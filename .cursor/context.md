@@ -85,6 +85,7 @@ Environment variables for this project are managed based on their usage context:
         VAPID_SUBJECT=
         # VITE_VAPID_PUBLIC_KEY= (also used server-side, sourced from Vercel by vercel dev)
         ```
+    *   No serverless functions should be required to action the current turn; state changes during a turn should be managed client-side and sent holistically at the end of the turn.
 
 2.  **Frontend Application (Client-Side - `src/*` directory, processed by Vite):**
     *   All environment variables required by the client-side code must be exposed by Vite.
