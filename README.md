@@ -1,5 +1,9 @@
 A Polytopia / Civ / Populous crossover Asynchronous turn-based casual web game.
 
+## Architecture
+
+![Architecture Diagram](/design/architecture.drawio.png)
+
 ## Local Development
 
 This project uses Vite for the frontend and Vercel CLI for emulating serverless functions locally.
