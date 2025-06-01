@@ -1,6 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import Redis from 'ioredis';
 
+// Define the namespace for Redis keys
+const redisKeyNamespace = 'hexbound:game:';
+
 // Initialize Redis client
 const redis = process.env.REDIS_URL ? new Redis(process.env.REDIS_URL) : new Redis();
 if (!process.env.REDIS_URL) {
@@ -46,7 +49,7 @@ export default async function handler(
   }
   // pushSubscription is optional on initial load if not yet granted
 
-  const redisGameKey = `game:${gameId}`;
+  const redisGameKey = `${redisKeyNamespace}${gameId}`;
 
   try {
     const rawGameStateFromRedis = await redis.hgetall(redisGameKey) as GameStateInRedis;
