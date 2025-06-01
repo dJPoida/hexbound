@@ -61,12 +61,43 @@ This game is a hybrid of Civilization, Polytopia, and Populous. It is an asynchr
 - **Proxy Setup**:
   - Vite proxies `/api` routes to `http://localhost:3000` where Vercel dev is running
 - **Benefit**:
-  - Get Vite’s lightning-fast frontend reload + accurate backend behavior during development
+  - Get Vite's lightning-fast frontend reload + accurate backend behavior during development
 
 ### Dev Commands
 - Run backend: `vercel dev`
 - Run frontend: `vite`
 - Combined (optional): Use `npm-run-all` or `concurrently` to run both
+
+### Environment Variable Management
+
+Environment variables for this project are managed based on their usage context:
+
+1.  **Serverless Functions (Backend - `api/*` directory):**
+    *   All environment variables required by serverless functions (e.g., `REDIS_URL`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, and `VITE_VAPID_PUBLIC_KEY` for server-side push configuration) are primarily defined in the **Vercel Project Settings** on the Vercel dashboard.
+    *   These variables should be configured for each relevant environment (Development, Preview, Production) within the Vercel dashboard.
+    *   When running `vercel dev` locally, it will fetch and use the variables set for the "Development" environment from the Vercel dashboard.
+    *   To maintain a reference in the local codebase, these server-side variables can be listed in `.env.local` but should have their values left blank or set to a placeholder comment (e.g., `VAR_NAME=#DEFINED_IN_VERCEL_DASHBOARD#`) to indicate they are sourced from Vercel during local development with `vercel dev`.
+        *Example `.env.local` structure for backend variables managed by Vercel:*
+        ```env
+        # BACKEND ENVIRONMENT VARIABLES CONFIGURED IN VERCEL DEVELOPMENT/PRODUCTION ENVIRONMENT
+        REDIS_URL=
+        VAPID_PRIVATE_KEY=
+        VAPID_SUBJECT=
+        # VITE_VAPID_PUBLIC_KEY= (also used server-side, sourced from Vercel by vercel dev)
+        ```
+
+2.  **Frontend Application (Client-Side - `src/*` directory, processed by Vite):**
+    *   All environment variables required by the client-side code must be exposed by Vite.
+    *   These variables **must be defined in the `.env.local` file** (or other `.env.[mode]` files as per Vite's standard .env loading mechanism).
+    *   To be exposed to client-side code, these variables **must be prefixed with `VITE_`** (e.g., `VITE_VAPID_PUBLIC_KEY`).
+    *   Vite will bundle these `VITE_` prefixed variables from `.env.local` into the frontend application via `import.meta.env`.
+        *Example `.env.local` for a frontend variable:*
+        ```env
+        # FRONTEND ENVIRONMENT VARIABLES EXPOSED BY VITE
+        VITE_VAPID_PUBLIC_KEY=your_actual_public_vapid_key_value
+        ```
+
+This strategy ensures that secrets and server-side configurations are managed securely within Vercel, while client-side configurations are handled via Vite's standard mechanisms. `vercel dev` prioritizes variables from the Vercel dashboard for the "Development" environment over those in `.env.local` for serverless functions.
 
 # AI Usage
 - Refactor and simplify UI components
