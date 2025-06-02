@@ -1,8 +1,13 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import Redis from 'ioredis';
 
-// Define the namespace for Redis keys
-const redisKeyNamespace = 'hexbound:game:';
+// Helper function to generate the namespaced Redis key prefix for games
+function getGameKeyPrefix(): string {
+  const env = process.env.VERCEL_ENV || 'localdev'; // Default to 'localdev' if VERCEL_ENV is not set
+  const prefix = `${env}:game:`;
+  // console.log(`[API get-game-state] Using Redis key prefix: ${prefix}`); // Optional: log for debugging
+  return prefix;
+}
 
 // Initialize Redis client
 const redis = process.env.REDIS_URL ? new Redis(process.env.REDIS_URL) : new Redis();
@@ -49,7 +54,9 @@ export default async function handler(
   }
   // pushSubscription is optional on initial load if not yet granted
 
-  const redisGameKey = `${redisKeyNamespace}${gameId}`;
+  const gameKeyPrefix = getGameKeyPrefix();
+  const redisGameKey = `${gameKeyPrefix}${gameId}`;
+  console.log(`[API get-game-state] Using Redis Key: ${redisGameKey}`); // Log the actual key used
 
   try {
     const rawGameStateFromRedis = await redis.hgetall(redisGameKey) as GameStateInRedis;

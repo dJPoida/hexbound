@@ -2,8 +2,13 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import Redis from 'ioredis';
 import * as webPushNamespace from 'web-push';
 
-// Define the namespace for Redis keys
-const redisKeyNamespace = 'hexbound:game:'; 
+// Helper function to generate the namespaced Redis key prefix for games
+function getGameKeyPrefix(): string {
+  const env = process.env.VERCEL_ENV || 'localdev'; // Default to 'localdev' if VERCEL_ENV is not set
+  const prefix = `${env}:game:`;
+  // console.log(`[API end-turn] Using Redis key prefix: ${prefix}`); // Optional: log for debugging
+  return prefix;
+}
 
 const redis = process.env.REDIS_URL ? new Redis(process.env.REDIS_URL) : new Redis();
 if (!process.env.REDIS_URL) {
@@ -82,7 +87,9 @@ export default async function handler(
     return response.status(400).json({ message: 'Invalid counter value provided.' });
   }
 
-  const redisGameKey = `${redisKeyNamespace}${gameId}`;
+  const gameKeyPrefix = getGameKeyPrefix();
+  const redisGameKey = `${gameKeyPrefix}${gameId}`;
+  console.log(`[API end-turn] Using Redis Key: ${redisGameKey}`); // Log the actual key used
 
   try {
     const rawGameState = await redis.hgetall(redisGameKey) as GameStateInRedis;
