@@ -16,12 +16,28 @@ const playerManagementDiv = document.getElementById('playerManagement') as HTMLD
 const nameInputSectionDiv = document.getElementById('nameInputSection') as HTMLDivElement;
 const playerNameInput = document.getElementById('playerNameInput') as HTMLInputElement;
 const saveNameButton = document.getElementById('saveNameButton') as HTMLButtonElement;
+const loadingPlayerMessageP = document.getElementById('loadingPlayerMessage') as HTMLParagraphElement;
 const loggedInSectionDiv = document.getElementById('loggedInSection') as HTMLDivElement;
 const loggedInPlayerNameSpan = document.getElementById('loggedInPlayerName') as HTMLSpanElement;
 const logoutButton = document.getElementById('logoutButton') as HTMLButtonElement;
 
+// View Management UI (Player, Lobby, Game)
+const viewDivider = document.getElementById('viewDivider') as HTMLHRElement; // Renamed from gameContentDivider
+const lobbyViewDiv = document.getElementById('lobbyView') as HTMLDivElement;
+const myGamesListUl = document.getElementById('myGamesList') as HTMLUListElement;
+const noGamesMessageP = document.getElementById('noGamesMessage') as HTMLParagraphElement;
+const lobbyCreateNewGameButton = document.getElementById('lobbyCreateNewGameButton') as HTMLButtonElement;
+const joinGameIdInput = document.getElementById('joinGameIdInput') as HTMLInputElement;
+const lobbyJoinByIdButton = document.getElementById('lobbyJoinByIdButton') as HTMLButtonElement;
+const returnToLobbyButton = document.getElementById('returnToLobbyButton') as HTMLButtonElement;
+const myGamesListLoadingIndicator = document.getElementById('myGamesListLoadingIndicator') as HTMLParagraphElement;
+
+// Debug Section UI
+const toggleDebugButton = document.getElementById('toggleDebugButton') as HTMLButtonElement;
+const debugContent = document.getElementById('debugContent') as HTMLDivElement;
+const gameStateJson = document.getElementById('gameStateJson') as HTMLPreElement;
+
 // Game Content UI (to be shown/hidden)
-const gameContentDivider = document.getElementById('gameContentDivider') as HTMLHRElement;
 const gameContainerDiv = document.getElementById('gameContainer') as HTMLDivElement;
 
 // Game State Variables
@@ -37,6 +53,27 @@ let currentPlayerId: string | null = null;
 let currentPlayerName: string | null = null;
 const HEXBOUND_PLAYER_ID_KEY = 'hexboundPlayerId';
 
+// Game-specific Player Details (populated when a game is active)
+interface GamePlayerDetails {
+  id: string | null;
+  name: string | null;
+}
+let gamePlayer1: GamePlayerDetails = { id: null, name: null };
+let gamePlayer2: GamePlayerDetails = { id: null, name: null };
+let gameCurrentTurnPlayerId: string | null = null; // ID of the player whose turn it is in the current game
+
+// Interface for game details received by the lobby
+interface GameDetailsForLobby {
+  gameId: string;
+  player1Id: string | null;
+  player1Name: string | null;
+  player2Id: string | null;
+  player2Name: string | null;
+  currentTurnPlayerId: string | null;
+  opponentName: string | null;
+  isMyTurn: boolean;
+}
+
 // --- Player ID LocalStorage Functions ---
 function getPlayerIdFromStorage(): string | null {
   return localStorage.getItem(HEXBOUND_PLAYER_ID_KEY);
@@ -48,6 +85,37 @@ function savePlayerIdToStorage(playerId: string): void {
 
 function clearPlayerIdFromStorage(): void {
   localStorage.removeItem(HEXBOUND_PLAYER_ID_KEY);
+}
+
+// --- View Management ---
+type AppView = 'login' | 'lobby' | 'game';
+
+function showView(view: AppView) {
+  console.log(`[Client] Showing view: ${view}`);
+  // Hide all main views first
+  if (nameInputSectionDiv) nameInputSectionDiv.style.display = 'none'; // Part of login view
+  // loggedInSectionDiv is managed by updateLoginStateUI, not directly by showView generally
+  if (lobbyViewDiv) lobbyViewDiv.style.display = 'none';
+  if (gameContainerDiv) gameContainerDiv.style.display = 'none';
+  if (returnToLobbyButton) returnToLobbyButton.style.display = 'none';
+  if (viewDivider) viewDivider.style.display = 'block'; // Usually visible if logged in
+
+  switch (view) {
+    case 'login':
+      // updateLoginStateUI will handle showing nameInputSection or loggedInSection
+      if (viewDivider) viewDivider.style.display = 'none'; // No divider before login section
+      // Ensure loggedInSection is also hidden if we are truly going to the name input form
+      if (!currentPlayerId && loggedInSectionDiv) loggedInSectionDiv.style.display = 'none'; 
+      if (nameInputSectionDiv && !currentPlayerId) nameInputSectionDiv.style.display = 'block';
+      break;
+    case 'lobby':
+      if (lobbyViewDiv) lobbyViewDiv.style.display = 'block';
+      break;
+    case 'game':
+      if (gameContainerDiv) gameContainerDiv.style.display = 'block';
+      if (returnToLobbyButton) returnToLobbyButton.style.display = 'block';
+      break;
+  }
 }
 
 // --- Game ID and Session ID Logic ---
@@ -84,45 +152,29 @@ function updateUrlWithGameId(gameId: string) {
   }
 }
 
-function getGameIdFromUrlOrStorage(): string {
+// Modified to only retrieve gameId from URL, not from localStorage as default.
+// If no gameId in URL, returns null. Lobby logic will handle this.
+function getGameIdFromUrl(): string | null {
   const urlParams = new URLSearchParams(window.location.search);
-  let gameId = urlParams.get('game');
-
-  if (gameId) {
-    localStorage.setItem('hexboundCurrentGameId', gameId);
-    updateUrlWithGameId(gameId); // Ensure URL is canonical if loaded from param
-    return gameId;
-  } 
-  
-  gameId = localStorage.getItem('hexboundCurrentGameId');
-  if (gameId) {
-    updateUrlWithGameId(gameId);
-    return gameId;
-  }
-  
-  gameId = generateGameId();
-  localStorage.setItem('hexboundCurrentGameId', gameId);
-  updateUrlWithGameId(gameId);
-  return gameId;
+  return urlParams.get('game');
 }
 
 // --- UI Update Functions ---
 function updateLoginStateUI() {
+  if (loadingPlayerMessageP) loadingPlayerMessageP.style.display = 'none'; // Always hide loading message here
+
   if (currentPlayerId && currentPlayerName) {
-    // Logged in state
+    // Logged in state: show logged-in info, hide name input
     if (nameInputSectionDiv) nameInputSectionDiv.style.display = 'none';
     if (loggedInSectionDiv) loggedInSectionDiv.style.display = 'block';
     if (loggedInPlayerNameSpan) loggedInPlayerNameSpan.textContent = currentPlayerName;
-    if (gameContentDivider) gameContentDivider.style.display = 'block';
-    if (gameContainerDiv) gameContainerDiv.style.display = 'block';
     if (playerNameInput) playerNameInput.value = ''; // Clear input field
   } else {
-    // Logged out state
+    // Logged out state: show name input, hide logged-in info and other views
     if (nameInputSectionDiv) nameInputSectionDiv.style.display = 'block';
     if (loggedInSectionDiv) loggedInSectionDiv.style.display = 'none';
     if (loggedInPlayerNameSpan) loggedInPlayerNameSpan.textContent = '';
-    if (gameContentDivider) gameContentDivider.style.display = 'none';
-    if (gameContainerDiv) gameContainerDiv.style.display = 'none';
+    showView('login'); // Explicitly ensure only login prompt is visible
   }
 }
 
@@ -139,114 +191,231 @@ function updateCounterDisplay() {
 }
 
 function updateGameInfoDisplay() {
-  if (gameIdDisplay) gameIdDisplay.textContent = currentGameId;
-  if (playerNumberDisplay) playerNumberDisplay.textContent = playerNumber ? `Player ${playerNumber}` : (currentGameId ? 'Spectator' : '-');
-  // Current turn display is updated by fetchGameState or after endTurn
+  if (gameIdDisplay) gameIdDisplay.textContent = currentGameId || 'N/A';
+  
+  let playerDisplayString = '-';
+  if (playerNumber && currentPlayerName) {
+    playerDisplayString = `${currentPlayerName} (Player ${playerNumber})`;
+  } else if (playerNumber && gamePlayer1.id === currentPlayerId && gamePlayer1.name) {
+    playerDisplayString = `${gamePlayer1.name} (Player 1)`;
+  } else if (playerNumber && gamePlayer2.id === currentPlayerId && gamePlayer2.name) {
+    playerDisplayString = `${gamePlayer2.name} (Player 2)`;
+  } else if (currentGameId) {
+    playerDisplayString = 'Spectator';
+  }
+  if (playerNumberDisplay) playerNumberDisplay.textContent = playerDisplayString;
 }
 
-function updateCurrentTurnDisplay(currentTurnSessionId: string | null, totalPlayers: number) {
-  if (currentTurnDisplay) {
-    if (!currentTurnSessionId) {
-      currentTurnDisplay.textContent = 'Waiting for players...';
-      return;
-    }
-    if (totalPlayers < 2 && playerNumber === 1) {
-        currentTurnDisplay.textContent = `Player 1 (Your Turn) - Waiting for Player 2...`;
-        return;
-    }
+function updateCurrentTurnDisplay(
+  activeTurnPlayerId: string | null, 
+  p1Details: GamePlayerDetails, 
+  p2Details: GamePlayerDetails, 
+  totalGamePlayers: number
+) {
+  if (!currentTurnDisplay) return;
 
-    const turnIsMine = currentTurnSessionId === localSessionId;
-    let turnPlayerNumber = null;
-    // This is a simplification; ideally, the server would tell us the turn player's number
-    // or we'd have a mapping of session IDs to player numbers from the game state.
-    // For now, we assume if it's not our turn, and we know our player number, the other player is the turn player.
-    if (playerNumber === 1 && currentTurnSessionId !== localSessionId) turnPlayerNumber = 2;
-    if (playerNumber === 2 && currentTurnSessionId !== localSessionId) turnPlayerNumber = 1;
-    if (turnIsMine) turnPlayerNumber = playerNumber;
-
-    if (turnPlayerNumber) {
-      currentTurnDisplay.textContent = `Player ${turnPlayerNumber}${turnIsMine ? ' (Your Turn)' : ''}`;
-    } else {
-      currentTurnDisplay.textContent = '-'; // Should not happen if game is active
-    }
+  if (!activeTurnPlayerId) {
+    currentTurnDisplay.textContent = 'Waiting for players...';
+    return;
   }
+
+  // Use currentPlayerId (the logged-in user) to determine if it's their turn
+  const turnIsMine = activeTurnPlayerId === currentPlayerId;
+
+  if (totalGamePlayers < 2 && p1Details.id === activeTurnPlayerId && turnIsMine) {
+    currentTurnDisplay.textContent = `${p1Details.name || 'Player 1'} (Your Turn) - Waiting for Player 2...`;
+    return;
+  }
+
+  let turnText = '-';
+  if (activeTurnPlayerId === p1Details.id && p1Details.name) {
+    turnText = `${p1Details.name} (P1)`;
+  } else if (activeTurnPlayerId === p2Details.id && p2Details.name) {
+    turnText = `${p2Details.name} (P2)`;
+  } else if (activeTurnPlayerId) {
+    // Fallback if name is somehow not available but ID is, though less likely with new flow
+    turnText = `Player (ID ending ...${activeTurnPlayerId.slice(-4)})`; 
+  }
+
+  if (turnIsMine) {
+    turnText += ' (Your Turn)';
+  }
+  currentTurnDisplay.textContent = turnText;
+}
+
+function updateDebugDisplay() {
+  if (!gameStateJson) return;
+
+  const clientDebugState = {
+    activePlayer: {
+      id: currentPlayerId,
+      name: currentPlayerName,
+      localSessionId: localSessionId,
+      pushSubscription: currentPushSubscription ? JSON.parse(JSON.stringify(currentPushSubscription)) : null // Deep copy for display
+    },
+    currentGame: {
+      id: currentGameId,
+      isMyTurn: isMyTurn,
+      counter: currentCounterValue,
+      thisClientPlayerNumber: playerNumber,
+      player1Details: gamePlayer1,
+      player2Details: gamePlayer2,
+      currentTurnPlayerId: gameCurrentTurnPlayerId,
+    }
+  };
+  gameStateJson.textContent = JSON.stringify(clientDebugState, null, 2);
 }
 
 // --- API Communication ---
-async function fetchGameState(gameId: string, sessionId: string, pushSub: PushSubscription | null, playerId: string | null) {
-  console.log(`Fetching game state for Game ID: ${gameId}, Session ID: ${sessionId}, Player ID: ${playerId}`);
-  if (!playerId) {
-    console.warn('[Client fetchGameState] Attempted to fetch game state without a playerId. Aborting.');
-    // Optionally, handle this by showing an error or re-prompting login.
-    // For now, we just prevent the fetch and the UI will remain as is.
+async function fetchGameState(gameId: string, sessionId: string, pushSub: PushSubscription | null, playerIdForGame: string | null) {
+  console.log(`Fetching game state for Game ID: ${gameId}, Session ID: ${sessionId}, Player ID: ${playerIdForGame}`);
+  if (!playerIdForGame) {
+    console.warn('[Client fetchGameState] Attempted to fetch game state without a playerIdForGame. Aborting.');
+    gamePlayer1 = { id: null, name: null }; gamePlayer2 = { id: null, name: null }; gameCurrentTurnPlayerId = null; isMyTurn = false;
+    updateGameInfoDisplay(); updateCurrentTurnDisplay(null, gamePlayer1, gamePlayer2, 0);
+    updateDebugDisplay(); // Reflect reset state in debug view
     return;
   }
   try {
     const response = await fetch('/api/get-game-state', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ gameId, sessionId, pushSubscription: pushSub, playerId }),
+      body: JSON.stringify({ gameId, sessionId, pushSubscription: pushSub, playerId: playerIdForGame }),
     });
 
     if (!response.ok) {
       const errorData = await response.text();
       console.error('Error fetching game state:', response.status, errorData);
-      // Potentially display an error to the user
       if (currentTurnDisplay) currentTurnDisplay.textContent = "Error loading game.";
-      isMyTurn = false;
-      playerNumber = null;
-      currentCounterValue = 0;
+      isMyTurn = false; playerNumber = null; currentCounterValue = 0;
+      gamePlayer1 = { id: null, name: null }; gamePlayer2 = { id: null, name: null }; gameCurrentTurnPlayerId = null;
+      updateDebugDisplay(); // Reflect reset state in debug view
     } else {
       const state = await response.json();
       console.log('Received game state:', state);
 
-      currentGameId = state.gameId; // Should match, but good to sync
-      playerNumber = state.playerNumberForThisClient;
-      isMyTurn = state.current_turn_player_session_id === localSessionId;
+      currentGameId = state.gameId;
+      playerNumber = state.playerNumberForThisClient; // P1 or P2 for THIS client
+      
+      gamePlayer1 = { id: state.player1_id, name: state.player1_name };
+      gamePlayer2 = { id: state.player2_id, name: state.player2_name };
+      gameCurrentTurnPlayerId = state.current_turn_player_id;
+      
+      isMyTurn = currentPlayerId === gameCurrentTurnPlayerId;
       currentCounterValue = state.counter;
       
-      updateCurrentTurnDisplay(state.current_turn_player_session_id, state.player_count);
+      updateCurrentTurnDisplay(gameCurrentTurnPlayerId, gamePlayer1, gamePlayer2, state.player_count);
+      updateDebugDisplay(); // Update debug view with new state
     }
   } catch (error) {
     console.error('Network or other error fetching game state:', error);
     if (currentTurnDisplay) currentTurnDisplay.textContent = "Network error loading game.";
-    isMyTurn = false;
-    playerNumber = null;
-    currentCounterValue = 0;
+    isMyTurn = false; playerNumber = null; currentCounterValue = 0;
+    gamePlayer1 = { id: null, name: null }; gamePlayer2 = { id: null, name: null }; gameCurrentTurnPlayerId = null;
+    updateDebugDisplay(); // Reflect reset state in debug view
   }
   
   updateCounterDisplay();
-  updateGameInfoDisplay();
+  updateGameInfoDisplay(); // Call this after gamePlayer1/2 might have been updated
 }
 
-async function handleStartNewGame() {
+// --- Lobby Functions (New) ---
+async function populateLobby() {
   if (!currentPlayerId) {
-    console.warn('[Client handleStartNewGame] Cannot start new game, player not logged in.');
-    alert('You must be logged in to start a new game. Please save your name first.');
+    console.warn('[Client] Cannot populate lobby, player not logged in.');
+    showView('login');
     return;
   }
-  // At this point, currentPlayerId is confirmed to be a string due to the guard clause.
-  const confirmedPlayerId = currentPlayerId;
+  console.log('[Client] Populating lobby for player:', currentPlayerId);
 
-  console.log('[Client] Starting new game for player:', confirmedPlayerId);
-  currentGameId = generateGameId();
-  localStorage.setItem('hexboundCurrentGameId', currentGameId);
-  updateUrlWithGameId(currentGameId);
+  if (myGamesListLoadingIndicator) myGamesListLoadingIndicator.style.display = 'block'; // Show loading
+  if (myGamesListUl) myGamesListUl.innerHTML = ''; // Clear previous list
+  if (noGamesMessageP) noGamesMessageP.style.display = 'none'; // Hide no games message initially
 
-  // Reset local state for the new game
-  playerNumber = null; 
-  isMyTurn = false;    
-  currentCounterValue = 0;
-  
-  // Explicitly set placeholder UI for new game before fetching state
-  if (gameIdDisplay) gameIdDisplay.textContent = currentGameId;
-  if (playerNumberDisplay) playerNumberDisplay.textContent = '-';
-  if (currentTurnDisplay) currentTurnDisplay.textContent = 'Loading...';
-  updateCounterDisplay(); // Disables buttons as isMyTurn is false
+  try {
+    const response = await fetch(`/api/get-my-games?playerId=${currentPlayerId}`);
+    if (myGamesListLoadingIndicator) myGamesListLoadingIndicator.style.display = 'none'; // Hide loading
 
-  // Fetch state for the new game, attempt to join as Player 1
-  // The existing push subscription is still valid and will be sent.
-  await fetchGameState(currentGameId, localSessionId, currentPushSubscription, confirmedPlayerId!);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[Client populateLobby] Error fetching games:', response.status, errorText);
+      if (myGamesListUl) myGamesListUl.innerHTML = '<li>Error loading your games.</li>';
+      // noGamesMessageP remains hidden as we show an error in the list
+      return;
+    }
+
+    const games: GameDetailsForLobby[] = await response.json();
+    console.log('[Client populateLobby] Received games:', games);
+
+    if (games.length === 0) {
+      if (noGamesMessageP) noGamesMessageP.style.display = 'block';
+    } else {
+      games.forEach(game => {
+        if (!myGamesListUl) return;
+        const listItem = document.createElement('li');
+        
+        let gameInfoText = `Game: ${game.gameId}`;
+        if (game.opponentName) {
+          gameInfoText += ` (vs ${game.opponentName})`;
+        } else if (game.player1Id === currentPlayerId && !game.player2Id) {
+          gameInfoText += ' (Waiting for opponent)';
+        } else {
+          gameInfoText += ' (Open game)';
+        }
+
+        if (game.isMyTurn) {
+          gameInfoText += ' - <strong>Your Turn!</strong>';
+        }
+        
+        listItem.innerHTML = gameInfoText; // Use innerHTML to parse the <strong> tag
+
+        const joinButton = document.createElement('button');
+        joinButton.textContent = 'Join Game';
+        joinButton.style.marginLeft = '10px';
+        joinButton.dataset.gameid = game.gameId;
+        joinButton.addEventListener('click', (e) => {
+          const gameIdToJoin = (e.target as HTMLButtonElement).dataset.gameid;
+          if (gameIdToJoin) {
+            navigateToGame(gameIdToJoin);
+          }
+        });
+        listItem.appendChild(joinButton);
+        myGamesListUl.appendChild(listItem);
+      });
+    }
+
+  } catch (error: any) {
+    if (myGamesListLoadingIndicator) myGamesListLoadingIndicator.style.display = 'none'; // Hide loading on error too
+    console.error('[Client populateLobby] Network or other error fetching games:', error);
+    if (myGamesListUl) myGamesListUl.innerHTML = '<li>Network error loading games.</li>';
+    // noGamesMessageP remains hidden
+  }
+}
+
+function navigateToGame(gameId: string) {
+  console.log(`[Client] Navigating to game: ${gameId}`);
+  updateUrlWithGameId(gameId); // This will set the URL
+  currentGameId = gameId; // Set current game ID state
+  showView('game');
+  if (currentPlayerId) { // Should always be true if we get here from lobby actions
+    initializeGameSystems(gameId, currentPlayerId, localSessionId);
+    // initializeGameSystems will call fetchGameState, which calls updateDebugDisplay
+  }
+  // Update debug display with initial (possibly empty) game state for this new game view
+  // Or rely on fetchGameState within initializeGameSystems to do the first updateDebugDisplay.
+  // For consistency, let's call it after fetchGameState in initializeGameSystems.
+}
+
+// Modified handleStartNewGame to be callable from lobby
+async function handleCreateNewGameFromLobby() {
+  if (!currentPlayerId) {
+    alert('You must be logged in to create a game.');
+    return;
+  }
+  const newGameId = generateGameId();
+  console.log('[Client] New game created from lobby by player:', currentPlayerId, 'New Game ID:', newGameId);
+  // No need to save to localStorage here, navigateToGame will update URL
+  navigateToGame(newGameId); // This will also call initializeGameSystems
 }
 
 // --- Player Management Event Listeners ---
@@ -275,8 +444,9 @@ saveNameButton?.addEventListener('click', async () => {
         currentPlayerName = playerData.playerName;
         savePlayerIdToStorage(playerData.playerId);
         console.log('[Client] Player registered/logged in:', currentPlayerName, 'ID:', currentPlayerId);
-        updateLoginStateUI();
-        await initializeGameSystems();
+        updateLoginStateUI(); // Update player info display
+        // DON'T call initializeGameSystems directly. initializeApp will handle routing to lobby/game.
+        initializeApp(); // Re-run initializeApp to route to lobby or game based on URL
       } else {
         console.error('[Client] Error registering player: API response did not contain a valid playerId or playerName.', playerData);
         alert('Error saving name: Received invalid data from server.');
@@ -307,21 +477,14 @@ logoutButton?.addEventListener('click', () => {
   clearPlayerIdFromStorage();
   currentPlayerId = null;
   currentPlayerName = null;
-  
-  // Reset game-specific variables as well, as the game context is lost on logout
-  currentGameId = ''; // Or fetch default/new one after re-login
-  playerNumber = null;
-  isMyTurn = false;
-  currentCounterValue = 0;
-  // Potentially clear other displays if not handled by updateLoginStateUI
-  if (gameIdDisplay) gameIdDisplay.textContent = '-';
-  if (playerNumberDisplay) playerNumberDisplay.textContent = '-';
-  if (currentTurnDisplay) currentTurnDisplay.textContent = '-';
-  if (counterDisplay) counterDisplay.textContent = '0';
-
-  updateLoginStateUI();
-  console.log('[Client] Player logged out. UI updated.');
-  // No need to call initializeGameSystems here as user is logged out.
+  updateLoginStateUI(); // This will now also call showView('login') internally
+  // Clear URL game param if any
+  const url = new URL(window.location.href);
+  if (url.searchParams.has('game')) {
+    url.searchParams.delete('game');
+    window.history.pushState({ path: url.href }, '', url.href);
+  }
+  console.log('[Client] Player logged out. UI updated, showing login prompt.');
 });
 
 // --- Event Listeners ---
@@ -345,52 +508,57 @@ incrementButton?.addEventListener('click', () => {
 });
 
 endTurnButton?.addEventListener('click', async () => {
-  if (!isMyTurn) {
-    console.warn("Not your turn!");
-    alert("Not your turn!");
+  if (!isMyTurn || !currentPlayerId) { // currentPlayerId should be set if isMyTurn is true
+    console.warn("Not your turn or player ID missing! isMyTurn:", isMyTurn, "currentPlayerId:", currentPlayerId);
+    alert("Not your turn or not properly logged in!");
     return;
   }
-  console.log('End Turn clicked. Game ID:', currentGameId, 'Session ID:', localSessionId, 'Counter:', currentCounterValue);
+  console.log('End Turn clicked. Game ID:', currentGameId, 'Player ID:', currentPlayerId, 'Counter:', currentCounterValue);
 
-  // Disable buttons immediately to prevent double-clicks during API call
-  isMyTurn = false;
+  const endedTurnPlayerId = currentPlayerId; // Store who ended the turn
+  isMyTurn = false; // Optimistically set to false
   updateCounterDisplay(); 
 
   try {
     const response = await fetch('/api/end-turn', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ gameId: currentGameId, sessionId: localSessionId, counter: currentCounterValue }), 
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        gameId: currentGameId, 
+        playerId: endedTurnPlayerId, 
+        counter: currentCounterValue 
+      }), 
     });
 
     if (response.ok) {
       const data = await response.json();
       console.log('End turn server response:', data);
-      if (data.newCounterValue !== undefined) currentCounterValue = data.newCounterValue; // Counter state from just before turn ended
-      // isMyTurn is already false.
-      // The actual current turn session ID is data.nextTurnPlayerSessionId
-      // We need to know the total player count to display the message correctly.
-      // For simplicity, we'll assume 2 players if the turn switch was successful.
-      // A more robust solution might involve fetching full game state or server sending more details.
-      updateCurrentTurnDisplay(data.nextTurnPlayerSessionId, 2); // Assume 2 players if successful turn end
-      updateCounterDisplay(); // Re-syncs button states and counter display
+      if (data.newCounterValue !== undefined) currentCounterValue = data.newCounterValue;
+      gameCurrentTurnPlayerId = data.nextTurnPlayerId;
+      isMyTurn = currentPlayerId === gameCurrentTurnPlayerId; // Crucial update
+      
+      // The server response for end-turn doesn't include full player names. 
+      // We rely on gamePlayer1 and gamePlayer2 being up-to-date from the last fetchGameState.
+      // The player_count also needs to be accurate. For simplicity, assume 2 if turn ended successfully.
+      const playerCount = (gamePlayer1.id && gamePlayer2.id) ? 2 : (gamePlayer1.id ? 1: 0);
+      updateCurrentTurnDisplay(gameCurrentTurnPlayerId, gamePlayer1, gamePlayer2, playerCount);
+      updateCounterDisplay(); // Reflect new isMyTurn state
       console.log("[Client] Turn ended successfully. UI updated.");
+      updateDebugDisplay(); // Update debug view with new state
     } else {
       const errorText = await response.text();
       console.error('Error ending turn:', response.statusText, errorText);
       alert(`Error ending turn: ${errorText || response.statusText}`);
-      // If ending turn failed, it's still our turn (re-enable buttons)
-      isMyTurn = true; 
+      isMyTurn = true; // Revert: it's still the previous player's turn on error
       updateCounterDisplay();
+      updateDebugDisplay(); // If state is changed reflect it
     }
   } catch (error) {
     console.error('Failed to send end turn request:', error);
     alert('Network error trying to end turn.');
-    // If ending turn failed due to network, it's still our turn
-    isMyTurn = true;
+    isMyTurn = true; // Revert
     updateCounterDisplay();
+    updateDebugDisplay(); // If state is changed reflect it
   }
 });
 
@@ -404,7 +572,55 @@ copyGameLinkButton?.addEventListener('click', () => {
   });
 });
 
-startNewGameButton?.addEventListener('click', handleStartNewGame);
+startNewGameButton?.addEventListener('click', handleCreateNewGameFromLobby);
+
+// --- Lobby Event Listeners (New) ---
+lobbyCreateNewGameButton?.addEventListener('click', handleCreateNewGameFromLobby);
+
+lobbyJoinByIdButton?.addEventListener('click', () => {
+  if (!joinGameIdInput) return;
+  const gameIdToJoin = joinGameIdInput.value.trim();
+  if (gameIdToJoin) {
+    navigateToGame(gameIdToJoin);
+    joinGameIdInput.value = ''; // Clear input
+  } else {
+    alert('Please enter a Game ID to join.');
+  }
+});
+
+returnToLobbyButton?.addEventListener('click', () => {
+  console.log('[Client] Returning to lobby from game:', currentGameId);
+  // Clear the game parameter from URL and navigate to lobby view
+  const url = new URL(window.location.href);
+  if (url.searchParams.has('game')) {
+    url.searchParams.delete('game');
+    window.history.pushState({ path: url.href }, '', url.href);
+  }
+  currentGameId = ''; // Clear current game context
+  // Reset game specific UI elements if necessary (or rely on initializeGameSystems not running)
+  if (gameIdDisplay) gameIdDisplay.textContent = '-';
+  if (playerNumberDisplay) playerNumberDisplay.textContent = '-';
+  if (currentTurnDisplay) currentTurnDisplay.textContent = '-';
+  if (counterDisplay) counterDisplay.textContent = '0';
+  isMyTurn = false;
+  updateCounterDisplay();
+
+  if (debugContent) debugContent.style.display = 'none';
+  if (toggleDebugButton) toggleDebugButton.textContent = 'Show Debug Info';
+  showView('lobby');
+  populateLobby(); // Refresh lobby content
+});
+
+toggleDebugButton?.addEventListener('click', () => {
+  if (debugContent && toggleDebugButton) {
+    const isHidden = debugContent.style.display === 'none';
+    debugContent.style.display = isHidden ? 'block' : 'none';
+    toggleDebugButton.textContent = isHidden ? 'Hide Debug Info' : 'Show Debug Info';
+    if (isHidden) {
+      updateDebugDisplay(); // Update content when showing
+    }
+  }
+});
 
 // --- Web Push Setup ---
 function urlBase64ToUint8Array(base64String: string) {
@@ -470,97 +686,108 @@ async function registerServiceWorkerAndSubscribeToPush() {
   }
 }
 
-async function initializeGameSystems() {
-  console.log('[Client] Player is logged in. Initializing game systems...');
-  currentGameId = getGameIdFromUrlOrStorage();
-  
-  updateGameInfoDisplay(); // Initial display of game ID before fetch
-  updateCounterDisplay(); // Initial button state based on isMyTurn (false initially)
+// Modified initializeGameSystems to accept gameId, playerId, sessionId
+async function initializeGameSystems(gameIdToLoad: string, pId: string, sId: string) {
+  console.log(`[Client] Initializing game systems for Game ID: ${gameIdToLoad}, Player ID: ${pId}, Session ID: ${sId}`);
+  currentGameId = gameIdToLoad;
+  // currentPlayerId and localSessionId should already be set by initializeApp
+
+  updateGameInfoDisplay(); // Use currentGameId set above
+  updateCounterDisplay(); 
 
   currentPushSubscription = await registerServiceWorkerAndSubscribeToPush();
-  
-  // Now fetch the actual game state from the server
-  await fetchGameState(currentGameId, localSessionId, currentPushSubscription, currentPlayerId);
+  await fetchGameState(currentGameId, sId, currentPushSubscription, pId);
 
   // Listen for messages from the Service Worker
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.addEventListener('message', event => {
-      console.log('[Client] Message received from SW:', JSON.stringify(event.data));
       if (event.data && event.data.type === 'GAME_UPDATE_NOTIFICATION') {
         const receivedGameId = event.data.gameId;
-        console.log(`[Client] Received GAME_UPDATE_NOTIFICATION from SW. Current Game ID: ${currentGameId}, Received Game ID: ${receivedGameId}`);
-        
         if (!receivedGameId || receivedGameId === currentGameId) {
-          console.log(`[Client] Game ID matches (${receivedGameId}) or is null/undefined. Refreshing game state for ${currentGameId}...`);
-          fetchGameState(currentGameId, localSessionId, currentPushSubscription, currentPlayerId);
+          fetchGameState(currentGameId, sId, currentPushSubscription, pId);
         }
       }
     });
   }
 
-  // Add listener for window focus to re-fetch game state
+  // Add listener for window focus
   window.addEventListener('focus', () => {
-    if (isMyTurn) {
-      console.log('[Client] Window focused, but it is currently this player\'s turn. Skipping state fetch.');
-      return;
-    }
-    console.log('[Client] Window focused and it is NOT this player\'s turn. Re-fetching game state.');
-    if (currentGameId && localSessionId) {
-      fetchGameState(currentGameId, localSessionId, currentPushSubscription, currentPlayerId);
+    if (isMyTurn) return;
+    if (currentGameId && pId && sId) {
+      fetchGameState(currentGameId, sId, currentPushSubscription, pId);
     }
   });
-  console.log('[Client] Game systems initialized.');
+  console.log('[Client] Game systems initialized for:', currentGameId);
 }
 
-// --- Initialization ---
+// --- Initialization (Refactored) ---
 async function initializeApp() {
-  // Display App Version ASAP
   const appVersion = import.meta.env.VITE_APP_VERSION || 'unknown';
-  if (appVersionDisplay) {
-    appVersionDisplay.textContent = appVersion;
-  }
-  console.log('[Client] App Version (for UI display):', appVersion);
+  if (appVersionDisplay) appVersionDisplay.textContent = appVersion;
+  console.log('[Client] App Version:', appVersion);
 
-  localSessionId = getSessionId(); // For this browser tab session
-  console.log('[Client] Local Tab Session ID:', localSessionId);
+  localSessionId = getSessionId();
+  const storedPlayerId = getPlayerIdFromStorage();
 
-  currentPlayerId = getPlayerIdFromStorage();
+  if (storedPlayerId) {
+    console.log('[Client] Found Player ID in storage:', storedPlayerId);
+    if (nameInputSectionDiv) nameInputSectionDiv.style.display = 'none';
+    if (loggedInSectionDiv) loggedInSectionDiv.style.display = 'none'; // Hide this too initially
+    if (loadingPlayerMessageP) {
+      loadingPlayerMessageP.textContent = 'Verifying your session...';
+      loadingPlayerMessageP.style.display = 'block';
+    }
 
-  if (currentPlayerId) {
-    console.log('[Client] Found Player ID in storage:', currentPlayerId);
-    saveNameButton.disabled = true; // Disable while attempting to fetch details
     try {
-      const playerDetailsResponse = await fetch(`/api/get-player-details?playerId=${currentPlayerId}`);
+      const playerDetailsResponse = await fetch(`/api/get-player-details?playerId=${storedPlayerId}`);
       if (playerDetailsResponse.ok) {
         const details = await playerDetailsResponse.json();
+        currentPlayerId = storedPlayerId; // Confirm the ID used
         currentPlayerName = details.playerName;
         console.log('[Client] Fetched player name:', currentPlayerName);
+        if (loadingPlayerMessageP) loadingPlayerMessageP.textContent = `Welcome back, ${currentPlayerName}! Please wait...`;
       } else {
-        console.warn('[Client] Could not fetch player details for ID from storage (Status:', playerDetailsResponse.status, '). Logging out.');
-        clearPlayerIdFromStorage();
-        currentPlayerId = null;
+        console.warn('[Client] Could not fetch player details for stored ID. Status:', playerDetailsResponse.status, '. Logging out.');
+        clearPlayerIdFromStorage(); 
+        currentPlayerId = null; 
         currentPlayerName = null;
-        // Optionally, inform the user their session might have expired or ID is invalid
-        alert('Your saved session is invalid. Please enter your name again.');
+        alert('Your saved session is invalid or has expired. Please enter your name again.');
       }
     } catch (e: any) {
-      console.error('[Client] Network error trying to fetch player details:', e);
-      // Don't clear stored ID on network error, user might just be offline. 
-      // UI will remain in logged-out state until they can connect.
-      currentPlayerName = null; // Ensure logged-out UI state if fetch fails for any reason before updateLoginStateUI
-      alert('Could not connect to server to verify your identity. Please check connection or try again later.');
+      console.error('[Client] Network error fetching player details:', e);
+      // Don't clear stored ID on network error, but treat as logged out for this session attempt
+      currentPlayerId = null; 
+      currentPlayerName = null; 
+      alert('Could not connect to the server to verify your identity. Please check your connection or try again later.');
     }
-    saveNameButton.disabled = false; // Re-enable after attempt
+    // loadingPlayerMessageP will be hidden by updateLoginStateUI or subsequent showView call
+
   } else {
     console.log('[Client] No Player ID found in storage.');
+    // currentPlayerId and currentPlayerName are already null
+    if (loadingPlayerMessageP) loadingPlayerMessageP.style.display = 'none'; // Ensure it's hidden
   }
 
-  updateLoginStateUI(); // Show/hide sections based on login status
+  updateLoginStateUI(); // Sets player name display or prompts for login name, and hides loading message
 
   if (currentPlayerId && currentPlayerName) {
-    await initializeGameSystems();
+    // Player is successfully (re)logged in
+    console.log('[Client] Player is logged in:', currentPlayerName, 'ID:', currentPlayerId);
+    if (loadingPlayerMessageP) loadingPlayerMessageP.style.display = 'none'; // Explicitly hide again before routing
+    const gameIdFromUrl = getGameIdFromUrl();
+    if (gameIdFromUrl) {
+      console.log('[Client] Game ID found in URL, navigating to game:', gameIdFromUrl);
+      navigateToGame(gameIdFromUrl);
+    } else {
+      console.log('[Client] No Game ID in URL, showing lobby.');
+      showView('lobby');
+      await populateLobby();
+    }
   } else {
-    console.log('[Client] Player not logged in. Game systems will not initialize yet.');
+    // Player not logged in (or name fetch failed, or no stored ID)
+    console.log('[Client] Player not logged in. Login prompt will be shown by updateLoginStateUI.');
+    // updateLoginStateUI already called showView('login') if !currentPlayerId
+    if (loadingPlayerMessageP) loadingPlayerMessageP.style.display = 'none'; // Ensure hidden
   }
 }
 
