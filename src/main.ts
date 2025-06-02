@@ -12,7 +12,6 @@ const startNewGameButton = document.getElementById('startNewGameButton') as HTML
 const appVersionDisplay = document.getElementById('appVersionDisplay') as HTMLSpanElement;
 
 // Player Management UI
-const playerManagementDiv = document.getElementById('playerManagement') as HTMLDivElement;
 const nameInputSectionDiv = document.getElementById('nameInputSection') as HTMLDivElement;
 const playerNameInput = document.getElementById('playerNameInput') as HTMLInputElement;
 const saveNameButton = document.getElementById('saveNameButton') as HTMLButtonElement;
