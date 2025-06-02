@@ -10,21 +10,38 @@
     <div id="app">
       <h1>Hexbound Game</h1>
       <p style="font-size: 0.8em; color: grey;">Version: <span id="appVersionDisplay"></span></p>
-      
-      <div id="gameInfo">
-        <p>Game ID: <strong id="gameIdDisplay">Loading...</strong> 
-           <button id="copyGameLinkButton">Copy Share Link</button>
-           <button id="startNewGameButton">Start New Game</button> 
-        </p>
-        <p>You are: <strong id="playerNumberDisplay">-</strong></p>
-        <p>Current Turn: <strong id="currentTurnDisplay">-</strong></p>
+
+      <div id="playerManagement">
+        <div id="nameInputSection">
+          <label for="playerNameInput">Enter Your Name:</label>
+          <input type="text" id="playerNameInput" />
+          <button id="saveNameButton">Save Name & Play</button>
+        </div>
+        <div id="loggedInSection" style="display: none;">
+          <p>Logged in as: <strong id="loggedInPlayerName"></strong></p>
+          <button id="logoutButton">Logout</button>
+        </div>
       </div>
 
-      <hr />
+      <hr id="gameContentDivider" style="display: none;" />
 
-      <p>Counter: <span id="counter">0</span></p>
-      <button id="incrementButton">Increment</button>
-      <button id="endTurnButton">End Turn</button>
+      <div id="gameContainer" style="display: none;">
+        <div id="gameInfo">
+          <p>Game ID: <strong id="gameIdDisplay">Loading...</strong> 
+             <button id="copyGameLinkButton">Copy Share Link</button>
+             <button id="startNewGameButton">Start New Game</button> 
+          </p>
+          <p>You are: <strong id="playerNumberDisplay">-</strong></p>
+          <p>Current Turn: <strong id="currentTurnDisplay">-</strong></p>
+        </div>
+  
+        <hr />
+  
+        <p>Counter: <span id="counter">0</span></p>
+        <button id="incrementButton">Increment</button>
+        <button id="endTurnButton">End Turn</button>
+      </div>
+
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
