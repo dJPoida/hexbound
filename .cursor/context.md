@@ -85,6 +85,7 @@ Environment variables are managed as follows:
 - Recommend next steps and architectural improvements.
 - Only add comments that describe code. Do not add comments that describe AI Agent actions or changes made by AI
 - Comments in Preact JS Templated String style components should be made with `<!-- HTML Comment Syntax -->`
+- It is possible for the Human to make changes to the code. Don't assume your memory of code is 100% correct.
 
 # Coding Conventions
 - Use functional, composable modules where appropriate.

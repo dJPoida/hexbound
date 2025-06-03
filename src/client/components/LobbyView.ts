@@ -5,14 +5,31 @@ const html = htm.bind(h);
 
 interface LobbyViewProps {
   styles: { [key: string]: string }; // From App.module.css
+  onNavigateToGame: (gameId: string) => void; // New prop for navigation
   // Props for game lists, handlers for create/join will be added later
   // e.g., myGames: Game[]; onCreateNewGame: () => void; onJoinGameById: (gameId: string) => void;
 }
 
-export function LobbyView({ styles }: LobbyViewProps) {
+export function LobbyView({ styles, onNavigateToGame }: LobbyViewProps) {
   // For now, handlers for buttons are not implemented, they will be passed as props later.
-  const handleCreateNewGame = () => console.log('Create New Game clicked');
-  const handleJoinById = () => console.log('Join by ID clicked with input:', (document.getElementById('joinGameIdInput') as HTMLInputElement)?.value);
+  const handleCreateNewGame = () => {
+    console.log('Create New Game clicked');
+    // Placeholder: In a real scenario, this would involve a server call
+    // and then navigating to the new game with its ID.
+    onNavigateToGame('newGameId-placeholder'); // Navigate with a placeholder ID
+  };
+  
+  const handleJoinById = () => {
+    const gameIdInput = document.getElementById('joinGameIdInput') as HTMLInputElement;
+    const gameId = gameIdInput?.value.trim();
+    if (gameId) {
+      console.log('Join by ID clicked with input:', gameId);
+      onNavigateToGame(gameId); // Navigate with the entered ID
+    } else {
+      console.log('Join by ID: No game ID entered');
+      // Optionally, show an error message to the user
+    }
+  };
 
   return html`
     <div id="lobbyView" style=${{ textAlign: 'left' }}>
@@ -21,7 +38,7 @@ export function LobbyView({ styles }: LobbyViewProps) {
       <p id="myGamesListLoadingIndicator" style=${{ display: 'none' }}>Loading your games...</p>
       <ul id="myGamesList" style=${{ paddingLeft: '0', listStylePosition: 'inside' }}>
         <!-- Game items will be populated here -->
-        <!-- Example: <li>Game XYZ (Opponent: ABC) <button class=${styles.button} data-gameid="XYZ">Join</button></li> -->
+        <!-- Example: <li>Game XYZ (Opponent: ABC) <button class=${styles.button} data-gameid="XYZ" onClick=${() => onNavigateToGame('XYZ')}>Join</button></li> -->
       </ul>
       <p id="noGamesMessage" style=${{ display: 'none' }}>You are not currently in any games.</p>
       

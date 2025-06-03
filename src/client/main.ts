@@ -5,6 +5,7 @@ import './global.css'; // Import global styles
 import styles from './App.module.css'; // Import CSS Modules
 import { PlayerManagement } from './components/PlayerManagement'; // Import the new component
 import { LobbyView } from './components/LobbyView'; // Import LobbyView
+import { GameContainer } from './components/GameContainer'; // Import GameContainer
 
 // Initialize htm with Preact's h function
 const html = htm.bind(h);
@@ -20,6 +21,7 @@ function App() {
   const [currentPlayerName, setCurrentPlayerName] = useState<string | null>(null);
   const [isLoadingAuth, setIsLoadingAuth] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [currentView, setCurrentView] = useState<'lobby' | 'game'>('lobby'); // State for view switching
 
   useEffect(() => {
     // VITE_APP_VERSION is injected by Vite during the build process
@@ -68,6 +70,7 @@ function App() {
         setCurrentPlayerId(data.playerId);
         setCurrentPlayerName(data.playerName);
         setIsLoggedIn(true);
+        setCurrentView('lobby'); // Default to lobby view after login
         localStorage.setItem('hexboundPlayerId', data.playerId);
         localStorage.setItem('hexboundPlayerName', data.playerName);
         setPlayerNameInput(''); // Clear input
@@ -85,9 +88,20 @@ function App() {
     setIsLoggedIn(false);
     setCurrentPlayerId(null);
     setCurrentPlayerName(null);
+    setCurrentView('lobby'); // Reset view on logout
     localStorage.removeItem('hexboundPlayerId');
     localStorage.removeItem('hexboundPlayerName');
     // Potentially call a backend logout if server-side sessions were involved
+  };
+
+  // Placeholder: Will be passed to LobbyView/GameContainer to switch views
+  const navigateToGame = (gameId: string) => {
+    console.log('Navigating to game:', gameId); // Placeholder
+    setCurrentView('game');
+  };
+
+  const navigateToLobby = () => {
+    setCurrentView('lobby');
   };
 
   return html`
@@ -106,38 +120,23 @@ function App() {
         />
       ` : html`
         <div> <!-- Logged in Wrapper -->
-          <p>Welcome, ${currentPlayerName}! (ID: ${currentPlayerId})</p>
+          <p>Welcome, ${currentPlayerName}!</p>
           <button class=${styles.button} onClick=${handleLogout}>Logout</button>
           
           <hr id="viewDivider" />
-          <${LobbyView} styles=${styles} />
-
-          <div id="gameContainer" style=${{ display: 'none' }}>
-            <button class=${styles.button} id="returnToLobbyButton" style=${{ display: 'none', marginBottom: '10px' }}>Return to Lobby</button>
-            <div id="gameInfo">
-              <p>Game ID: <strong id="gameIdDisplay">Loading...</strong> 
-                 <button class=${styles.button} id="copyGameLinkButton">Copy Share Link</button>
-                 <button class=${styles.button} id="startNewGameButton">Start New Game</button> 
-              </p>
-              <p>You are: <strong id="playerNumberDisplay">-</strong></p>
-              <p>Current Turn: <strong id="currentTurnDisplay">-</strong></p>
-            </div>
-    
-            <hr />
-    
-            <p>Counter: <span id="counter">0</span></p>
-            <button class=${styles.button} id="incrementButton">Increment</button>
-            <button class=${styles.button} id="endTurnButton">End Turn</button>
-
-            <hr style=${{ marginTop: '20px' }} /> 
-            <div id="debugSection">
-              <button class=${styles.button} id="toggleDebugButton">Show Debug Info</button>
-              <div id="debugContent" style=${{ display: 'none', marginTop: '10px', maxHeight: '200px', overflowY: 'auto', backgroundColor: '#333', color: '#f0f0f0', border: '1px solid #555', padding: '10px', textAlign: 'left' }}>
-                <h4>Current Game State (Client-Side View):</h4>
-                <pre id="gameStateJson" style=${{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}></pre>
-              </div>
-            </div>
-          </div>
+          
+          ${currentView === 'lobby' && html`
+            <${LobbyView} 
+              styles=${styles} 
+              onNavigateToGame=${navigateToGame} 
+            />
+          `}
+          ${currentView === 'game' && html`
+            <${GameContainer} 
+              styles=${styles} 
+              onNavigateToLobby=${navigateToLobby} 
+            />
+          `}
         </div>
       `}
     </div>

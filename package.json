@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --watch src --ext ts,json --exec tsx src/server/main.ts",
+    "dev": "nodemon --watch src/server --watch src/shared --ext ts,json --exec \"tsx src/server/main.ts\"",
     "build": "npm version patch --no-git-tag-version && tsc -p tsconfig.json && vite build",
     "start": "node dist/server/main.js",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
