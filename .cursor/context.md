@@ -83,6 +83,8 @@ Environment variables are managed as follows:
 - Write documentation and user onboarding flows.
 - Design alternate UI/UX layouts or game ideas using natural language prompts.
 - Recommend next steps and architectural improvements.
+- Only add comments that describe code. Do not add comments that describe AI Agent actions or changes made by AI
+- Comments in Preact JS Templated String style components should be made with `<!-- HTML Comment Syntax -->`
 
 # Coding Conventions
 - Use functional, composable modules where appropriate.

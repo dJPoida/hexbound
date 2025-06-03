@@ -2,15 +2,27 @@ import express from 'express';
 import { createServer as createViteServer } from 'vite';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import config from './config'; // Import shared configuration
+// import redisClient from './redisClient'; // No longer directly used here, but used by apiRouter
+import apiRouter from './apiRouter'; // Import the new API router
+
+// App version is now in config, no need to import directly from package.json here
+// import { version as appVersion } from '../../package.json'; 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+console.log(`Hexbound Server starting, version: ${config.appVersion}`);
+
 async function startServer() {
   const app = express();
 
-  const viteRoot = path.resolve(__dirname, '../client');
+  // Handle API routes first
+  app.use('/api', apiRouter);
 
+  // Vite Server Middleware for client-side assets and HMR
+  // This needs to be after API routes to avoid conflicts, but before SPA fallback.
+  const viteRoot = path.resolve(__dirname, '../client');
   const vite = await createViteServer({
     root: viteRoot,
     configFile: path.resolve(__dirname, '../../vite.config.ts'),
@@ -20,31 +32,16 @@ async function startServer() {
     },
     appType: 'spa',
   });
-
-  // Use Vite's middleware BEFORE your own routes
   app.use(vite.middlewares);
 
-  // Your API routes
-  app.get('/api/ping', (_req, res) => {
-    res.json({ message: 'pong' });
-  });
-
-  // SPA fallback: Serve index.html for all other GET requests not handled by Vite or API routes.
-  // Vite's middleware should handle serving assets from the publicDir (e.g., /vite.svg)
-  // and transformed source files (e.g., /main.ts if main.ts is in src/client).
-  // This explicit fallback is for SPA routing, ensuring client-side routes are directed to index.html.
+  // SPA fallback: Serve index.html for all other GET requests
+  // This should be the last route handler for GET requests.
   app.get('*', (req, res, next) => {
-    // Check if the request is for an API route or if Vite might handle it (e.g. static asset)
-    // A more sophisticated check might be needed if you have many non-SPA backend routes.
-    if (req.originalUrl.startsWith('/api')) {
-      return next(); // Pass to API routes or 404 if not defined
-    }
     // Let Vite handle its specific files like HMR updates or source maps
     if (req.originalUrl.includes('@vite') || req.originalUrl.includes('@fs')) {
-        return next();
+        return next(); // Let Vite handle its own internal requests
     }
     // For any other GET request, serve the index.html
-    // Vite's root is src/client, and index.html is now at src/client/index.html
     res.sendFile(path.resolve(viteRoot, 'index.html'), (err) => {
       if (err) {
         console.error('Error sending index.html:', err);
@@ -53,11 +50,15 @@ async function startServer() {
     });
   });
 
-  const port = process.env.PORT || 5173;
+  // Use port from config
+  const port = parseInt(config.viteDevPort, 10); // Vite integrated server runs on this
   app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
     console.log('Vite middleware enabled. Client should be served with HMR.');
   });
 }
 
-startServer(); 
+startServer().catch(err => {
+  console.error("[Server] Failed to start server:", err);
+  process.exit(1);
+}); 
