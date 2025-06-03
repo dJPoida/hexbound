@@ -1,0 +1,39 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "react"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime" // Important for new JSX transform, Preact 10+ supports it
+  ],
+  "settings": {
+    "react": {
+      "pragma": "h", // Tell eslint-plugin-react to use Preact's 'h' function
+      "version": "detect" // Automatically detect the Preact version
+    }
+  },
+  "rules": {
+    // You can add or override rules here
+    "react/no-unknown-property": ["error", { "ignore": ["class"] }], // Allow 'class' for HTM, though 'className' is preferred for JSX
+    "react/prop-types": "off", // Not needed as much with TypeScript
+    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "no-mixed-spaces-and-tabs": "off"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2021": true
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true // Enable JSX parsing (HTM is JSX-like)
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  }
+} 

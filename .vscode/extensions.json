@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "streetsidesoftware.code-spell-checker",
+        "hediet.vscode-drawio",
+        "dbaeumer.vscode-eslint",
+        "bierner.lit-html",
+        "esbenp.prettier-vscode",
+        "simonsiefke.svg-preview"
+    ]
+}
