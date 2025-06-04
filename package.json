@@ -6,11 +6,12 @@
   "scripts": {
     "dev": "nodemon --watch src/server --watch src/shared --ext ts,json --exec \"tsx src/server/main.ts\"",
     "build": "npm version patch --no-git-tag-version && tsc -p tsconfig.json && vite build",
-    "start": "node dist/server/main.js",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "docker:build": "docker-compose build",
     "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down"
+    "docker:down": "docker-compose down",
+
+    "start": "docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d"
   },
   "devDependencies": {
     "@types/express": "^4.17.22",
