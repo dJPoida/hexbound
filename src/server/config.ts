@@ -6,7 +6,7 @@ dotenv.config();
 const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   port: process.env.PORT || '3000', // Express server port, ensure it matches if changed
-  viteDevPort: process.env.VITE_DEV_PORT || '5173', // Vite dev server port from before
+  viteDevPort: process.env.VITE_DEV_PORT || '3000', // Vite dev server port from before
   redis: {
     url: process.env.REDIS_URL, // Preferred if you have a full URL
     host: process.env.REDIS_HOST || 'localhost',

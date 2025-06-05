@@ -2,6 +2,9 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   root: 'src/client', // Set the root to your client source files
+  server: {
+    allowedHosts: ['dev.hexbound.game-host.org'],
+  },
   // server: {  // Server options are handled by Express when in middleware mode
   //   port: 5173, 
   //   proxy: {
