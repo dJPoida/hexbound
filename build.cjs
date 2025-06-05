@@ -18,16 +18,13 @@ const runCommand = (command, stepName) => {
 
 log('Initiating Hexbound build process...\n');
 
-// 1. Bump package version
-runCommand('npm version patch --no-git-tag-version', 'NPM Version Patch');
-
-// 2. Build server with esbuild
+// 1. Build server with esbuild
 runCommand('node esbuild.config.js', 'Server Build (esbuild)');
 
-// 3. Build client with Vite
+// 2. Build client with Vite
 runCommand('npx vite build', 'Client Build (Vite)');
 
-// 4. Create dist/server/package.json to specify CommonJS for the server bundle
+// 3. Create dist/server/package.json to specify CommonJS for the server bundle
 log('Starting: Create dist/server/package.json');
 const distServerDir = path.resolve(__dirname, 'dist/server');
 const packageJsonPath = path.join(distServerDir, 'package.json');
