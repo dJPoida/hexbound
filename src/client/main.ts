@@ -106,7 +106,7 @@ function App() {
 
   return html`
     <div class=${styles.appContainer}>
-      <h1>Hexbound Game (Preact UI)</h1>
+      <h1>Hexbound Game</h1>
       <p style=${{ fontSize: '0.8em', color: 'grey' }}>Version: <span id="appVersionDisplay">${version}</span></p>
 
       ${!isLoggedIn ? html`

@@ -26,10 +26,11 @@ if (typeof __dirname === 'string' && __dirname) {
 console.log(`Hexbound Server starting, version: ${config.appVersion}, mode: ${config.nodeEnv}`);
 console.log(`Using directory for operations: ${currentModuleDirname}`);
 
-let httpServer: http.Server; // To store the server instance
+let moduleLevelHttpServer: http.Server; // To store the server instance
 
 async function startServer() {
   const app = express();
+  const httpServer = http.createServer(app); // Create HTTP server instance with Express app
 
   // API routes are always active
   app.use('/api', apiRouter);
@@ -59,7 +60,9 @@ async function startServer() {
       configFile: path.resolve(currentModuleDirname, '../../vite.config.ts'),
       server: {
         middlewareMode: true,
-        hmr: true,
+        hmr: {
+          server: httpServer, // Pass the http server instance here
+        },
       },
       appType: 'spa',
     });
@@ -79,12 +82,20 @@ async function startServer() {
     });
   }
 
-  const port = config.nodeEnv === 'production' 
-    ? parseInt(config.port, 10) 
-    : parseInt(config.viteDevPort, 10);
+  console.log(`[main.ts] config.nodeEnv: ${config.nodeEnv}`);
+  console.log(`[main.ts] config.prodPort (now config.port): ${config.port}`);
+  console.log(`[main.ts] config.devPort (now config.viteDevPort): ${config.viteDevPort}`);
 
-  // Store the server instance
-  httpServer = app.listen(port, () => {
+  // Select port based on environment using the new config keys
+  const port = config.nodeEnv === 'production' 
+    ? parseInt(config.port, 10)          // Use config.port for production
+    : parseInt(config.viteDevPort, 10);   // Use config.viteDevPort for development
+  
+  console.log(`[main.ts] Final port selected: ${port}`);
+
+  // Store the server instance - NO, httpServer is already our instance.
+  // Start listening on the httpServer instance
+  httpServer.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
     if (config.nodeEnv !== 'production') {
       console.log('Vite middleware enabled. Client should be served with HMR.');
@@ -92,6 +103,8 @@ async function startServer() {
       console.log('Production server running. Serving static client build.');
     }
   });
+
+  moduleLevelHttpServer = httpServer; // Assign the created httpServer to the module-level variable
 }
 
 const gracefulShutdownHandler = async (signal: string) => {
@@ -99,9 +112,9 @@ const gracefulShutdownHandler = async (signal: string) => {
   let exitCode = 0;
   try {
     // Stop the HTTP server from accepting new connections
-    if (httpServer) {
+    if (moduleLevelHttpServer) {
       await new Promise<void>((resolve, reject) => {
-        httpServer.close((err) => {
+        moduleLevelHttpServer.close((err) => {
           if (err) {
             console.error('[Server] Error closing HTTP server:', err);
             exitCode = 1;
