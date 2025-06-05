@@ -1,11 +1,11 @@
 {
   "name": "hexbound",
   "private": true,
-  "version": "0.0.15",
+  "version": "0.0.21",
   "type": "module",
   "scripts": {
     "dev": "nodemon --watch src/server --watch src/shared --ext ts,json --exec \"tsx src/server/main.ts\"",
-    "build": "npm version patch --no-git-tag-version && node esbuild.config.js && vite build",
+    "build": "node build.cjs",
     "preview": "NODE_ENV=production node dist/server/main.js",
     "preview-win": "SET \"NODE_ENV=production\" && node dist/server/main.js",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",

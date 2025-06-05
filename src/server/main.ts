@@ -1,8 +1,10 @@
 import express from 'express';
 import path from 'path';
+import http from 'http'; // Import http module
 import { fileURLToPath } from 'url'; // Needed for ESM dev mode
 import config from './config';
 import apiRouter from './apiRouter';
+import { disconnectRedis } from './redisClient'; // Import disconnectRedis
 
 // Vite is only needed for development mode
 import { createServer as createViteServer } from 'vite';
@@ -23,6 +25,8 @@ if (typeof __dirname === 'string' && __dirname) {
 
 console.log(`Hexbound Server starting, version: ${config.appVersion}, mode: ${config.nodeEnv}`);
 console.log(`Using directory for operations: ${currentModuleDirname}`);
+
+let httpServer: http.Server; // To store the server instance
 
 async function startServer() {
   const app = express();
@@ -79,7 +83,8 @@ async function startServer() {
     ? parseInt(config.port, 10) 
     : parseInt(config.viteDevPort, 10);
 
-  app.listen(port, () => {
+  // Store the server instance
+  httpServer = app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
     if (config.nodeEnv !== 'production') {
       console.log('Vite middleware enabled. Client should be served with HMR.');
@@ -88,6 +93,37 @@ async function startServer() {
     }
   });
 }
+
+const gracefulShutdownHandler = async (signal: string) => {
+  console.log(`[Server] ${signal} received. Shutting down gracefully...`);
+  let exitCode = 0;
+  try {
+    // Stop the HTTP server from accepting new connections
+    if (httpServer) {
+      await new Promise<void>((resolve, reject) => {
+        httpServer.close((err) => {
+          if (err) {
+            console.error('[Server] Error closing HTTP server:', err);
+            exitCode = 1;
+            return reject(err);
+          }
+          console.log('[Server] HTTP server closed.');
+          resolve();
+        });
+      });
+    }
+    // Disconnect Redis
+    await disconnectRedis();
+  } catch (error) {
+    console.error('[Server] Error during graceful shutdown:', error);
+    exitCode = 1;
+  }
+  console.log('[Server] Graceful shutdown complete. Exiting.');
+  process.exit(exitCode);
+};
+
+process.on('SIGINT', () => gracefulShutdownHandler('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdownHandler('SIGTERM'));
 
 startServer().catch(err => {
   console.error("[Server] Failed to start server:", err);
