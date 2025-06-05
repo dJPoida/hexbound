@@ -1,23 +1,41 @@
-# Stage 1: Build the frontend
+# Stage 1: Build the application
 FROM node:18-alpine AS builder
 WORKDIR /app
+
+# Copy package files and install all dependencies (including dev for building)
 COPY package*.json ./
-RUN npm install
+# Use npm ci for cleaner, more reproducible builds in CI/CD environments
+RUN npm ci
+
+# Copy the rest of the application source code
 COPY . .
-RUN npm run build
+
+# Run the build process (TypeScript compilation and Vite build)
+# We explicitly run tsc and vite build here to avoid side effects from npm scripts
+# like package versioning, and to ensure both server and client are built.
+RUN npx tsc -p tsconfig.json && npx vite build
 
 # Stage 2: Setup the production environment
 FROM node:18-alpine
 WORKDIR /app
-COPY package*.json ./
-# Install production dependencies only
-RUN npm install --omit=dev
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/dist-server ./dist-server
-# COPY ./api ./api # This is no longer needed as TS code is in src-server and compiled
 
-# We will manage env vars more robustly later
-COPY .env.local ./.env
-# Expose the port the app will run on
-EXPOSE 8080
-CMD ["node", "dist-server/server.js"] 
+# Set Node environment to production
+ENV NODE_ENV=production
+
+# Copy package files and install production dependencies only
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+# Copy the built application from the builder stage
+# This assumes 'tsc -p tsconfig.json' outputs server files to 'dist/server'
+# and 'vite build' outputs client files to 'dist/client'.
+# The entire 'dist' directory from the builder will be copied.
+COPY --from=builder /app/dist ./dist
+
+# Expose the port the app will run on.
+# Your server config (src/server/config.ts) uses process.env.PORT || '3000'.
+EXPOSE 3000
+
+# Command to run the application
+# This assumes your server entry point after compilation is 'dist/server/main.js'.
+CMD ["node", "dist/server/main.js"] 
