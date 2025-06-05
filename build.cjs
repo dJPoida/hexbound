@@ -25,7 +25,7 @@ runCommand('npm version patch --no-git-tag-version', 'NPM Version Patch');
 runCommand('node esbuild.config.js', 'Server Build (esbuild)');
 
 // 3. Build client with Vite
-runCommand('vite build', 'Client Build (Vite)');
+runCommand('npx vite build', 'Client Build (Vite)');
 
 // 4. Create dist/server/package.json to specify CommonJS for the server bundle
 log('Starting: Create dist/server/package.json');

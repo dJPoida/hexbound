@@ -10,10 +10,9 @@ RUN npm ci
 # Copy the rest of the application source code
 COPY . .
 
-# Run the build process (TypeScript compilation and Vite build)
-# We explicitly run tsc and vite build here to avoid side effects from npm scripts
-# like package versioning, and to ensure both server and client are built.
-RUN npx tsc -p tsconfig.json && npx vite build
+# Run the build process using the project's build script
+# This ensures esbuild is used for the server and dist/server/package.json is created.
+RUN node build.cjs
 
 # Stage 2: Setup the production environment
 FROM node:18-alpine
