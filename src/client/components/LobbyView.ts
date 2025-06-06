@@ -32,22 +32,40 @@ export function LobbyView({ styles, onNavigateToGame }: LobbyViewProps) {
   };
 
   return html`
-    <div id="lobbyView" style=${{ textAlign: 'left' }}>
-      <h2>Lobby</h2>
-      <h3>Your Active Games:</h3>
-      <p id="myGamesListLoadingIndicator" style=${{ display: 'none' }}>Loading your games...</p>
-      <ul id="myGamesList" style=${{ paddingLeft: '0', listStylePosition: 'inside' }}>
-        <!-- Game items will be populated here -->
-        <!-- Example: <li>Game XYZ (Opponent: ABC) <button class=${styles.button} data-gameid="XYZ" onClick=${() => onNavigateToGame('XYZ')}>Join</button></li> -->
-      </ul>
-      <p id="noGamesMessage" style=${{ display: 'none' }}>You are not currently in any games.</p>
-      
-      <hr />
-      <h3>Start or Join a Game:</h3>
-      <button class=${styles.button} id="lobbyCreateNewGameButton" onClick=${handleCreateNewGame}>Create New Game</button>
-      <div>
-        <input type="text" id="joinGameIdInput" placeholder="Paste Game ID here" />
-        <button class=${styles.button} id="lobbyJoinByIdButton" onClick=${handleJoinById}>Join by ID</button>
+    <div class=${styles.lobbyContainer}>
+      <h2 class=${styles.lobbyTitle}>Lobby</h2>
+
+      <div class=${styles.lobbySection}>
+        <h3 class=${styles.sectionTitle}>Your Active Games</h3>
+        <p id="noGamesMessage">You are not currently in any games.</p>
+        <ul class=${styles.gameList}>
+          <!-- Game items will be populated here -->
+        </ul>
+      </div>
+
+      <div class=${styles.lobbySection}>
+        <h3 class=${styles.sectionTitle}>Start or Join a Game</h3>
+        <button 
+          class=${`${styles.button} ${styles.primaryButton}`}
+          onClick=${handleCreateNewGame}
+        >
+          Create New Game
+        </button>
+        
+        <div class=${styles.joinByIdContainer}>
+          <input 
+            type="text" 
+            id="joinGameIdInput" 
+            class=${styles.input}
+            placeholder="Paste Game ID here" 
+          />
+          <button 
+            class=${styles.button}
+            onClick=${handleJoinById}
+          >
+            Join by ID
+          </button>
+        </div>
       </div>
     </div>
   `;

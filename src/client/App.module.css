@@ -3,6 +3,11 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
 }
 
 .logo {
@@ -26,6 +31,68 @@
   color: #888;
 }
 
+.playerManagementContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.loginForm {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 2.5rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.loginTitle {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 2em;
+  font-weight: 700;
+  color: #fff;
+}
+
+.loginSubtitle {
+  margin-bottom: 2rem;
+  font-size: 1em;
+  color: #a0a0a0;
+}
+
+.inputGroup {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #c0c0c0;
+  font-weight: 500;
+}
+
+.input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 5px;
+  border: 1px solid #444;
+  background-color: #2a2a2a;
+  color: #fff;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #646cff;
+  box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.3);
+}
+
 .button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -36,6 +103,7 @@
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
+  width: 100%;
 }
 .button:hover {
   border-color: #646cff;
@@ -51,4 +119,127 @@
     background-color: #f9f9f9;
     /* Text color for button in light mode might be needed, e.g., color: #213547; */
   }
+}
+
+.loginButton {
+  background-color: #646cff;
+  color: white;
+  padding: 0.8rem;
+  font-weight: 700;
+  font-size: 1.1em;
+}
+
+.loginButton:hover {
+  background-color: #535bf2;
+}
+
+.authError {
+  color: #ff6b6b;
+  margin-top: 1rem;
+}
+
+.loadingIndicator {
+  margin-top: 1rem;
+  color: #a0a0a0;
+}
+
+.versionDisplay {
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+  font-size: 0.75em;
+  color: #555;
+}
+
+/* Lobby Styles */
+.lobbyContainer {
+  width: 100%;
+  max-width: 600px;
+  text-align: left;
+}
+
+.lobbyTitle {
+  font-size: 2.5em;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.lobbySection {
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  font-size: 1.5em;
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.5rem;
+}
+
+.gameList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.primaryButton {
+  background-color: #646cff;
+  color: white;
+  padding: 0.8rem;
+  font-weight: 700;
+  font-size: 1.1em;
+  margin-bottom: 1rem;
+}
+
+.primaryButton:hover {
+  background-color: #535bf2;
+}
+
+.joinByIdContainer {
+  display: flex;
+  gap: 10px;
+}
+
+.joinByIdContainer > .input {
+  flex-grow: 1;
+}
+
+/* Logged In Header */
+.loggedInContainer {
+  width: 100%;
+  max-width: 600px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.welcomeMessage {
+  font-size: 1.1em;
+  font-weight: 500;
+  margin: 0;
+}
+
+.logoutButton {
+  background-color: transparent;
+  border: 1px solid #555;
+  color: #a0a0a0;
+}
+.logoutButton:hover {
+  background-color: #333;
+  border-color: #777;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #444;
+  margin: 2rem 0;
 } 

@@ -106,9 +106,6 @@ function App() {
 
   return html`
     <div class=${styles.appContainer}>
-      <h1>Hexbound Game</h1>
-      <p style=${{ fontSize: '0.8em', color: 'grey' }}>Version: <span id="appVersionDisplay">${version}</span></p>
-
       ${!isLoggedIn ? html`
         <${PlayerManagement} 
           styles=${styles} 
@@ -119,11 +116,13 @@ function App() {
           authError=${authError}
         />
       ` : html`
-        <div> <!-- Logged in Wrapper -->
-          <p>Welcome, ${currentPlayerName}!</p>
-          <button class=${styles.button} onClick=${handleLogout}>Logout</button>
+        <div class=${styles.loggedInContainer}> <!-- Logged in Wrapper -->
+          <div class=${styles.header}>
+            <p class=${styles.welcomeMessage}>Welcome, ${currentPlayerName}!</p>
+            <button class=${`${styles.button} ${styles.logoutButton}`} onClick=${handleLogout}>Logout</button>
+          </div>
           
-          <hr id="viewDivider" />
+          <hr class=${styles.divider} />
           
           ${currentView === 'lobby' && html`
             <${LobbyView} 
@@ -139,6 +138,7 @@ function App() {
           `}
         </div>
       `}
+      <p class=${styles.versionDisplay}>Version: <span id="appVersionDisplay">${version}</span></p>
     </div>
   `;
 }

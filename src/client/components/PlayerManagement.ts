@@ -33,27 +33,36 @@ export function PlayerManagement({
   };
 
   return html`
-    <div id="playerManagement">
-      <div id="nameInputSection">
-        <label htmlFor="playerNameInput">Enter Your Name:</label>
-        <input 
-          type="text" 
-          id="playerNameInput" 
-          value=${playerNameInput} 
-          onInput=${handleInput} 
-          disabled=${isLoadingAuth} 
-        />
+    <div class=${styles.playerManagementContainer}>
+      <form class=${styles.loginForm} onSubmit=${handleSubmit}>
+        <h2 class=${styles.loginTitle}>Join the Game</h2>
+        <p class=${styles.loginSubtitle}>Enter your name to begin your adventure in Hexbound.</p>
+        
+        <div class=${styles.inputGroup}>
+          <label htmlFor="playerNameInput" class=${styles.label}>Player Name</label>
+          <input 
+            type="text" 
+            id="playerNameInput" 
+            class=${styles.input}
+            value=${playerNameInput} 
+            onInput=${handleInput} 
+            disabled=${isLoadingAuth}
+            placeholder="e.g., Aragorn"
+          />
+        </div>
+
         <button 
-          class=${styles.button} 
+          class=${`${styles.button} ${styles.loginButton}`}
           id="saveNameButton" 
-          onClick=${handleSubmit} 
+          type="submit"
           disabled=${isLoadingAuth}
         >
-          ${isLoadingAuth ? 'Logging in...' : 'Save Name & Play'}
+          ${isLoadingAuth ? 'Entering...' : 'Save Name & Play'}
         </button>
-      </div>
-      ${isLoadingAuth && html`<p id="loadingPlayerMessage">Loading your details...</p>`}
-      ${authError && html`<p style=${{ color: 'red' }}>Error: ${authError}</p>`}
+
+        ${authError && html`<p class=${styles.authError}>${authError}</p>`}
+        ${isLoadingAuth && html`<div class=${styles.loadingIndicator}>Verifying...</div>`}
+      </form>
     </div>
   `;
 } 
