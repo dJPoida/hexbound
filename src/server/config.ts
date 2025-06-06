@@ -12,10 +12,12 @@ const currentModuleDirname = getModuleDir(
   typeof import.meta?.url === 'string' ? import.meta?.url : undefined,
 );
 
-// In production, variables are injected by Docker. In development, load from .env.local
-if (!isProduction) {
-  dotenv.config({ path: path.resolve(currentModuleDirname, '../../.env.local') });
-}
+// Always load environment variables from .env.local.
+// This allows for both local development and previewing the production build locally.
+// In a true containerized environment (like Docker), the variables injected
+// into the container's environment will take precedence over the values in this file,
+// as dotenv does not override existing process.env variables.
+dotenv.config({ path: path.resolve(currentModuleDirname, '../../.env.local') });
 
 const config = {
   nodeEnv: process.env.NODE_ENV || 'development',

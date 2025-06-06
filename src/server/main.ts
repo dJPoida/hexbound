@@ -5,6 +5,7 @@ import { getModuleDir } from '../shared/helpers/getModuleDir.helper.js';
 import config from './config';
 import apiRouter from './apiRouter';
 import { disconnectRedis } from './redisClient'; // Import disconnectRedis
+import { disconnectPostgres } from './postgresClient';
 
 // Vite is only needed for development mode
 import { createServer as createViteServer } from 'vite';
@@ -120,6 +121,8 @@ const gracefulShutdownHandler = async (signal: string) => {
     }
     // Disconnect Redis
     await disconnectRedis();
+    // Disconnect Postgres
+    await disconnectPostgres();
   } catch (error) {
     console.error('[Server] Error during graceful shutdown:', error);
     exitCode = 1;
