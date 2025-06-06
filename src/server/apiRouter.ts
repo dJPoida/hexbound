@@ -2,6 +2,8 @@ import express from 'express';
 import config from './config';
 import redisClient from './redisClient';
 import { v4 as uuidv4 } from 'uuid';
+import { AppDataSource } from './data-source';
+import { User } from './entities/User.entity';
 
 const router = express.Router();
 
@@ -34,39 +36,34 @@ router.get('/redis-test', async (_req, res) => {
   }
 });
 
-// Player Authentication/Registration Endpoint
-router.post('/player/auth', async (req, res) => {
-  const { playerName } = req.body;
+// User Login/Registration Endpoint
+router.post('/login', async (req, res) => {
+  const { userName } = req.body;
 
-  if (!playerName || typeof playerName !== 'string' || playerName.trim().length === 0) {
-    return res.status(400).json({ message: 'Player name is required and must be a non-empty string.' });
-  }
-
-  if (!redisClient.isOpen) {
-    return res.status(503).json({ message: 'Redis client not connected. Cannot process player authentication.' });
+  if (!userName || typeof userName !== 'string' || userName.trim().length === 0 || userName.length > 20) {
+    return res.status(400).json({ message: 'Username is required, must be a non-empty string, and cannot exceed 20 characters.' });
   }
 
   try {
-    const playerId = uuidv4();
-    const redisKey = `${config.nodeEnv}:player:${playerId}`;
-    const playerData = {
-      playerId,
-      playerName: playerName.trim(),
-      joinedAt: new Date().toISOString(),
-    };
+    const userRepository = AppDataSource.getRepository(User);
+    let user = await userRepository.findOneBy({ userName: userName.trim() });
 
-    // Using HSET for structured data is often better, but SET with JSON.stringify is fine for this scope.
-    await redisClient.set(redisKey, JSON.stringify(playerData));
-    // Optionally, set an expiration if sessions/players are temporary, e.g.:
-    // await redisClient.expire(redisKey, 60 * 60 * 24); // Expires in 24 hours
+    if (!user) {
+      // User does not exist, so create a new one
+      user = userRepository.create({ userName: userName.trim() });
+      await userRepository.save(user);
+      console.log(`[Login] New user created: ${user.userName}, ID: ${user.userId}`);
+    } else {
+      console.log(`[Login] Existing user logged in: ${user.userName}, ID: ${user.userId}`);
+    }
 
-    console.log(`[Auth] Player registered/authenticated: ${playerName}, ID: ${playerId}`);
-    res.status(200).json({ playerId, playerName: playerData.playerName });
+    res.status(200).json({ userId: user.userId, userName: user.userName });
 
   } catch (error) {
-    console.error('[API /player/auth] Error:', error);
-    res.status(500).json({ message: 'Error processing player authentication', error: (error as Error).message });
+    console.error('[API /login] Error:', error);
+    res.status(500).json({ message: 'Error processing user login', error: (error as Error).message });
   }
 });
+
 
 export default router; 

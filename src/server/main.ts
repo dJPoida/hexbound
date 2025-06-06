@@ -5,7 +5,7 @@ import { getModuleDir } from '../shared/helpers/getModuleDir.helper.js';
 import config from './config';
 import apiRouter from './apiRouter';
 import { disconnectRedis } from './redisClient'; // Import disconnectRedis
-import { disconnectPostgres } from './postgresClient';
+import { AppDataSource } from './data-source';
 
 // Vite is only needed for development mode
 import { createServer as createViteServer } from 'vite';
@@ -25,6 +25,15 @@ let moduleLevelHttpServer: http.Server; // To store the server instance
 async function startServer() {
   const app = express();
   const httpServer = http.createServer(app); // Create HTTP server instance with Express app
+
+  // Initialize TypeORM
+  try {
+    await AppDataSource.initialize();
+    console.log("Data Source has been initialized!");
+  } catch (err) {
+    console.error("Error during Data Source initialization:", err);
+    process.exit(1);
+  }
 
   // API routes are always active
   app.use('/api', apiRouter);
@@ -121,8 +130,11 @@ const gracefulShutdownHandler = async (signal: string) => {
     }
     // Disconnect Redis
     await disconnectRedis();
-    // Disconnect Postgres
-    await disconnectPostgres();
+    // Disconnect from Postgres
+    if (AppDataSource.isInitialized) {
+      await AppDataSource.destroy();
+      console.log('[Server] PostgreSQL connection closed.');
+    }
   } catch (error) {
     console.error('[Server] Error during graceful shutdown:', error);
     exitCode = 1;

@@ -84,7 +84,10 @@ Environment variables are managed as follows:
 - Only add comments that describe code. Do not add comments that describe AI Agent actions or changes made by AI
 - Comments in Preact JS Templated String style components should be made with `<!-- HTML Comment Syntax -->`
 - It is possible for the Human to make changes to the code. Don't assume your memory of code is 100% correct.
+
+## AI Rules. Never violate these constraints.
 - When attempting to use the `__dirname` or `path.dirname` consider the helper function in `./src/shared/helpers/getModuleDir.helper.ts`
+- When an unexpected issue prevents the solution of a request, consult the user before attempting the automatic resolution of the problem. Do not attempt to automatically resolve issues you encounter.
 
 # Coding Conventions
 - Use functional, composable modules where appropriate.

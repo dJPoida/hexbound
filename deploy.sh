@@ -27,9 +27,17 @@ fi
 echo "Checks passed. Proceeding with deployment..."
 # --- End of Checks ---
 
-# --- Build the Docker Containers ---
-echo "--- Build and Start the Docker Containers ---"
-docker compose --env-file .env.prod -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+# --- Build the Docker image for the new version ---
+echo "--- Building new Docker image ---"
+docker compose -f docker-compose.prod.yml build
+
+# --- Run Database Migrations ---
+echo "--- Running database migrations ---"
+docker compose -f docker-compose.prod.yml run --rm game npm run typeorm:run
+
+# --- Start the Services ---
+echo "--- Starting all services ---"
+docker compose --env-file .env.prod -f docker-compose.yml -f docker-compose.prod.yml up -d
 
 # --- Deployment complete ---
 echo "--- Deployment script finished successfully. ---"

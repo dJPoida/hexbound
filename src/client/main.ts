@@ -3,7 +3,7 @@ import { useEffect, useState } from 'preact/hooks';
 import htm from 'htm';
 import './global.css'; // Import global styles
 import styles from './App.module.css'; // Import CSS Modules
-import { PlayerManagement } from './components/PlayerManagement'; // Import the new component
+import { UserLogin } from './components/UserLogin';
 import { LobbyView } from './components/LobbyView'; // Import LobbyView
 import { GameContainer } from './components/GameContainer'; // Import GameContainer
 
@@ -14,12 +14,12 @@ const html = htm.bind(h);
 function App() {
   const [version, setVersion] = useState('LOADING...');
   
-  // Player Authentication State
-  const [playerNameInput, setPlayerNameInput] = useState('');
+  // User Authentication State
+  const [userNameInput, setUserNameInput] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentPlayerId, setCurrentPlayerId] = useState<string | null>(null);
-  const [currentPlayerName, setCurrentPlayerName] = useState<string | null>(null);
-  const [isLoadingAuth, setIsLoadingAuth] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [currentUserName, setCurrentUserName] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [currentView, setCurrentView] = useState<'lobby' | 'game'>('lobby'); // State for view switching
 
@@ -36,44 +36,44 @@ function App() {
         .then(data => setVersion(data.version || 'N/A (dev)'))
         .catch(() => setVersion('N/A (fetch error)'));
     }
-    // Check local storage for existing player session (simple example)
-    const storedPlayerId = localStorage.getItem('hexboundPlayerId');
-    const storedPlayerName = localStorage.getItem('hexboundPlayerName');
-    if (storedPlayerId && storedPlayerName) {
-      setCurrentPlayerId(storedPlayerId);
-      setCurrentPlayerName(storedPlayerName);
+    // Check local storage for existing user session
+    const storedUserId = localStorage.getItem('hexboundUserId');
+    const storedUserName = localStorage.getItem('hexboundUserName');
+    if (storedUserId && storedUserName) {
+      setCurrentUserId(storedUserId);
+      setCurrentUserName(storedUserName);
       setIsLoggedIn(true);
     }
   }, []);
 
-  const handlePlayerNameInputChange = (name: string) => {
-    setPlayerNameInput(name);
+  const handleUserNameInputChange = (name: string) => {
+    setUserNameInput(name);
   };
 
-  const handleSaveNameAndPlay = async () => {
-    if (!playerNameInput.trim()) {
-      setAuthError('Player name cannot be empty.');
+  const handleLogin = async () => {
+    if (!userNameInput.trim()) {
+      setAuthError('Username cannot be empty.');
       return;
     }
-    setIsLoadingAuth(true);
+    setIsLoading(true);
     setAuthError(null);
     try {
-      const response = await fetch('/api/player/auth', {
+      const response = await fetch('/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ playerName: playerNameInput.trim() }),
+        body: JSON.stringify({ userName: userNameInput.trim() }),
       });
       const data = await response.json();
       if (response.ok) {
-        setCurrentPlayerId(data.playerId);
-        setCurrentPlayerName(data.playerName);
+        setCurrentUserId(data.userId);
+        setCurrentUserName(data.userName);
         setIsLoggedIn(true);
         setCurrentView('lobby'); // Default to lobby view after login
-        localStorage.setItem('hexboundPlayerId', data.playerId);
-        localStorage.setItem('hexboundPlayerName', data.playerName);
-        setPlayerNameInput(''); // Clear input
+        localStorage.setItem('hexboundUserId', data.userId);
+        localStorage.setItem('hexboundUserName', data.userName);
+        setUserNameInput(''); // Clear input
       } else {
         setAuthError(data.message || 'Authentication failed.');
       }
@@ -81,16 +81,16 @@ function App() {
       setAuthError('An error occurred. Please try again.');
       console.error('Auth error:', error);
     }
-    setIsLoadingAuth(false);
+    setIsLoading(false);
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setCurrentPlayerId(null);
-    setCurrentPlayerName(null);
+    setCurrentUserId(null);
+    setCurrentUserName(null);
     setCurrentView('lobby'); // Reset view on logout
-    localStorage.removeItem('hexboundPlayerId');
-    localStorage.removeItem('hexboundPlayerName');
+    localStorage.removeItem('hexboundUserId');
+    localStorage.removeItem('hexboundUserName');
     // Potentially call a backend logout if server-side sessions were involved
   };
 
@@ -107,18 +107,18 @@ function App() {
   return html`
     <div class=${styles.appContainer}>
       ${!isLoggedIn ? html`
-        <${PlayerManagement} 
+        <${UserLogin} 
           styles=${styles} 
-          playerNameInput=${playerNameInput}
-          onPlayerNameInputChange=${handlePlayerNameInputChange}
-          onSaveNameAndPlay=${handleSaveNameAndPlay}
-          isLoadingAuth=${isLoadingAuth}
-          authError=${authError}
+          userNameInput=${userNameInput}
+          onUserNameInputChange=${handleUserNameInputChange}
+          onLogin=${handleLogin}
+          isLoading=${isLoading}
+          error=${authError}
         />
       ` : html`
         <div class=${styles.loggedInContainer}> <!-- Logged in Wrapper -->
           <div class=${styles.header}>
-            <p class=${styles.welcomeMessage}>Welcome, ${currentPlayerName}!</p>
+            <p class=${styles.welcomeMessage}>Welcome, ${currentUserName}!</p>
             <button class=${`${styles.button} ${styles.logoutButton}`} onClick=${handleLogout}>Logout</button>
           </div>
           
