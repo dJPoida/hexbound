@@ -2,7 +2,12 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { getModuleDir } from "@/shared/helpers/getModuleDir.helper";
 
-const currentModuleDir = getModuleDir(import.meta.url);
+// The 'import.meta.url' argument is only available in ESM context.
+// In a CJS context (like the production build), it will be undefined,
+// and the helper will fall back to using __dirname.
+const currentModuleDirname = getModuleDir(
+  typeof import.meta?.url === 'string' ? import.meta?.url : undefined,
+);
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -13,7 +18,7 @@ export const AppDataSource = new DataSource({
   database: process.env.POSTGRES_DB,
   synchronize: process.env.NODE_ENV === "development",
   logging: process.env.NODE_ENV === "development",
-  entities: [`${currentModuleDir}/entities/*.entity{.ts,.js}`],
-  migrations: [`${currentModuleDir}/migrations/*{.ts,.js}`],
+  entities: [`${currentModuleDirname}/entities/*.entity{.ts,.js}`],
+  migrations: [`${currentModuleDirname}/migrations/*{.ts,.js}`],
   subscribers: [],
 }); 
