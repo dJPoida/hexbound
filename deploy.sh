@@ -1,6 +1,10 @@
 #!/bin/bash
 # A script to deploy the hexbound application on the server.
 
+# --- Pull the latest changes from the repository ---
+echo "--- Puling the latest changes from the repository ---"
+git pull
+
 # --- Pre-Deployment Safety Checks ---
 ENV_FILE=".env.prod"
 echo "--- Running Pre-Deployment Checks ---"
@@ -23,7 +27,9 @@ fi
 echo "Checks passed. Proceeding with deployment..."
 # --- End of Checks ---
 
-git pull
+# --- Build the Docker Containers ---
+echo "--- Build and Start the Docker Containers ---"
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 
+# --- Deployment complete ---
 echo "--- Deployment script finished successfully. ---"
