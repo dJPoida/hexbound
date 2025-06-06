@@ -9,6 +9,7 @@ const runCommand = (command, stepName) => {
   try {
     execSync(command, { stdio: 'inherit' }); // stdio: 'inherit' will show command output in console
     log(`Finished: ${stepName}`);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     console.error(`\n[Build Script] ERROR - Failed step: ${stepName}`);
     // execSync already prints error details due to stdio: 'inherit'
@@ -44,4 +45,4 @@ try {
   process.exit(1);
 }
 
-log('\nHexbound build process completed successfully!\n'); 
+log('Hexbound build process completed successfully!\n'); 
