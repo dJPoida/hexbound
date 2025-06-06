@@ -6,6 +6,14 @@ A Polytopia / Civ / Populous crossover Asynchronous turn-based casual web game.
 
 ![Architecture Diagram](/design/architecture.drawio.png) (Note: This diagram might need an update to reflect the Dockerized Node.js server instead of Vercel serverless functions.)
 
+## Local Development
+
+### Inspecting the Database
+
+This project's `docker-compose.yml` includes a Redis Commander service, which provides a web-based GUI for exploring the Redis database.
+
+To access it, ensure your Docker containers are running (`docker-compose up`) and navigate to [http://localhost:8081](http://localhost:8081) in your web browser.
+
 ## Environment Variables
 
 To run the application locally, you need to set up environment variables. Create a file named `.env.local` in the root of the project and add the following variables.
