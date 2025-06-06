@@ -29,7 +29,7 @@ echo "Checks passed. Proceeding with deployment..."
 
 # --- Build the Docker Containers ---
 echo "--- Build and Start the Docker Containers ---"
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+docker compose --env-file .env.prod -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 
 # --- Deployment complete ---
 echo "--- Deployment script finished successfully. ---"

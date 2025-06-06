@@ -1,12 +1,20 @@
+import { getModuleDir } from '@/shared/helpers/getModuleDir.helper';
 import dotenv from 'dotenv';
 import path from 'path';
 
 // Determine the environment
 const isProduction = process.env.NODE_ENV === 'production';
 
+// The 'import.meta.url' argument is only available in ESM context.
+// In a CJS context (like the production build), it will be undefined,
+// and the helper will fall back to using __dirname.
+const currentModuleDirname = getModuleDir(
+  typeof import.meta?.url === 'string' ? import.meta?.url : undefined,
+);
+
 // In production, variables are injected by Docker. In development, load from .env.local
 if (!isProduction) {
-  dotenv.config({ path: path.resolve(__dirname, '../../.env.local') });
+  dotenv.config({ path: path.resolve(currentModuleDirname, '../../.env.local') });
 }
 
 const config = {

@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'path';
 import http from 'http'; // Import http module
-import { fileURLToPath } from 'url'; // Needed for ESM dev mode
+import { getModuleDir } from '../shared/helpers/getModuleDir.helper.js';
 import config from './config';
 import apiRouter from './apiRouter';
 import { disconnectRedis } from './redisClient'; // Import disconnectRedis
@@ -9,19 +9,12 @@ import { disconnectRedis } from './redisClient'; // Import disconnectRedis
 // Vite is only needed for development mode
 import { createServer as createViteServer } from 'vite';
 
-let currentModuleDirname: string;
-
-if (typeof __dirname === 'string' && __dirname) {
-  // Environment provides a global __dirname (e.g., CJS bundle from esbuild)
-  currentModuleDirname = __dirname;
-} else if (typeof import.meta !== 'undefined' && import.meta.url) {
-  // ESM environment (e.g., dev mode with tsx)
-  currentModuleDirname = path.dirname(fileURLToPath(import.meta.url));
-} else {
-  // Fallback or error if neither is available
-  console.error("CRITICAL: Could not determine module directory. __dirname and import.meta.url are unavailable.");
-  process.exit(1);
-}
+// The 'import.meta.url' argument is only available in ESM context.
+// In a CJS context (like the production build), it will be undefined,
+// and the helper will fall back to using __dirname.
+const currentModuleDirname = getModuleDir(
+  typeof import.meta?.url === 'string' ? import.meta?.url : undefined,
+);
 
 console.log(`Hexbound Server starting, version: ${config.appVersion}, mode: ${config.nodeEnv}`);
 console.log(`Using directory for operations: ${currentModuleDirname}`);
