@@ -5,6 +5,7 @@
         "dbaeumer.vscode-eslint",
         "bierner.lit-html",
         "esbenp.prettier-vscode",
-        "simonsiefke.svg-preview"
+        "simonsiefke.svg-preview",
+        "bierner.markdown-mermaid"
     ]
 }

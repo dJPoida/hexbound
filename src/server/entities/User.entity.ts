@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from "typeorm";
+import { Game } from "./Game.entity";
 
 @Entity({ name: "users" })
 export class User {
@@ -7,4 +8,7 @@ export class User {
 
   @Column({ type: "varchar", length: 20 })
   userName!: string;
+
+  @ManyToMany(() => Game, (game) => game.players)
+  games!: Game[];
 } 

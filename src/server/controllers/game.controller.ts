@@ -1,0 +1,80 @@
+import { Request, Response } from 'express';
+import { AppDataSource } from '../data-source';
+import { Game } from '../entities/Game.entity';
+import { User } from '../entities/User.entity';
+import { generateGameCode } from '../helpers/gameCode.helper';
+import redisClient from '../redisClient';
+
+export const createGame = async (req: Request, res: Response) => {
+  // TODO: Replace with actual session-based authentication
+  const { userId } = req.body;
+  if (!userId) {
+    return res.status(400).json({ message: 'userId is required' });
+  }
+
+  const gameRepository = AppDataSource.getRepository(Game);
+  const userRepository = AppDataSource.getRepository(User);
+
+  try {
+    // 1. Find the user who is creating the game
+    const user = await userRepository.findOne({ where: { userId } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // 2. Generate a unique game code
+    let gameCode;
+    let isCodeUnique = false;
+    let attempts = 0;
+    do {
+      gameCode = generateGameCode();
+      const existingGame = await gameRepository.findOne({ where: { gameCode } });
+      if (!existingGame) {
+        isCodeUnique = true;
+      }
+      attempts++;
+    } while (!isCodeUnique && attempts < 10);
+
+    if (!isCodeUnique) {
+      return res.status(500).json({ message: 'Failed to generate a unique game code after several attempts.' });
+    }
+    
+    // 3. Create and save the new game
+    const game = gameRepository.create({
+      gameCode,
+      status: 'waiting',
+      players: [user], // Add the creator as the first player
+    });
+    await gameRepository.save(game);
+
+    // 4. Initialize game state in Redis
+    const initialGameState = {
+      gameCode: game.gameCode,
+      turn: 1,
+      players: {
+        'player_0': {
+          userId: user.userId,
+          userName: user.userName,
+        },
+      },
+      mapData: {}, // To be determined later
+      gameState: {
+        placeholderCounter: 0
+      }
+    };
+
+    // Use JSON.SET to store the object
+    await redisClient.json.set(`game:${game.gameId}`, '$', initialGameState);
+
+    // 5. Send the successful response
+    res.status(201).json({
+      message: 'Game created successfully',
+      gameId: game.gameId,
+      gameCode: game.gameCode,
+    });
+
+  } catch (error) {
+    console.error('[API /games] Error creating game:', error);
+    res.status(500).json({ message: 'Error creating game', error: (error as Error).message });
+  }
+}; 
