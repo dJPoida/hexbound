@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { getModuleDir } from "@/shared/helpers/getModuleDir.helper";
+import { User } from "./entities/User.entity";
 
 // The 'import.meta.url' argument is only available in ESM context.
 // In a CJS context (like the production build), it will be undefined,
@@ -18,7 +19,7 @@ export const AppDataSource = new DataSource({
   database: process.env.POSTGRES_DB,
   synchronize: process.env.NODE_ENV === "development",
   logging: process.env.NODE_ENV === "development",
-  entities: [`${currentModuleDirname}/entities/*.entity{.ts,.js}`],
+  entities: [User],
   migrations: [`${currentModuleDirname}/migrations/*{.ts,.js}`],
   subscribers: [],
 }); 
