@@ -1,7 +1,11 @@
 import { Request, Response } from 'express';
 import { ILike } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 import { AppDataSource } from '../data-source';
 import { User } from '../entities/User.entity';
+import redisClient from '../redisClient';
+
+const SESSION_EXPIRATION_SECONDS = 86400; // 24 hours
 
 export const loginOrRegisterUser = async (req: Request, res: Response) => {
   const { userName } = req.body;
@@ -23,7 +27,20 @@ export const loginOrRegisterUser = async (req: Request, res: Response) => {
       console.log(`[Login] Existing user logged in: ${user.userName}, ID: ${user.userId}`);
     }
 
-    res.status(200).json({ userId: user.userId, userName: user.userName });
+    // Create a session token
+    const sessionToken = uuidv4();
+    const sessionKey = `session:${sessionToken}`;
+
+    // Store the session in Redis
+    await redisClient.set(sessionKey, user.userId, {
+      EX: SESSION_EXPIRATION_SECONDS,
+    });
+
+    res.status(200).json({ 
+      userId: user.userId, 
+      userName: user.userName,
+      sessionToken: sessionToken,
+    });
 
   } catch (error) {
     console.error('[API /login] Error:', error);

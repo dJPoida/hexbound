@@ -6,6 +6,7 @@ import config from './config';
 import apiRouter from './apiRouter';
 import { disconnectRedis } from './redisClient'; // Import disconnectRedis
 import { AppDataSource } from './data-source';
+import { initializeWebSocketServer } from './webSocketServer.js';
 
 // Vite is only needed for development mode
 import { createServer as createViteServer } from 'vite';
@@ -25,6 +26,9 @@ let moduleLevelHttpServer: http.Server; // To store the server instance
 async function startServer() {
   const app = express();
   const httpServer = http.createServer(app); // Create HTTP server instance with Express app
+
+  // Initialize WebSocket Server
+  initializeWebSocketServer(httpServer);
 
   // Initialize TypeORM
   try {

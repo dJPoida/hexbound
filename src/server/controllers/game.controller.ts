@@ -4,12 +4,14 @@ import { Game } from '../entities/Game.entity';
 import { User } from '../entities/User.entity';
 import { generateGameCode } from '../helpers/gameCode.helper';
 import redisClient from '../redisClient';
+import { AuthenticatedRequest } from '../middleware/auth.middleware';
 
-export const createGame = async (req: Request, res: Response) => {
-  // TODO: Replace with actual session-based authentication
-  const { userId } = req.body;
+export const createGame = async (req: AuthenticatedRequest, res: Response) => {
+  // The user's ID is now available from the auth middleware
+  const userId = req.user?.userId;
   if (!userId) {
-    return res.status(400).json({ message: 'userId is required' });
+    // This case should ideally not be reached if authMiddleware is working correctly
+    return res.status(401).json({ message: 'Authentication error: User ID not found.' });
   }
 
   const gameRepository = AppDataSource.getRepository(Game);
