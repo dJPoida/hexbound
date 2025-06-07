@@ -2,72 +2,75 @@ A Polytopia / Civ / Populous crossover Asynchronous turn-based casual web game.
 
 🌏 Server URL: **TEMPORARILY REDACTED**
 
+## Built With
+
+*   **TypeScript**: For robust, type-safe code.
+*   **Node.js & Express**: For the backend server and API.
+*   **Preact & htm**: For lightweight and efficient frontend components.
+*   **Vite**: For a fast and modern frontend build process.
+*   **TypeORM**: To interact with the PostgreSQL database.
+*   **Redis**: For in-memory data storage and caching.
+*   **Docker**: For containerizing the application and its services.
+
 ## Architecture Overview
 
 ![Architecture Diagram](/design/architecture.drawio.png) (Note: This diagram might need an update to reflect the Dockerized Node.js server instead of Vercel serverless functions.)
 
-## Local Development
+## Getting Started
+
+To get a local copy up and running, follow these simple steps.
+
+### Prerequisites
+
+Make sure you have the following software installed:
+*   Node.js (v18 or later is recommended)
+*   Docker and Docker Compose
+
+### Installation & Setup
+
+1.  **Clone the repository**
+    ```sh
+    git clone https://github.com/your_username/your_repository.git
+    ```
+2.  **Install NPM packages**
+    ```sh
+    npm install
+    ```
+3.  **Set up Environment Variables**
+    Create a `.env.local` file by copying the provided example. This file holds all necessary environment variables for local development.
+    ```sh
+    cp .env.example .env.local
+    ```
+    The default values in `.env.example` are configured to work with the Docker setup out-of-the-box.
+
+## Usage
+
+1.  **Start Background Services**
+    This command will start the PostgreSQL and Redis containers in the background.
+    ```sh
+    npm run docker:up
+    ```
+2.  **Run the Development Server**
+    This command starts the Node.js application with the Vite dev server. It will watch for file changes and automatically reload.
+    ```sh
+    npm run dev
+    ```
+    Once the server is running, you can access the application at **[http://localhost:3000](http://localhost:3000)**.
 
 ### Inspecting the Database
 
-This project's `docker-compose.yml` includes a Redis Commander service, which provides a web-based GUI for exploring the Redis database.
+This project's `docker-compose.yml` includes web-based tools for exploring the databases.
 
-To access it, ensure your Docker containers are running (`docker-compose up`) and navigate to [http://localhost:8081](http://localhost:8081) in your web browser.
+#### Redis (via Redis Commander)
 
-## Environment Variables
+To inspect the Redis database, ensure your Docker containers are running (`npm run docker:up`) and navigate to **[http://localhost:8081](http://localhost:8081)** in your web browser.
 
-To run the application locally, you need to set up environment variables. Create a file named `.env.local` in the root of the project and add the following variables.
+#### PostgreSQL (via Adminer)
 
-This file is loaded by the server during development. In production, these variables should be injected into the Docker container's environment.
-
-### Example `.env.local`
-
-```
-# Environment variables for Hexbound local development
-
-# --------------------
-# General Application
-# --------------------
-# The port the Node.js Express server will run on.
-PORT=3000
-
-# The port the Vite dev server will use for Hot Module Replacement (HMR).
-# In the current setup, this should match PORT because Vite runs in middleware mode.
-VITE_DEV_PORT=3000
-
-# --------------------
-# Redis Configuration
-# --------------------
-# The host where the Redis server is running.
-REDIS_HOST=localhost
-
-# The port for the Redis server.
-REDIS_PORT=6379
-
-# The password for the Redis server (if any). Leave blank if not set.
-REDIS_PASSWORD=
-
-# You can optionally provide a full Redis connection URL instead of host/port.
-# If REDIS_URL is set, it will be used instead of the other REDIS_* variables.
-# REDIS_URL=redis://:password@hostname:port/database_number
-REDIS_URL=
-
-# ------------------------
-# PostgreSQL Configuration (if used)
-# ------------------------
-# The host where the PostgreSQL server is running.
-POSTGRES_HOST=localhost
-
-# The port for the PostgreSQL server.
-POSTGRES_PORT=5432
-
-# The username for the PostgreSQL database.
-POSTGRES_USER=your_db_user
-
-# The password for the PostgreSQL database.
-POSTGRES_PASSWORD=your_db_password
-
-# The name of the PostgreSQL database.
-POSTGRES_DB=hexbound
-```
+To inspect the PostgreSQL database, navigate to **[http://localhost:8080](http://localhost:8080)**. You can log in using the following credentials, which correspond to the default values in `.env.example`:
+-   **System**: `PostgreSQL`
+-   **Server**: `postgres` (the service name within Docker's network)
+-   **Username**: The value of `POSTGRES_USER` from your `.env.local` file (e.g., `hexbound`)
+-   **Password**: The value of `POSTGRES_PASSWORD` from your `.env.local` file
+-   **Database**: The value of `POSTGRES_DB` from your `.env.local` file (e.g., `hexbound`)
 
