@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Copy package files and install all dependencies (including dev for building)
@@ -15,7 +15,7 @@ COPY . .
 RUN node build.cjs
 
 # Stage 2: Setup the production environment
-FROM node:18-alpine
+FROM node:20-alpine
 WORKDIR /app
 
 # Set Node environment to production
@@ -31,10 +31,16 @@ RUN npm ci --omit=dev
 # The entire 'dist' directory from the builder will be copied.
 COPY --from=builder /app/dist ./dist
 
+# Copy the entrypoint script
+COPY entrypoint.sh .
+# Make the entrypoint script executable
+RUN chmod +x ./entrypoint.sh
+
 # Expose the port the app will run on.
 # Your server config (src/server/config.ts) uses process.env.PORT || '3000'.
 EXPOSE 3000
 
-# Command to run the application
-# This assumes your server entry point after compilation is 'dist/server/main.js'.
+# Set the entrypoint script to be executed when the container starts
+ENTRYPOINT ["./entrypoint.sh"]
+# Command to run the application, which will be passed to the entrypoint
 CMD ["node", "dist/server/main.js"] 

@@ -31,10 +31,6 @@ echo "Checks passed. Proceeding with deployment..."
 echo "--- Building new Docker image ---"
 docker compose -f docker-compose.prod.yml build
 
-# --- Run Database Migrations ---
-echo "--- Running database migrations ---"
-docker compose -f docker-compose.prod.yml run --rm game npm run typeorm:run
-
 # --- Start the Services ---
 echo "--- Starting all services ---"
 docker compose --env-file .env.prod -f docker-compose.yml -f docker-compose.prod.yml up -d

@@ -1,11 +1,11 @@
 import esbuild from 'esbuild';
 
 esbuild.build({
-  entryPoints: ['src/server/main.ts'],
-  outfile: 'dist/server/main.js',
+  entryPoints: ['src/server/main.ts', 'src/server/data-source.ts', 'src/server/migrations/*.ts'],
+  outdir: 'dist/server',
   bundle: true,
   platform: 'node',
-  target: 'node18', // Match your Dockerfile Node version
+  target: 'node20', // Match your Dockerfile Node version
   format: 'cjs', // Output CommonJS
   sourcemap: true,
   packages: 'external', // Keep node_modules external

@@ -14,6 +14,7 @@
     "typeorm": "tsx --env-file=.env.local node_modules/typeorm/cli.js -d src/server/data-source.ts",
     "typeorm:generate": "npm run typeorm -- migration:generate",
     "typeorm:run": "npm run typeorm -- migration:run",
+    "typeorm:run:prod": "node node_modules/typeorm/cli.js -d dist/server/data-source.js migration:run",
     "db:reset": "npm run typeorm -- schema:drop"
   },
   "devDependencies": {
