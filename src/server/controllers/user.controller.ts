@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { ILike } from 'typeorm';
 import { AppDataSource } from '../data-source';
 import { User } from '../entities/User.entity';
 
@@ -11,7 +12,7 @@ export const loginOrRegisterUser = async (req: Request, res: Response) => {
 
   try {
     const userRepository = AppDataSource.getRepository(User);
-    let user = await userRepository.findOneBy({ userName: userName.trim() });
+    let user = await userRepository.findOne({ where: { userName: ILike(userName.trim()) } });
 
     if (!user) {
       // User does not exist, so create a new one
