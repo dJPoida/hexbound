@@ -242,4 +242,82 @@
   border: none;
   border-top: 1px solid #444;
   margin: 2rem 0;
+}
+
+/* New Game List Item Styles */
+.gameListItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  border: 1px solid transparent;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.gameListItem:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-color: #444;
+}
+
+.gameInfoContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: left;
+}
+
+.gameCode {
+  font-size: 1.1em;
+  font-weight: 500;
+  color: #fff;
+}
+
+.gameMeta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85em;
+  color: #a0a0a0;
+}
+
+.gameStatus,
+.playerCount {
+  /* No specific styles needed yet, but classes are here for future use */
+}
+
+.joinButton {
+  background-color: #3e44a8; /* A slightly different blue */
+  color: white;
+  width: auto; /* Override full-width default */
+  padding: 0.5em 1.5em;
+  font-weight: 500;
+}
+
+.joinButton:hover {
+  background-color: #4f55b5;
+  border-color: #646cff;
+}
+
+/* Game Container Specific Styles */
+.gameMetaRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #333;
+}
+
+.gameMetaRow:last-child {
+  border-bottom: none;
+}
+
+.gameMetaRow strong {
+  color: #fff;
+}
+
+.gameActionContainer {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
 } 

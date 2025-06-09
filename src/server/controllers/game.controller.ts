@@ -5,6 +5,41 @@ import { User } from '../entities/User.entity';
 import { generateGameCode } from '../helpers/gameCode.helper';
 import redisClient from '../redisClient';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
+import { GameStatus } from '../entities/GameStatus.entity';
+import { GameStatusValues } from '../entities/GameStatus.entity';
+
+export const getGamesForUser = async (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user?.userId;
+  if (!userId) {
+    return res.status(401).json({ message: 'Authentication error: User ID not found.' });
+  }
+
+  const gameRepository = AppDataSource.getRepository(Game);
+
+  try {
+    const games = await gameRepository.find({
+      where: {
+        players: {
+          userId: userId,
+        },
+      },
+      relations: {
+        status: true,
+        players: true,
+      },
+      order: {
+        gameId: 'DESC', // Or any other order you prefer
+      },
+    });
+
+    // We may want to simplify the returned payload later
+    res.status(200).json(games);
+
+  } catch (error) {
+    console.error('[API /games GET] Error fetching games:', error);
+    res.status(500).json({ message: 'Error fetching games', error: (error as Error).message });
+  }
+};
 
 export const createGame = async (req: AuthenticatedRequest, res: Response) => {
   // The user's ID is now available from the auth middleware
@@ -16,12 +51,19 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
 
   const gameRepository = AppDataSource.getRepository(Game);
   const userRepository = AppDataSource.getRepository(User);
+  const statusRepository = AppDataSource.getRepository(GameStatus);
 
   try {
     // 1. Find the user who is creating the game
     const user = await userRepository.findOne({ where: { userId } });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Get the 'waiting' status from the database
+    const waitingStatus = await statusRepository.findOne({ where: { statusName: GameStatusValues.WAITING } });
+    if (!waitingStatus) {
+        return res.status(500).json({ message: "Initial game status 'waiting' not found in database." });
     }
 
     // 2. Generate a unique game code
@@ -44,7 +86,7 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
     // 3. Create and save the new game
     const game = gameRepository.create({
       gameCode,
-      status: 'waiting',
+      status: waitingStatus,
       players: [user], // Add the creator as the first player
     });
     await gameRepository.save(game);

@@ -1,5 +1,6 @@
 import { h } from 'preact';
 import htm from 'htm';
+import { Game } from '../../shared/types/game.types';
 
 const html = htm.bind(h);
 
@@ -7,11 +8,12 @@ interface LobbyViewProps {
   styles: { [key: string]: string }; // From App.module.css
   onNavigateToGame: (gameId: string) => void; // New prop for navigation
   onCreateNewGame: () => void;
+  myGames: Game[];
   // Props for game lists, handlers for create/join will be added later
   // e.g., myGames: Game[]; onJoinGameById: (gameId: string) => void;
 }
 
-export function LobbyView({ styles, onNavigateToGame, onCreateNewGame }: LobbyViewProps) {
+export function LobbyView({ styles, onNavigateToGame, onCreateNewGame, myGames }: LobbyViewProps) {
   const handleJoinById = () => {
     const gameIdInput = document.getElementById('joinGameIdInput') as HTMLInputElement;
     const gameId = gameIdInput?.value.trim();
@@ -30,10 +32,26 @@ export function LobbyView({ styles, onNavigateToGame, onCreateNewGame }: LobbyVi
 
       <div class=${styles.lobbySection}>
         <h3 class=${styles.sectionTitle}>Your Active Games</h3>
-        <p id="noGamesMessage">You are not currently in any games.</p>
-        <ul class=${styles.gameList}>
-          <!-- Game items will be populated here -->
-        </ul>
+        ${myGames.length === 0 ? html`
+          <p id="noGamesMessage">You are not currently in any games.</p>
+        ` : html`
+          <ul class=${styles.gameList}>
+            ${myGames.map(game => html`
+              <li key=${game.gameId} class=${styles.gameListItem}>
+                <div class=${styles.gameInfoContainer}>
+                  <span class=${styles.gameCode}>${game.gameCode}</span>
+                  <div class=${styles.gameMeta}>
+                    <span class=${styles.gameStatus}>Status: ${game.status.statusName}</span>
+                    <span class=${styles.playerCount}>Players: ${game.players.length}</span>
+                  </div>
+                </div>
+                <button class=${`${styles.button} ${styles.joinButton}`} onClick=${() => onNavigateToGame(game.gameId)}>
+                  Join
+                </button>
+              </li>
+            `)}
+          </ul>
+        `}
       </div>
 
       <div class=${styles.lobbySection}>
@@ -62,4 +80,4 @@ export function LobbyView({ styles, onNavigateToGame, onCreateNewGame }: LobbyVi
       </div>
     </div>
   `;
-} 
+}

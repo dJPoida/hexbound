@@ -10,6 +10,7 @@ import { authService } from './services/auth.service';
 import { authenticatedFetch } from './services/api.service';
 import { socketService } from './services/socket.service';
 import { GameStateUpdatePayload } from '../shared/types/socket.types';
+import { Game } from '../shared/types/game.types';
 
 // Initialize htm with Preact's h function
 const html = htm.bind(h);
@@ -32,6 +33,21 @@ function App() {
 
   // Game State
   const [gameState, setGameState] = useState<GameStateUpdatePayload | null>(null);
+  const [myGames, setMyGames] = useState<Game[]>([]);
+
+  const fetchMyGames = async () => {
+    try {
+      const response = await authenticatedFetch('/api/games');
+      if (response.ok) {
+        const games = await response.json();
+        setMyGames(games);
+      } else {
+        console.error('Failed to fetch user games');
+      }
+    } catch (error) {
+      console.error('Error fetching user games:', error);
+    }
+  };
 
   useEffect(() => {
     // VITE_APP_VERSION is injected by Vite during the build process
@@ -52,6 +68,7 @@ function App() {
       setCurrentUserId(session.userId);
       setCurrentUserName(session.userName);
       setIsLoggedIn(true);
+      fetchMyGames(); // Fetch games if session exists
     }
 
     // Setup socket listeners
@@ -102,6 +119,7 @@ function App() {
         setIsLoggedIn(true);
         setCurrentView('lobby');
         setUserNameInput('');
+        fetchMyGames(); // Fetch games after successful login
       } else {
         setAuthError(data.message || 'Authentication failed.');
       }
@@ -122,6 +140,7 @@ function App() {
       const data = await response.json();
       if (response.ok) {
         console.log('Game created successfully:', data);
+        fetchMyGames(); // Refresh the game list
         navigateToGame(data.gameId);
       } else {
         setAuthError(data.message || 'Failed to create game.');
@@ -193,6 +212,7 @@ function App() {
               styles=${styles} 
               onNavigateToGame=${navigateToGame} 
               onCreateNewGame=${handleCreateNewGame}
+              myGames=${myGames}
             />
           `}
           ${currentView === 'game' && html`

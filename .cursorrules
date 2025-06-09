@@ -91,6 +91,7 @@ Environment variables are managed as follows:
 - When attempting to use the `__dirname` or `path.dirname` consider the helper function in `./src/shared/helpers/getModuleDir.helper.ts`
 - When an unexpected issue prevents the solution of a request, consult the user before attempting the automatic resolution of the problem. Do not attempt to automatically resolve issues you encounter.
 - Always propose updates to this file `.cursorrules` whenever major decisions are made that no longer align with the documentation or if documentation is lacking or missing entirely
+- Prefer using ENUMS or `as const` key/value types instead of hard-coded strings or values for switching data or configuration values.
 
 # Data Models
 

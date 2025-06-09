@@ -1,7 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne, JoinColumn } from "typeorm";
 import { User } from "./User.entity";
-
-export type GameStatus = "waiting" | "active" | "finished";
+import { GameStatus } from "./GameStatus.entity";
 
 @Entity({ name: "games" })
 export class Game {
@@ -11,7 +10,8 @@ export class Game {
   @Column({ type: "varchar", unique: true })
   gameCode!: string;
 
-  @Column({ type: "varchar", default: "waiting" })
+  @ManyToOne(() => GameStatus, status => status.games, { eager: true })
+  @JoinColumn({ name: "statusId" })
   status!: GameStatus;
 
   @Column({ type: "integer", default: 1 })

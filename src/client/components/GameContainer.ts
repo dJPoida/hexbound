@@ -41,23 +41,31 @@ export function GameContainer({
   const counter = gameState?.gameState.placeholderCounter ?? 0;
 
   return html`
-    <div id="gameContainer">
-      <button class=${styles.button} id="returnToLobbyButton" onClick=${onNavigateToLobby} style=${{ marginBottom: '10px' }}>Return to Lobby</button>
-      <div id="gameInfo">
-        <p>Game Code: <strong id="gameCodeDisplay">${gameCode}</strong></p>
-        <p>You are: <strong id="playerNumberDisplay">${playerNumber}</strong></p>
-        <p>Current Turn: <strong id="currentTurnDisplay">${currentTurn}</strong></p>
+    <div class=${styles.lobbyContainer}>
+      <button class=${styles.button} onClick=${onNavigateToLobby} style=${{ marginBottom: '2rem', width: 'auto' }}>Return to Lobby</button>
+      
+      <div class=${styles.lobbySection}>
+        <h3 class=${styles.sectionTitle}>Game Info</h3>
+        <div class=${styles.gameMetaRow}><span>Game Code:</span> <strong>${gameCode}</strong></div>
+        <div class=${styles.gameMetaRow}><span>Your Role:</span> <strong>${playerNumber}</strong></div>
+        <div class=${styles.gameMetaRow}><span>Current Turn:</span> <strong>${currentTurn}</strong></div>
       </div>
 
-      <hr />
+      <div class=${styles.lobbySection}>
+        <h3 class=${styles.sectionTitle}>Actions</h3>
+        <div class=${styles.gameMetaRow}>
+          <span>Counter:</span> 
+          <strong>${counter}</strong>
+        </div>
+        <div class=${styles.gameActionContainer}>
+          <button class=${`${styles.button} ${styles.primaryButton}`} onClick=${onIncrementCounter}>Increment</button>
+          <button class=${`${styles.button} ${styles.joinButton}`} onClick=${onEndTurn}>End Turn</button>
+        </div>
+      </div>
 
-      <p>Counter: <span id="counter">${counter}</span></p>
-      <button class=${styles.button} id="incrementButton" onClick=${onIncrementCounter}>Increment</button>
-      <button class=${styles.button} id="endTurnButton" onClick=${onEndTurn}>End Turn</button>
-
-      <hr style=${{ marginTop: '20px' }} /> 
-      <div id="debugSection">
-        <button class=${styles.button} id="toggleDebugButton" onClick=${handleToggleDebug}>Show Debug Info</button>
+      <div class=${styles.lobbySection}>
+        <h3 class=${styles.sectionTitle}>Debug</h3>
+        <button class=${styles.button} onClick=${handleToggleDebug} style=${{width: 'auto'}}>Show Debug Info</button>
         <div id="debugContent" style=${{ display: 'none', marginTop: '10px', maxHeight: '200px', overflowY: 'auto', backgroundColor: '#333', color: '#f0f0f0', border: '1px solid #555', padding: '10px', textAlign: 'left' }}>
           <h4>Current Game State (Client-Side View):</h4>
           <pre id="gameStateJson" style=${{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
