@@ -6,19 +6,12 @@ const html = htm.bind(h);
 interface LobbyViewProps {
   styles: { [key: string]: string }; // From App.module.css
   onNavigateToGame: (gameId: string) => void; // New prop for navigation
+  onCreateNewGame: () => void;
   // Props for game lists, handlers for create/join will be added later
-  // e.g., myGames: Game[]; onCreateNewGame: () => void; onJoinGameById: (gameId: string) => void;
+  // e.g., myGames: Game[]; onJoinGameById: (gameId: string) => void;
 }
 
-export function LobbyView({ styles, onNavigateToGame }: LobbyViewProps) {
-  // For now, handlers for buttons are not implemented, they will be passed as props later.
-  const handleCreateNewGame = () => {
-    console.log('Create New Game clicked');
-    // Placeholder: In a real scenario, this would involve a server call
-    // and then navigating to the new game with its ID.
-    onNavigateToGame('newGameId-placeholder'); // Navigate with a placeholder ID
-  };
-  
+export function LobbyView({ styles, onNavigateToGame, onCreateNewGame }: LobbyViewProps) {
   const handleJoinById = () => {
     const gameIdInput = document.getElementById('joinGameIdInput') as HTMLInputElement;
     const gameId = gameIdInput?.value.trim();
@@ -47,7 +40,7 @@ export function LobbyView({ styles, onNavigateToGame }: LobbyViewProps) {
         <h3 class=${styles.sectionTitle}>Start or Join a Game</h3>
         <button 
           class=${`${styles.button} ${styles.primaryButton}`}
-          onClick=${handleCreateNewGame}
+          onClick=${onCreateNewGame}
         >
           Create New Game
         </button>

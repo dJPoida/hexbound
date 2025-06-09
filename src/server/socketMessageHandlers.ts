@@ -33,8 +33,7 @@ export function handleSocketMessage(ws: AuthenticatedWebSocket, message: Buffer)
   // Route message to appropriate handler based on type
   switch (parsedMessage.type) {
     case 'game:subscribe':
-      subManager.subscribe(ws, (parsedMessage.payload as GameSubscribePayload).gameId);
-      // Here you would typically fetch and send the full game state
+      handleSubscribe(ws, parsedMessage.payload as GameSubscribePayload);
       break;
 
     case 'game:unsubscribe':
@@ -55,6 +54,30 @@ export function handleSocketMessage(ws: AuthenticatedWebSocket, message: Buffer)
   }
 }
 
+async function handleSubscribe(ws: AuthenticatedWebSocket, payload: GameSubscribePayload) {
+  const { gameId } = payload;
+  subManager.subscribe(ws, gameId);
+
+  // After subscribing, send the latest game state to the client
+  try {
+    const gameKey = `game:${gameId}`;
+    const gameState = await redisClient.json.get(gameKey);
+
+    if (gameState) {
+      const updateMessage: SocketMessage<unknown> = {
+        type: 'game:state_update',
+        payload: gameState,
+      };
+      ws.send(JSON.stringify(updateMessage));
+    } else {
+      // Handle case where game state is not found
+      ws.send(JSON.stringify({ type: 'error', payload: { message: `Game state for ${gameId} not found.` } }));
+    }
+  } catch (error) {
+    console.error(`[MessageHandler] Error fetching game state for ${gameId}:`, error);
+    ws.send(JSON.stringify({ type: 'error', payload: { message: 'Failed to retrieve game state.' } }));
+  }
+}
 
 async function handleIncrementCounter(ws: AuthenticatedWebSocket, payload: IncrementCounterPayload) {
     const { gameId } = payload;

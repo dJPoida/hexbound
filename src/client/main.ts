@@ -6,6 +6,10 @@ import styles from './App.module.css'; // Import CSS Modules
 import { UserLogin } from './components/UserLogin';
 import { LobbyView } from './components/LobbyView'; // Import LobbyView
 import { GameContainer } from './components/GameContainer'; // Import GameContainer
+import { authService } from './services/auth.service';
+import { authenticatedFetch } from './services/api.service';
+import { socketService } from './services/socket.service';
+import { GameStateUpdatePayload } from '../shared/types/socket.types';
 
 // Initialize htm with Preact's h function
 const html = htm.bind(h);
@@ -21,7 +25,13 @@ function App() {
   const [currentUserName, setCurrentUserName] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
-  const [currentView, setCurrentView] = useState<'lobby' | 'game'>('lobby'); // State for view switching
+  
+  // View and Navigation State
+  const [currentView, setCurrentView] = useState<'lobby' | 'game'>('lobby');
+  const [currentGameId, setCurrentGameId] = useState<string | null>(null);
+
+  // Game State
+  const [gameState, setGameState] = useState<GameStateUpdatePayload | null>(null);
 
   useEffect(() => {
     // VITE_APP_VERSION is injected by Vite during the build process
@@ -36,14 +46,31 @@ function App() {
         .then(data => setVersion(data.version || 'N/A (dev)'))
         .catch(() => setVersion('N/A (fetch error)'));
     }
-    // Check local storage for existing user session
-    const storedUserId = localStorage.getItem('hexboundUserId');
-    const storedUserName = localStorage.getItem('hexboundUserName');
-    if (storedUserId && storedUserName) {
-      setCurrentUserId(storedUserId);
-      setCurrentUserName(storedUserName);
+    // Check for existing user session using the auth service
+    const session = authService.getSession();
+    if (session) {
+      setCurrentUserId(session.userId);
+      setCurrentUserName(session.userName);
       setIsLoggedIn(true);
     }
+
+    // Setup socket listeners
+    const handleGameStateUpdate = (payload: unknown) => {
+      setGameState(payload as GameStateUpdatePayload);
+    };
+    const handleCounterUpdate = (payload: unknown) => {
+      const update = payload as { newCount: number };
+      setGameState(prev => prev ? { ...prev, gameState: { ...prev.gameState, placeholderCounter: update.newCount } } : null);
+    };
+
+    socketService.on('game:state_update', handleGameStateUpdate);
+    socketService.on('game:counter_update', handleCounterUpdate);
+
+    return () => {
+      // Cleanup listeners on component unmount
+      socketService.off('game:state_update', handleGameStateUpdate);
+      socketService.off('game:counter_update', handleCounterUpdate);
+    };
   }, []);
 
   const handleUserNameInputChange = (name: string) => {
@@ -67,13 +94,14 @@ function App() {
       });
       const data = await response.json();
       if (response.ok) {
+        // Use the auth service to save the session
+        authService.saveSession(data.sessionToken, data.userId, data.userName);
+        
         setCurrentUserId(data.userId);
         setCurrentUserName(data.userName);
         setIsLoggedIn(true);
-        setCurrentView('lobby'); // Default to lobby view after login
-        localStorage.setItem('hexboundUserId', data.userId);
-        localStorage.setItem('hexboundUserName', data.userName);
-        setUserNameInput(''); // Clear input
+        setCurrentView('lobby');
+        setUserNameInput('');
       } else {
         setAuthError(data.message || 'Authentication failed.');
       }
@@ -84,24 +112,60 @@ function App() {
     setIsLoading(false);
   };
 
+  const handleCreateNewGame = async () => {
+    setIsLoading(true); // Reuse isLoading for feedback
+    setAuthError(null);
+    try {
+      const response = await authenticatedFetch('/api/games', {
+        method: 'POST',
+      });
+      const data = await response.json();
+      if (response.ok) {
+        console.log('Game created successfully:', data);
+        navigateToGame(data.gameId);
+      } else {
+        setAuthError(data.message || 'Failed to create game.');
+      }
+    } catch (error) {
+      setAuthError('An error occurred while creating the game.');
+      console.error('Create game error:', error);
+    }
+    setIsLoading(false);
+  };
+
   const handleLogout = () => {
     setIsLoggedIn(false);
     setCurrentUserId(null);
     setCurrentUserName(null);
-    setCurrentView('lobby'); // Reset view on logout
-    localStorage.removeItem('hexboundUserId');
-    localStorage.removeItem('hexboundUserName');
-    // Potentially call a backend logout if server-side sessions were involved
+    setCurrentView('lobby');
+    authService.clearSession(); // Use the auth service to clear the session
   };
 
-  // Placeholder: Will be passed to LobbyView/GameContainer to switch views
   const navigateToGame = (gameId: string) => {
-    console.log('Navigating to game:', gameId); // Placeholder
+    setCurrentGameId(gameId);
     setCurrentView('game');
+    socketService.connect(gameId);
   };
 
   const navigateToLobby = () => {
+    if (currentGameId) {
+      socketService.sendMessage('game:unsubscribe', { gameId: currentGameId });
+    }
+    setCurrentGameId(null);
+    setGameState(null);
     setCurrentView('lobby');
+  };
+
+  const handleIncrementCounter = () => {
+    if (currentGameId) {
+        socketService.sendMessage('game:increment_counter', { gameId: currentGameId });
+    }
+  };
+
+  const handleEndTurn = () => {
+      if (currentGameId) {
+          socketService.sendMessage('game:end_turn', { gameId: currentGameId });
+      }
   };
 
   return html`
@@ -128,12 +192,16 @@ function App() {
             <${LobbyView} 
               styles=${styles} 
               onNavigateToGame=${navigateToGame} 
+              onCreateNewGame=${handleCreateNewGame}
             />
           `}
           ${currentView === 'game' && html`
             <${GameContainer} 
-              styles=${styles} 
-              onNavigateToLobby=${navigateToLobby} 
+              styles=${styles}
+              onNavigateToLobby=${navigateToLobby}
+              gameState=${gameState}
+              onIncrementCounter=${handleIncrementCounter}
+              onEndTurn=${handleEndTurn}
             />
           `}
         </div>
@@ -166,4 +234,4 @@ if (import.meta.hot) {
   import.meta.hot.accept();
 }
 
-console.log('Preact app initialized.'); 
+console.log('Preact app initialized.');

@@ -12,9 +12,10 @@ export function initializeWebSocketServer(server: http.Server) {
   server.on('upgrade', async (request, socket, head) => {
     const { pathname } = parse(request.url || '', true);
 
-    // For now, only handle WebSocket connections on the /ws path
+    // We only want to handle our application's WebSocket requests on the '/ws' path.
+    // By returning early for any other path, we allow other 'upgrade' listeners
+    // (like the one Vite uses for HMR) to process the request.
     if (pathname !== '/ws') {
-      socket.destroy();
       return;
     }
 
