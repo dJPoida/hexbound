@@ -1,6 +1,6 @@
 import { h } from 'preact';
 import htm from 'htm';
-import { Game } from '../../shared/types/game.types';
+import { Game, Player } from '../../shared/types/game.types';
 
 const html = htm.bind(h);
 
@@ -41,8 +41,14 @@ export function LobbyView({ styles, onNavigateToGame, onCreateNewGame, myGames }
                 <div class=${styles.gameInfoContainer}>
                   <span class=${styles.gameCode}>${game.gameCode}</span>
                   <div class=${styles.gameMeta}>
-                    <span class=${styles.gameStatus}>Status: ${game.status.statusName}</span>
-                    <span class=${styles.playerCount}>Players: ${game.players.length}</span>
+                    <span class=${styles.turnCount}>Turn: ${game.currentTurn}</span>
+                    <span class=${styles.playerCount}>
+                      Players: ${
+                        (Array.isArray(game.players) ? game.players : Object.values(game.players) as Player[])
+                          .map((p: Player) => p.userName)
+                          .join(', ')
+                      }
+                    </span>
                   </div>
                 </div>
                 <button class=${`${styles.button} ${styles.joinButton}`} onClick=${() => onNavigateToGame(game.gameId)}>
@@ -68,7 +74,7 @@ export function LobbyView({ styles, onNavigateToGame, onCreateNewGame, myGames }
             type="text" 
             id="joinGameIdInput" 
             class=${styles.input}
-            placeholder="Paste Game ID here" 
+            placeholder="Paste Game Code or ID" 
           />
           <button 
             class=${styles.button}

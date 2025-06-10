@@ -34,6 +34,7 @@ export interface EndTurnPayload {
 
 // The full game state sent upon subscription or major updates
 export interface GameStateUpdatePayload {
+  [key: string]: unknown; // To allow for use as a RedisJSON object
   gameId: string;
   gameCode: string;
   turn: number;

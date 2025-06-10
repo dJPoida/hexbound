@@ -1,5 +1,7 @@
 import { h } from 'preact';
+import { useEffect } from 'preact/hooks';
 import htm from 'htm';
+import { authService } from '../services/auth.service';
 
 const html = htm.bind(h);
 
@@ -20,6 +22,13 @@ export function UserLogin({
   isLoading,
   error,
 }: UserLoginProps) {
+  useEffect(() => {
+    const savedUserName = authService.getUserName();
+    if (savedUserName) {
+      onUserNameInputChange(savedUserName);
+    }
+  }, []);
+
   const handleInput = (event: Event) => {
     if (event.target instanceof HTMLInputElement) {
       onUserNameInputChange(event.target.value);

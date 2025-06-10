@@ -26,5 +26,12 @@ export async function authenticatedFetch(url: string, options: RequestInit = {})
     headers,
   };
 
-  return fetch(url, newOptions);
+  const response = await fetch(url, newOptions);
+
+  if (response.status === 401) {
+    authService.clearAuthToken();
+    window.location.href = '/'; 
+  }
+
+  return response;
 } 

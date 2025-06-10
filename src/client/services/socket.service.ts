@@ -1,5 +1,5 @@
 import { authService } from './auth.service';
-import { SocketMessage } from '../../shared/types/socket.types';
+import { SocketMessage, ErrorPayload } from '../../shared/types/socket.types';
 
 type MessageHandler = (payload: unknown) => void;
 
@@ -34,6 +34,15 @@ class SocketService {
     this.socket.onmessage = (event) => {
       try {
         const message: SocketMessage<unknown> = JSON.parse(event.data);
+
+        // Handle server-sent errors specifically
+        if (message.type === 'error') {
+          const payload = message.payload as ErrorPayload;
+          console.error(`[SocketService] Server Error: ${payload.message}`, payload.details ?? '');
+          // Here you could add logic to show a toast or modal to the user
+          return;
+        }
+
         if (this.messageHandlers.has(message.type)) {
           this.messageHandlers.get(message.type)?.forEach(handler => handler(message.payload));
         } else {

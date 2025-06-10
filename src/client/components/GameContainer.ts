@@ -36,7 +36,9 @@ export function GameContainer({
 
   const gameId = gameState?.gameId ?? 'Loading...';
   const gameCode = gameState?.gameCode ?? 'Loading...';
-  const playerNumber = '-'; // This will need more logic to determine which player this client is
+  const playerNames = gameState?.players
+    ? Object.values(gameState.players).map(p => p.userName).join(', ')
+    : 'Loading...';
   const currentTurn = gameState?.turn ?? '-';
   const counter = gameState?.gameState.placeholderCounter ?? 0;
 
@@ -47,7 +49,7 @@ export function GameContainer({
       <div class=${styles.lobbySection}>
         <h3 class=${styles.sectionTitle}>Game Info</h3>
         <div class=${styles.gameMetaRow}><span>Game Code:</span> <strong>${gameCode}</strong></div>
-        <div class=${styles.gameMetaRow}><span>Your Role:</span> <strong>${playerNumber}</strong></div>
+        <div class=${styles.gameMetaRow}><span>Players:</span> <strong>${playerNames}</strong></div>
         <div class=${styles.gameMetaRow}><span>Current Turn:</span> <strong>${currentTurn}</strong></div>
       </div>
 

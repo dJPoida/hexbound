@@ -277,14 +277,15 @@
 
 .gameMeta {
   display: flex;
-  gap: 1rem;
-  font-size: 0.85em;
-  color: #a0a0a0;
+  gap: 10px;
+  align-items: center;
 }
 
-.gameStatus,
-.playerCount {
-  /* No specific styles needed yet, but classes are here for future use */
+.playerCount,
+.turnCount {
+  font-size: 0.9em;
+  color: #a0a0a0;
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 .joinButton {

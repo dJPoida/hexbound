@@ -40,10 +40,27 @@ export const authService = {
   },
 
   /**
+   * Clears the authentication token and user ID from localStorage,
+   * but preserves the user name for a better re-login experience.
+   */
+  clearAuthToken(): void {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_ID_KEY);
+  },
+
+  /**
    * Retrieves just the authentication token from localStorage.
    * @returns The token, or null if it doesn't exist.
    */
   getToken(): string | null {
     return localStorage.getItem(TOKEN_KEY);
+  },
+
+  /**
+   * Retrieves just the user name from localStorage.
+   * @returns The user name, or null if it doesn't exist.
+   */
+  getUserName(): string | null {
+    return localStorage.getItem(USER_NAME_KEY);
   },
 }; 

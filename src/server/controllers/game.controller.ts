@@ -17,23 +17,24 @@ export const getGamesForUser = async (req: AuthenticatedRequest, res: Response) 
   const gameRepository = AppDataSource.getRepository(Game);
 
   try {
-    const games = await gameRepository.find({
-      where: {
-        players: {
-          userId: userId,
-        },
-      },
+    // Find all games with their players and then filter them in the application
+    const allGames = await gameRepository.find({
       relations: {
         status: true,
         players: true,
       },
       order: {
-        gameId: 'DESC', // Or any other order you prefer
+        gameId: 'DESC',
       },
     });
 
+    // Filter games to only include those where the current user is a player
+    const userGames = allGames.filter(game => 
+      game.players.some(player => player.userId === userId)
+    );
+
     // We may want to simplify the returned payload later
-    res.status(200).json(games);
+    res.status(200).json(userGames);
 
   } catch (error) {
     console.error('[API /games GET] Error fetching games:', error);
