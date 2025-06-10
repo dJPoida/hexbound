@@ -1,0 +1,18 @@
+.logo {
+  display: block;
+}
+
+.small {
+  width: 150px;
+  height: auto;
+}
+
+.medium {
+  width: 250px;
+  height: auto;
+}
+
+.large {
+  width: 400px;
+  height: auto;
+} 

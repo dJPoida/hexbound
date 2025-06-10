@@ -1,0 +1,68 @@
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  color: var(--color-charcoal);
+}
+
+.section {
+  margin-top: 3rem;
+  border-top: var(--border-width) solid var(--color-stone-grey);
+  padding-top: 2rem;
+}
+
+.section h2 {
+    margin-bottom: 2rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 2rem;
+  align-items: center;
+}
+
+/* Color Swatch */
+.colorSwatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.colorBox {
+  width: 100px;
+  height: 100px;
+  border-radius: var(--border-radius-medium);
+  border: var(--border-width) solid var(--border-color);
+}
+
+.colorInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.colorInfo strong {
+    font-weight: var(--font-weight-bold);
+}
+
+.colorInfo span {
+    font-size: var(--font-size-caption);
+    color: var(--color-stone-grey);
+}
+
+
+/* Typography */
+.typographySample {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.caption {
+    font-size: var(--font-size-caption);
+    color: var(--color-stone-grey);
+    text-transform: uppercase;
+} 

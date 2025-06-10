@@ -12,6 +12,8 @@ import { authenticatedFetch } from './services/api.service';
 import { socketService } from './services/socket.service';
 import { GameStateUpdatePayload } from '../shared/types/socket.types';
 import { Game } from '../shared/types/game.types';
+import { Router } from './components/Router/Router';
+import { StyleGuide } from './pages/StyleGuide/StyleGuide';
 
 // Initialize htm with Preact's h function
 const html = htm.bind(h);
@@ -240,10 +242,23 @@ function App() {
   `;
 }
 
+// Define the routes for the application
+const routes = {
+  '/': () => html`<${App} />`,
+  '/style-guide': () => html`<${StyleGuide} />`,
+};
+
+// A new root component that includes the Router
+const HexboundApp = () => {
+  return html`
+    <${Router} routes=${routes} fallback=${() => html`<${App} />`} />
+  `;
+};
+
 // Render the App component into the div#app element in index.html
 const appRoot = document.getElementById('app');
 if (appRoot) {
-  render(html`<${App} />`, appRoot);
+  render(html`<${HexboundApp} />`, appRoot);
 } else {
   console.error('Target root element #app not found in DOM.');
 }
