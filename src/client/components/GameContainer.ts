@@ -6,7 +6,6 @@ const html = htm.bind(h);
 
 interface GameContainerProps {
   styles: { [key: string]: string };
-  onNavigateToLobby: () => void;
   gameState: GameStateUpdatePayload | null;
   onIncrementCounter: () => void;
   onEndTurn: () => void;
@@ -21,7 +20,6 @@ interface GameContainerProps {
 
 export function GameContainer({ 
   styles, 
-  onNavigateToLobby,
   gameState,
   onIncrementCounter,
   onEndTurn
@@ -44,7 +42,6 @@ export function GameContainer({
 
   return html`
     <div class=${styles.lobbyContainer}>
-      <button class=${styles.button} onClick=${onNavigateToLobby} style=${{ marginBottom: '2rem', width: 'auto' }}>Return to Lobby</button>
       
       <div class=${styles.lobbySection}>
         <h3 class=${styles.sectionTitle}>Game Info</h3>

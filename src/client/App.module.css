@@ -222,6 +222,13 @@
   margin-bottom: 1rem;
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+
 .welcomeMessage {
   font-size: 1.1em;
   font-weight: 500;
@@ -236,6 +243,20 @@
 .logoutButton:hover {
   background-color: #333;
   border-color: #777;
+}
+
+.linkButton {
+  background: none;
+  border: none;
+  color: #a0a0a0;
+  text-decoration: underline;
+  padding: 0;
+  font-size: 0.9em;
+}
+
+.linkButton:hover {
+  color: #fff;
+  border-color: transparent;
 }
 
 .divider {
@@ -321,4 +342,57 @@
   display: flex;
   gap: 1rem;
   margin-top: 1.5rem;
+}
+
+.hamburgerButton {
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.hamburgerButton:hover {
+  border-color: #646cff;
+}
+
+.menuDropdown {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  width: 180px;
+  padding: 0.5rem 0;
+  overflow: hidden;
+}
+
+.menuItem {
+  background: none;
+  border: none;
+  color: #fff;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  font-size: 1em;
+  border-radius: 0;
+  border-bottom: 1px solid #444;
+}
+
+.menuItem:last-child {
+  border-bottom: none;
+}
+
+.menuItem:hover {
+  background-color: #646cff;
+  border-color: #646cff;
 } 

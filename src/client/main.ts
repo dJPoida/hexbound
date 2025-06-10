@@ -6,6 +6,7 @@ import styles from './App.module.css'; // Import CSS Modules
 import { UserLogin } from './components/UserLogin';
 import { LobbyView } from './components/LobbyView'; // Import LobbyView
 import { GameContainer } from './components/GameContainer'; // Import GameContainer
+import { Header } from './components/Header';
 import { authService } from './services/auth.service';
 import { authenticatedFetch } from './services/api.service';
 import { socketService } from './services/socket.service';
@@ -62,6 +63,12 @@ function App() {
         .then(data => setVersion(data.version || 'N/A (dev)'))
         .catch(() => setVersion('N/A (fetch error)'));
     }
+
+    const lastUserName = authService.getUserName();
+    if(lastUserName) {
+      setUserNameInput(lastUserName);
+    }
+
     // Check for existing user session using the auth service
     const session = authService.getSession();
     if (session) {
@@ -157,7 +164,7 @@ function App() {
     setCurrentUserId(null);
     setCurrentUserName(null);
     setCurrentView('lobby');
-    authService.clearSession(); // Use the auth service to clear the session
+    authService.clearAuthToken(); // Use the auth service to clear the session but keep the user name
   };
 
   const navigateToGame = (gameId: string) => {
@@ -200,10 +207,13 @@ function App() {
         />
       ` : html`
         <div class=${styles.loggedInContainer}> <!-- Logged in Wrapper -->
-          <div class=${styles.header}>
-            <p class=${styles.welcomeMessage}>Welcome, ${currentUserName}!</p>
-            <button class=${`${styles.button} ${styles.logoutButton}`} onClick=${handleLogout}>Logout</button>
-          </div>
+          <${Header}
+            styles=${styles}
+            currentUserName=${currentUserName}
+            onLogout=${handleLogout}
+            currentView=${currentView}
+            onNavigateToLobby=${navigateToLobby}
+          />
           
           <hr class=${styles.divider} />
           
@@ -218,7 +228,6 @@ function App() {
           ${currentView === 'game' && html`
             <${GameContainer} 
               styles=${styles}
-              onNavigateToLobby=${navigateToLobby}
               gameState=${gameState}
               onIncrementCounter=${handleIncrementCounter}
               onEndTurn=${handleEndTurn}
