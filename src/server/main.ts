@@ -45,12 +45,11 @@ async function startServer() {
   if (config.nodeEnv === 'production') {
     console.log('Production mode: serving static files from dist/client');
     const clientBuildDir = path.resolve(currentModuleDirname, '../client');
-    const assetsDir = path.resolve(clientBuildDir, 'assets');
 
-    // Serve static assets (JS, CSS, images, etc.)
-    app.use('/assets', express.static(assetsDir));
+    // Serve all static files from the client build directory
+    app.use(express.static(clientBuildDir));
 
-    // SPA fallback: Serve index.html for all other GET requests
+    // SPA fallback: Serve index.html for all other GET requests that don't match a file
     app.get('*', (req, res) => {
       res.sendFile(path.resolve(clientBuildDir, 'index.html'), (err) => {
         if (err) {
