@@ -1,5 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&display=swap');
 
+@font-face {
+  font-family: 'Junction';
+  src: url('/fonts/Junction/Junction-light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Junction';
+  src: url('/fonts/Junction/Junction-regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Junction';
+  src: url('/fonts/Junction/Junction-bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Girassol';
+  src: url('/fonts/Girassol/Girassol-Regular.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
 html {
   box-sizing: border-box;
 }
@@ -23,10 +51,12 @@ html {
   --color-deep-purple: #5d4f6b;
 
   /* Typography */
-  --font-family-main: 'Zilla Slab', serif;
+  --font-family-main: 'Girassol', sans-serif;
+  --font-family-body: 'Junction', sans-serif;
   --font-size-heading: 2.5rem;
   --font-size-body: 1rem;
   --font-size-caption: 0.8rem;
+  --font-weight-light: 300;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-bold: 700;
@@ -42,7 +72,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  font-family: var(--font-family-main);
+  font-family: var(--font-family-body);
   color: var(--color-charcoal);
   background-color: var(--color-canvas-white);
   background-image: url('/images/paper-texture.png');
@@ -69,6 +99,7 @@ h1 {
 }
 
 p {
+  font-family: var(--font-family-body);
   font-size: var(--font-size-body);
   color: var(--color-stone-grey);
 }

@@ -27,3 +27,6 @@ dist-ssr
 .vercel
 
 /data/
+
+*.kra-autosave.kra
+*.kra~

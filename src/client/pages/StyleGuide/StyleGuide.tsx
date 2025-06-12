@@ -16,6 +16,7 @@ const ColorSwatch = ({ name, hex }: { name: string; hex: string }) => (
 export const StyleGuide = () => {
   return (
     <div class={styles.container}>
+      <Logo size="large" />
       <h1>Style Guide</h1>
       <p>This page is a visual inventory of all UI components and design tokens.</p>
 
@@ -37,8 +38,10 @@ export const StyleGuide = () => {
       <section class={styles.section}>
         <h2>Typography</h2>
         <div class={styles.typographySample}>
-          <h1>Heading 1</h1>
-          <p>This is body text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          <h1>Heading 1 (Girassol)</h1>
+          <p style={{ fontWeight: 'var(--font-weight-light)' }}>This is body text in Junction Light.</p>
+          <p style={{ fontWeight: 'var(--font-weight-regular)' }}>This is body text in Junction Regular.</p>
+          <p style={{ fontWeight: 'var(--font-weight-bold)' }}>This is body text in Junction Bold.</p>
           <span class={styles.caption}>This is a caption.</span>
         </div>
       </section>
@@ -52,15 +55,6 @@ export const StyleGuide = () => {
           <Button onClick={() => {}} variant="red">Red</Button>
           <Button onClick={() => {}} variant="purple">Purple</Button>
           <Button onClick={() => {}} variant="primary" disabled>Disabled</Button>
-        </div>
-      </section>
-
-      <section class={styles.section}>
-        <h2>Logo</h2>
-        <div class={styles.grid}>
-          <Logo size="small" />
-          <Logo size="medium" />
-          <Logo size="large" />
         </div>
       </section>
     </div>
