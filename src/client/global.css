@@ -63,8 +63,8 @@ html {
 
   /* Borders and Effects */
   --border-radius-small: 8px;
-  --border-radius-medium: 12px;
-  --border-width: 3px;
+  --border-radius-medium: 14px;
+  --border-width: 2px;
   --border-color: var(--color-charcoal);
 }
 

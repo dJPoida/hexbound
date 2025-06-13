@@ -1,6 +1,7 @@
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
 import htm from 'htm';
+import { MenuButton } from './Button/MenuButton';
 
 const html = htm.bind(h);
 
@@ -21,11 +22,7 @@ export function Header({ currentUserName, onLogout, styles, currentView, onNavig
         <div class=${styles.header}>
             <p class=${styles.welcomeMessage}>Welcome, ${currentUserName}!</p>
             <div class=${styles.headerActions}>
-                <button class=${styles.hamburgerButton} onClick=${toggleMenu}>
-                    <svg fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px">
-                        <path d="M4 8h24v2h-24zM4 15h24v2h-24zM4 22h24v2h-24z"></path>
-                    </svg>
-                </button>
+                ${h(MenuButton, { onClick: toggleMenu, ariaLabel: 'Open menu', variant: 'secondary' })}
                 ${isMenuOpen && html`
                     <div class=${styles.menuDropdown}>
                         ${currentView === 'game' && html`

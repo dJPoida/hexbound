@@ -1,6 +1,7 @@
 import { h } from 'preact';
 import htm from 'htm';
 import { Game, Player } from '../../shared/types/game.types';
+import { Button } from './Button/Button';
 
 const html = htm.bind(h);
 
@@ -51,9 +52,11 @@ export function LobbyView({ styles, onNavigateToGame, onCreateNewGame, myGames }
                     </span>
                   </div>
                 </div>
-                <button class=${`${styles.button} ${styles.joinButton}`} onClick=${() => onNavigateToGame(game.gameId)}>
-                  Join
-                </button>
+                ${h(Button, {
+                  onClick: () => onNavigateToGame(game.gameId),
+                  children: 'Join',
+                  variant: 'secondary',
+                })}
               </li>
             `)}
           </ul>
@@ -62,13 +65,11 @@ export function LobbyView({ styles, onNavigateToGame, onCreateNewGame, myGames }
 
       <div class=${styles.lobbySection}>
         <h3 class=${styles.sectionTitle}>Start or Join a Game</h3>
-        <button 
-          class=${`${styles.button} ${styles.primaryButton}`}
-          onClick=${onCreateNewGame}
-        >
-          Create New Game
-        </button>
-        
+        ${h(Button, {
+          onClick: onCreateNewGame,
+          children: 'Create New Game',
+          variant: 'primary',
+        })}
         <div class=${styles.joinByIdContainer}>
           <input 
             type="text" 
@@ -76,12 +77,11 @@ export function LobbyView({ styles, onNavigateToGame, onCreateNewGame, myGames }
             class=${styles.input}
             placeholder="Paste Game Code or ID" 
           />
-          <button 
-            class=${styles.button}
-            onClick=${handleJoinById}
-          >
-            Join by ID
-          </button>
+          ${h(Button, {
+            onClick: handleJoinById,
+            children: 'Join by ID',
+            variant: 'secondary',
+          })}
         </div>
       </div>
     </div>
