@@ -12,6 +12,7 @@ import { broadcastToGame } from './socketSubscriptionManager';
 import { AppDataSource } from './data-source';
 import { Game } from './entities/Game.entity';
 import { User } from './entities/User.entity';
+import { RedisJSON } from '@redis/json/dist/commands';
 
 // A simple type guard to check if a message is a valid SocketMessage
 function isSocketMessage(msg: unknown): msg is SocketMessage<unknown> {
@@ -28,6 +29,11 @@ export function handleSocketMessage(ws: AuthenticatedWebSocket, message: Buffer)
     return;
   }
   
+  if (parsedMessage && parsedMessage.type === 'ping') {
+    ws.send(JSON.stringify({ type: 'pong' }));
+    return;
+  }
+
   if (!isSocketMessage(parsedMessage)) {
     console.error(`[MessageHandler] Invalid message structure from ${ws.userId}:`, parsedMessage);
     ws.send(JSON.stringify({ type: 'error', payload: { message: 'Invalid message structure.' } }));
@@ -108,7 +114,7 @@ async function handleSubscribe(ws: AuthenticatedWebSocket, payload: GameSubscrib
           userId: user.userId,
           userName: user.userName,
         };
-        await redisClient.json.set(`game:${gameId}`, '$', redisGameState as any);
+        await redisClient.json.set(`game:${gameId}`, '$', redisGameState as unknown as RedisJSON);
       } else {
         console.error(`[MessageHandler] CRITICAL: Game ${gameId} found in DB but not in Redis.`);
         return ws.send(JSON.stringify({ type: 'error', payload: { message: 'Game state is inconsistent. Cannot join.' } }));

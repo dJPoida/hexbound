@@ -6,8 +6,21 @@ type MessageHandler = (payload: unknown) => void;
 class SocketService {
   private socket: WebSocket | null = null;
   private messageHandlers = new Map<string, MessageHandler[]>();
+  private heartbeatTimer: number | null = null;
+  private missedPongs = 0;
+  private reconnectTimer: number | null = null;
+  private reconnectAttempts = 0;
+  private lastGameId: string | null = null;
+  private isManuallyClosed = false;
+
+  private HEARTBEAT_INTERVAL = 20000; // 20s
+  private MAX_MISSED_PONGS = 2;
+  private BASE_RECONNECT_DELAY = 3000; // 3s
+  private MAX_RECONNECT_DELAY = 30000; // 30s
 
   public connect(gameId: string) {
+    this.lastGameId = gameId;
+    this.isManuallyClosed = false;
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       console.log('WebSocket is already connected.');
       return;
@@ -27,22 +40,24 @@ class SocketService {
 
     this.socket.onopen = () => {
       console.log('[SocketService] WebSocket connection established.');
+      this.reconnectAttempts = 0;
+      this.startHeartbeat();
       // Automatically subscribe to the game once connected
-      this.sendMessage('game:subscribe', { gameId });
+      this.sendMessage('game:subscribe', { gameId: this.lastGameId });
     };
 
     this.socket.onmessage = (event) => {
       try {
         const message: SocketMessage<unknown> = JSON.parse(event.data);
-
-        // Handle server-sent errors specifically
+        if (message.type === 'pong') {
+          this.missedPongs = 0;
+          return;
+        }
         if (message.type === 'error') {
           const payload = message.payload as ErrorPayload;
           console.error(`[SocketService] Server Error: ${payload.message}`, payload.details ?? '');
-          // Here you could add logic to show a toast or modal to the user
           return;
         }
-
         if (this.messageHandlers.has(message.type)) {
           this.messageHandlers.get(message.type)?.forEach(handler => handler(message.payload));
         } else {
@@ -55,12 +70,52 @@ class SocketService {
 
     this.socket.onclose = (event) => {
       console.log(`[SocketService] WebSocket connection closed: ${event.code}`);
+      this.stopHeartbeat();
       this.socket = null;
+      if (!this.isManuallyClosed) {
+        this.scheduleReconnect();
+      }
     };
 
     this.socket.onerror = (error) => {
       console.error('[SocketService] WebSocket error:', error);
+      this.socket?.close();
     };
+  }
+
+  private startHeartbeat() {
+    this.stopHeartbeat();
+    this.missedPongs = 0;
+    this.heartbeatTimer = window.setInterval(() => {
+      if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+        this.socket.send(JSON.stringify({ type: 'ping' }));
+        this.missedPongs++;
+        if (this.missedPongs > this.MAX_MISSED_PONGS) {
+          console.warn('[SocketService] Missed pong, closing socket to trigger reconnect.');
+          this.socket.close();
+        }
+      }
+    }, this.HEARTBEAT_INTERVAL);
+  }
+
+  private stopHeartbeat() {
+    if (this.heartbeatTimer) {
+      clearInterval(this.heartbeatTimer);
+      this.heartbeatTimer = null;
+    }
+  }
+
+  private scheduleReconnect() {
+    if (this.reconnectTimer) return;
+    const delay = Math.min(this.BASE_RECONNECT_DELAY * Math.pow(2, this.reconnectAttempts), this.MAX_RECONNECT_DELAY);
+    console.log(`[SocketService] Attempting to reconnect in ${delay / 1000}s...`);
+    this.reconnectTimer = window.setTimeout(() => {
+      this.reconnectTimer = null;
+      this.reconnectAttempts++;
+      if (this.lastGameId) {
+        this.connect(this.lastGameId);
+      }
+    }, delay);
   }
 
   public sendMessage<T>(type: string, payload: T) {
@@ -90,6 +145,8 @@ class SocketService {
   }
 
   public disconnect() {
+    this.isManuallyClosed = true;
+    this.stopHeartbeat();
     if (this.socket) {
       this.socket.close();
     }
