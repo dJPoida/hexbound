@@ -2,11 +2,13 @@ import { h } from 'preact';
 import { useEffect } from 'preact/hooks';
 import htm from 'htm';
 import { authService } from '../services/auth.service';
+import styles from './UserLogin.module.css';
+import { Logo } from './Logo/Logo';
+import { Button } from './Button/Button';
 
 const html = htm.bind(h);
 
 interface UserLoginProps {
-  styles: Record<string, string>;
   userNameInput: string;
   onUserNameInputChange: (name: string) => void;
   onLogin: () => void;
@@ -15,7 +17,6 @@ interface UserLoginProps {
 }
 
 export function UserLogin({
-  styles,
   userNameInput,
   onUserNameInputChange,
   onLogin,
@@ -45,7 +46,7 @@ export function UserLogin({
   return html`
     <div class=${styles.playerManagementContainer}>
       <form class=${styles.loginForm} onSubmit=${handleSubmit}>
-        <h1 class=${styles.loginTitle}>Hexbound</h1>
+        ${h(Logo, { size: 'medium' })}
         <p class=${styles.loginSubtitle}>Enter your name to begin your journey.</p>
         
         <div class=${styles.inputGroup}>
@@ -62,13 +63,12 @@ export function UserLogin({
           />
         </div>
 
-        <button 
-          class=${`${styles.button} ${styles.loginButton}`}
-          type="submit"
-          disabled=${isLoading}
-        >
-          ${isLoading ? 'Logging in...' : 'Play'}
-        </button>
+        ${h(Button, {
+          onClick: onLogin,
+          variant: 'primary',
+          disabled: isLoading,
+          children: isLoading ? 'Logging in...' : 'Play',
+        })}
 
         ${error && html`<p class=${styles.authError}>${error}</p>`}
         ${isLoading && html`<div class=${styles.loadingIndicator}>Verifying...</div>`}
