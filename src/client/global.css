@@ -1,6 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&display=swap');
 
 @font-face {
+  font-family: 'Hexbound';
+  src: url('/fonts/Hexbound/Hexbound.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
   font-family: 'Junction';
   src: url('/fonts/Junction/Junction-light.woff') format('woff');
   font-weight: 300;
@@ -18,13 +25,6 @@
   font-family: 'Junction';
   src: url('/fonts/Junction/Junction-bold.woff') format('woff');
   font-weight: 700;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Girassol';
-  src: url('/fonts/Girassol/Girassol-Regular.woff') format('woff');
-  font-weight: bold;
   font-style: normal;
 }
 
@@ -51,7 +51,7 @@ html {
   --color-deep-purple: #5d4f6b;
 
   /* Typography */
-  --font-family-main: 'Girassol', sans-serif;
+  --font-family-main: 'Hexbound', sans-serif;
   --font-family-body: 'Junction', sans-serif;
   --font-size-heading: 2.5rem;
   --font-size-body: 1rem;

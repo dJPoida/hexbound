@@ -38,7 +38,7 @@ export const StyleGuide = () => {
       <section class={styles.section}>
         <h2>Typography</h2>
         <div class={styles.typographySample}>
-          <h1>Heading 1 (Girassol)</h1>
+          <h1>Heading 1 (Hexbound)</h1>
           <p style={{ fontWeight: 'var(--font-weight-light)' }}>This is body text in Junction Light.</p>
           <p style={{ fontWeight: 'var(--font-weight-regular)' }}>This is body text in Junction Regular.</p>
           <p style={{ fontWeight: 'var(--font-weight-bold)' }}>This is body text in Junction Bold.</p>
