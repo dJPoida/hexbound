@@ -80,6 +80,7 @@ export function App() {
       setCurrentUserId(session.userId);
       setCurrentUserName(session.userName);
       setIsLoggedIn(true);
+      setCurrentView('lobby');
       fetchMyGames(); // Fetch games if session exists
     }
 
