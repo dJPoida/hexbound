@@ -63,7 +63,7 @@ export function GameContainer({
   const gameId = gameState?.gameId ?? 'Loading...';
   const gameCode = gameState?.gameCode ?? 'Loading...';
   const playerNames = gameState?.players
-    ? Object.values(gameState.players).map(p => p.userName).join(', ')
+    ? gameState.players.map(p => p.userName).join(', ')
     : 'Loading...';
   const currentTurn = gameState?.turn ?? '-';
   const counter = gameState?.gameState.placeholderCounter ?? 0;

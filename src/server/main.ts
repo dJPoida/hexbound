@@ -39,7 +39,8 @@ async function startServer() {
     process.exit(1);
   }
 
-  // API routes are always active
+  // API routes must be registered BEFORE the Vite middleware
+  // so they are handled by the backend and not treated as a client-side route.
   app.use('/api', apiRouter);
 
   if (config.nodeEnv === 'production') {
@@ -72,35 +73,22 @@ async function startServer() {
       },
       appType: 'spa',
     });
+    
+    // Use vite's connect instance as middleware.
+    // This will handle HMR and serve client-side assets.
     app.use(vite.middlewares);
-
-    // SPA fallback for Vite dev server
-    app.get('*', (req, res, next) => {
-      if (req.originalUrl.includes('@vite') || req.originalUrl.includes('@fs') || req.originalUrl.startsWith('/api')) {
-        return next();
-      }
-      res.sendFile(path.resolve(viteRoot, 'index.html'), (err) => {
-        if (err) {
-          console.error('Error sending index.html in dev:', err);
-          res.status(500).end();
-        }
-      });
-    });
   }
 
-  console.log(`[main.ts] config.nodeEnv: ${config.nodeEnv}`);
-  console.log(`[main.ts] config.prodPort (now config.port): ${config.port}`);
-  console.log(`[main.ts] config.devPort (now config.viteDevPort): ${config.viteDevPort}`);
-
-  // Select port based on environment using the new config keys
+  // The 'port' variable was being declared too late. Moved up for clarity.
   const port = config.nodeEnv === 'production' 
-    ? parseInt(config.port, 10)          // Use config.port for production
-    : parseInt(config.viteDevPort, 10);   // Use config.viteDevPort for development
-  
+    ? parseInt(config.port, 10)
+    : parseInt(config.viteDevPort, 10);
+
+  console.log(`[main.ts] config.nodeEnv: ${config.nodeEnv}`);
+  console.log(`[main.ts] config.port: ${config.port}`);
+  console.log(`[main.ts] config.viteDevPort: ${config.viteDevPort}`);
   console.log(`[main.ts] Final port selected: ${port}`);
 
-  // Store the server instance - NO, httpServer is already our instance.
-  // Start listening on the httpServer instance
   httpServer.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
     if (config.nodeEnv !== 'production') {
@@ -120,8 +108,10 @@ const gracefulShutdownHandler = async (signal: string) => {
     // Stop the HTTP server from accepting new connections
     if (moduleLevelHttpServer) {
       await new Promise<void>((resolve, reject) => {
-        moduleLevelHttpServer.close((err) => {
-          if (err) {
+        // Add specific type for the error object
+        moduleLevelHttpServer.close((err?: NodeJS.ErrnoException) => {
+          // If the server is already closed, that's not a real error in a shutdown sequence.
+          if (err && err.code !== 'ERR_SERVER_NOT_RUNNING') {
             console.error('[Server] Error closing HTTP server:', err);
             exitCode = 1;
             return reject(err);

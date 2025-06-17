@@ -109,12 +109,10 @@ async function handleSubscribe(ws: AuthenticatedWebSocket, payload: GameSubscrib
       const redisGameState = (await redisClient.json.get(`game:${gameId}`)) as unknown as GameStateUpdatePayload | null;
 
       if (redisGameState) {
-        const newPlayerKey = `player_${Object.keys(redisGameState.players).length}`;
-        redisGameState.players[newPlayerKey] = {
+        await redisClient.json.arrAppend(`game:${gameId}`, '$.players', {
           userId: user.userId,
           userName: user.userName,
-        };
-        await redisClient.json.set(`game:${gameId}`, '$', redisGameState as unknown as RedisJSON);
+        } as unknown as RedisJSON);
       } else {
         console.error(`[MessageHandler] CRITICAL: Game ${gameId} found in DB but not in Redis.`);
         return ws.send(JSON.stringify({ type: 'error', payload: { message: 'Game state is inconsistent. Cannot join.' } }));

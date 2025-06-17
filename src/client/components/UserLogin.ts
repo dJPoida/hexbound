@@ -44,8 +44,8 @@ export function UserLogin({
   const userNameInputId = 'userNameInput';
 
   return html`
-    <div class=${styles.playerManagementContainer}>
-      <form class=${styles.loginForm} onSubmit=${handleSubmit}>
+    <div class=${styles.loginForm}>
+      <form onSubmit=${handleSubmit}>
         ${h(Logo, { size: 'medium' })}
         <p class=${styles.loginSubtitle}>Enter your name to begin your journey.</p>
         
@@ -63,12 +63,15 @@ export function UserLogin({
           />
         </div>
 
-        ${h(Button, {
-          onClick: onLogin,
-          variant: 'primary',
-          disabled: isLoading,
-          children: isLoading ? 'Logging in...' : 'Play',
-        })}
+        <${Button}
+          onClick=${onLogin}
+          variant="primary"
+          disabled=${isLoading}
+          fullWidth=${true}
+          className=${styles.loginButton}
+        >
+          ${isLoading ? 'Logging in...' : 'Play'}
+        </${Button}>
 
         ${error && html`<p class=${styles.authError}>${error}</p>`}
         ${isLoading && html`<div class=${styles.loadingIndicator}>Verifying...</div>`}

@@ -6,150 +6,175 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logoVanilla:hover { /* Renamed from .logo.vanilla to be more CSS module friendly */
-  filter: drop-shadow(0 0 2em #3178c6aa);
-}
-
-.card {
-  padding: 2em;
-}
-
-.readTheDocs {
-  color: #888;
-}
-
-.playerManagementContainer {
+.loggedInContainer {
+  width: 100%;
+  height: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  width: 100%;
+  overflow: hidden;
+  padding: 2rem;
 }
 
-.loginForm {
-  background: rgba(0, 0, 0, 0.2);
-  padding: 2.5rem;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+/* 
+  Special overrides for utility pages that need to scroll.
+  This is applied by the router for /utils and /style-guide
+*/
+#app.utility-page-active .appContainer,
+#app.utility-page-active .loggedInContainer {
+  height: auto;
+  overflow-y: auto;
+  padding: 2rem;
 }
 
-.loginTitle {
-  margin-top: 0;
-  margin-bottom: 0.5rem;
-  font-size: 2em;
-  font-weight: 700;
-  color: #fff;
-}
-
-.loginSubtitle {
-  margin-bottom: 2rem;
-  font-size: 1em;
-  color: #a0a0a0;
-}
-
-.inputGroup {
-  margin-bottom: 1.5rem;
-  text-align: left;
-}
-
-.label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #c0c0c0;
-  font-weight: 500;
-}
-
-.input {
-  width: 100%;
-  padding: 0.8rem 1rem;
-  border-radius: 5px;
-  border: 1px solid #444;
-  background-color: #2a2a2a;
-  color: #fff;
-  font-size: 1em;
-  box-sizing: border-box;
-}
-
-.input:focus {
-  outline: none;
-  border-color: #646cff;
-  box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.3);
-}
-
-.button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-  width: 100%;
-}
-.button:hover {
-  border-color: #646cff;
-}
-.button:focus,
-.button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-/* Light theme styles for button, scoped within this module */
-@media (prefers-color-scheme: light) {
-  .button {
-    background-color: #f9f9f9;
-    /* Text color for button in light mode might be needed, e.g., color: #213547; */
-  }
-}
-
-.loginButton {
-  background-color: #646cff;
-  color: white;
-  padding: 0.8rem;
-  font-weight: 700;
-  font-size: 1.1em;
-}
-
-.loginButton:hover {
-  background-color: #535bf2;
-}
-
-.authError {
-  color: #ff6b6b;
-  margin-top: 1rem;
-}
-
-.loadingIndicator {
-  margin-top: 1rem;
-  color: #a0a0a0;
-}
+/* General Layout Elements */
 
 .versionDisplay {
-  position: absolute;
+  position: fixed; /* Use fixed to keep it in viewport */
   bottom: 10px;
   right: 15px;
   font-size: 0.75em;
-  color: #555;
+  color: var(--color-stone-grey);
+  opacity: 0.7;
 }
 
-/* Lobby Styles */
+.header {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+
+.welcomeMessage {
+  font-size: 1.1em;
+  font-weight: 500;
+  margin: 0;
+  color: var(--color-charcoal);
+}
+
+.logoutButton {
+  background-color: transparent;
+  border: 1px solid #555;
+  color: #a0a0a0;
+}
+.logoutButton:hover {
+  background-color: #333;
+  border-color: #777;
+}
+
+.linkButton {
+  background: none;
+  border: none;
+  color: var(--color-stone-grey);
+  text-decoration: underline;
+  padding: 0;
+  font-size: 0.9em;
+}
+
+.linkButton:hover {
+  color: var(--color-hex-amber);
+  border-color: transparent;
+}
+
+.divider {
+  border: none;
+  width: 100%;
+  max-width: 800px;
+  border-top: 1px solid #ddd;
+  margin: 2rem 0;
+}
+
+/* Input Fields Polish */
+
+.input {
+  background: #f8f7f3;
+  border: var(--border-width) solid #d6d2c4;
+  color: var(--color-charcoal);
+  border-radius: var(--border-radius-small);
+  font-size: 1.1rem;
+  padding: 0.9rem 1.2rem;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--color-hex-amber);
+  box-shadow: 0 0 0 2px var(--color-glow-yellow);
+  background: #fffbe6;
+}
+
+
+/* Hamburger Menu */
+.hamburgerButton {
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.hamburgerButton:hover {
+  border-color: #646cff;
+}
+
+.menuDropdown {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background-color: var(--color-canvas-white);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  width: 180px;
+  padding: 0.5rem 0;
+  overflow: hidden;
+}
+
+.menuItem {
+  background: none;
+  border: none;
+  color: var(--color-charcoal);
+  padding: 0.75rem 1rem;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  font-size: 1em;
+  border-radius: 0;
+  border-bottom: 1px solid #eee;
+}
+
+.menuItem:last-child {
+  border-bottom: none;
+}
+
+.menuItem:hover {
+  background-color: var(--color-hex-amber);
+  color: white;
+  border-color: var(--color-hex-amber);
+}
+
+
+/* Lobby & Game Container Styles */
+
 .lobbyContainer {
   width: 100%;
   max-width: 600px;
@@ -171,7 +196,7 @@
   border-radius: var(--border-radius-medium);
   border: var(--border-width) solid #d6d2c4;
   box-shadow: 0 8px 32px 0 rgba(60, 50, 30, 0.10), 0 1.5px 4px 0 rgba(60, 50, 30, 0.06);
-  padding: 2.2rem 2.2rem 1.7rem 2.2rem;
+  padding: 2.2rem;
   margin-bottom: 3rem;
 }
 
@@ -193,140 +218,15 @@
   margin: 0;
 }
 
-.primaryButton {
-  background-color: #646cff;
-  color: white;
-  padding: 0.8rem;
-  font-weight: 700;
-  font-size: 1.1em;
-  margin-bottom: 1rem;
+#noGamesMessage {
+  font-family: var(--font-family-body);
+  color: var(--color-stone-grey);
+  text-align: center;
+  padding: 2rem;
 }
 
-.primaryButton:hover {
-  background-color: #535bf2;
-}
 
-.joinByIdContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 1.1rem;
-  margin-top: 1.2rem;
-  background: #f8f7f3;
-  border-radius: var(--border-radius-medium);
-  padding: 0.7rem 0.7rem 0.7rem 1rem;
-  box-shadow: 0 2px 8px 0 rgba(60, 50, 30, 0.06);
-  border: 1.5px solid #e0ddd2;
-}
-
-.joinByIdContainer > .input {
-  flex: 1 1 auto;
-  min-width: 0;
-  font-size: 1.1rem;
-  height: 48px;
-  border-radius: var(--border-radius-small);
-  border: var(--border-width) solid #d6d2c4;
-  background: #f8f7f3;
-  color: var(--color-charcoal);
-  margin: 0;
-  box-shadow: none;
-  transition: border-color 0.18s, box-shadow 0.18s;
-}
-
-.joinByIdContainer > .input:focus {
-  border-color: var(--color-hex-amber);
-  box-shadow: 0 0 0 2px var(--color-glow-yellow);
-  background: #fffbe6;
-}
-
-.joinByIdContainer > .button, .joinByIdContainer > button {
-  height: 48px;
-  min-width: 130px;
-  font-size: 1.1rem;
-  border-radius: var(--border-radius-small);
-  margin: 0;
-  box-shadow: 0 2px 8px 0 rgba(60, 50, 30, 0.10);
-}
-
-.primaryButton {
-  margin-bottom: 1.2rem;
-  width: 100%;
-  font-size: 1.15rem;
-  padding: 1rem 0;
-  border-radius: var(--border-radius-medium);
-  box-shadow: 0 2px 8px 0 rgba(60, 50, 30, 0.10);
-}
-
-/* Divider between Create New Game and join-by-ID row */
-.lobbySection > .primaryButton + .joinByIdContainer {
-  border-top: 1.5px solid #e0ddd2;
-  margin-top: 1.7rem;
-  padding-top: 1.3rem;
-}
-
-/* Logged In Header */
-.loggedInContainer {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow-y: auto; /* Allow vertical scrolling */
-  padding: 2rem; /* Add padding here instead of appContainer */
-}
-
-.header {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.headerActions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  position: relative;
-}
-
-.welcomeMessage {
-  font-size: 1.1em;
-  font-weight: 500;
-  margin: 0;
-}
-
-.logoutButton {
-  background-color: transparent;
-  border: 1px solid #555;
-  color: #a0a0a0;
-}
-.logoutButton:hover {
-  background-color: #333;
-  border-color: #777;
-}
-
-.linkButton {
-  background: none;
-  border: none;
-  color: #a0a0a0;
-  text-decoration: underline;
-  padding: 0;
-  font-size: 0.9em;
-}
-
-.linkButton:hover {
-  color: #fff;
-  border-color: transparent;
-}
-
-.divider {
-  border: none;
-  border-top: 1px solid #444;
-  margin: 2rem 0;
-}
-
-/* New Game List Item Styles */
+/* Game List Item Styles */
 .gameListItem {
   background: linear-gradient(180deg, #f9f6e8 90%, #f3ecd2 100%);
   border-radius: var(--border-radius-medium);
@@ -400,17 +300,51 @@
   font-weight: var(--font-weight-bold);
   letter-spacing: 0.03em;
   padding: 0.7rem 0;
-  border-radius: var(--border-radius-medium);
-  box-shadow: 0 2px 8px 0 rgba(60, 50, 30, 0.10);
-  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
 }
+
+/* Join By ID container */
+.joinByIdContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.1rem;
+  margin-top: 1.2rem;
+  background: #f8f7f3;
+  border-radius: var(--border-radius-medium);
+  padding: 0.7rem 0.7rem 0.7rem 1rem;
+  box-shadow: 0 2px 8px 0 rgba(60, 50, 30, 0.06);
+  border: 1.5px solid #e0ddd2;
+}
+
+.joinByIdContainer > .input {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+}
+
+.joinByIdContainer > button {
+  height: 48px;
+  min-width: 130px;
+  font-size: 1.1rem;
+  border-radius: var(--border-radius-small);
+  margin: 0;
+}
+
+/* Divider between Create New Game and join-by-ID row */
+.lobbySection > button + .joinByIdContainer {
+  border-top: 1.5px solid #e0ddd2;
+  margin-top: 1.7rem;
+  padding-top: 1.3rem;
+}
+
 
 /* Game Container Specific Styles */
 .gameMetaRow {
   display: flex;
   justify-content: space-between;
   padding: 0.5rem 0;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #e0ddd2;
+  color: var(--color-stone-grey);
 }
 
 .gameMetaRow:last-child {
@@ -418,7 +352,8 @@
 }
 
 .gameMetaRow strong {
-  color: #fff;
+  color: var(--color-charcoal);
+  font-weight: var(--font-weight-bold);
 }
 
 .gameActionContainer {
@@ -426,93 +361,3 @@
   gap: 1rem;
   margin-top: 1.5rem;
 }
-
-.hamburgerButton {
-  background: none;
-  border: 1px solid transparent;
-  cursor: pointer;
-  padding: 0.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-}
-
-.hamburgerButton:hover {
-  border-color: #646cff;
-}
-
-.menuDropdown {
-  position: absolute;
-  top: 120%;
-  right: 0;
-  background-color: #2a2a2a;
-  border: 1px solid #444;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  display: flex;
-  flex-direction: column;
-  z-index: 10;
-  width: 180px;
-  padding: 0.5rem 0;
-  overflow: hidden;
-}
-
-.menuItem {
-  background: none;
-  border: none;
-  color: #fff;
-  padding: 0.75rem 1rem;
-  text-align: left;
-  width: 100%;
-  cursor: pointer;
-  font-size: 1em;
-  border-radius: 0;
-  border-bottom: 1px solid #444;
-}
-
-.menuItem:last-child {
-  border-bottom: none;
-}
-
-.menuItem:hover {
-  background-color: #646cff;
-  border-color: #646cff;
-}
-
-#noGamesMessage, .gameMeta, .gameCode, .turnCount, .playerCount {
-  font-family: var(--font-family-body);
-  color: var(--color-stone-grey);
-}
-
-/* Button polish */
-.primaryButton, .joinButton {
-  box-shadow: 0 2px 8px 0 rgba(60, 50, 30, 0.10);
-  padding: 0.9rem 0;
-  border-radius: var(--border-radius-medium);
-  font-size: 1.1rem;
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.03em;
-  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
-}
-.primaryButton:hover, .joinButton:hover {
-  background: var(--color-glow-yellow);
-  color: var(--color-charcoal);
-  box-shadow: 0 4px 16px 0 rgba(60, 50, 30, 0.14);
-}
-
-/* Input polish */
-.input {
-  background: #f8f7f3;
-  border: var(--border-width) solid #d6d2c4;
-  color: var(--color-charcoal);
-  border-radius: var(--border-radius-small);
-  font-size: 1.1rem;
-  padding: 0.9rem 1.2rem;
-  transition: border-color 0.18s, box-shadow 0.18s;
-}
-.input:focus {
-  border-color: var(--color-hex-amber);
-  box-shadow: 0 0 0 2px var(--color-glow-yellow);
-  background: #fffbe6;
-} 

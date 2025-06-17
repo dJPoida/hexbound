@@ -9,25 +9,22 @@
 .loginForm {
   background: rgba(254, 250, 239, 0.92); /* lighter, parchment-like */
   border-radius: var(--border-radius-medium);
-  box-shadow: 0 8px 32px 0 rgba(60, 50, 30, 0.10), 0 0 0 2px var(--color-stone-grey);
-  border: 1.5px solid var(--color-stone-grey);
+  box-shadow: 0 8px 32px 0 rgba(60, 50, 30, 0.10), 0 0 0 2px rgba(0,0,0,0.05);
+  border: 1.5px solid #d6d2c4;
   padding: 3rem 2.5rem 2.5rem 2.5rem;
   max-width: 420px;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  backdrop-filter: blur(2px);
 }
 
 .loginTitle {
-  font-family: var(--font-family-main);
-  font-size: var(--font-size-heading);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-charcoal);
+  margin-top: 0;
   margin-bottom: 0.5rem;
-  letter-spacing: 0.04em;
-  text-shadow: 0 2px 8px rgba(60, 50, 30, 0.10);
+  font-size: 2em;
+  font-weight: 700;
+  color: #fff;
 }
 
 .loginSubtitle {
@@ -58,18 +55,17 @@
   width: 100%;
   padding: 0.9rem 1.2rem;
   border-radius: var(--border-radius-small);
-  border: var(--border-width) solid var(--color-stone-grey);
+  border: var(--border-width) solid #d6d2c4;
   font-family: var(--font-family-body);
   font-size: 1.1rem;
   color: var(--color-charcoal);
-  background: #f5f5f2;
-  background-clip: padding-box;
-  outline: none;
-  margin-bottom: 0.2rem;
+  background: #fdfaf2;
   transition: border-color 0.2s, background 0.2s;
 }
 .input:focus {
+  outline: none;
   border-color: var(--color-hex-amber);
+  box-shadow: 0 0 0 2px var(--color-glow-yellow);
   background: #fffbe6;
 }
 
@@ -79,27 +75,11 @@
 }
 
 .loginButton {
-  font-family: var(--font-family-main);
-  font-size: 1.3rem;
-  font-weight: var(--font-weight-bold);
-  background: var(--color-hex-amber);
-  color: var(--color-charcoal);
-  border-radius: var(--border-radius-medium);
-  border: var(--border-width) solid var(--color-charcoal);
-  box-shadow: 0 2px 8px 0 rgba(60, 50, 30, 0.10);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 0.9rem 0;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  margin-top: 0.5rem;
 }
-.loginButton:hover:not(:disabled) {
-  background: var(--color-glow-yellow);
-  color: var(--color-charcoal);
-}
-.loginButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+
+.loginButton:hover {
+  background-color: #535bf2;
 }
 
 .authError {

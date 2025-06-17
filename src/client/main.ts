@@ -3,6 +3,7 @@ import htm from 'htm';
 import { Router } from './components/Router/Router';
 import { App } from './App';
 import { StyleGuide } from './pages/StyleGuide/StyleGuide';
+import { Utils } from './pages/Utils/Utils';
 
 const html = htm.bind(h);
 
@@ -10,12 +11,15 @@ const html = htm.bind(h);
 const routes = {
   '/': () => html`<${App} />`,
   '/style-guide': () => html`<${StyleGuide} />`,
+  '/utils': () => html`<${Utils} />`,
 };
+
+const utilityRoutes = ['/style-guide', '/utils'];
 
 const appElement = document.getElementById('app');
 
 if (appElement) {
-  render(html`<${Router} routes=${routes} />`, appElement);
+  render(html`<${Router} routes=${routes} utilityRoutes=${utilityRoutes} />`, appElement);
 } else {
   console.error("Could not find element with id 'app' to mount the application.");
 } 

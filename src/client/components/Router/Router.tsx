@@ -1,8 +1,8 @@
 import { Component, h } from 'preact';
-import { useState, useEffect } from 'preact/hooks';
 
 interface RouterProps {
   routes: Record<string, () => h.JSX.Element>;
+  utilityRoutes: string[];
   fallback?: () => h.JSX.Element;
 }
 
@@ -14,15 +14,33 @@ export class Router extends Component<RouterProps> {
   };
 
   handleRouteChange = () => {
+    this.updateBodyClass(getCurrentPath());
     this.setState({ path: getCurrentPath() });
   };
 
+  updateBodyClass(path: string) {
+    const appRoot = document.getElementById('app');
+    if (appRoot) {
+      if (this.props.utilityRoutes.includes(path)) {
+        appRoot.classList.add('utility-page-active');
+      } else {
+        appRoot.classList.remove('utility-page-active');
+      }
+    }
+  }
+
   componentDidMount() {
     window.addEventListener('popstate', this.handleRouteChange);
+    this.updateBodyClass(this.state.path); // Initial load
   }
 
   componentWillUnmount() {
     window.removeEventListener('popstate', this.handleRouteChange);
+    // Clean up class on unmount
+    const appRoot = document.getElementById('app');
+    if (appRoot) {
+      appRoot.classList.remove('utility-page-active');
+    }
   }
 
   render() {

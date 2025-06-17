@@ -1,0 +1,64 @@
+.utilsContainer {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 4rem auto;
+  font-family: var(--font-family-body);
+  color: var(--color-charcoal);
+}
+
+.title {
+  font-family: var(--font-family-main);
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 1.2rem;
+  color: var(--color-stone-grey);
+  margin-bottom: 3rem;
+}
+
+.card {
+  background: var(--color-canvas-white);
+  border: 1px solid #e0ddd2;
+  border-radius: var(--border-radius-medium);
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.cardTitle {
+  font-family: var(--font-family-main);
+  font-size: 1.8rem;
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.cardDescription {
+  font-size: 1rem;
+  color: var(--color-stone-grey);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.successMessage,
+.errorMessage {
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: var(--border-radius-small);
+  text-align: center;
+  font-weight: 500;
+}
+
+.successMessage {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+.errorMessage {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ef9a9a;
+} 
