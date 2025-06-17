@@ -9,6 +9,7 @@ interface GameContainerProps {
   gameState: GameStateUpdatePayload | null;
   onIncrementCounter: () => void;
   onEndTurn: () => void;
+  connectionStatus: 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
   // TODO: Add props for game state, player info, and event handlers
   // e.g., gameId: string | null;
   //       playerNumber: number | null;
@@ -21,8 +22,36 @@ interface GameContainerProps {
 export function GameContainer({ 
   gameState,
   onIncrementCounter,
-  onEndTurn
+  onEndTurn,
+  connectionStatus
 }: GameContainerProps) {
+
+  if (connectionStatus === 'connecting') {
+    return html`
+      <div class="lobbyContainer">
+        <h3 class="sectionTitle">Connecting to Game...</h3>
+        <p>Please wait while we establish a connection to the game server.</p>
+      </div>
+    `;
+  }
+
+  if (connectionStatus === 'reconnecting') {
+    return html`
+      <div class="lobbyContainer">
+        <h3 class="sectionTitle">Connection Lost</h3>
+        <p>Attempting to reconnect to the game server...</p>
+      </div>
+    `;
+  }
+
+  if (connectionStatus === 'disconnected' && !gameState) {
+     return html`
+      <div class="lobbyContainer">
+        <h3 class="sectionTitle">Not Connected</h3>
+        <p>There is no active connection to the game server.</p>
+      </div>
+    `;
+  }
 
   const handleToggleDebug = () => {
     const debugContent = document.getElementById('debugContent');

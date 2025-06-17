@@ -14,6 +14,8 @@ import { GameStateUpdatePayload } from '../shared/types/socket.types';
 import { Game } from '../shared/types/game.types';
 import { Viewport } from './components/Viewport/Viewport';
 
+type ConnectionStatus = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
 // Initialize htm with Preact's h function
 const html = htm.bind(h);
 
@@ -36,6 +38,7 @@ export function App() {
   // Game State
   const [gameState, setGameState] = useState<GameStateUpdatePayload | null>(null);
   const [myGames, setMyGames] = useState<Game[]>([]);
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('disconnected');
 
   const fetchMyGames = async () => {
     try {
@@ -87,14 +90,19 @@ export function App() {
       const update = payload as { newCount: number };
       setGameState(prev => prev ? { ...prev, gameState: { ...prev.gameState, placeholderCounter: update.newCount } } : null);
     };
+    const handleStatusUpdate = (status: ConnectionStatus) => {
+      setConnectionStatus(status);
+    }
 
     socketService.on('game:state_update', handleGameStateUpdate);
     socketService.on('game:counter_update', handleCounterUpdate);
+    socketService.onStatus(handleStatusUpdate);
 
     return () => {
       // Cleanup listeners on component unmount
       socketService.off('game:state_update', handleGameStateUpdate);
       socketService.off('game:counter_update', handleCounterUpdate);
+      socketService.offStatus(handleStatusUpdate);
     };
   }, []);
 
@@ -178,6 +186,7 @@ export function App() {
     if (currentGameId) {
       socketService.sendMessage('game:unsubscribe', { gameId: currentGameId });
     }
+    socketService.disconnect();
     setCurrentGameId(null);
     setGameState(null);
     setCurrentView('lobby');
@@ -221,6 +230,7 @@ export function App() {
             gameState=${gameState}
             onIncrementCounter=${handleIncrementCounter}
             onEndTurn=${handleEndTurn}
+            connectionStatus=${connectionStatus}
           />
         `}
       `;
