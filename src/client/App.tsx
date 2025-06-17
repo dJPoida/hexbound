@@ -3,10 +3,11 @@ import { useEffect, useState } from 'preact/hooks';
 import htm from 'htm';
 import './global.css'; // Import global styles
 import styles from './App.module.css'; // Import CSS Modules
-import { UserLogin } from './components/UserLogin';
-import { LobbyView } from './components/LobbyView'; // Import LobbyView
-import { GameContainer } from './components/GameContainer'; // Import GameContainer
-import { Header } from './components/Header';
+import { Router } from './components/Router/Router';
+import { UserLogin } from './components/UserLogin/UserLogin';
+import { LobbyView } from './components/LobbyView/LobbyView';
+import { GameContainer } from './components/GameContainer/GameContainer';
+import { Header } from './components/Header/Header';
 import { authService } from './services/auth.service';
 import { authenticatedFetch } from './services/api.service';
 import { socketService } from './services/socket.service';
@@ -32,7 +33,7 @@ export function App() {
   const [authError, setAuthError] = useState<string | null>(null);
   
   // View and Navigation State
-  const [currentView, setCurrentView] = useState<'lobby' | 'game'>('lobby');
+  const [currentView, setCurrentView] = useState<'login' | 'lobby' | 'game'>('login');
   const [currentGameId, setCurrentGameId] = useState<string | null>(null);
 
   // Game State
@@ -205,56 +206,62 @@ export function App() {
   };
 
   const renderLoggedInView = () => {
-    return html`
-        <${Header}
-          styles=${styles}
-          currentUserName=${currentUserName}
-          onLogout=${handleLogout}
-          currentView=${currentView}
-          onNavigateToLobby=${navigateToLobby}
+    return (
+      <>
+        <Header
+          currentUserName={currentUserName}
+          onLogout={handleLogout}
+          currentView={currentView}
+          onNavigateToLobby={navigateToLobby}
         />
         
-        <hr class=${styles.divider} />
+        <hr className={styles.divider} />
         
-        ${currentView === 'lobby' && html`
-          <${LobbyView} 
-            styles=${styles} 
-            onNavigateToGame=${navigateToGame} 
-            onCreateNewGame=${handleCreateNewGame}
-            myGames=${myGames}
+        {currentView === 'lobby' && (
+          <LobbyView 
+            onNavigateToGame={navigateToGame} 
+            onCreateNewGame={handleCreateNewGame}
+            myGames={myGames}
           />
-        `}
-        ${currentView === 'game' && html`
-          <${GameContainer} 
-            styles=${styles}
-            gameState=${gameState}
-            onIncrementCounter=${handleIncrementCounter}
-            onEndTurn=${handleEndTurn}
-            connectionStatus=${connectionStatus}
+        )}
+        {currentView === 'game' && (
+          <GameContainer 
+            gameState={gameState}
+            onIncrementCounter={handleIncrementCounter}
+            onEndTurn={handleEndTurn}
+            connectionStatus={connectionStatus}
           />
-        `}
-      `;
+        )}
+      </>
+    );
   }
 
-  return html`
-    <div class=${styles.appContainer}>
-      ${!isLoggedIn ? html`
-        <${UserLogin} 
-          styles=${styles} 
-          userNameInput=${userNameInput}
-          onUserNameInputChange=${handleUserNameInputChange}
-          onLogin=${handleLogin}
-          isLoading=${isLoading}
-          error=${authError}
+  const viewToRender = () => {
+    if (!isLoggedIn) {
+      return (
+        <UserLogin 
+          userNameInput={userNameInput}
+          onUserNameInputChange={handleUserNameInputChange}
+          onLogin={handleLogin}
+          isLoading={isLoading}
+          error={authError}
         />
-      ` : html`
-        <${Viewport} pixiContainerId="pixi-container">
-          <div class=${styles.loggedInContainer}>
-            ${renderLoggedInView()}
-          </div>
-        </${Viewport}>
-      `}
-      <p class=${styles.versionDisplay}>Version: <span id="appVersionDisplay">${version}</span></p>
+      );
+    }
+
+    return (
+      <Viewport pixiContainerId="pixi-container">
+        <div className={styles.loggedInContainer}>
+          {renderLoggedInView()}
+        </div>
+      </Viewport>
+    );
+  };
+
+  return (
+    <div className={styles.appContainer}>
+      {viewToRender()}
+      <p className={styles.versionDisplay}>Version: <span id="appVersionDisplay">{version}</span></p>
     </div>
-  `;
+  );
 }
