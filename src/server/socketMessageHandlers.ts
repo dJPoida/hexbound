@@ -13,6 +13,8 @@ import { AppDataSource } from './data-source';
 import { Game } from './entities/Game.entity';
 import { User } from './entities/User.entity';
 import { RedisJSON } from '@redis/json/dist/commands';
+import { SOCKET_MESSAGE_TYPES } from '../shared/constants/socket.const';
+import { createRedisKey, REDIS_KEY_PREFIXES } from '../shared/constants/redis.const';
 
 // A simple type guard to check if a message is a valid SocketMessage
 function isSocketMessage(msg: unknown): msg is SocketMessage<unknown> {
@@ -25,42 +27,42 @@ export function handleSocketMessage(ws: AuthenticatedWebSocket, message: Buffer)
     parsedMessage = JSON.parse(message.toString());
   } catch (error) {
     console.error(`[MessageHandler] Failed to parse message from ${ws.userId}:`, message.toString());
-    ws.send(JSON.stringify({ type: 'error', payload: { message: 'Invalid JSON format.' } }));
+    ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Invalid JSON format.' } }));
     return;
   }
   
-  if (parsedMessage && parsedMessage.type === 'ping') {
-    ws.send(JSON.stringify({ type: 'pong' }));
+  if (parsedMessage && parsedMessage.type === SOCKET_MESSAGE_TYPES.PING) {
+    ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.PONG }));
     return;
   }
 
   if (!isSocketMessage(parsedMessage)) {
     console.error(`[MessageHandler] Invalid message structure from ${ws.userId}:`, parsedMessage);
-    ws.send(JSON.stringify({ type: 'error', payload: { message: 'Invalid message structure.' } }));
+    ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Invalid message structure.' } }));
     return;
   }
 
   // Route message to appropriate handler based on type
   switch (parsedMessage.type) {
-    case 'game:subscribe':
+    case SOCKET_MESSAGE_TYPES.GAME_SUBSCRIBE:
       handleSubscribe(ws, parsedMessage.payload as GameSubscribePayload);
       break;
 
-    case 'game:unsubscribe':
+    case SOCKET_MESSAGE_TYPES.GAME_UNSUBSCRIBE:
       subManager.unsubscribe(ws, (parsedMessage.payload as GameSubscribePayload).gameId);
       break;
 
-    case 'game:increment_counter':
+    case SOCKET_MESSAGE_TYPES.GAME_INCREMENT_COUNTER:
       handleIncrementCounter(ws, parsedMessage.payload as IncrementCounterPayload);
       break;
     
-    case 'game:end_turn':
+    case SOCKET_MESSAGE_TYPES.GAME_END_TURN:
         handleEndTurn(ws, parsedMessage.payload as EndTurnPayload);
         break;
 
     default:
       console.log(`[MessageHandler] Unknown message type from ${ws.userId}: ${parsedMessage.type}`);
-      ws.send(JSON.stringify({ type: 'error', payload: { message: `Unknown message type: ${parsedMessage.type}` } }));
+      ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: `Unknown message type: ${parsedMessage.type}` } }));
   }
 }
 
@@ -70,7 +72,7 @@ async function handleSubscribe(ws: AuthenticatedWebSocket, payload: GameSubscrib
 
   if (!userId) {
     // Should not happen with authenticated websockets
-    return ws.send(JSON.stringify({ type: 'error', payload: { message: 'Authentication required.' } }));
+    return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Authentication required.' } }));
   }
 
   const gameRepository = AppDataSource.getRepository(Game);
@@ -88,14 +90,14 @@ async function handleSubscribe(ws: AuthenticatedWebSocket, payload: GameSubscrib
     });
 
     if (!game) {
-      return ws.send(JSON.stringify({ type: 'error', payload: { message: `Game not found: ${gameIdentifier}` } }));
+      return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: `Game not found: ${gameIdentifier}` } }));
     }
 
     // From this point on, we use the definitive gameId from the database record.
     const gameId = game.gameId;
     const user = await userRepository.findOneBy({ userId });
     if (!user) {
-      return ws.send(JSON.stringify({ type: 'error', payload: { message: 'Authenticated user not found.' } }));
+      return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Authenticated user not found.' } }));
     }
 
     const isPlayerInGame = game.players.some((p: User) => p.userId === user.userId);
@@ -106,16 +108,17 @@ async function handleSubscribe(ws: AuthenticatedWebSocket, payload: GameSubscrib
       await gameRepository.save(game);
 
       // Add player to the game state in Redis
-      const redisGameState = (await redisClient.json.get(`game:${gameId}`)) as unknown as GameStateUpdatePayload | null;
+      const redisGameKey = createRedisKey(REDIS_KEY_PREFIXES.GAME_STATE, gameId);
+      const redisGameState = (await redisClient.json.get(redisGameKey)) as unknown as GameStateUpdatePayload | null;
 
       if (redisGameState) {
-        await redisClient.json.arrAppend(`game:${gameId}`, '$.players', {
+        await redisClient.json.arrAppend(redisGameKey, '$.players', {
           userId: user.userId,
           userName: user.userName,
         } as unknown as RedisJSON);
       } else {
         console.error(`[MessageHandler] CRITICAL: Game ${gameId} found in DB but not in Redis.`);
-        return ws.send(JSON.stringify({ type: 'error', payload: { message: 'Game state is inconsistent. Cannot join.' } }));
+        return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Game state is inconsistent. Cannot join.' } }));
       }
     }
 
@@ -123,11 +126,12 @@ async function handleSubscribe(ws: AuthenticatedWebSocket, payload: GameSubscrib
     subManager.subscribe(ws, gameId);
 
     // Fetch the latest state from Redis (which may have just been updated)
-    const latestGameState = await redisClient.json.get(`game:${gameId}`);
+    const gameKey = createRedisKey(REDIS_KEY_PREFIXES.GAME_STATE, gameId);
+    const latestGameState = await redisClient.json.get(gameKey);
 
     if (latestGameState) {
       const updateMessage: SocketMessage<GameStateUpdatePayload> = {
-        type: 'game:state_update',
+        type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE,
         payload: latestGameState as unknown as GameStateUpdatePayload,
       };
       // Broadcast the new state to ALL connected clients in the game room
@@ -135,17 +139,17 @@ async function handleSubscribe(ws: AuthenticatedWebSocket, payload: GameSubscrib
     } else {
       // This is a critical error if we reach here, as state should exist.
       console.error(`[MessageHandler] CRITICAL: Game state for ${gameId} disappeared after update.`);
-      ws.send(JSON.stringify({ type: 'error', payload: { message: `Game state for ${gameId} could not be retrieved.` } }));
+      ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: `Game state for ${gameId} could not be retrieved.` } }));
     }
   } catch (error) {
     console.error(`[MessageHandler] Error in handleSubscribe for game ${gameIdentifier}:`, error);
-    ws.send(JSON.stringify({ type: 'error', payload: { message: 'Failed to subscribe to game.' } }));
+    ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Failed to subscribe to game.' } }));
   }
 }
 
 async function handleIncrementCounter(ws: AuthenticatedWebSocket, payload: IncrementCounterPayload) {
     const { gameId } = payload;
-    const gameKey = `game:${gameId}`;
+    const gameKey = createRedisKey(REDIS_KEY_PREFIXES.GAME_STATE, gameId);
 
     try {
         // Increment the counter in Redis
@@ -154,7 +158,7 @@ async function handleIncrementCounter(ws: AuthenticatedWebSocket, payload: Incre
 
         // Prepare the update message
         const updateMessage: SocketMessage<{ gameId: string, newCount: number }> = {
-            type: 'game:counter_update',
+            type: SOCKET_MESSAGE_TYPES.GAME_COUNTER_UPDATE,
             payload: {
                 gameId,
                 newCount: newCount,
@@ -166,7 +170,7 @@ async function handleIncrementCounter(ws: AuthenticatedWebSocket, payload: Incre
 
     } catch (error) {
         console.error(`[MessageHandler] Error incrementing counter for game ${gameId}:`, error);
-        ws.send(JSON.stringify({ type: 'error', payload: { message: 'Failed to increment counter.' } }));
+        ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Failed to increment counter.' } }));
     }
 }
 
@@ -176,7 +180,7 @@ async function handleEndTurn(ws: AuthenticatedWebSocket, payload: EndTurnPayload
     console.log(`[MessageHandler] User ${ws.userId} ended turn for game ${gameId}.`);
 
     const updateMessage = {
-        type: 'game:turn_ended',
+        type: SOCKET_MESSAGE_TYPES.GAME_TURN_ENDED,
         payload: {
             gameId,
             message: `Turn ended by ${ws.userId}. It's the next player's turn!`
