@@ -39,11 +39,9 @@ export interface GameStateUpdatePayload {
   gameCode: string;
   turn: number;
   players: {
-    [playerKey: string]: {
       userId: string;
-      userName: string;
-    };
-  };
+      userName:string;
+  }[];
   // mapData: any; // To be defined later
   gameState: {
     placeholderCounter: number;

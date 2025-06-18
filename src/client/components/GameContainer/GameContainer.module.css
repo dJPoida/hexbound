@@ -1,0 +1,50 @@
+.gameContainer {
+  width: 100%;
+  max-width: 600px;
+  text-align: left;
+}
+
+.section {
+  background: rgba(254, 250, 239, 0.97);
+  border-radius: var(--border-radius-medium);
+  border: var(--border-width) solid #d6d2c4;
+  box-shadow: 0 8px 32px 0 rgba(60, 50, 30, 0.10), 0 1.5px 4px 0 rgba(60, 50, 30, 0.06);
+  padding: 2.2rem;
+  margin-bottom: 3rem;
+}
+
+.sectionTitle {
+  font-family: var(--font-family-main);
+  font-size: 2rem;
+  font-weight: var(--font-weight-bold);
+  margin-top: 0;
+  margin-bottom: 1.2rem;
+  border-bottom: 1px solid #e0ddd2;
+  padding-bottom: 0.5rem;
+  color: var(--color-charcoal);
+  letter-spacing: 0.04em;
+}
+
+/* Game Container Specific Styles */
+.gameMetaRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e0ddd2;
+  color: var(--color-stone-grey);
+}
+
+.gameMetaRow:last-child {
+  border-bottom: none;
+}
+
+.gameMetaRow strong {
+  color: var(--color-charcoal);
+  font-weight: var(--font-weight-bold);
+}
+
+.gameActionContainer {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+} 

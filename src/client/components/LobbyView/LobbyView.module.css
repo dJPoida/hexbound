@@ -1,0 +1,161 @@
+.lobbyContainer {
+  width: 100%;
+  max-width: 600px;
+  text-align: left;
+}
+
+.lobbyTitle {
+  font-family: var(--font-family-main);
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: var(--color-charcoal);
+  letter-spacing: 0.02em;
+}
+
+.lobbySection {
+  background: rgba(254, 250, 239, 0.97);
+  border-radius: var(--border-radius-medium);
+  border: var(--border-width) solid #d6d2c4;
+  box-shadow: 0 8px 32px 0 rgba(60, 50, 30, 0.10), 0 1.5px 4px 0 rgba(60, 50, 30, 0.06);
+  padding: 2.2rem;
+  margin-bottom: 3rem;
+}
+
+.sectionTitle {
+  font-family: var(--font-family-main);
+  font-size: 2rem;
+  font-weight: var(--font-weight-bold);
+  margin-top: 0;
+  margin-bottom: 1.2rem;
+  border-bottom: 1px solid #e0ddd2;
+  padding-bottom: 0.5rem;
+  color: var(--color-charcoal);
+  letter-spacing: 0.04em;
+}
+
+.gameList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.noGamesMessage {
+  font-family: var(--font-family-body);
+  color: var(--color-stone-grey);
+  text-align: center;
+  padding: 2rem;
+}
+
+
+/* Game List Item Styles */
+.gameListItem {
+  background: linear-gradient(180deg, #f9f6e8 90%, #f3ecd2 100%);
+  border-radius: var(--border-radius-medium);
+  border: var(--border-width) solid #e0ddd2;
+  box-shadow: 0 6px 24px 0 rgba(60, 50, 30, 0.10);
+  margin-bottom: 2rem;
+  padding: 1.3rem 2rem 1.3rem 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  transition: box-shadow 0.18s, transform 0.18s;
+  min-height: 84px;
+}
+.gameListItem::before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 7px;
+  border-radius: 6px;
+  background: var(--color-hex-amber);
+}
+.gameListItem:hover {
+  box-shadow: 0 12px 32px 0 rgba(60, 50, 30, 0.16);
+  transform: translateY(-2px) scale(1.012);
+}
+
+.gameInfoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1 1 auto;
+  margin-right: 2rem;
+}
+
+.gameCode {
+  font-family: var(--font-family-main);
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-charcoal);
+  margin-bottom: 0.3rem;
+  letter-spacing: 0.01em;
+}
+
+.gameMeta {
+  font-family: var(--font-family-body);
+  font-size: 0.95rem;
+  color: var(--color-stone-grey);
+  opacity: 0.85;
+  display: flex;
+  gap: 1.2rem;
+}
+
+.turnCount, .playerCount {
+  font-size: 0.95rem;
+  color: var(--color-stone-grey);
+  background: rgba(180,170,150,0.13);
+  border-radius: 5px;
+  padding: 0.1rem 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.joinButton {
+  align-self: center;
+  min-width: 110px;
+  margin-left: auto;
+  font-size: 1.1rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.03em;
+  padding: 0.7rem 0;
+}
+
+/* Join By ID container */
+.joinByIdContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.1rem;
+  margin-top: 1.2rem;
+  background: #f8f7f3;
+  border-radius: var(--border-radius-medium);
+  padding: 0.7rem 0.7rem 0.7rem 1rem;
+  box-shadow: 0 2px 8px 0 rgba(60, 50, 30, 0.06);
+  border: 1.5px solid #e0ddd2;
+}
+
+.joinByIdContainer > .input {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+}
+
+.joinByIdContainer > button {
+  height: 48px;
+  min-width: 130px;
+  font-size: 1.1rem;
+  border-radius: var(--border-radius-small);
+  margin: 0;
+}
+
+/* Divider between Create New Game and join-by-ID row */
+.lobbySection > button + .joinByIdContainer {
+  border-top: 1.5px solid #e0ddd2;
+  margin-top: 1.7rem;
+  padding-top: 1.3rem;
+} 

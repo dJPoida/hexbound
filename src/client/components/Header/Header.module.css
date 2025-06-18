@@ -1,0 +1,85 @@
+.header {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+
+.welcomeMessage {
+  font-size: 1.1em;
+  font-weight: 500;
+  margin: 0;
+  color: var(--color-charcoal);
+}
+
+.logoutButton {
+  background-color: transparent;
+  border: 1px solid #555;
+  color: #a0a0a0;
+}
+.logoutButton:hover {
+  background-color: #333;
+  border-color: #777;
+}
+
+.linkButton {
+  background: none;
+  border: none;
+  color: var(--color-stone-grey);
+  text-decoration: underline;
+  padding: 0;
+  font-size: 0.9em;
+}
+
+.linkButton:hover {
+  color: var(--color-hex-amber);
+  border-color: transparent;
+}
+
+.menuDropdown {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background-color: var(--color-canvas-white);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  width: 180px;
+  padding: 0.5rem 0;
+  overflow: hidden;
+}
+
+.menuItem {
+  background: none;
+  border: none;
+  color: var(--color-charcoal);
+  padding: 0.75rem 1rem;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  font-size: 1em;
+  border-radius: 0;
+  border-bottom: 1px solid #eee;
+}
+
+.menuItem:last-child {
+  border-bottom: none;
+}
+
+.menuItem:hover {
+  background-color: var(--color-hex-amber);
+  color: white;
+  border-color: var(--color-hex-amber);
+} 

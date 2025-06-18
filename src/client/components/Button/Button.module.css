@@ -12,6 +12,8 @@
   box-shadow: 0px 4px 0px 0px var(--border-color);
   position: relative;
   top: 0;
+  border: 1px solid transparent;
+  transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
 }
 
 .button:hover:not(:disabled) {
@@ -53,4 +55,8 @@
 .purple {
   background-color: var(--color-deep-purple);
   color: var(--color-canvas-white);
+}
+
+.fullWidth {
+  width: 100%;
 } 

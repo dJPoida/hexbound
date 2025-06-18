@@ -17,21 +17,14 @@ export const getGamesForUser = async (req: AuthenticatedRequest, res: Response) 
   const gameRepository = AppDataSource.getRepository(Game);
 
   try {
-    // Find all games with their players and then filter them in the application
-    const allGames = await gameRepository.find({
-      relations: {
-        status: true,
-        players: true,
-      },
-      order: {
-        gameId: 'DESC',
-      },
-    });
-
-    // Filter games to only include those where the current user is a player
-    const userGames = allGames.filter(game => 
-      game.players.some(player => player.userId === userId)
-    );
+    // Find all games where the current user is a player, directly in the database.
+    const userGames = await gameRepository
+      .createQueryBuilder("game")
+      .leftJoinAndSelect("game.status", "status")
+      .leftJoinAndSelect("game.players", "player")
+      .where("player.userId = :userId", { userId })
+      .orderBy("game.gameId", "DESC")
+      .getMany();
 
     // We may want to simplify the returned payload later
     res.status(200).json(userGames);
@@ -94,14 +87,15 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
 
     // 4. Initialize game state in Redis
     const initialGameState = {
+      gameId: game.gameId,
       gameCode: game.gameCode,
       turn: 1,
-      players: {
-        'player_0': {
+      players: [
+        {
           userId: user.userId,
           userName: user.userName,
         },
-      },
+      ],
       mapData: {}, // To be determined later
       gameState: {
         placeholderCounter: 0

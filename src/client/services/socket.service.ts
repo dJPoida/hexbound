@@ -2,10 +2,12 @@ import { authService } from './auth.service';
 import { SocketMessage, ErrorPayload } from '../../shared/types/socket.types';
 
 type MessageHandler = (payload: unknown) => void;
+type StatusHandler = (status: 'connecting' | 'connected' | 'reconnecting' | 'disconnected') => void;
 
 class SocketService {
   private socket: WebSocket | null = null;
   private messageHandlers = new Map<string, MessageHandler[]>();
+  private statusHandlers: StatusHandler[] = [];
   private heartbeatTimer: number | null = null;
   private missedPongs = 0;
   private reconnectTimer: number | null = null;
@@ -18,6 +20,10 @@ class SocketService {
   private BASE_RECONNECT_DELAY = 3000; // 3s
   private MAX_RECONNECT_DELAY = 30000; // 30s
 
+  private updateStatus(status: 'connecting' | 'connected' | 'reconnecting' | 'disconnected') {
+    this.statusHandlers.forEach(handler => handler(status));
+  }
+
   public connect(gameId: string) {
     this.lastGameId = gameId;
     this.isManuallyClosed = false;
@@ -25,6 +31,8 @@ class SocketService {
       console.log('WebSocket is already connected.');
       return;
     }
+
+    this.updateStatus('connecting');
 
     const token = authService.getToken();
     if (!token) {
@@ -40,6 +48,7 @@ class SocketService {
 
     this.socket.onopen = () => {
       console.log('[SocketService] WebSocket connection established.');
+      this.updateStatus('connected');
       this.reconnectAttempts = 0;
       this.startHeartbeat();
       // Automatically subscribe to the game once connected
@@ -73,7 +82,10 @@ class SocketService {
       this.stopHeartbeat();
       this.socket = null;
       if (!this.isManuallyClosed) {
+        this.updateStatus('reconnecting');
         this.scheduleReconnect();
+      } else {
+        this.updateStatus('disconnected');
       }
     };
 
@@ -141,6 +153,17 @@ class SocketService {
       if (index > -1) {
         handlers.splice(index, 1);
       }
+    }
+  }
+
+  public onStatus(handler: StatusHandler) {
+    this.statusHandlers.push(handler);
+  }
+
+  public offStatus(handler: StatusHandler) {
+    const index = this.statusHandlers.indexOf(handler);
+    if (index > -1) {
+      this.statusHandlers.splice(index, 1);
     }
   }
 

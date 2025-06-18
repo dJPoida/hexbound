@@ -5,9 +5,9 @@ import { authMiddleware } from '../middleware/auth.middleware';
 const router = express.Router();
 
 // Route to get all games for the authenticated user
-router.get('/games', authMiddleware, getGamesForUser);
+router.get('/', authMiddleware, getGamesForUser);
 
 // Route to create a new game, protected by the auth middleware
-router.post('/games', authMiddleware, createGame);
+router.post('/', authMiddleware, createGame);
 
 export default router; 
