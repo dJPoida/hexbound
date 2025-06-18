@@ -127,13 +127,18 @@ The `type` string identifies the action or event, and is defined in `src/shared/
     -   **Payload**: `{ "gameId": "string" }`
 
 ### Game State Updates (Server-to-Client)
--   **`GAME_STATE_UPDATE`**: Server sends the full, updated game state to all players in a game. This is broadcast after a player joins or a significant state change occurs.
-    -   **Payload**: The full Redis game state object.
+
+-   **`GAME_STATE_UPDATE`**: This is the primary message for synchronizing game state. The server sends this message in several scenarios:
+    -   To a single player when they subscribe or reconnect, showing them the latest state.
+    -   To a single player after they perform an action (e.g., `GAME_INCREMENT_COUNTER`) to give them instant feedback on their turn's progress.
+    -   To all players in a game when a turn ends, broadcasting the official new state.
+    -   **Payload (`ClientGameStatePayload`)**:
         ```json
         {
           "gameId": "string",
           "gameCode": "string",
-          "turn": 1,
+          "turnNumber": 1,
+          "currentPlayerId": "string",
           "players": [
             {
               "userId": "string",
@@ -146,15 +151,12 @@ The `type` string identifies the action or event, and is defined in `src/shared/
           }
         }
         ```
--   **`GAME_COUNTER_UPDATE`**: A granular state update for the placeholder counter.
-     -   **Payload**: `{ "gameId": "string", "newCount": "number" }`
--   **`GAME_TURN_ENDED`**: Notifies clients that the turn has ended.
-     -   **Payload**: `{ "gameId": "string", "message": "string" }`
 
 ### Player Actions (Client-to-Server)
--   **`GAME_INCREMENT_COUNTER`**: Client requests to increment a value.
+
+-   **`GAME_INCREMENT_COUNTER`**: Client requests to increment the placeholder counter. This action is logged by the server. The server responds by sending a `GAME_STATE_UPDATE` message with a *preview* of the new state back to only the player who sent the action.
     -   **Payload**: `{ "gameId": "string" }`
--   **`GAME_END_TURN`**: Client message to end their current turn.
+-   **`GAME_END_TURN`**: Client message to end their current turn. This causes the server to apply all logged actions, calculate the next turn, and broadcast a `GAME_STATE_UPDATE` to all players.
     -   **Payload**: `{ "gameId": "string" }`
 
 ### Client-to-Server Messages (Actions)

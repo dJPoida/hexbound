@@ -5,8 +5,9 @@ import { User } from '../entities/User.entity';
 import { generateGameCode } from '../helpers/gameCode.helper';
 import redisClient from '../redisClient';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
-import { GameStatus } from '../entities/GameStatus.entity';
-import { GameStatusValues } from '../entities/GameStatus.entity';
+import { GameStatus, GameStatusValues } from '../entities/GameStatus.entity';
+import { ServerGameState } from '../../shared/types/socket.types';
+import { RedisJSON } from '@redis/json/dist/commands';
 
 export const getGamesForUser = async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user?.userId;
@@ -86,16 +87,18 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
     await gameRepository.save(game);
 
     // 4. Initialize game state in Redis
-    const initialGameState = {
+    const initialGameState: ServerGameState = {
       gameId: game.gameId,
       gameCode: game.gameCode,
-      turn: 1,
+      turnNumber: 1,
+      currentPlayerId: user.userId, // The creator starts the first turn
       players: [
         {
           userId: user.userId,
           userName: user.userName,
         },
       ],
+      turnActionLog: [], // To store actions taken in a turn
       mapData: {}, // To be determined later
       gameState: {
         placeholderCounter: 0
@@ -103,7 +106,7 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
     };
 
     // Use JSON.SET to store the object
-    await redisClient.json.set(`game:${game.gameId}`, '$', initialGameState);
+    await redisClient.json.set(`game:${game.gameId}`, '$', initialGameState as unknown as RedisJSON);
 
     // 5. Send the successful response
     res.status(201).json({

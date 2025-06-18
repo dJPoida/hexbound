@@ -1,10 +1,11 @@
 import { useState } from 'preact/hooks';
-import { GameStateUpdatePayload } from '../../../shared/types/socket.types';
+import { ClientGameStatePayload } from '../../../shared/types/socket.types';
+import { authService } from '../../services/auth.service';
 import { Button } from '../Button/Button';
 import styles from './GameContainer.module.css';
 
 interface GameContainerProps {
-  gameState: GameStateUpdatePayload | null;
+  gameState: ClientGameStatePayload | null;
   onIncrementCounter: () => void;
   onEndTurn: () => void;
   connectionStatus: 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
@@ -53,8 +54,11 @@ export function GameContainer({
   const playerNames = gameState?.players
     ? gameState.players.map(p => p.userName).join(', ')
     : 'Loading...';
-  const currentTurn = gameState?.turn ?? '-';
+  const currentTurn = gameState?.turnNumber ?? '-';
   const counter = gameState?.gameState.placeholderCounter ?? 0;
+  
+  const currentUserId = authService.getUserId();
+  const isMyTurn = gameState?.currentPlayerId === currentUserId;
 
   return (
     <div className={styles.gameContainer}>
@@ -72,8 +76,8 @@ export function GameContainer({
           <strong>{counter}</strong>
         </div>
         <div className={styles.gameActionContainer}>
-          <Button onClick={onIncrementCounter} variant="primary">Increment</Button>
-          <Button onClick={onEndTurn} variant="secondary">End Turn</Button>
+          <Button onClick={onIncrementCounter} variant="primary" disabled={!isMyTurn}>Increment</Button>
+          <Button onClick={onEndTurn} variant="secondary" disabled={!isMyTurn}>End Turn</Button>
         </div>
       </div>
 
