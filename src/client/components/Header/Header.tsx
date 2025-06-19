@@ -11,8 +11,23 @@ interface HeaderProps {
 
 export function Header({ currentUserName, onLogout, currentView, onNavigateToLobby }: HeaderProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [copyStatus, setCopyStatus] = useState<'idle' | 'copied'>('idle');
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+    const handleCopyLink = () => {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            setCopyStatus('copied');
+            setTimeout(() => {
+                setCopyStatus('idle');
+                toggleMenu(); 
+            }, 1500);
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+            // Optionally, handle the error (e.g., show an error message)
+            toggleMenu();
+        });
+    };
 
     return (
         <div className={styles.header}>
@@ -22,7 +37,12 @@ export function Header({ currentUserName, onLogout, currentView, onNavigateToLob
                 {isMenuOpen && (
                     <div className={styles.menuDropdown}>
                         {currentView === 'game' && (
-                            <button className={styles.menuItem} onClick={() => { onNavigateToLobby(); toggleMenu(); }}>Return to Lobby</button>
+                            <>
+                                <button className={styles.menuItem} onClick={handleCopyLink}>
+                                    {copyStatus === 'copied' ? 'Link Copied!' : 'Copy Game Link'}
+                                </button>
+                                <button className={styles.menuItem} onClick={() => { onNavigateToLobby(); toggleMenu(); }}>Return to Lobby</button>
+                            </>
                         )}
                         <button className={styles.menuItem} onClick={() => { onLogout(); toggleMenu(); }}>Logout</button>
                     </div>

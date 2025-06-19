@@ -5,20 +5,25 @@ import styles from './LobbyView.module.css';
 import inputStyles from '../../App.module.css';
 
 interface LobbyViewProps {
-  onNavigateToGame: (gameId: string) => void;
+  onNavigateToGame: (gameId: string, gameCode: string) => void;
   onCreateNewGame: () => void;
   myGames: Game[];
+  currentUserId: string | null;
 }
 
-export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames }: LobbyViewProps) {
-  const gameIdInputRef = useRef<HTMLInputElement>(null);
+export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentUserId }: LobbyViewProps) {
+  const gameCodeInputRef = useRef<HTMLInputElement>(null);
 
-  const handleJoinById = () => {
-    const gameId = gameIdInputRef.current?.value.trim();
-    if (gameId) {
-      onNavigateToGame(gameId);
+  const handleJoinByCode = () => {
+    const gameCode = gameCodeInputRef.current?.value.trim();
+    if (gameCode) {
+      // This will be handled by App.tsx which will fetch the game by code
+      // For now, we'll just push a new history state and let App.tsx handle it on load
+      // A more robust solution might involve a direct API call here.
+      window.history.pushState({ gameCode }, '', `/game/${gameCode}`);
+      window.dispatchEvent(new PopStateEvent('popstate')); // Manually trigger router change
     } else {
-      console.log('Join by ID: No game ID entered');
+      console.log('Join by Code: No game code entered');
     }
   };
 
@@ -32,29 +37,31 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames }: LobbyV
           <p className={styles.noGamesMessage}>You are not currently in any games.</p>
         ) : (
           <ul className={styles.gameList}>
-            {myGames.map(game => (
-              <li key={game.gameId} className={styles.gameListItem}>
-                <div className={styles.gameInfoContainer}>
-                  <span className={styles.gameCode}>{game.gameCode}</span>
-                  <div className={styles.gameMeta}>
-                    <span className={styles.turnCount}>Turn: {game.currentTurn}</span>
-                    <span className={styles.playerCount}>
-                      Players: {
-                        (Array.isArray(game.players) ? game.players : Object.values(game.players) as Player[])
-                          .map((p: Player) => p.userName)
-                          .join(', ')
-                      }
-                    </span>
+            {myGames.map(game => {
+              const isMyTurn = game.currentPlayerId === currentUserId;
+              return (
+                <li key={game.gameId} className={styles.gameListItem}>
+                  <div className={styles.gameInfoContainer}>
+                    <span className={styles.gameCode}>{game.gameCode}</span>
+                    <div className={styles.gameMeta}>
+                      <span className={styles.playerCount}>
+                        Players: {
+                          (Array.isArray(game.players) ? game.players : Object.values(game.players) as Player[])
+                            .map((p: Player) => p.userName)
+                            .join(', ')
+                        }
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <Button
-                  onClick={() => onNavigateToGame(game.gameId)}
-                  variant="secondary"
-                >
-                  Join
-                </Button>
-              </li>
-            ))}
+                  <Button
+                    onClick={() => onNavigateToGame(game.gameId, game.gameCode)}
+                    variant={isMyTurn ? "primary" : "secondary"}
+                  >
+                    {isMyTurn ? "Your turn" : "Open"}
+                  </Button>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
@@ -70,15 +77,15 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames }: LobbyV
         <div className={styles.joinByIdContainer}>
           <input 
             type="text" 
-            ref={gameIdInputRef}
+            ref={gameCodeInputRef}
             className={inputStyles.input}
-            placeholder="Paste Game Code or ID" 
+            placeholder="Paste Game Code" 
           />
           <Button
-            onClick={handleJoinById}
+            onClick={handleJoinByCode}
             variant="secondary"
           >
-            Join by ID
+            Join by Code
           </Button>
         </div>
       </div>

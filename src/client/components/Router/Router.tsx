@@ -47,7 +47,7 @@ export class Router extends Component<RouterProps> {
     const { routes, fallback } = this.props;
     const { path } = this.state;
 
-    const PageComponent = routes[path] || fallback;
+    const PageComponent = routes[path] || (path.startsWith('/game/') ? routes['/'] : undefined) || fallback;
 
     return PageComponent ? <PageComponent /> : null;
   }

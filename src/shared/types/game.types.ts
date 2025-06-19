@@ -20,4 +20,5 @@ export interface Game {
   currentTurn: number;
   status: GameStatus;
   players: Player[];
+  currentPlayerId: string | null;
 } 
