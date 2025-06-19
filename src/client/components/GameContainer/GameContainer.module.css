@@ -47,4 +47,31 @@
   display: flex;
   gap: 1rem;
   margin-top: 1.5rem;
+}
+
+.turnStatus {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-bold);
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-radius: var(--border-radius-medium);
+  border: var(--border-width) solid #d6d2c4;
+}
+
+.turnStatus strong {
+  font-weight: var(--font-weight-extrabold);
+}
+
+.myTurn {
+  background-color: var(--color-glow-yellow);
+  color: var(--color-charcoal);
+  border-color: var(--color-hex-amber);
+  box-shadow: 0 0 12px 0 var(--color-glow-yellow);
+}
+
+.waitingTurn {
+  background-color: #f7f5f0;
+  color: var(--color-stone-grey);
+  border-color: #e0ddd2;
 } 

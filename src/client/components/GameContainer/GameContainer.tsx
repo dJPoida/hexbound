@@ -60,6 +60,34 @@ export function GameContainer({
   const currentUserId = authService.getUserId();
   const isMyTurn = gameState?.currentPlayerId === currentUserId;
 
+  const currentPlayer = gameState?.players.find(
+    (p) => p.userId === gameState.currentPlayerId
+  );
+
+  const renderTurnStatus = () => {
+    if (!gameState) {
+      return null;
+    }
+
+    if (isMyTurn) {
+      return (
+        <div className={`${styles.turnStatus} ${styles.myTurn}`}>
+          It&apos;s your turn!
+        </div>
+      );
+    }
+
+    if (currentPlayer) {
+      return (
+        <div className={`${styles.turnStatus} ${styles.waitingTurn}`}>
+          Waiting for <strong>{currentPlayer.userName}</strong>...
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <div className={styles.gameContainer}>
       <div className={styles.section}>
@@ -70,6 +98,7 @@ export function GameContainer({
       </div>
 
       <div className={styles.section}>
+        {renderTurnStatus()}
         <h3 className={styles.sectionTitle}>Actions</h3>
         <div className={styles.gameMetaRow}>
           <span>Counter:</span> 
