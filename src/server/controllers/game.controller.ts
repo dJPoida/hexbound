@@ -48,11 +48,23 @@ export const getGamesForUser = async (req: AuthenticatedRequest, res: Response) 
   try {
     // Find all games where the current user is a player, directly in the database.
     const userGames = await gameRepository
-      .createQueryBuilder("game")
-      .leftJoinAndSelect("game.status", "status")
-      .leftJoinAndSelect("game.players", "player")
-      .where("player.userId = :userId", { userId })
-      .orderBy("game.gameId", "DESC")
+      .createQueryBuilder('game')
+      .leftJoinAndSelect('game.status', 'status')
+      .leftJoinAndSelect('game.players', 'player')
+      .where(
+        (qb) => {
+          const subQuery = qb
+            .subQuery()
+            .select('g.gameId')
+            .from(Game, 'g')
+            .innerJoin('g.players', 'p')
+            .where('p.userId = :userId')
+            .getQuery();
+          return 'game.gameId IN ' + subQuery;
+        },
+      )
+      .setParameter('userId', userId)
+      .orderBy('game.gameId', 'DESC')
       .getMany();
 
     // For each game, fetch the current player ID from Redis
