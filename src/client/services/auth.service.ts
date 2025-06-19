@@ -63,4 +63,12 @@ export const authService = {
   getUserName(): string | null {
     return localStorage.getItem(USER_NAME_KEY);
   },
+
+  /**
+   * Retrieves just the user ID from localStorage.
+   * @returns The user ID, or null if it doesn't exist.
+   */
+  getUserId(): string | null {
+    return localStorage.getItem(USER_ID_KEY);
+  },
 }; 

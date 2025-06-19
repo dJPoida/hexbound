@@ -1,10 +1,11 @@
 import { useState } from 'preact/hooks';
-import { GameStateUpdatePayload } from '../../../shared/types/socket.types';
+import { ClientGameStatePayload } from '../../../shared/types/socket.types';
+import { authService } from '../../services/auth.service';
 import { Button } from '../Button/Button';
 import styles from './GameContainer.module.css';
 
 interface GameContainerProps {
-  gameState: GameStateUpdatePayload | null;
+  gameState: ClientGameStatePayload | null;
   onIncrementCounter: () => void;
   onEndTurn: () => void;
   connectionStatus: 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
@@ -53,8 +54,39 @@ export function GameContainer({
   const playerNames = gameState?.players
     ? gameState.players.map(p => p.userName).join(', ')
     : 'Loading...';
-  const currentTurn = gameState?.turn ?? '-';
+  const currentTurn = gameState?.turnNumber ?? '-';
   const counter = gameState?.gameState.placeholderCounter ?? 0;
+  
+  const currentUserId = authService.getUserId();
+  const isMyTurn = gameState?.currentPlayerId === currentUserId;
+
+  const currentPlayer = gameState?.players.find(
+    (p) => p.userId === gameState.currentPlayerId
+  );
+
+  const renderTurnStatus = () => {
+    if (!gameState) {
+      return null;
+    }
+
+    if (isMyTurn) {
+      return (
+        <div className={`${styles.turnStatus} ${styles.myTurn}`}>
+          It&apos;s your turn!
+        </div>
+      );
+    }
+
+    if (currentPlayer) {
+      return (
+        <div className={`${styles.turnStatus} ${styles.waitingTurn}`}>
+          Waiting for <strong>{currentPlayer.userName}</strong>...
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <div className={styles.gameContainer}>
@@ -66,14 +98,15 @@ export function GameContainer({
       </div>
 
       <div className={styles.section}>
+        {renderTurnStatus()}
         <h3 className={styles.sectionTitle}>Actions</h3>
         <div className={styles.gameMetaRow}>
           <span>Counter:</span> 
           <strong>{counter}</strong>
         </div>
         <div className={styles.gameActionContainer}>
-          <Button onClick={onIncrementCounter} variant="primary">Increment</Button>
-          <Button onClick={onEndTurn} variant="secondary">End Turn</Button>
+          <Button onClick={onIncrementCounter} variant="primary" disabled={!isMyTurn}>Increment</Button>
+          <Button onClick={onEndTurn} variant="secondary" disabled={!isMyTurn}>End Turn</Button>
         </div>
       </div>
 

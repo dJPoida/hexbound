@@ -4,7 +4,9 @@ import {
   GameSubscribePayload,
   IncrementCounterPayload,
   EndTurnPayload,
-  GameStateUpdatePayload,
+  ServerGameState,
+  TurnAction,
+  ClientGameStatePayload,
 } from '../shared/types/socket.types';
 import * as subManager from './socketSubscriptionManager';
 import redisClient from './redisClient';
@@ -15,10 +17,15 @@ import { User } from './entities/User.entity';
 import { RedisJSON } from '@redis/json/dist/commands';
 import { SOCKET_MESSAGE_TYPES } from '../shared/constants/socket.const';
 import { createRedisKey, REDIS_KEY_PREFIXES } from '../shared/constants/redis.const';
+import { getPlayerTurnPreview } from './helpers/gameState.helper';
+import { toClientState } from './helpers/clientState.helper';
 
 // A simple type guard to check if a message is a valid SocketMessage
 function isSocketMessage(msg: unknown): msg is SocketMessage<unknown> {
-  return typeof msg === 'object' && msg !== null && 'type' in msg && 'payload' in msg;
+  if (typeof msg !== 'object' || msg === null) {
+    return false;
+  }
+  return 'type' in msg && 'payload' in msg;
 }
 
 export function handleSocketMessage(ws: AuthenticatedWebSocket, message: Buffer) {
@@ -71,21 +78,16 @@ async function handleSubscribe(ws: AuthenticatedWebSocket, payload: GameSubscrib
   const { userId } = ws;
 
   if (!userId) {
-    // Should not happen with authenticated websockets
     return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Authentication required.' } }));
   }
 
-  const gameRepository = AppDataSource.getRepository(Game);
-  const userRepository = AppDataSource.getRepository(User);
-
   try {
-    // Regex to check if the identifier is a UUID
+    const gameRepository = AppDataSource.getRepository(Game);
+    const userRepository = AppDataSource.getRepository(User);
+    
     const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
-    const isUuid = uuidRegex.test(gameIdentifier);
-
-    // Find the game by ID or by Code
     const game = await gameRepository.findOne({
-      where: isUuid ? { gameId: gameIdentifier } : { gameCode: gameIdentifier },
+      where: uuidRegex.test(gameIdentifier) ? { gameId: gameIdentifier } : { gameCode: gameIdentifier },
       relations: { players: true, status: true },
     });
 
@@ -93,8 +95,15 @@ async function handleSubscribe(ws: AuthenticatedWebSocket, payload: GameSubscrib
       return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: `Game not found: ${gameIdentifier}` } }));
     }
 
-    // From this point on, we use the definitive gameId from the database record.
     const gameId = game.gameId;
+    const gameKey = createRedisKey(REDIS_KEY_PREFIXES.GAME_STATE, gameId);
+    const initialGameState = await redisClient.json.get(gameKey) as unknown as ServerGameState | null;
+
+    if (!initialGameState) {
+      console.error(`[MessageHandler] CRITICAL: Game ${gameId} found in DB but not in Redis.`);
+      return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Game state is inconsistent.' } }));
+    }
+
     const user = await userRepository.findOneBy({ userId });
     if (!user) {
       return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Authenticated user not found.' } }));
@@ -102,45 +111,38 @@ async function handleSubscribe(ws: AuthenticatedWebSocket, payload: GameSubscrib
 
     const isPlayerInGame = game.players.some((p: User) => p.userId === user.userId);
 
-    if (!isPlayerInGame) {
-      // Add player to the game in Postgres
-      game.players.push(user);
-      await gameRepository.save(game);
-
-      // Add player to the game state in Redis
-      const redisGameKey = createRedisKey(REDIS_KEY_PREFIXES.GAME_STATE, gameId);
-      const redisGameState = (await redisClient.json.get(redisGameKey)) as unknown as GameStateUpdatePayload | null;
-
-      if (redisGameState) {
-        await redisClient.json.arrAppend(redisGameKey, '$.players', {
-          userId: user.userId,
-          userName: user.userName,
-        } as unknown as RedisJSON);
-      } else {
-        console.error(`[MessageHandler] CRITICAL: Game ${gameId} found in DB but not in Redis.`);
-        return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Game state is inconsistent. Cannot join.' } }));
-      }
-    }
-
-    // Subscribe the user's websocket to this game's broadcast channel
+    // Subscribe the user's websocket to this game's broadcast channel first
     subManager.subscribe(ws, gameId);
 
-    // Fetch the latest state from Redis (which may have just been updated)
-    const gameKey = createRedisKey(REDIS_KEY_PREFIXES.GAME_STATE, gameId);
-    const latestGameState = await redisClient.json.get(gameKey);
+    if (!isPlayerInGame) {
+      // Logic for a new player joining the game
+      if (initialGameState.turnNumber > 1) {
+        return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'This game has already started and cannot be joined.' } }));
+      }
 
-    if (latestGameState) {
-      const updateMessage: SocketMessage<GameStateUpdatePayload> = {
-        type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE,
-        payload: latestGameState as unknown as GameStateUpdatePayload,
-      };
-      // Broadcast the new state to ALL connected clients in the game room
-      broadcastToGame(gameId, JSON.stringify(updateMessage));
+      game.players.push(user);
+      await gameRepository.save(game);
+      await redisClient.json.arrAppend(gameKey, '$.players', { userId: user.userId, userName: user.userName } as unknown as RedisJSON);
+      
+      // Fetch the state again since it was modified
+      const updatedGameState = await redisClient.json.get(gameKey) as unknown as ServerGameState;
+
+      // Broadcast the new state to all players
+      const broadcastMessage: SocketMessage<ClientGameStatePayload> = { type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE, payload: toClientState(updatedGameState) };
+      broadcastToGame(gameId, JSON.stringify(broadcastMessage));
+
     } else {
-      // This is a critical error if we reach here, as state should exist.
-      console.error(`[MessageHandler] CRITICAL: Game state for ${gameId} disappeared after update.`);
-      ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: `Game state for ${gameId} could not be retrieved.` } }));
+      // Logic for an existing player reconnecting
+      let stateToSend = initialGameState;
+      if (initialGameState.currentPlayerId === userId) {
+        // If it's the current player's turn, send them a preview of their actions
+        stateToSend = getPlayerTurnPreview(initialGameState);
+      }
+      
+      const updateMessage: SocketMessage<ClientGameStatePayload> = { type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE, payload: toClientState(stateToSend) };
+      ws.send(JSON.stringify(updateMessage));
     }
+
   } catch (error) {
     console.error(`[MessageHandler] Error in handleSubscribe for game ${gameIdentifier}:`, error);
     ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Failed to subscribe to game.' } }));
@@ -149,24 +151,37 @@ async function handleSubscribe(ws: AuthenticatedWebSocket, payload: GameSubscrib
 
 async function handleIncrementCounter(ws: AuthenticatedWebSocket, payload: IncrementCounterPayload) {
     const { gameId } = payload;
+    const { userId } = ws;
     const gameKey = createRedisKey(REDIS_KEY_PREFIXES.GAME_STATE, gameId);
 
     try {
-        // Increment the counter in Redis
-        const newCountResult = await redisClient.json.numIncrBy(gameKey, '$.gameState.placeholderCounter', 1);
-        const newCount = (newCountResult as number[])[0];
+        const gameState = await redisClient.json.get(gameKey) as unknown as ServerGameState | null;
 
-        // Prepare the update message
-        const updateMessage: SocketMessage<{ gameId: string, newCount: number }> = {
-            type: SOCKET_MESSAGE_TYPES.GAME_COUNTER_UPDATE,
-            payload: {
-                gameId,
-                newCount: newCount,
-            }
+        if (!gameState) {
+          return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: `Game state not found for game ${gameId}.` } }));
+        }
+
+        if (gameState.currentPlayerId !== userId) {
+          return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'It is not your turn.' } }));
+        }
+
+        const action: TurnAction = { type: 'INCREMENT_COUNTER' };
+        
+        // Add the action to the turn log
+        await redisClient.json.arrAppend(gameKey, '$.turnActionLog', action as unknown as RedisJSON);
+
+        // Re-fetch the state to get the updated action log
+        const updatedGameState = await redisClient.json.get(gameKey) as unknown as ServerGameState;
+
+        // Generate the preview state for the current player
+        const previewState = getPlayerTurnPreview(updatedGameState);
+
+        // Send the updated preview state back to only the current player
+        const updateMessage: SocketMessage<ClientGameStatePayload> = {
+            type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE,
+            payload: toClientState(previewState)
         };
-
-        // Broadcast the new count to everyone in the game
-        broadcastToGame(gameId, JSON.stringify(updateMessage));
+        ws.send(JSON.stringify(updateMessage));
 
     } catch (error) {
         console.error(`[MessageHandler] Error incrementing counter for game ${gameId}:`, error);
@@ -176,15 +191,55 @@ async function handleIncrementCounter(ws: AuthenticatedWebSocket, payload: Incre
 
 async function handleEndTurn(ws: AuthenticatedWebSocket, payload: EndTurnPayload) {
     const { gameId } = payload;
-    // Placeholder for turn-end logic
-    console.log(`[MessageHandler] User ${ws.userId} ended turn for game ${gameId}.`);
+    const { userId } = ws;
+    const gameKey = createRedisKey(REDIS_KEY_PREFIXES.GAME_STATE, gameId);
 
-    const updateMessage = {
-        type: SOCKET_MESSAGE_TYPES.GAME_TURN_ENDED,
-        payload: {
-            gameId,
-            message: `Turn ended by ${ws.userId}. It's the next player's turn!`
-        }
-    };
-    broadcastToGame(gameId, JSON.stringify(updateMessage));
+    try {
+      // 1. Fetch the current game state
+      const gameState = await redisClient.json.get(gameKey) as unknown as ServerGameState | null;
+
+      if (!gameState) {
+        return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: `Game state not found for game ${gameId}.` } }));
+      }
+
+      // 2. Validate that it's the user's turn
+      if (gameState.currentPlayerId !== userId) {
+        return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'It is not your turn to end.' } }));
+      }
+
+      // 3. Apply the logged actions to get the state at the end of the turn
+      const stateAfterActions = getPlayerTurnPreview(gameState);
+
+      // 4. Determine the next player
+      const currentPlayerIndex = stateAfterActions.players.findIndex((p: { userId: string; }) => p.userId === userId);
+      const nextPlayerIndex = (currentPlayerIndex + 1) % stateAfterActions.players.length;
+      const nextPlayer = stateAfterActions.players[nextPlayerIndex];
+
+      // 5. Determine the next turn number
+      const newTurnNumber = currentPlayerIndex === stateAfterActions.players.length - 1 
+        ? stateAfterActions.turnNumber + 1 
+        : stateAfterActions.turnNumber;
+
+      // 6. Create the new game state object
+      const newGameState: ServerGameState = {
+        ...stateAfterActions,
+        turnActionLog: [], // Clear the log
+        currentPlayerId: nextPlayer.userId,
+        turnNumber: newTurnNumber,
+      };
+
+      // 7. Atomically update the entire game state in Redis
+      await redisClient.json.set(gameKey, '$', newGameState as unknown as RedisJSON);
+
+      // 8. Broadcast the new state to all players in the game
+      const updateMessage: SocketMessage<ClientGameStatePayload> = {
+        type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE,
+        payload: toClientState(newGameState),
+      };
+      broadcastToGame(gameId, JSON.stringify(updateMessage));
+
+    } catch (error) {
+      console.error(`[MessageHandler] Error ending turn for game ${gameId}:`, error);
+      ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Failed to end turn.' } }));
+    }
 } 

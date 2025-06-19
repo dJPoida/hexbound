@@ -11,7 +11,7 @@ import { Header } from './components/Header/Header';
 import { authService } from './services/auth.service';
 import { authenticatedFetch } from './services/api.service';
 import { socketService } from './services/socket.service';
-import { GameStateUpdatePayload } from '../shared/types/socket.types';
+import { ClientGameStatePayload } from '../shared/types/socket.types';
 import { Game } from '../shared/types/game.types';
 import { Viewport } from './components/Viewport/Viewport';
 
@@ -37,9 +37,25 @@ export function App() {
   const [currentGameId, setCurrentGameId] = useState<string | null>(null);
 
   // Game State
-  const [gameState, setGameState] = useState<GameStateUpdatePayload | null>(null);
+  const [gameState, setGameState] = useState<ClientGameStatePayload | null>(null);
   const [myGames, setMyGames] = useState<Game[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('disconnected');
+
+  const getGameByCode = async (gameCode: string) => {
+    try {
+      const response = await authenticatedFetch(`/api/games/by-code/${gameCode}`);
+      if (response.ok) {
+        const game = await response.json();
+        navigateToGame(game.gameId, game.gameCode);
+      } else {
+        // Handle not found or other errors
+        console.error('Game not found for code:', gameCode);
+        navigateToLobby(); // Or show a not-found message
+      }
+    } catch (error) {
+      console.error('Error fetching game by code:', error);
+    }
+  };
 
   const fetchMyGames = async () => {
     try {
@@ -80,17 +96,26 @@ export function App() {
       setCurrentUserId(session.userId);
       setCurrentUserName(session.userName);
       setIsLoggedIn(true);
-      setCurrentView('lobby');
       fetchMyGames(); // Fetch games if session exists
+
+      // Check URL for game code
+      const path = window.location.pathname;
+      const gameIdMatch = path.match(/^\/game\/([a-zA-Z0-9-]+)/);
+      if (gameIdMatch) {
+        const gameCode = gameIdMatch[1];
+        getGameByCode(gameCode);
+      } else {
+        setCurrentView('lobby');
+      }
     }
 
     // Setup socket listeners
     const handleGameStateUpdate = (payload: unknown) => {
-      setGameState(payload as GameStateUpdatePayload);
+      setGameState(payload as ClientGameStatePayload);
     };
     const handleCounterUpdate = (payload: unknown) => {
       const update = payload as { newCount: number };
-      setGameState(prev => prev ? { ...prev, gameState: { ...prev.gameState, placeholderCounter: update.newCount } } : null);
+      setGameState((prev: ClientGameStatePayload | null) => prev ? { ...prev, gameState: { ...prev.gameState, placeholderCounter: update.newCount } } : null);
     };
     const handleStatusUpdate = (status: ConnectionStatus) => {
       setConnectionStatus(status);
@@ -100,13 +125,42 @@ export function App() {
     socketService.on('game:counter_update', handleCounterUpdate);
     socketService.onStatus(handleStatusUpdate);
 
+    const handlePopState = () => {
+      const path = window.location.pathname;
+      const gameIdMatch = path.match(/^\/game\/([a-zA-Z0-9-]+)/);
+      if (gameIdMatch) {
+        if(isLoggedIn) {
+          const gameCode = gameIdMatch[1];
+          getGameByCode(gameCode);
+        }
+      } else {
+        navigateToLobby();
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
     return () => {
       // Cleanup listeners on component unmount
       socketService.off('game:state_update', handleGameStateUpdate);
       socketService.off('game:counter_update', handleCounterUpdate);
       socketService.offStatus(handleStatusUpdate);
+      window.removeEventListener('popstate', handlePopState);
     };
-  }, []);
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (currentView === 'lobby' && isLoggedIn) {
+      // Fetch games immediately when entering the lobby
+      fetchMyGames();
+
+      // Set up an interval to poll every 60 seconds
+      const pollInterval = setInterval(fetchMyGames, 60000);
+
+      // Clean up the interval when the component unmounts or the view changes
+      return () => clearInterval(pollInterval);
+    }
+  }, [currentView, isLoggedIn]);
 
   const handleUserNameInputChange = (name: string) => {
     setUserNameInput(name);
@@ -135,9 +189,17 @@ export function App() {
         setCurrentUserId(data.userId);
         setCurrentUserName(data.userName);
         setIsLoggedIn(true);
-        setCurrentView('lobby');
         setUserNameInput('');
         fetchMyGames(); // Fetch games after successful login
+
+        const path = window.location.pathname;
+        const gameIdMatch = path.match(/^\/game\/([a-zA-Z0-9-]+)/);
+        if (gameIdMatch) {
+          const gameCode = gameIdMatch[1];
+          getGameByCode(gameCode);
+        } else {
+          setCurrentView('lobby');
+        }
       } else {
         setAuthError(data.message || 'Authentication failed.');
       }
@@ -159,7 +221,7 @@ export function App() {
       if (response.ok) {
         console.log('Game created successfully:', data);
         fetchMyGames(); // Refresh the game list
-        navigateToGame(data.gameId);
+        navigateToGame(data.gameId, data.gameCode);
       } else {
         setAuthError(data.message || 'Failed to create game.');
       }
@@ -178,10 +240,11 @@ export function App() {
     authService.clearAuthToken(); // Use the auth service to clear the session but keep the user name
   };
 
-  const navigateToGame = (gameId: string) => {
+  const navigateToGame = (gameId: string, gameCode: string) => {
     setCurrentGameId(gameId);
     setCurrentView('game');
     socketService.connect(gameId);
+    window.history.pushState({ gameId }, '', `/game/${gameCode}`);
   };
 
   const navigateToLobby = () => {
@@ -192,6 +255,7 @@ export function App() {
     setCurrentGameId(null);
     setGameState(null);
     setCurrentView('lobby');
+    window.history.pushState({}, '', '/');
   };
 
   const handleIncrementCounter = () => {
@@ -223,9 +287,10 @@ export function App() {
             onNavigateToGame={navigateToGame} 
             onCreateNewGame={handleCreateNewGame}
             myGames={myGames}
+            currentUserId={currentUserId}
           />
         )}
-        {currentView === 'game' && (
+        {currentView === 'game' && gameState && (
           <GameContainer 
             gameState={gameState}
             onIncrementCounter={handleIncrementCounter}

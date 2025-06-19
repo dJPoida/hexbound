@@ -5,8 +5,37 @@ import { User } from '../entities/User.entity';
 import { generateGameCode } from '../helpers/gameCode.helper';
 import redisClient from '../redisClient';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
-import { GameStatus } from '../entities/GameStatus.entity';
-import { GameStatusValues } from '../entities/GameStatus.entity';
+import { GameStatus, GameStatusValues } from '../entities/GameStatus.entity';
+import { ServerGameState } from '../../shared/types/socket.types';
+import { RedisJSON } from '@redis/json/dist/commands';
+
+export const getGameByCode = async (req: Request, res: Response) => {
+  const { gameCode } = req.params;
+
+  if (!gameCode) {
+    return res.status(400).json({ message: 'Game code is required.' });
+  }
+
+  const gameRepository = AppDataSource.getRepository(Game);
+
+  try {
+    const game = await gameRepository
+      .createQueryBuilder("game")
+      .leftJoinAndSelect("game.status", "status")
+      .leftJoinAndSelect("game.players", "player")
+      .where("game.gameCode = :gameCode", { gameCode })
+      .getOne();
+
+    if (!game) {
+      return res.status(404).json({ message: 'Game not found.' });
+    }
+
+    res.status(200).json(game);
+  } catch (error) {
+    console.error(`[API /games/by-code/${gameCode} GET] Error fetching game:`, error);
+    res.status(500).json({ message: 'Error fetching game', error: (error as Error).message });
+  }
+};
 
 export const getGamesForUser = async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user?.userId;
@@ -19,15 +48,38 @@ export const getGamesForUser = async (req: AuthenticatedRequest, res: Response) 
   try {
     // Find all games where the current user is a player, directly in the database.
     const userGames = await gameRepository
-      .createQueryBuilder("game")
-      .leftJoinAndSelect("game.status", "status")
-      .leftJoinAndSelect("game.players", "player")
-      .where("player.userId = :userId", { userId })
-      .orderBy("game.gameId", "DESC")
+      .createQueryBuilder('game')
+      .leftJoinAndSelect('game.status', 'status')
+      .leftJoinAndSelect('game.players', 'player')
+      .where(
+        (qb) => {
+          const subQuery = qb
+            .subQuery()
+            .select('g.gameId')
+            .from(Game, 'g')
+            .innerJoin('g.players', 'p')
+            .where('p.userId = :userId')
+            .getQuery();
+          return 'game.gameId IN ' + subQuery;
+        },
+      )
+      .setParameter('userId', userId)
+      .orderBy('game.gameId', 'DESC')
       .getMany();
 
+    // For each game, fetch the current player ID from Redis
+    const gamesWithCurrentPlayer = await Promise.all(
+      userGames.map(async (game) => {
+        const gameState = await redisClient.json.get(`game:${game.gameId}`) as ServerGameState | null;
+        return {
+          ...game,
+          currentPlayerId: gameState?.currentPlayerId || null,
+        };
+      })
+    );
+
     // We may want to simplify the returned payload later
-    res.status(200).json(userGames);
+    res.status(200).json(gamesWithCurrentPlayer);
 
   } catch (error) {
     console.error('[API /games GET] Error fetching games:', error);
@@ -86,16 +138,18 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
     await gameRepository.save(game);
 
     // 4. Initialize game state in Redis
-    const initialGameState = {
+    const initialGameState: ServerGameState = {
       gameId: game.gameId,
       gameCode: game.gameCode,
-      turn: 1,
+      turnNumber: 1,
+      currentPlayerId: user.userId, // The creator starts the first turn
       players: [
         {
           userId: user.userId,
           userName: user.userName,
         },
       ],
+      turnActionLog: [], // To store actions taken in a turn
       mapData: {}, // To be determined later
       gameState: {
         placeholderCounter: 0
@@ -103,7 +157,7 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
     };
 
     // Use JSON.SET to store the object
-    await redisClient.json.set(`game:${game.gameId}`, '$', initialGameState);
+    await redisClient.json.set(`game:${game.gameId}`, '$', initialGameState as unknown as RedisJSON);
 
     // 5. Send the successful response
     res.status(201).json({

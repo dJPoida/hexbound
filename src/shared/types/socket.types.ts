@@ -32,12 +32,37 @@ export interface EndTurnPayload {
 
 // --- Server -> Client Message Payloads ---
 
-// The full game state sent upon subscription or major updates
-export interface GameStateUpdatePayload {
+// This represents a single action taken by a player during their turn.
+// It will be expanded as more actions are added.
+export type TurnAction = {
+  type: 'INCREMENT_COUNTER';
+};
+
+// The full, internal game state stored in Redis
+export interface ServerGameState {
   [key: string]: unknown; // To allow for use as a RedisJSON object
   gameId: string;
   gameCode: string;
-  turn: number;
+  turnNumber: number;
+  currentPlayerId: string;
+  players: {
+      userId: string;
+      userName:string;
+  }[];
+  turnActionLog: TurnAction[];
+  // mapData: any; // To be defined later
+  gameState: {
+    placeholderCounter: number;
+  };
+}
+
+// The game state payload that is sent to the client.
+// It omits server-only fields like the turn action log.
+export interface ClientGameStatePayload {
+  gameId: string;
+  gameCode: string;
+  turnNumber: number;
+  currentPlayerId: string;
   players: {
       userId: string;
       userName:string;
