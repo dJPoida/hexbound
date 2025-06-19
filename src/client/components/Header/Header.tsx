@@ -31,7 +31,7 @@ export function Header({ currentUserName, onLogout, currentView, onNavigateToLob
 
     return (
         <div className={styles.header}>
-            <p className={styles.welcomeMessage}>Welcome, {currentUserName}!</p>
+            <p className={styles.welcomeMessage}>{currentUserName}</p>
             <div className={styles.headerActions}>
                 <MenuButton onClick={toggleMenu} ariaLabel="Open menu" variant="secondary" />
                 {isMenuOpen && (

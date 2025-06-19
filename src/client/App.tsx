@@ -15,6 +15,8 @@ import { ClientGameStatePayload } from '../shared/types/socket.types';
 import { Game } from '../shared/types/game.types';
 import { Viewport } from './components/Viewport/Viewport';
 import { GameLayout } from './components/GameLayout/GameLayout';
+import { ActionBar } from './components/ActionBar/ActionBar';
+import { Button } from './components/Button/Button';
 
 type ConnectionStatus = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
@@ -305,7 +307,14 @@ export function App() {
       />
     );
 
-    const footerContent = <div>Footer Placeholder</div>;
+    let footerContent = null;
+    if (currentView === 'game') {
+      footerContent = (
+        <ActionBar>
+          <Button onClick={handleEndTurn} variant="primary">End Turn</Button>
+        </ActionBar>
+      );
+    }
 
     return (
       <GameLayout

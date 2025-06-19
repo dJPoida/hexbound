@@ -99,15 +99,6 @@ export function GameContainer({
 
       <div className={styles.section}>
         {renderTurnStatus()}
-        <h3 className={styles.sectionTitle}>Actions</h3>
-        <div className={styles.gameMetaRow}>
-          <span>Counter:</span> 
-          <strong>{counter}</strong>
-        </div>
-        <div className={styles.gameActionContainer}>
-          <Button onClick={onIncrementCounter} variant="primary" disabled={!isMyTurn}>Increment</Button>
-          <Button onClick={onEndTurn} variant="secondary" disabled={!isMyTurn}>End Turn</Button>
-        </div>
       </div>
 
       <div className={styles.section}>
