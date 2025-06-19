@@ -14,6 +14,7 @@ import { socketService } from './services/socket.service';
 import { ClientGameStatePayload } from '../shared/types/socket.types';
 import { Game } from '../shared/types/game.types';
 import { Viewport } from './components/Viewport/Viewport';
+import { GameLayout } from './components/GameLayout/GameLayout';
 
 type ConnectionStatus = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
@@ -271,36 +272,49 @@ export function App() {
   };
 
   const renderLoggedInView = () => {
-    return (
-      <>
-        <Header
-          currentUserName={currentUserName}
-          onLogout={handleLogout}
-          currentView={currentView}
-          onNavigateToLobby={navigateToLobby}
-        />
-        
-        <hr className={styles.divider} />
-        
-        {currentView === 'lobby' && (
-          <LobbyView 
-            onNavigateToGame={navigateToGame} 
+    const mainContent = () => {
+      if (currentView === 'lobby') {
+        return (
+          <LobbyView
+            onNavigateToGame={navigateToGame}
             onCreateNewGame={handleCreateNewGame}
             myGames={myGames}
             currentUserId={currentUserId}
           />
-        )}
-        {currentView === 'game' && gameState && (
-          <GameContainer 
+        );
+      }
+      if (currentView === 'game' && gameState) {
+        return (
+          <GameContainer
             gameState={gameState}
             onIncrementCounter={handleIncrementCounter}
             onEndTurn={handleEndTurn}
             connectionStatus={connectionStatus}
           />
-        )}
-      </>
+        );
+      }
+      return null;
+    };
+
+    const headerContent = (
+      <Header
+        currentUserName={currentUserName}
+        onLogout={handleLogout}
+        currentView={currentView}
+        onNavigateToLobby={navigateToLobby}
+      />
     );
-  }
+
+    const footerContent = <div>Footer Placeholder</div>;
+
+    return (
+      <GameLayout
+        header={headerContent}
+        main={mainContent()}
+        footer={footerContent}
+      />
+    );
+  };
 
   const viewToRender = () => {
     if (!isLoggedIn) {
@@ -315,13 +329,7 @@ export function App() {
       );
     }
 
-    return (
-      <Viewport pixiContainerId="pixi-container">
-        <div className={styles.loggedInContainer}>
-          {renderLoggedInView()}
-        </div>
-      </Viewport>
-    );
+    return renderLoggedInView();
   };
 
   return (
