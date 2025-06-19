@@ -16,17 +16,17 @@ Land tiles can be in 1 of **(?)** levels of elevation. Refer to Unit Movement, T
 |Plains| |Y |
 |Forest|Y |Y |
 |Tundra|Y | |
-|Swamp| | |
+|Bog| | |
 
 ### Terrain Upgrades
 
 |Terrain Type|Upgrade|Output|Unlock|
 |---|---|---|---|
 |Grass|Farm |Food|Scout|
-|Rocky|Mine |Gold|Swordsmen|
+|Rocky|Mine |Gold|Blacksmith|
 |Hills|Monument |Worship||
 |Desert|Moisture Trap |Food|Scout|
 |Plains|Pasture|Food|Cavalry Horses|
 |Forest|Lumberjack |Gold|Archers|
 |Tundra|Trapping Hut|Gold|Siege Mammoths|
-|Bog|Peat Pits||Flaming Weapons |
+|Bog|Peat Pits||Engineers Guild|
