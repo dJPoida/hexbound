@@ -131,6 +131,12 @@ Client-side code is organized to promote modularity and maintainability.
   - Style files should have a `.module.css` extension (e.g., `MyComponent.module.css`).
   - These styles are imported into the component file and applied as objects (e.g., `styles.myClass`). This locally scopes class names and avoids global style conflicts.
 
+# Backend Development & TypeORM
+- **`reflect-metadata` Requirement**: For all TypeORM operations, especially migration generation, ensure `import 'reflect-metadata';` is the very first import in the server's entry point (`src/server/main.ts`).
+- **Explicit Column Types**: If TypeORM migration generation fails with a type inference error (e.g., "cannot be guessed"), explicitly define the column type (e.g., `@Column('varchar')`) in the entity definition.
+- **Entity Registration**: When a new TypeORM entity is created, it **must** be added to the `entities` array in the `DataSource` configuration file (`src/server/data-source.ts`).
+- **NPM Script Arguments**: Before running npm scripts that pass arguments to an underlying command (like `typeorm`), verify the correct syntax in `package.json`, particularly the use of `--` to separate arguments.
+
 # Asset Management
 
 ## Icon Font Workflow
