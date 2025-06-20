@@ -60,4 +60,37 @@ self.addEventListener('push', (event: PushEvent) => {
   event.waitUntil(showNotification());
 });
 
+self.addEventListener('notificationclick', (event: NotificationEvent) => {
+  console.log('[SW] Notification click received.', event.notification.data);
+  
+  event.notification.close();
+
+  const openGamePromise = async () => {
+    const gameId = event.notification.data?.gameId;
+    const gameUrl = gameId ? `/game/${gameId}` : '/';
+    
+    const allClients = await self.clients.matchAll({
+      includeUncontrolled: true,
+      type: 'window',
+    });
+
+    // Check if there's already a window open with the app
+    const gameClient = allClients.find(client => {
+      // Use URL constructor to easily parse the path
+      const clientPath = new URL(client.url).pathname;
+      return clientPath.startsWith('/game/');
+    });
+
+    if (gameClient) {
+      console.log('[SW] Found an existing game window. Focusing it.');
+      return gameClient.focus();
+    } else {
+      console.log(`[SW] No existing window found. Opening new one at ${gameUrl}`);
+      return self.clients.openWindow(gameUrl);
+    }
+  };
+
+  event.waitUntil(openGamePromise());
+});
+
 // The manual fetch handler has been removed, as it can conflict with Workbox's precaching. 
