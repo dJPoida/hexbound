@@ -274,6 +274,8 @@ export function App() {
   };
 
   const renderLoggedInView = () => {
+    const isMyTurn = gameState?.currentPlayerId === currentUserId;
+
     const mainContent = () => {
       if (currentView === 'lobby') {
         return (
@@ -292,6 +294,7 @@ export function App() {
             onIncrementCounter={handleIncrementCounter}
             onEndTurn={handleEndTurn}
             connectionStatus={connectionStatus}
+            isMyTurn={isMyTurn}
           />
         );
       }
@@ -311,7 +314,7 @@ export function App() {
     if (currentView === 'game') {
       footerContent = (
         <ActionBar>
-          <Button onClick={handleEndTurn} variant="primary">End Turn</Button>
+          <Button onClick={handleEndTurn} variant="secondary" disabled={!isMyTurn}>End Turn</Button>
         </ActionBar>
       );
     }

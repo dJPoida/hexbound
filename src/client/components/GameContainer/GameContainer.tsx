@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 import { ClientGameStatePayload } from '../../../shared/types/socket.types';
 import { authService } from '../../services/auth.service';
 import { Button } from '../Button/Button';
+import { Dialog } from '../Dialog/Dialog';
 import styles from './GameContainer.module.css';
 
 interface GameContainerProps {
@@ -9,41 +10,28 @@ interface GameContainerProps {
   onIncrementCounter: () => void;
   onEndTurn: () => void;
   connectionStatus: 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+  isMyTurn: boolean;
 }
 
 export function GameContainer({ 
   gameState,
   onIncrementCounter,
   onEndTurn,
-  connectionStatus
+  connectionStatus,
+  isMyTurn
 }: GameContainerProps) {
   const [isDebugVisible, setIsDebugVisible] = useState(false);
 
   if (connectionStatus === 'connecting') {
-    return (
-      <div className={styles.gameContainer}>
-        <h3 className={styles.sectionTitle}>Connecting to Game...</h3>
-        <p>Please wait while we establish a connection to the game server.</p>
-      </div>
-    );
+    return <Dialog title="Connecting...">Connecting to Game...</Dialog>;
   }
 
   if (connectionStatus === 'reconnecting') {
-    return (
-      <div className={styles.gameContainer}>
-        <h3 className={styles.sectionTitle}>Connection Lost</h3>
-        <p>Attempting to reconnect to the game server...</p>
-      </div>
-    );
+    return <Dialog title="Reconnecting...">Connection to the server has been lost. Attempting to reconnect...</Dialog>;
   }
 
   if (connectionStatus === 'disconnected' && !gameState) {
-     return (
-      <div className={styles.gameContainer}>
-        <h3 className={styles.sectionTitle}>Not Connected</h3>
-        <p>There is no active connection to the game server.</p>
-      </div>
-    );
+     return <Dialog title="Disconnected">There is no active connection to the game server.</Dialog>;
   }
 
   const handleToggleDebug = () => {
@@ -57,24 +45,15 @@ export function GameContainer({
   const currentTurn = gameState?.turnNumber ?? '-';
   const counter = gameState?.gameState.placeholderCounter ?? 0;
   
-  const currentUserId = authService.getUserId();
-  const isMyTurn = gameState?.currentPlayerId === currentUserId;
-
   const currentPlayer = gameState?.players.find(
     (p) => p.userId === gameState.currentPlayerId
   );
 
   const renderTurnStatus = () => {
-    if (!gameState) {
-      return null;
-    }
+    if (!gameState) return null;
 
     if (isMyTurn) {
-      return (
-        <div className={`${styles.turnStatus} ${styles.myTurn}`}>
-          It&apos;s your turn!
-        </div>
-      );
+      return <div className={`${styles.turnStatus} ${styles.myTurn}`}>It&apos;s your turn!</div>;
     }
 
     if (currentPlayer) {
@@ -84,14 +63,12 @@ export function GameContainer({
         </div>
       );
     }
-
     return null;
   };
 
   return (
-    <div className={styles.gameContainer}>
+    <Dialog title="Game Status">
       <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Game Info</h3>
         <div className={styles.gameMetaRow}><span>Game Code:</span> <strong>{gameCode}</strong></div>
         <div className={styles.gameMetaRow}><span>Players:</span> <strong>{playerNames}</strong></div>
         <div className={styles.gameMetaRow}><span>Current Turn:</span> <strong>{currentTurn}</strong></div>
@@ -102,8 +79,15 @@ export function GameContainer({
       </div>
 
       <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Debug</h3>
-        <Button onClick={handleToggleDebug} variant="secondary">
+        <div className={styles.gameMetaRow}>
+          <span>Counter:</span> 
+          <strong>{counter}</strong>
+        </div>
+        <Button onClick={onIncrementCounter} variant="primary" disabled={!isMyTurn} fullWidth={true}>Increment</Button>
+      </div>
+
+      <div className={styles.section}>
+        <Button onClick={handleToggleDebug} variant="secondary" fullWidth={true}>
           {isDebugVisible ? 'Hide' : 'Show'} Debug Info
         </Button>
         {isDebugVisible && (
@@ -115,6 +99,6 @@ export function GameContainer({
           </div>
         )}
       </div>
-    </div>
+    </Dialog>
   );
 } 

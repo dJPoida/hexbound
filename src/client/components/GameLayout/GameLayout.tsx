@@ -11,11 +11,11 @@ interface GameLayoutProps {
 export function GameLayout({ header, main, footer }: GameLayoutProps) {
   return (
     <div class={styles.gameLayout}>
+      <header class={styles.header}>{header}</header>
+      <main class={styles.mainContent}>{main}</main>
       <div class={styles.viewportContainer}>
         <Viewport pixiContainerId="pixi-container">{null}</Viewport>
       </div>
-      <header class={styles.header}>{header}</header>
-      <main class={styles.mainContent}>{main}</main>
       <footer class={styles.footer}>{footer}</footer>
     </div>
   );

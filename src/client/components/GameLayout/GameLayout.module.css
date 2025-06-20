@@ -1,6 +1,7 @@
 .gameLayout {
   display: grid;
   grid-template-rows: auto 1fr auto;
+  grid-template-columns: 1fr;
   grid-template-areas:
     'header'
     'main'
@@ -59,4 +60,32 @@
 /* Enable pointer events for children of the footer */
 .footer > * {
   pointer-events: auto;
+}
+
+/* Responsive styles for mobile devices */
+@media (max-width: 768px) {
+  .gameLayout {
+    /* Re-define the grid for a vertical stacking layout */
+    grid-template-rows: auto auto 1fr auto; /* Header, Main, Viewport, Footer */
+    grid-template-areas:
+      'header'
+      'main'
+      'viewport'
+      'footer';
+    position: static; /* Unset relative positioning to allow normal flow */
+    height: 100%; /* Use 100% instead of 100vh for better mobile browser behavior */
+  }
+
+  .viewportContainer {
+    position: static; /* Bring the viewport into the document flow */
+    grid-area: viewport;
+    height: 100%;
+    width: 100%;
+    /* No z-index needed as it's part of the flow now */
+  }
+
+  .mainContent {
+    /* On mobile, align dialogs to the top instead of centering them vertically */
+    align-items: flex-start;
+  }
 } 
