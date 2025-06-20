@@ -13,10 +13,10 @@ router.use(express.json());
 // More specific routes should be registered first.
 // These sub-routers now correctly handle their own paths.
 router.use('/games', gameRoutes);
+router.use('/user', userRoutes);
 router.use('/utils', utilsRoutes);
 
 // General routes that are not nested under a specific resource
-router.use('/', userRoutes); // Handles POST /api/login
 router.use('/', miscRoutes); // Handles GET /api/version, etc.
 
 export default router; 

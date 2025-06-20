@@ -43,6 +43,13 @@ Make sure you have the following software installed:
     ```
     The default values in `.env.example` are configured to work with the Docker setup out-of-the-box.
 
+    **Note on VAPID Keys for Push Notifications:**
+    The `.env.local` file requires VAPID keys for sending web push notifications. For local development, you can use the example keys provided in `.env.example`. For a production environment, you **must** generate your own secure keys:
+    ```sh
+    npx web-push generate-vapid-keys
+    ```
+    Then, update the `VITE_VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY` variables in your production environment configuration.
+
 ## Usage
 
 1.  **Start Background Services**

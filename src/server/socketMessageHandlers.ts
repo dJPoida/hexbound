@@ -19,6 +19,7 @@ import { SOCKET_MESSAGE_TYPES } from '../shared/constants/socket.const';
 import { createRedisKey, REDIS_KEY_PREFIXES } from '../shared/constants/redis.const';
 import { getPlayerTurnPreview } from './helpers/gameState.helper';
 import { toClientState } from './helpers/clientState.helper';
+import { pushService } from './services/push.service';
 
 // A simple type guard to check if a message is a valid SocketMessage
 function isSocketMessage(msg: unknown): msg is SocketMessage<unknown> {
@@ -214,6 +215,17 @@ async function handleEndTurn(ws: AuthenticatedWebSocket, payload: EndTurnPayload
       const currentPlayerIndex = stateAfterActions.players.findIndex((p: { userId: string; }) => p.userId === userId);
       const nextPlayerIndex = (currentPlayerIndex + 1) % stateAfterActions.players.length;
       const nextPlayer = stateAfterActions.players[nextPlayerIndex];
+
+      // Send a push notification to the next player
+      if (nextPlayer) {
+        const notificationPayload = {
+          title: 'Hexbound: Your Turn!',
+          body: `It's your turn to make a move in game ${stateAfterActions.gameCode}.`,
+          data: { gameId: stateAfterActions.gameId }
+        };
+        // We don't need to wait for this to complete
+        pushService.sendNotification(nextPlayer.userId, notificationPayload);
+      }
 
       // 5. Determine the next turn number
       const newTurnNumber = currentPlayerIndex === stateAfterActions.players.length - 1 

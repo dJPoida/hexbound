@@ -1,0 +1,66 @@
+/* Dialog.module.css */
+.dialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  background-image: var(--texture-paper);
+  background-color: var(--color-canvas-white);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Ensures the border-radius is respected by children */
+  border: 2px solid var(--color-stone-grey);
+  /* The dialog is now a normal block, centered by its parent (.mainContent) */
+  /* No position, z-index, or full-screen dimensions needed */
+}
+
+.dialogHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 2px solid var(--color-stone-grey);
+}
+
+.dialogTitle {
+  font-family: var(--font-family-display);
+  font-size: 1.8rem;
+  margin: 0;
+  color: var(--color-charcoal);
+  font-weight: 400;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  line-height: 1;
+  color: var(--color-stone-grey);
+  cursor: pointer;
+  padding: 0;
+}
+
+.closeButton:hover {
+  color: var(--color-charcoal);
+}
+
+.dialogContent {
+  padding: 1.5rem;
+  overflow-y: auto;
+  color: var(--color-charcoal);
+}
+
+.dialogFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-top: 2px solid var(--color-stone-grey);
+  background-color: rgba(0, 0, 0, 0.03);
+} 

@@ -1,77 +1,45 @@
-.gameContainer {
-  width: 100%;
-  max-width: 600px;
-  text-align: left;
-}
-
 .section {
-  background: rgba(254, 250, 239, 0.97);
-  border-radius: var(--border-radius-medium);
-  border: var(--border-width) solid #d6d2c4;
-  box-shadow: 0 8px 32px 0 rgba(60, 50, 30, 0.10), 0 1.5px 4px 0 rgba(60, 50, 30, 0.06);
-  padding: 2.2rem;
-  margin-bottom: 3rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-stone-grey-light);
 }
 
-.sectionTitle {
-  font-family: var(--font-family-main);
-  font-size: 2rem;
-  font-weight: var(--font-weight-bold);
-  margin-top: 0;
-  margin-bottom: 1.2rem;
-  border-bottom: 1px solid #e0ddd2;
-  padding-bottom: 0.5rem;
-  color: var(--color-charcoal);
-  letter-spacing: 0.04em;
+.section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
-/* Game Container Specific Styles */
+.section:first-child {
+  padding-top: 0;
+}
+
 .gameMetaRow {
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #e0ddd2;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.gameMetaRow span {
   color: var(--color-stone-grey);
-}
-
-.gameMetaRow:last-child {
-  border-bottom: none;
-}
-
-.gameMetaRow strong {
-  color: var(--color-charcoal);
-  font-weight: var(--font-weight-bold);
-}
-
-.gameActionContainer {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1.5rem;
 }
 
 .turnStatus {
-  text-align: center;
-  font-size: 1.5rem;
-  font-weight: var(--font-weight-bold);
-  margin-bottom: 1.5rem;
   padding: 1rem;
-  border-radius: var(--border-radius-medium);
-  border: var(--border-width) solid #d6d2c4;
-}
-
-.turnStatus strong {
-  font-weight: var(--font-weight-extrabold);
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 1rem;
 }
 
 .myTurn {
-  background-color: var(--color-glow-yellow);
-  color: var(--color-charcoal);
-  border-color: var(--color-hex-amber);
-  box-shadow: 0 0 12px 0 var(--color-glow-yellow);
+  background-color: var(--color-success-light);
+  color: var(--color-success-dark);
+  border: 1px solid var(--color-success);
 }
 
 .waitingTurn {
-  background-color: #f7f5f0;
-  color: var(--color-stone-grey);
-  border-color: #e0ddd2;
+  background-color: var(--color-warning-light);
+  color: var(--color-warning-dark);
+  border: 1px solid var(--color-warning);
 } 

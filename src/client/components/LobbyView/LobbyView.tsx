@@ -3,6 +3,7 @@ import { Game, Player } from '../../../shared/types/game.types';
 import { Button } from '../Button/Button';
 import styles from './LobbyView.module.css';
 import inputStyles from '../../App.module.css';
+import { Dialog } from '../Dialog/Dialog';
 
 interface LobbyViewProps {
   onNavigateToGame: (gameId: string, gameCode: string) => void;
@@ -27,12 +28,35 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
     }
   };
 
-  return (
-    <div className={styles.lobbyContainer}>
-      <h2 className={styles.lobbyTitle}>Lobby</h2>
+  const footerContent = (
+    <div className={styles.lobbyActions}>
+      <Button
+        onClick={onCreateNewGame}
+        variant="primary"
+        fullWidth={true}
+      >
+        Create New Game
+      </Button>
+      <div className={styles.joinByIdContainer}>
+        <input 
+          type="text" 
+          ref={gameCodeInputRef}
+          className={inputStyles.input}
+          placeholder="Paste Game Code" 
+        />
+        <Button
+          onClick={handleJoinByCode}
+          variant="secondary"
+        >
+          Join
+        </Button>
+      </div>
+    </div>
+  );
 
+  return (
+    <Dialog title="Game Lobby" footer={footerContent}>
       <div className={styles.lobbySection}>
-        <h3 className={styles.sectionTitle}>Your Active Games</h3>
         {myGames.length === 0 ? (
           <p className={styles.noGamesMessage}>You are not currently in any games.</p>
         ) : (
@@ -57,7 +81,7 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
                     onClick={() => onNavigateToGame(game.gameId, game.gameCode)}
                     variant={isMyTurn ? "primary" : "secondary"}
                   >
-                    {isMyTurn ? "Your turn" : "Open"}
+                    {isMyTurn ? "Your Turn" : "Open"}
                   </Button>
                 </li>
               );
@@ -65,30 +89,6 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
           </ul>
         )}
       </div>
-
-      <div className={styles.lobbySection}>
-        <h3 className={styles.sectionTitle}>Start or Join a Game</h3>
-        <Button
-          onClick={onCreateNewGame}
-          variant="primary"
-        >
-          Create New Game
-        </Button>
-        <div className={styles.joinByIdContainer}>
-          <input 
-            type="text" 
-            ref={gameCodeInputRef}
-            className={inputStyles.input}
-            placeholder="Paste Game Code" 
-          />
-          <Button
-            onClick={handleJoinByCode}
-            variant="secondary"
-          >
-            Join by Code
-          </Button>
-        </div>
-      </div>
-    </div>
+    </Dialog>
   );
 } 

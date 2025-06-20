@@ -1,5 +1,6 @@
 import { useState } from 'preact/hooks';
 import { MenuButton } from '../Button/MenuButton';
+import { GameSettingsDialog } from '../GameSettingsDialog/GameSettingsDialog';
 import styles from './Header.module.css';
 
 interface HeaderProps {
@@ -11,9 +12,15 @@ interface HeaderProps {
 
 export function Header({ currentUserName, onLogout, currentView, onNavigateToLobby }: HeaderProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [copyStatus, setCopyStatus] = useState<'idle' | 'copied'>('idle');
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+    const openSettings = () => {
+        setIsMenuOpen(false);
+        setIsSettingsOpen(true);
+    }
+    const closeSettings = () => setIsSettingsOpen(false);
 
     const handleCopyLink = () => {
         navigator.clipboard.writeText(window.location.href).then(() => {
@@ -31,23 +38,30 @@ export function Header({ currentUserName, onLogout, currentView, onNavigateToLob
 
     return (
         <div className={styles.header}>
-            <p className={styles.welcomeMessage}>Welcome, {currentUserName}!</p>
+            <p className={styles.welcomeMessage}>{currentUserName}</p>
             <div className={styles.headerActions}>
                 <MenuButton onClick={toggleMenu} ariaLabel="Open menu" variant="secondary" />
                 {isMenuOpen && (
                     <div className={styles.menuDropdown}>
                         {currentView === 'game' && (
                             <>
+                                <button className={styles.menuItem} onClick={openSettings}>Game Settings</button>
                                 <button className={styles.menuItem} onClick={handleCopyLink}>
                                     {copyStatus === 'copied' ? 'Link Copied!' : 'Copy Game Link'}
                                 </button>
                                 <button className={styles.menuItem} onClick={() => { onNavigateToLobby(); toggleMenu(); }}>Return to Lobby</button>
                             </>
                         )}
-                        <button className={styles.menuItem} onClick={() => { onLogout(); toggleMenu(); }}>Logout</button>
+                        {currentView === 'lobby' && (
+                             <>
+                                <button className={styles.menuItem} onClick={openSettings}>Game Settings</button>
+                                <button className={styles.menuItem} onClick={() => { onLogout(); toggleMenu(); }}>Logout</button>
+                            </>
+                        )}
                     </div>
                 )}
             </div>
+            {isSettingsOpen && <GameSettingsDialog onClose={closeSettings} />}
         </div>
     );
 } 

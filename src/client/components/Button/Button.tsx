@@ -4,10 +4,11 @@ import styles from './Button.module.css';
 interface ButtonProps {
   onClick: () => void;
   children: preact.ComponentChildren;
-  variant?: 'primary' | 'secondary' | 'green' | 'red' | 'purple';
+  variant?: 'primary' | 'secondary' | 'green' | 'red' | 'purple' | 'icon';
   disabled?: boolean;
   fullWidth?: boolean;
   className?: string;
+  ['aria-label']?: string;
 }
 
 export const Button = ({
@@ -17,6 +18,7 @@ export const Button = ({
   disabled = false,
   fullWidth = false,
   className = '',
+  'aria-label': ariaLabel,
 }: ButtonProps) => {
   const buttonClasses = [
     styles.button, 
@@ -26,7 +28,7 @@ export const Button = ({
   ].join(' ').trim();
 
   return (
-    <button class={buttonClasses} onClick={onClick} disabled={disabled}>
+    <button class={buttonClasses} onClick={() => onClick()} disabled={disabled} aria-label={ariaLabel}>
       {children}
     </button>
   );

@@ -1,0 +1,23 @@
+.settingsSection {
+  margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+  font-family: var(--font-family-display);
+  font-size: 1.2rem;
+  color: var(--color-hex-amber);
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.settingDescription {
+  font-size: 0.9rem;
+  color: var(--color-parchment-light);
+  margin-top: 0.5rem;
+  margin-left: 2.55rem; /* Align with checkbox text */
+  opacity: 0.8;
+  max-width: 400px;
+} 

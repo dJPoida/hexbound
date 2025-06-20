@@ -8,16 +8,17 @@ class SocketService {
   private socket: WebSocket | null = null;
   private messageHandlers = new Map<string, MessageHandler[]>();
   private statusHandlers: StatusHandler[] = [];
-  private heartbeatTimer: number | null = null;
-  private missedPongs = 0;
-  private reconnectTimer: number | null = null;
   private reconnectAttempts = 0;
   private lastGameId: string | null = null;
   private isManuallyClosed = false;
+  private messageQueue: string[] = [];
 
   private HEARTBEAT_INTERVAL = 20000; // 20s
-  private MAX_MISSED_PONGS = 2;
-  private BASE_RECONNECT_DELAY = 3000; // 3s
+  private missedPongs = 0;
+  private MAX_MISSED_PONGS = 3;
+  private heartbeatTimer: number | undefined;
+
+  private RECONNECT_BASE_DELAY = 1000; // 1s
   private MAX_RECONNECT_DELAY = 30000; // 30s
 
   private updateStatus(status: 'connecting' | 'connected' | 'reconnecting' | 'disconnected') {
@@ -40,7 +41,6 @@ class SocketService {
       return;
     }
 
-    // Use wss:// for secure connections in production
     const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
     const socketUrl = `${protocol}://${window.location.host}/ws?token=${token}`;
     
@@ -51,6 +51,7 @@ class SocketService {
       this.updateStatus('connected');
       this.reconnectAttempts = 0;
       this.startHeartbeat();
+      this.processMessageQueue();
       // Automatically subscribe to the game once connected
       this.sendMessage('game:subscribe', { gameId: this.lastGameId });
     };
@@ -78,7 +79,7 @@ class SocketService {
     };
 
     this.socket.onclose = (event) => {
-      console.log(`[SocketService] WebSocket connection closed: ${event.code}`);
+      console.log(`[SocketService] WebSocket connection closed. Code: ${event.code}, Reason: ${event.reason}, Clean: ${event.wasClean}`);
       this.stopHeartbeat();
       this.socket = null;
       if (!this.isManuallyClosed) {
@@ -93,6 +94,18 @@ class SocketService {
       console.error('[SocketService] WebSocket error:', error);
       this.socket?.close();
     };
+  }
+
+  private scheduleReconnect() {
+    const delay = Math.min(this.RECONNECT_BASE_DELAY * Math.pow(2, this.reconnectAttempts), this.MAX_RECONNECT_DELAY);
+    console.log(`[SocketService] Attempting to reconnect in ${delay}ms... (Attempt ${this.reconnectAttempts + 1})`);
+    
+    setTimeout(() => {
+      this.reconnectAttempts++;
+      if (this.lastGameId) {
+        this.connect(this.lastGameId);
+      }
+    }, delay);
   }
 
   private startHeartbeat() {
@@ -113,43 +126,41 @@ class SocketService {
   private stopHeartbeat() {
     if (this.heartbeatTimer) {
       clearInterval(this.heartbeatTimer);
-      this.heartbeatTimer = null;
+      this.heartbeatTimer = undefined;
     }
-  }
-
-  private scheduleReconnect() {
-    if (this.reconnectTimer) return;
-    const delay = Math.min(this.BASE_RECONNECT_DELAY * Math.pow(2, this.reconnectAttempts), this.MAX_RECONNECT_DELAY);
-    console.log(`[SocketService] Attempting to reconnect in ${delay / 1000}s...`);
-    this.reconnectTimer = window.setTimeout(() => {
-      this.reconnectTimer = null;
-      this.reconnectAttempts++;
-      if (this.lastGameId) {
-        this.connect(this.lastGameId);
-      }
-    }, delay);
   }
 
   public sendMessage<T>(type: string, payload: T) {
+    const message = JSON.stringify({ type, payload });
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      const message: SocketMessage<T> = { type, payload };
-      this.socket.send(JSON.stringify(message));
+      this.socket.send(message);
     } else {
-      console.error('[SocketService] Cannot send message, socket is not open.');
+      console.log(`[SocketService] Socket not open, readyState: ${this.socket?.readyState}. Queuing message:`, message);
+      this.messageQueue.push(message);
+    }
+  }
+  
+  private processMessageQueue() {
+    while (this.messageQueue.length > 0) {
+      const message = this.messageQueue.shift();
+      if (message) {
+        console.log('[SocketService] Sending queued message:', message);
+        this.socket?.send(message);
+      }
     }
   }
 
-  public on(messageType: string, handler: MessageHandler) {
-    if (!this.messageHandlers.has(messageType)) {
-      this.messageHandlers.set(messageType, []);
+  public on<T>(type: string, handler: (payload: T) => void) {
+    if (!this.messageHandlers.has(type)) {
+      this.messageHandlers.set(type, []);
     }
-    this.messageHandlers.get(messageType)?.push(handler);
+    this.messageHandlers.get(type)?.push(handler as MessageHandler);
   }
 
-  public off(messageType: string, handler: MessageHandler) {
-    const handlers = this.messageHandlers.get(messageType);
+  public off<T>(type: string, handler: (payload: T) => void) {
+    const handlers = this.messageHandlers.get(type);
     if (handlers) {
-      const index = handlers.indexOf(handler);
+      const index = handlers.indexOf(handler as MessageHandler);
       if (index > -1) {
         handlers.splice(index, 1);
       }
@@ -176,5 +187,4 @@ class SocketService {
   }
 }
 
-// Export a singleton instance of the service
 export const socketService = new SocketService(); 

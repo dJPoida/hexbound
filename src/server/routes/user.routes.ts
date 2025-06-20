@@ -1,9 +1,13 @@
 import { Router } from 'express';
-import { loginOrRegisterUser } from '../controllers/user.controller';
-import { API_ROUTES } from '../../shared/constants/api.const';
+import { loginOrRegisterUser, subscribeToPushNotifications } from '../controllers/user.controller';
+import { authMiddleware } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.post(API_ROUTES.LOGIN, loginOrRegisterUser);
+// Public route: POST /api/user/login
+router.post('/login', loginOrRegisterUser);
+
+// Protected route: POST /api/user/subscribe-push
+router.post('/subscribe-push', authMiddleware, subscribeToPushNotifications);
 
 export default router; 

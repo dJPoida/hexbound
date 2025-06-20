@@ -1,0 +1,31 @@
+.checkboxContainer {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  padding: 0.5rem 0;
+  border-radius: var(--border-radius-small);
+  transition: background-color 0.2s;
+}
+
+.checkboxContainer:not(.disabled):hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.icon {
+  font-size: 1.8rem;
+  margin-right: 0.75rem;
+  color: var(--color-hex-amber);
+  line-height: 1;
+}
+
+.label {
+  font-family: var(--font-family-main);
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+} 

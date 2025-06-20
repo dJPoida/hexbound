@@ -131,6 +131,26 @@ Client-side code is organized to promote modularity and maintainability.
   - Style files should have a `.module.css` extension (e.g., `MyComponent.module.css`).
   - These styles are imported into the component file and applied as objects (e.g., `styles.myClass`). This locally scopes class names and avoids global style conflicts.
 
+# Backend Development & TypeORM
+- **`reflect-metadata` Requirement**: For all TypeORM operations, especially migration generation, ensure `import 'reflect-metadata';` is the very first import in the server's entry point (`src/server/main.ts`).
+- **Explicit Column Types**: If TypeORM migration generation fails with a type inference error (e.g., "cannot be guessed"), explicitly define the column type (e.g., `@Column('varchar')`) in the entity definition.
+- **Entity Registration**: When a new TypeORM entity is created, it **must** be added to the `entities` array in the `DataSource` configuration file (`src/server/data-source.ts`).
+- **NPM Script Arguments**: Before running npm scripts that pass arguments to an underlying command (like `typeorm`), verify the correct syntax in `package.json`, particularly the use of `--` to separate arguments.
+
+# Asset Management
+
+## Icon Font Workflow
+The project uses a custom icon font for UI elements, generated via IcoMoon. The source files are stored in `/design/assets/hexbound-icons`.
+
+To update the icon font:
+1. Replace the contents of `/design/assets/hexbound-icons` with the new files downloaded from IcoMoon.
+2. Run the command `npm run update:icons`.
+
+This script will automatically:
+- Copy the `.woff` font file to `/src/client/public/fonts/HexboundIcons/`.
+- Read the new `style.css`, update the font path, and append a cache-busting timestamp.
+- Overwrite `/src/client/HexboundIcons.css` with the updated styles.
+
 # Project Structure
 - **`build.cjs`**: A Node.js script that orchestrates the entire build process. It builds the server using esbuild and the client using Vite.
 - **`data/`**: A directory used for storing persistent data, such as the Redis database files during local development. This directory is not checked into version control.

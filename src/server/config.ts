@@ -36,7 +36,19 @@ const config = {
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
   },
+  webpush: {
+    publicKey: process.env.VITE_VAPID_PUBLIC_KEY || '',
+    privateKey: process.env.VAPID_PRIVATE_KEY || '',
+    subject: process.env.VAPID_SUBJECT || '',
+  },
   appVersion: process.env.npm_package_version || 'unknown',
 };
+
+// Validate essential configuration
+if (!config.webpush.privateKey || !config.webpush.publicKey) {
+  console.error("VAPID keys (VITE_VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY) are not defined in the environment. Push notifications will not work.");
+  // In a production environment, you might want to prevent the server from starting.
+  // process.exit(1); 
+}
 
 export default config; 

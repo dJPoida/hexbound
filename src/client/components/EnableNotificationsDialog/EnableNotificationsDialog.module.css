@@ -1,0 +1,42 @@
+.dialogText {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: var(--color-parchment-light);
+  margin-bottom: 1rem;
+}
+
+.dialogSubtext {
+  font-size: 0.9rem;
+  color: var(--color-parchment-light);
+  opacity: 0.8;
+  margin-bottom: 1.5rem;
+}
+
+.footerActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  width: 100%;
+}
+
+.errorText {
+  color: var(--color-clay-red);
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.warningText {
+  color: var(--color-hex-amber);
+  background-color: rgba(255, 204, 0, 0.1);
+  border: 1px solid var(--color-hex-amber);
+  border-radius: var(--border-radius-medium);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.warningText i {
+  margin-right: 0.5rem;
+  vertical-align: middle;
+} 
