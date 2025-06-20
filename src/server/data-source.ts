@@ -4,6 +4,7 @@ import { getModuleDir } from "@/shared/helpers/getModuleDir.helper";
 import { User } from "./entities/User.entity";
 import { Game } from "./entities/Game.entity";
 import { GameStatus } from "./entities/GameStatus.entity";
+import { PushSubscription } from "./entities/PushSubscription.entity";
 
 // The 'import.meta.url' argument is only available in ESM context.
 // In a CJS context (like the production build), it will be undefined,
@@ -21,7 +22,7 @@ export const AppDataSource = new DataSource({
   database: process.env.POSTGRES_DB,
   synchronize: false,
   logging: ["error"],
-  entities: [User, Game, GameStatus],
+  entities: [User, Game, GameStatus, PushSubscription],
   migrations: [`${currentModuleDirname}/migrations/*{.ts,.js}`],
   subscribers: [],
 }); 
