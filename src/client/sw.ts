@@ -15,6 +15,24 @@ registerRoute(
   new StaleWhileRevalidate()
 );
 
+self.addEventListener('push', (event: PushEvent) => {
+  if (!event.data) {
+    console.error('Push event but no data');
+    return;
+  }
+  
+  const data = event.data.json();
+  const title = data.title || 'Hexbound';
+  const options = {
+    body: data.body || 'You have a new notification.',
+    icon: '/favicon/android-chrome-192x192.png', // Optional
+    badge: '/favicon/favicon-32x32.png', // Optional
+    data: data.data, // Attach custom data
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
 // Basic fetch handler
 self.addEventListener('fetch', (event: FetchEvent) => {
   event.respondWith(
