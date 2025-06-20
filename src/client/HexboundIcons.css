@@ -1,10 +1,6 @@
 @font-face {
   font-family: 'hexbound-icon';
-  src:  url('fonts/hexbound-icon.eot?x6einq');
-  src:  url('fonts/hexbound-icon.eot?x6einq#iefix') format('embedded-opentype'),
-    url('fonts/hexbound-icon.ttf?x6einq') format('truetype'),
-    url('/fonts/HexboundIcons/hexbound-icon.woff?v=1750398110216') format('woff'),
-    url('fonts/hexbound-icon.svg?x6einq#hexbound-icon') format('svg');
+  src: url('/fonts/HexboundIcons/hexbound-icon.woff?v=1750398110216') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: block;
