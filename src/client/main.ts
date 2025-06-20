@@ -1,11 +1,15 @@
 import { render, h } from 'preact';
 import htm from 'htm';
+import { registerSW } from 'virtual:pwa-register';
 import { Router } from './components/Router/Router';
 import { App } from './App';
 import { StyleGuide } from './pages/StyleGuide/StyleGuide';
 import { Utils } from './pages/Utils/Utils';
 import './global.css';
 import './HexboundIcons.css';
+
+// Register the service worker
+registerSW({ immediate: true });
 
 const html = htm.bind(h);
 

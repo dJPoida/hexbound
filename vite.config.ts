@@ -1,8 +1,39 @@
 import { defineConfig, type UserConfig } from 'vite';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig((): UserConfig => {
   return {
     root: 'src/client', // Set the root to your client source files
+    plugins: [
+      VitePWA({
+        srcDir: '.', // Relative to the root
+        filename: 'sw.ts', // The service worker file
+        strategies: 'injectManifest', // We want to control the SW, so we use injectManifest
+        injectRegister: false, // We will register the service worker manually
+        manifest: {
+          name: 'Hexbound',
+          short_name: 'Hexbound',
+          description: 'An asynchronous web-based strategy game.',
+          theme_color: '#000000',
+          background_color: '#000000',
+          display: 'standalone',
+          scope: '/',
+          start_url: '/',
+          icons: [
+            {
+              src: 'favicon/android-chrome-192x192.png',
+              sizes: '192x192',
+              type: 'image/png',
+            },
+            {
+              src: 'favicon/android-chrome-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+            },
+          ],
+        },
+      }),
+    ],
     server: {
       allowedHosts: ['dev.hexbound.game-host.org'],
     },
