@@ -3,6 +3,7 @@ import { useState, useEffect } from 'preact/hooks';
 import { Dialog } from '../Dialog/Dialog';
 import { Checkbox } from '../Checkbox/Checkbox';
 import { settingsService } from '../../services/settings.service';
+import { pushService } from '../../services/push.service';
 import styles from './GameSettingsDialog.module.css';
 
 interface GameSettingsDialogProps {
@@ -14,6 +15,7 @@ type NotificationPermission = 'default' | 'granted' | 'denied';
 export const GameSettingsDialog = ({ onClose }: GameSettingsDialogProps) => {
   const [settings, setSettings] = useState(settingsService.getSettings());
   const [permission, setPermission] = useState<NotificationPermission>('default');
+  const [isSubscribing, setIsSubscribing] = useState(false);
 
   useEffect(() => {
     // Component did mount
@@ -24,18 +26,37 @@ export const GameSettingsDialog = ({ onClose }: GameSettingsDialogProps) => {
   }, []);
 
   const handleNotificationsEnabledChange = async (checked: boolean) => {
-    if (checked && Notification.permission !== 'granted') {
-      const newPermission = await Notification.requestPermission();
-      setPermission(newPermission);
-      if (newPermission !== 'granted') {
-        // Don't enable if permission was denied
-        return; 
+    // If the user is trying to enable notifications
+    if (checked) {
+      // First, check for browser-level permission if not already granted
+      if (Notification.permission !== 'granted') {
+        const newPermission = await Notification.requestPermission();
+        setPermission(newPermission);
+        if (newPermission !== 'granted') {
+          return; // Bail out if permission is denied
+        }
       }
+      
+      // Now, subscribe to the push service and send to backend
+      setIsSubscribing(true);
+      try {
+        await pushService.subscribeUser();
+        // Only update our app's setting if the subscription was successful
+        settingsService.updateSettings({ notificationsEnabled: true });
+      } catch (error) {
+        console.error("Failed to complete push subscription process.", error);
+        // Optionally, show an error to the user in the dialog
+      } finally {
+        setIsSubscribing(false);
+      }
+    } else {
+      // If the user is disabling notifications
+      // TODO: We should also send a request to the backend to *remove* the subscription
+      settingsService.updateSettings({ notificationsEnabled: false });
     }
-    settingsService.updateSettings({ notificationsEnabled: checked });
   };
   
-  const isNotificationToggleDisabled = permission === 'denied';
+  const isNotificationToggleDisabled = permission === 'denied' || isSubscribing;
 
   return (
     <Dialog title="Game Settings" onClose={onClose}>
@@ -48,16 +69,19 @@ export const GameSettingsDialog = ({ onClose }: GameSettingsDialogProps) => {
           disabled={isNotificationToggleDisabled}
         />
         <p class={styles.settingDescription}>
-          {permission === 'denied' && (
+          {isSubscribing && (
+            <span>Subscribing...</span>
+          )}
+          {!isSubscribing && permission === 'denied' && (
             <span>Notifications are blocked by your browser. You must enable them in your browser settings to receive turn updates.</span>
           )}
-          {permission === 'default' && (
+          {!isSubscribing && permission === 'default' && (
             <span>This will ask for permission to show notifications.</span>
           )}
-          {permission === 'granted' && !settings.notificationsEnabled && (
+          {!isSubscribing && permission === 'granted' && !settings.notificationsEnabled && (
             <span>Notifications are allowed but currently disabled.</span>
           )}
-           {permission === 'granted' && settings.notificationsEnabled && (
+           {!isSubscribing && permission === 'granted' && settings.notificationsEnabled && (
             <span>You will be notified when it&apos;s your turn.</span>
           )}
         </p>
