@@ -44,7 +44,9 @@ export function Header({ currentUserName, onLogout, currentView, onNavigateToLob
                                 <button className={styles.menuItem} onClick={() => { onNavigateToLobby(); toggleMenu(); }}>Return to Lobby</button>
                             </>
                         )}
-                        <button className={styles.menuItem} onClick={() => { onLogout(); toggleMenu(); }}>Logout</button>
+                        {currentView === 'lobby' && (
+                            <button className={styles.menuItem} onClick={() => { onLogout(); toggleMenu(); }}>Logout</button>
+                        )}
                     </div>
                 )}
             </div>
