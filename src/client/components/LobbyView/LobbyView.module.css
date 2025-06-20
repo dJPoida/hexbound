@@ -23,6 +23,7 @@
 }
 
 .gameListItem {
+  position: relative;
   background: linear-gradient(180deg, #fdfbf5 90%, #f7f2e6 100%);
   border-radius: var(--border-radius-medium);
   border: var(--border-width) solid #e0ddd2;

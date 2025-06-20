@@ -17,6 +17,7 @@ import { Viewport } from './components/Viewport/Viewport';
 import { GameLayout } from './components/GameLayout/GameLayout';
 import { ActionBar } from './components/ActionBar/ActionBar';
 import { Button } from './components/Button/Button';
+import { Dialog } from './components/Dialog/Dialog';
 
 type ConnectionStatus = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
@@ -43,6 +44,7 @@ export function App() {
   const [gameState, setGameState] = useState<ClientGameStatePayload | null>(null);
   const [myGames, setMyGames] = useState<Game[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('disconnected');
+  const [isDebugInfoOpen, setIsDebugInfoOpen] = useState(false);
 
   const getGameByCode = async (gameCode: string) => {
     try {
@@ -273,6 +275,10 @@ export function App() {
       }
   };
 
+  const handleToggleDebugInfo = () => {
+    setIsDebugInfoOpen(!isDebugInfoOpen);
+  };
+
   const renderLoggedInView = () => {
     const isMyTurn = gameState?.currentPlayerId === currentUserId;
 
@@ -289,13 +295,24 @@ export function App() {
       }
       if (currentView === 'game' && gameState) {
         return (
-          <GameContainer
-            gameState={gameState}
-            onIncrementCounter={handleIncrementCounter}
-            onEndTurn={handleEndTurn}
-            connectionStatus={connectionStatus}
-            isMyTurn={isMyTurn}
-          />
+          <>
+            <GameContainer
+              gameState={gameState}
+              onIncrementCounter={handleIncrementCounter}
+              onEndTurn={handleEndTurn}
+              connectionStatus={connectionStatus}
+              isMyTurn={isMyTurn}
+            />
+            {isDebugInfoOpen && (
+              <Dialog title="Debug Game State" onClose={handleToggleDebugInfo}>
+                <div className={styles.debugContent}>
+                  <pre>
+                    {gameState ? JSON.stringify(gameState, null, 2) : 'No game state available.'}
+                  </pre>
+                </div>
+              </Dialog>
+            )}
+          </>
         );
       }
       return null;
@@ -314,6 +331,9 @@ export function App() {
     if (currentView === 'game') {
       footerContent = (
         <ActionBar>
+          <Button onClick={handleToggleDebugInfo} variant="icon" aria-label="Show Debug Info">
+            <i class="hbi hbi-terminal"></i>
+          </Button>
           <Button onClick={handleEndTurn} variant="secondary" disabled={!isMyTurn}>End Turn</Button>
         </ActionBar>
       );
@@ -343,6 +363,8 @@ export function App() {
 
     return renderLoggedInView();
   };
+
+  const isMyTurn = gameState?.currentPlayerId === currentUserId;
 
   return (
     <div className={styles.appContainer}>

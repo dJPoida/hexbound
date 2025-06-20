@@ -360,3 +360,20 @@
   gap: 1rem;
   margin-top: 1.5rem;
 }
+
+.debugContent {
+  background-color: #333;
+  color: #f0f0f0;
+  border: 1px solid #555;
+  padding: 1rem;
+  max-height: 50vh;
+  overflow-y: auto;
+  text-align: left;
+  border-radius: var(--border-radius-medium);
+}
+
+.debugContent pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 0;
+}
