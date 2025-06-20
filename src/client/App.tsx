@@ -236,11 +236,11 @@ export function App() {
   };
 
   const handleLogout = () => {
+    navigateToLobby();
+    authService.clearAuthToken();
     setIsLoggedIn(false);
     setCurrentUserId(null);
     setCurrentUserName(null);
-    setCurrentView('lobby');
-    authService.clearAuthToken(); // Use the auth service to clear the session but keep the user name
   };
 
   const navigateToGame = (gameId: string, gameCode: string) => {
