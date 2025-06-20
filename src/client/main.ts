@@ -9,7 +9,16 @@ import './global.css';
 import './HexboundIcons.css';
 
 // Register the service worker
-registerSW({ immediate: true });
+const updateSW = registerSW({
+  onNeedRefresh() {
+    // A new service worker is waiting to activate.
+    // Send a message to it to trigger the 'skipWaiting' process.
+    updateSW(true);
+  },
+  onOfflineReady() {
+    console.log('App is ready to work offline.');
+  },
+});
 
 const html = htm.bind(h);
 

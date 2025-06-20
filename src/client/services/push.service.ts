@@ -22,31 +22,36 @@ const getVapidPublicKey = (): string => {
 
 export const pushService = {
   async subscribeUser(): Promise<PushSubscription | null> {
+    console.log('[PushService] Starting subscription process...');
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-      console.warn('Push messaging is not supported');
+      console.warn('[PushService] Push messaging is not supported in this browser.');
       return null;
     }
 
     try {
+      console.log('[PushService] Waiting for service worker to be ready...');
       const swRegistration = await navigator.serviceWorker.ready;
+      console.log('[PushService] Service worker is ready. Subscribing with push manager...');
+
       const publicKey = getVapidPublicKey();
       const subscription = await swRegistration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(publicKey),
       });
 
-      console.log('User is subscribed:', subscription);
+      console.log('[PushService] User is subscribed:', subscription);
       
       // Send subscription to the backend
+      console.log('[PushService] Sending subscription to backend...');
       await authenticatedFetch(API_ROUTES.SUBSCRIBE_PUSH, {
         method: 'POST',
         body: JSON.stringify(subscription),
       });
 
-      console.log('Push subscription sent to server.');
+      console.log('[PushService] Push subscription sent to server successfully.');
       return subscription;
     } catch (error) {
-      console.error('Failed to subscribe the user: ', error);
+      console.error('[PushService] Failed to subscribe the user: ', error);
       return null;
     }
   },

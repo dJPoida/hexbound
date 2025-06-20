@@ -40,6 +40,12 @@ async function startServer() {
     process.exit(1);
   }
 
+  // Add a simple request logger middleware
+  app.use((req, res, next) => {
+    console.log(`[Server] Received request: ${req.method} ${req.originalUrl}`);
+    next();
+  });
+
   // API routes must be registered BEFORE the Vite middleware
   // so they are handled by the backend and not treated as a client-side route.
   app.use('/api', apiRouter);

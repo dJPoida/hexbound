@@ -18,6 +18,7 @@ import { GameLayout } from './components/GameLayout/GameLayout';
 import { ActionBar } from './components/ActionBar/ActionBar';
 import { Button } from './components/Button/Button';
 import { Dialog } from './components/Dialog/Dialog';
+import { API_ROUTES } from '../shared/constants/api.const';
 
 type ConnectionStatus = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
@@ -179,7 +180,7 @@ export function App() {
     setIsLoading(true);
     setAuthError(null);
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch(API_ROUTES.LOGIN, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

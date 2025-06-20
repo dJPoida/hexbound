@@ -32,6 +32,10 @@ export default defineConfig((): UserConfig => {
             },
           ],
         },
+        devOptions: {
+          enabled: true,
+          type: 'module',
+        },
       }),
     ],
     server: {
