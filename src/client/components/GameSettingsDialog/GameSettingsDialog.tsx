@@ -10,7 +10,7 @@ interface GameSettingsDialogProps {
   onClose: () => void;
 }
 
-type NotificationPermission = 'default' | 'granted' | 'denied';
+export type NotificationPermission = 'default' | 'granted' | 'denied' | 'prompt';
 
 export const GameSettingsDialog = ({ onClose }: GameSettingsDialogProps) => {
   const [settings, setSettings] = useState(settingsService.getSettings());

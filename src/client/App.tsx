@@ -19,8 +19,14 @@ import { ActionBar } from './components/ActionBar/ActionBar';
 import { Button } from './components/Button/Button';
 import { Dialog } from './components/Dialog/Dialog';
 import { API_ROUTES } from '../shared/constants/api.const';
+import { EnableNotificationsDialog } from './components/EnableNotificationsDialog/EnableNotificationsDialog';
+import { settingsService } from './services/settings.service';
+import { pushService } from './services/push.service';
+import type { NotificationPermission } from './components/GameSettingsDialog/GameSettingsDialog';
 
+const NOTIFICATION_PENDING_KEY = 'hexbound-notifications-pending-activation';
 type ConnectionStatus = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+type ExtendedPermissionState = 'prompt' | 'granted' | 'denied' | 'default';
 
 // Initialize htm with Preact's h function
 const html = htm.bind(h);
@@ -36,6 +42,8 @@ export function App() {
   const [currentUserName, setCurrentUserName] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [showNotificationsPrompt, setShowNotificationsPrompt] = useState(false);
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
   
   // View and Navigation State
   const [currentView, setCurrentView] = useState<'login' | 'lobby' | 'game'>('login');
@@ -46,6 +54,8 @@ export function App() {
   const [myGames, setMyGames] = useState<Game[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('disconnected');
   const [isDebugInfoOpen, setIsDebugInfoOpen] = useState(false);
+
+  const [afterPromptAction, setAfterPromptAction] = useState<() => void>(() => {});
 
   const getGameByCode = async (gameCode: string) => {
     try {
@@ -89,6 +99,18 @@ export function App() {
         .then(res => res.json())
         .then(data => setVersion(data.version || 'N/A (dev)'))
         .catch(() => setVersion('N/A (fetch error)'));
+    }
+
+    // Check if we're returning from a permission change
+    const isNotificationPending = sessionStorage.getItem(NOTIFICATION_PENDING_KEY);
+    if (isNotificationPending) {
+      sessionStorage.removeItem(NOTIFICATION_PENDING_KEY); // Clean up immediately
+      if (Notification.permission === 'granted') {
+        console.log('[App] Resuming notification subscription after permission change.');
+        pushService.subscribeUser().then(() => {
+          settingsService.updateSettings({ notificationsEnabled: true });
+        }).catch(err => console.error("Failed to auto-subscribe after permission change:", err));
+      }
     }
 
     const lastUserName = authService.getUserName();
@@ -196,16 +218,20 @@ export function App() {
         setCurrentUserName(data.userName);
         setIsLoggedIn(true);
         setUserNameInput('');
-        fetchMyGames(); // Fetch games after successful login
-
-        const path = window.location.pathname;
-        const gameIdMatch = path.match(/^\/game\/([a-zA-Z0-9-]+)/);
-        if (gameIdMatch) {
-          const gameCode = gameIdMatch[1];
-          getGameByCode(gameCode);
-        } else {
-          setCurrentView('lobby');
-        }
+        
+        // After login, check notification status before deciding where to navigate.
+        await checkNotificationStatusAndProceed(() => {
+          // This is the function that runs after the notification check is complete.
+          const path = window.location.pathname;
+          const gameIdMatch = path.match(/^\/game\/([a-zA-Z0-9-]+)/);
+          if (gameIdMatch) {
+            const gameCode = gameIdMatch[1];
+            getGameByCode(gameCode);
+          } else {
+            navigateToLobby();
+          }
+        });
+        
       } else {
         setAuthError(data.message || 'Authentication failed.');
       }
@@ -214,6 +240,40 @@ export function App() {
       console.error('Auth error:', error);
     }
     setIsLoading(false);
+  };
+
+  const checkNotificationStatusAndProceed = async (onComplete: () => void) => {
+    // Check if notifications are supported by the browser
+    if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+      onComplete();
+      return;
+    }
+
+    const permission: NotificationPermission = Notification.permission as NotificationPermission;
+    setNotificationPermission(permission); // Store the permission state
+    const settings = settingsService.getSettings();
+
+    if (permission === 'granted' && !settings.notificationsEnabled) {
+      // Auto-subscribe user since they already gave permission
+      try {
+        await pushService.subscribeUser();
+        settingsService.updateSettings({ notificationsEnabled: true });
+      } catch (error) {
+        console.error("Failed to auto-subscribe user:", error);
+      }
+      onComplete(); // Proceed regardless of subscription success
+    } else if (permission === 'prompt' || permission === 'default' || (permission === 'denied' && !settings.notificationsEnabled)) {
+      // Show the prompt dialog if it hasn't been asked, or if it was denied and our in-app setting is off.
+      if (permission === 'denied') {
+        // Set the flag so we know to check for changes on next load
+        sessionStorage.setItem(NOTIFICATION_PENDING_KEY, 'true');
+      }
+      setAfterPromptAction(() => onComplete);
+      setShowNotificationsPrompt(true);
+    } else {
+      // Permission is 'denied' or already granted and enabled, just proceed
+      onComplete();
+    }
   };
 
   const handleCreateNewGame = async () => {
@@ -358,6 +418,20 @@ export function App() {
           onLogin={handleLogin}
           isLoading={isLoading}
           error={authError}
+        />
+      );
+    }
+    
+    if (showNotificationsPrompt) {
+      return (
+        <EnableNotificationsDialog 
+            permissionState={notificationPermission}
+            onComplete={() => {
+                setShowNotificationsPrompt(false);
+                if (afterPromptAction) {
+                  afterPromptAction();
+                }
+            }}
         />
       );
     }
