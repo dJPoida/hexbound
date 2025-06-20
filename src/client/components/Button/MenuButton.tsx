@@ -8,12 +8,10 @@ interface MenuButtonProps {
 }
 
 export const MenuButton = ({ onClick, ariaLabel = 'Open menu', variant = 'secondary' }: MenuButtonProps) => {
-  const buttonClasses = `${styles.button} ${styles[variant]}`;
+  const buttonClasses = `${styles.button} ${styles[variant]} ${styles.icon}`;
   return (
     <button class={buttonClasses} onClick={onClick} aria-label={ariaLabel} type="button">
-      <svg fill="currentColor" viewBox="0 0 32 32" width="24" height="24" aria-hidden="true">
-        <path d="M4 8h24v2h-24zM4 15h24v2h-24zM4 22h24v2h-24z"></path>
-      </svg>
+      <span class="hbi-menu" aria-hidden="true"></span>
     </button>
   );
 }; 

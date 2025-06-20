@@ -1,0 +1,33 @@
+@font-face {
+  font-family: 'hexbound-icon';
+  src:  url('fonts/hexbound-icon.eot?ajo5y9');
+  src:  url('fonts/hexbound-icon.eot?ajo5y9#iefix') format('embedded-opentype'),
+    url('fonts/hexbound-icon.ttf?ajo5y9') format('truetype'),
+    url('fonts/hexbound-icon.woff?ajo5y9') format('woff'),
+    url('fonts/hexbound-icon.svg?ajo5y9#hexbound-icon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="hbi-"], [class*=" hbi-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'hexbound-icon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.hbi-code:before {
+  content: "\ea80";
+}
+.hbi-menu:before {
+  content: "\e9bd";
+}

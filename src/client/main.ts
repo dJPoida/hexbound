@@ -4,6 +4,8 @@ import { Router } from './components/Router/Router';
 import { App } from './App';
 import { StyleGuide } from './pages/StyleGuide/StyleGuide';
 import { Utils } from './pages/Utils/Utils';
+import './global.css';
+import './HexboundIcons.css';
 
 const html = htm.bind(h);
 
