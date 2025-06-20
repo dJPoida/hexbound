@@ -26,21 +26,38 @@ registerRoute(
 );
 
 self.addEventListener('push', (event: PushEvent) => {
-  if (!event.data) {
-    console.error('Push event but no data');
-    return;
-  }
-  
-  const data = event.data.json();
-  const title = data.title || 'Hexbound';
-  const options = {
-    body: data.body || 'You have a new notification.',
-    icon: '/favicon/android-chrome-192x192.png', // Optional
-    badge: '/favicon/favicon-32x32.png', // Optional
-    data: data.data, // Attach custom data
+  const showNotification = async () => {
+    // Check for visible clients
+    const allClients = await self.clients.matchAll({
+      includeUncontrolled: true,
+      type: 'window',
+    });
+
+    const isAppVisible = allClients.some((client) => client.visibilityState === 'visible');
+
+    if (isAppVisible) {
+      console.log('[SW] Push event received, but a client is visible. Skipping notification.');
+      return;
+    }
+
+    if (!event.data) {
+      console.error('Push event but no data');
+      return;
+    }
+    
+    const data = event.data.json();
+    const title = data.title || 'Hexbound';
+    const options = {
+      body: data.body || 'You have a new notification.',
+      icon: '/favicon/android-chrome-192x192.png', // Optional
+      badge: '/favicon/favicon-32x32.png', // Optional
+      data: data.data, // Attach custom data
+    };
+
+    await self.registration.showNotification(title, options);
   };
 
-  event.waitUntil(self.registration.showNotification(title, options));
+  event.waitUntil(showNotification());
 });
 
 // The manual fetch handler has been removed, as it can conflict with Workbox's precaching. 
