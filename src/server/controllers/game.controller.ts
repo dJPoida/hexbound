@@ -6,8 +6,10 @@ import { generateGameCode } from '../helpers/gameCode.helper';
 import redisClient from '../redisClient';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
 import { GameStatus, GameStatusValues } from '../entities/GameStatus.entity';
-import { ServerGameState } from '../../shared/types/socket.types';
+import { ServerGameState, SocketMessage } from '../../shared/types/socket.types';
 import { RedisJSON } from '@redis/json/dist/commands';
+import { broadcastToGame } from '../socketSubscriptionManager';
+import { SOCKET_MESSAGE_TYPES } from '../../shared/constants/socket.const';
 
 export const getGameByCode = async (req: Request, res: Response) => {
   const { gameCode } = req.params;
@@ -87,9 +89,68 @@ export const getGamesForUser = async (req: AuthenticatedRequest, res: Response) 
   }
 };
 
+export const joinGame = async (req: AuthenticatedRequest, res: Response) => {
+  const { gameCode } = req.params;
+  const userId = res.locals.userId;
+
+  if (!userId) {
+    return res.status(401).json({ message: 'Authentication error: User ID not found.' });
+  }
+
+  const gameRepository = AppDataSource.getRepository(Game);
+  const userRepository = AppDataSource.getRepository(User);
+
+  try {
+    const game = await gameRepository.findOne({ where: { gameCode }, relations: ['players', 'status'] });
+    if (!game) {
+      return res.status(404).json({ message: 'Game not found.' });
+    }
+
+    const user = await userRepository.findOne({ where: { userId } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Check if user is already in the game
+    if (game.players.some(player => player.userId === userId)) {
+      // User is already a player, so this is a successful "join"
+      return res.status(200).json({ message: 'Already joined.', gameId: game.gameId });
+    }
+
+    // Add the user to the game's players
+    game.players.push(user);
+    await gameRepository.save(game);
+
+    // Now, update the game state in Redis
+    const redisKey = `game:${game.gameId}`;
+    const currentState = await redisClient.json.get(redisKey) as ServerGameState | null;
+
+    if (currentState) {
+      const newPlayer = {
+        userId: user.userId,
+        userName: user.userName,
+      };
+      currentState.players.push(newPlayer);
+      await redisClient.json.set(redisKey, '$', currentState as unknown as RedisJSON);
+      
+      // Finally, broadcast the updated state to all clients in the game
+      const broadcastMessage: SocketMessage<ServerGameState> = {
+        type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE,
+        payload: currentState,
+      };
+      broadcastToGame(game.gameId, JSON.stringify(broadcastMessage));
+    }
+
+    res.status(200).json({ message: 'Successfully joined game.', gameId: game.gameId });
+  } catch (error) {
+    console.error(`[API /games/${gameCode}/join] Error joining game:`, error);
+    res.status(500).json({ message: 'Error joining game', error: (error as Error).message });
+  }
+};
+
 export const createGame = async (req: AuthenticatedRequest, res: Response) => {
   // The user's ID is now available from the auth middleware
-  const userId = req.user?.userId;
+  const userId = res.locals.userId;
   if (!userId) {
     // This case should ideally not be reached if authMiddleware is working correctly
     return res.status(401).json({ message: 'Authentication error: User ID not found.' });

@@ -57,19 +57,29 @@ export function App() {
 
   const [afterPromptAction, setAfterPromptAction] = useState<() => void>(() => {});
 
-  const getGameByCode = async (gameCode: string) => {
+  const handleJoinGame = async (gameCode: string) => {
     try {
-      const response = await authenticatedFetch(`/api/games/by-code/${gameCode}`);
-      if (response.ok) {
-        const game = await response.json();
-        navigateToGame(game.gameId, game.gameCode);
-      } else {
-        // Handle not found or other errors
-        console.error('Game not found for code:', gameCode);
-        navigateToLobby(); // Or show a not-found message
+      // First, attempt to join the game.
+      const joinResponse = await authenticatedFetch(`/api/games/${gameCode}/join`, {
+        method: 'POST',
+      });
+
+      if (!joinResponse.ok) {
+        // If join fails (e.g., game not found, server error), handle it.
+        const errorData = await joinResponse.json();
+        console.error('Failed to join game:', errorData.message);
+        navigateToLobby(); // Or show an error message to the user
+        return;
       }
+      
+      const joinData = await joinResponse.json();
+      const gameId = joinData.gameId;
+
+      // After a successful join, navigate to the game.
+      navigateToGame(gameId, gameCode);
+
     } catch (error) {
-      console.error('Error fetching game by code:', error);
+      console.error('Error joining game:', error);
     }
   };
 
@@ -131,7 +141,7 @@ export function App() {
       const gameIdMatch = path.match(/^\/game\/([a-zA-Z0-9-]+)/);
       if (gameIdMatch) {
         const gameCode = gameIdMatch[1];
-        getGameByCode(gameCode);
+        handleJoinGame(gameCode);
       } else {
         setCurrentView('lobby');
       }
@@ -143,7 +153,7 @@ export function App() {
       if (gameIdMatch) {
         if(isLoggedIn) {
           const gameCode = gameIdMatch[1];
-          getGameByCode(gameCode);
+          handleJoinGame(gameCode);
         }
       } else {
         navigateToLobby();
@@ -234,7 +244,7 @@ export function App() {
           const gameIdMatch = path.match(/^\/game\/([a-zA-Z0-9-]+)/);
           if (gameIdMatch) {
             const gameCode = gameIdMatch[1];
-            getGameByCode(gameCode);
+            handleJoinGame(gameCode);
           } else {
             navigateToLobby();
           }
