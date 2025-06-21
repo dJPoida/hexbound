@@ -9,6 +9,14 @@ import { disconnectRedis } from './redisClient'; // Import disconnectRedis
 import { AppDataSource } from './data-source';
 import { initializeWebSocketServer } from './webSocketServer.js';
 
+process.on('uncaughtException', (err, origin) => {
+  console.error(`[Server] Uncaught Exception. Origin: ${origin}`, err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[Server] Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 // Vite is only needed for development mode
 import { createServer as createViteServer } from 'vite';
 
@@ -61,23 +69,27 @@ async function startServer() {
       });
     });
   } else {
-    console.log('Development mode: configuring Vite middleware.');
-    const viteRoot = path.resolve(currentModuleDirname, '../client');
-    const vite = await createViteServer({
-      root: viteRoot,
-      configFile: path.resolve(currentModuleDirname, '../../vite.config.ts'),
-      server: {
-        middlewareMode: true,
-        hmr: {
-          server: httpServer, // Pass the http server instance here
+    try {
+      console.log('Development mode: configuring Vite middleware.');
+      const viteRoot = path.resolve(currentModuleDirname, '../client');
+      const vite = await createViteServer({
+        root: viteRoot,
+        configFile: path.resolve(currentModuleDirname, '../../vite.config.ts'),
+        server: {
+          middlewareMode: true,
+          hmr: {
+            server: httpServer, // Pass the http server instance here
+          },
         },
-      },
-      appType: 'spa',
-    });
-    
-    // Use vite's connect instance as middleware.
-    // This will handle HMR and serve client-side assets.
-    app.use(vite.middlewares);
+        appType: 'spa',
+      });
+      
+      // Use vite's connect instance as middleware.
+      // This will handle HMR and serve client-side assets.
+      app.use(vite.middlewares);
+    } catch (e) {
+      console.error('[Vite] Error during middleware configuration:', e);
+    }
   }
 
   // The 'port' variable was being declared too late. Moved up for clarity.
@@ -102,8 +114,9 @@ async function startServer() {
   moduleLevelHttpServer = httpServer; // Assign the created httpServer to the module-level variable
 }
 
-const gracefulShutdownHandler = async (signal: string) => {
-  console.log(`[Server] ${signal} received. Shutting down gracefully...`);
+const executeGracefulShutdown = async (signal: string) => {
+  console.log(`[Server] Executing graceful shutdown for ${signal}...`);
+  console.trace('[Server] Shutdown initiated from:');
   let exitCode = 0;
   try {
     // Stop the HTTP server from accepting new connections
@@ -135,6 +148,11 @@ const gracefulShutdownHandler = async (signal: string) => {
   }
   console.log('[Server] Graceful shutdown complete. Exiting.');
   process.exit(exitCode);
+};
+
+const gracefulShutdownHandler = (signal: string) => {
+  console.log(`[Server] ${signal} received. Kicking off graceful shutdown.`);
+  executeGracefulShutdown(signal);
 };
 
 process.on('SIGINT', () => gracefulShutdownHandler('SIGINT'));

@@ -137,6 +137,89 @@ Client-side code is organized to promote modularity and maintainability.
 - **Entity Registration**: When a new TypeORM entity is created, it **must** be added to the `entities` array in the `DataSource` configuration file (`src/server/data-source.ts`).
 - **NPM Script Arguments**: Before running npm scripts that pass arguments to an underlying command (like `typeorm`), verify the correct syntax in `package.json`, particularly the use of `--` to separate arguments.
 
+# Backend Development & Express
+- **Middleware-to-Controller Data Passing**: To ensure consistency and avoid bugs, middleware should always pass data to subsequent handlers by attaching it to the `res.locals` object. Controllers should then exclusively read from `res.locals` to retrieve this data. For example, `auth.middleware.ts` sets `res.locals.userId`, and controllers read from that property.
+
+# Asset Management
+
+## Icon Font Workflow
+The project uses a custom icon font for UI elements, generated via IcoMoon. The source files are stored in `/design/assets/hexbound-icons`.
+
+To update the icon font:
+1. Replace the contents of `/design/assets/hexbound-icons` with the new files downloaded from IcoMoon.
+2. Run the command `npm run update:icons`.
+
+This script will automatically:
+- Copy the `.woff` font file to `/src/client/public/fonts/HexboundIcons/`.
+- Read the new `style.css`, update the font path, and append a cache-busting timestamp.
+- Overwrite `/src/client/HexboundIcons.css` with the updated styles.
+
+# Vite in Middleware Mode
+**Reasoning**:
+- Fast builds and dependency caching for the frontend.
+- Excellent Hot Module Reloading (HMR) support.
+- First-class TypeScript support.
+- **Configuration**: When running Vite in `middlewareMode` from the Express server (`src/server/main.ts`), server-specific options (e.g., `allowedHosts`, `hmr`) must be configured within the `createViteServer` function call. The `server` block in `vite.config.ts` must be removed to prevent configuration conflicts that can lead to server instability.
+
+### Development Workflow
+- **Primary Command**: `npm run dev`
+  - This command runs the Node.js server which uses Vite to build and serve the front end using HMR
+  - The application is typically accessible at `http://localhost:3000`.
+  - Server environment variables are loaded from `.env.local` via `dotenv`.
+- **Starting Docker Services**: `npm run docker:up` (which executes `docker compose --env-file .env.local -f docker-compose.yml up -d`).
+  - This ensures that all Docker containers (typically Redis and Postgres) are started and available.
+- **Stopping Docker Services**: `npm run docker:down`.
+
+### Environment Variable Management
+
+Environment variables are managed as follows:
+
+# Node.js Process Management
+- **Signal Handling**: Do not use `async` functions directly as listeners for Node.js process signals (e.g., `process.on('SIGINT', async () => ...)`). This can lead to race conditions where the process exits before the async operation completes. Instead, use a synchronous handler that calls an `async` function to perform the cleanup.
+
+# Data Models
+
+This section outlines the primary data entities used in the application, managed by TypeORM.
+
+## User Entity (`/src/server/entities/User.entity.ts`)
+
+Represents a player in the game.
+
+-   **`userId`**: `string` (Primary Key, UUID) - A unique identifier for the user.
+-   **`userName`**: `string` - The user's chosen display name. Limited to 20 characters.
+
+# Coding Conventions
+- Use functional, composable modules where appropriate.
+- Prefer clear, well-typed TypeScript code with explicit interfaces.
+- Source code exists in `/src` and is separated into `server`, `client` and `shared` domains (shared houses types used across both server and client)
+
+# Constants
+The `src/shared/constants/` directory contains files for defining application-wide constants. Using these constants helps prevent bugs from typos and makes the code easier to maintain.
+- **`api.const.ts`**: Defines constants for API endpoint paths.
+- **`redis.const.ts`**: Defines key prefixes and helper functions for creating Redis keys.
+- **`socket.const.ts`**: Defines the types for WebSocket messages.
+
+# Backend Structure
+The server-side application follows a clear structure for handling API requests.
+- **Routes**: Located in `src/server/routes/`, these files define the API endpoints using Express Router. They are responsible for mapping HTTP methods and paths to controller functions. Route paths should use constants defined in `src/shared/constants/api.const.ts`.
+- **Controllers**: Located in `src/server/controllers/`, these files contain the business logic for each API endpoint. They handle the request, interact with services or data models, and send the response.
+
+# Frontend Structure
+Client-side code is organized to promote modularity and maintainability.
+- **Components**: Reusable UI components are located in `src/client/components/`.
+  - Each component should reside in its own folder (e.g., `src/client/components/MyComponent/`).
+  - The main component file should be named after the folder (e.g., `MyComponent.tsx` for JSX components, or `MyComponent.ts` for `htm`-based components).
+  - All related files, such as styles or sub-components, should be co-located in the same folder.
+- **Styling**: Component-specific styles are managed using CSS Modules.
+  - Style files should have a `.module.css` extension (e.g., `MyComponent.module.css`).
+  - These styles are imported into the component file and applied as objects (e.g., `styles.myClass`). This locally scopes class names and avoids global style conflicts.
+
+# Backend Development & TypeORM
+- **`reflect-metadata` Requirement**: For all TypeORM operations, especially migration generation, ensure `import 'reflect-metadata';` is the very first import in the server's entry point (`src/server/main.ts`).
+- **Explicit Column Types**: If TypeORM migration generation fails with a type inference error (e.g., "cannot be guessed"), explicitly define the column type (e.g., `@Column('varchar')`) in the entity definition.
+- **Entity Registration**: When a new TypeORM entity is created, it **must** be added to the `entities` array in the `DataSource` configuration file (`src/server/data-source.ts`).
+- **NPM Script Arguments**: Before running npm scripts that pass arguments to an underlying command (like `typeorm`), verify the correct syntax in `package.json`, particularly the use of `--` to separate arguments.
+
 # Asset Management
 
 ## Icon Font Workflow

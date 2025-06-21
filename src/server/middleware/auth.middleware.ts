@@ -26,6 +26,8 @@ export const authMiddleware = async (req: AuthenticatedRequest, res: Response, n
     const sessionKey = `session:${token}`;
     const userId = await redisClient.get(sessionKey);
 
+    console.log(`[Auth Middleware] Checking session key: ${sessionKey}, Found user ID: ${userId}`);
+
     if (!userId) {
       return res.status(401).json({ message: 'Invalid or expired session token.' });
     }

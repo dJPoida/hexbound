@@ -38,7 +38,7 @@ export const getGameByCode = async (req: Request, res: Response) => {
 };
 
 export const getGamesForUser = async (req: AuthenticatedRequest, res: Response) => {
-  const userId = req.user?.userId;
+  const userId = res.locals.userId;
   if (!userId) {
     return res.status(401).json({ message: 'Authentication error: User ID not found.' });
   }

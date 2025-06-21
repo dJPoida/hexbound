@@ -224,7 +224,10 @@ async function handleEndTurn(ws: AuthenticatedWebSocket, payload: EndTurnPayload
         const notificationPayload = {
           title: 'Hexbound: Your Turn!',
           body: `It's your turn to make a move in game ${stateAfterActions.gameCode}.`,
-          data: { gameId: stateAfterActions.gameId }
+          data: { 
+            gameId: stateAfterActions.gameId,
+            gameCode: stateAfterActions.gameCode,
+          }
         };
         // We don't need to wait for this to complete
         console.log(`[EndTurn] Sending push notification to: ${nextPlayer.userId}`);

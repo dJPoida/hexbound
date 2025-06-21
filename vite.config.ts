@@ -39,7 +39,10 @@ export default defineConfig((): UserConfig => {
       }),
     ],
     server: {
-      allowedHosts: ['dev.hexbound.game-host.org'],
+      allowedHosts: [
+        'dev.hexbound.game-host.org',
+        'localhost',
+      ],
     },
     appType: 'spa', // Explicitly set for SPA behavior
     build: {

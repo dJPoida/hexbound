@@ -1,6 +1,7 @@
 import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
-import { StaleWhileRevalidate } from 'workbox-strategies';
+import { StaleWhileRevalidate, NetworkFirst } from 'workbox-strategies';
+import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -19,9 +20,32 @@ precacheAndRoute(self.__WB_MANIFEST);
 // Remove old caches.
 cleanupOutdatedCaches();
 
-// Example of caching an API route (GET requests only)
+/*
+// Use a NetworkFirst strategy for game list API calls.
+// This ensures the user always sees the latest list of games when online,
+// and falls back to the cache only when offline.
 registerRoute(
-  ({ request, url }) => request.method === 'GET' && url.pathname.startsWith('/api'),
+  ({ url }) => url.pathname === '/api/games',
+  new NetworkFirst({
+    cacheName: 'api-games-cache',
+    plugins: [
+      // Ensure that only successful responses are cached.
+      new CacheableResponsePlugin({
+        statuses: [200],
+      }),
+    ],
+  })
+);
+*/
+
+// Use a StaleWhileRevalidate strategy for other GET API requests.
+// This is good for data that doesn't need to be real-time, like game assets or user profiles.
+// IMPORTANT: We explicitly exclude /api/games which is handled above.
+registerRoute(
+  ({ request, url }) =>
+    request.method === 'GET' &&
+    url.pathname.startsWith('/api/') &&
+    !url.pathname.startsWith('/api/games'),
   new StaleWhileRevalidate()
 );
 
@@ -66,29 +90,27 @@ self.addEventListener('notificationclick', (event: NotificationEvent) => {
   event.notification.close();
 
   const openGamePromise = async () => {
-    const gameId = event.notification.data?.gameId;
-    const gameUrl = gameId ? `/game/${gameId}` : '/';
+    const gameCode = event.notification.data?.gameCode;
+    const gameUrl = gameCode ? `/game/${gameCode}` : '/';
     
+    // This looks for an existing window and focuses it.
     const allClients = await self.clients.matchAll({
       includeUncontrolled: true,
       type: 'window',
     });
 
-    // Find a client to focus, preferably one that is already visible.
-    const clientToFocus = allClients.find(client => client.visibilityState === 'visible') || allClients[0];
-
-    if (clientToFocus) {
-      console.log('[SW] Found an existing app window. Focusing and navigating.');
-      // Note: client.navigate() is not supported in all browsers.
-      // It's best to check for its existence.
-      if ('navigate' in clientToFocus && typeof clientToFocus.navigate === 'function') {
-        await clientToFocus.navigate(gameUrl);
+    for (const client of allClients) {
+      // Use URL to easily parse the path, and ignore query strings
+      const clientUrl = new URL(client.url);
+      if (clientUrl.pathname === gameUrl) {
+        console.log(`[SW] Found an existing window for ${gameUrl}. Focusing it.`);
+        return client.focus();
       }
-      return clientToFocus.focus();
-    } else {
-      console.log(`[SW] No existing window found. Opening new one at ${gameUrl}`);
-      return self.clients.openWindow(gameUrl);
     }
+
+    // If no window was found, open a new one.
+    console.log(`[SW] No existing window found for ${gameUrl}. Opening a new one.`);
+    return self.clients.openWindow(gameUrl);
   };
 
   event.waitUntil(openGamePromise());

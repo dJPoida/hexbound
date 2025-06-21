@@ -221,14 +221,15 @@ export function App() {
         // Use the auth service to save the session
         authService.saveSession(data.sessionToken, data.userId, data.userName);
         
+        // It's important to set the state that indicates the user is logged in *before*
+        // we proceed, as other effects may depend on this.
         setCurrentUserId(data.userId);
         setCurrentUserName(data.userName);
         setIsLoggedIn(true);
         setUserNameInput('');
         
-        // After login, check notification status before deciding where to navigate.
+        // Now, perform the post-login actions like checking notifications and navigating.
         await checkNotificationStatusAndProceed(() => {
-          // This is the function that runs after the notification check is complete.
           const path = window.location.pathname;
           const gameIdMatch = path.match(/^\/game\/([a-zA-Z0-9-]+)/);
           if (gameIdMatch) {
@@ -314,6 +315,17 @@ export function App() {
   };
 
   const navigateToGame = (gameId: string, gameCode: string) => {
+    // Aggressively check for notification permission inconsistencies
+    if ('Notification' in window) {
+      const permission = Notification.permission;
+      const settings = settingsService.getSettings();
+
+      if (permission === 'denied' && settings.notificationsEnabled) {
+        console.log('[Permissions] Notification permission has been revoked. Updating app settings.');
+        settingsService.updateSettings({ notificationsEnabled: false });
+      }
+    }
+    
     setCurrentGameId(gameId);
     setCurrentView('game');
     socketService.connect(gameId);

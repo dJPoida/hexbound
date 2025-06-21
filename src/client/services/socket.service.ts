@@ -24,10 +24,11 @@ class SocketService {
     this.lastGameId = gameId;
     this.isManuallyClosed = false;
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      console.log('WebSocket is already connected.');
+      console.log('[SocketService] WebSocket is already connected.');
       return;
     }
 
+    console.log(`[SocketService] Attempting to connect for gameId: ${gameId}`);
     this.updateStatus('connecting');
 
     const token = authService.getToken();
@@ -146,6 +147,7 @@ class SocketService {
   }
 
   public disconnect() {
+    console.log('[SocketService] Manual disconnect called.');
     this.isManuallyClosed = true;
     if (this.socket) {
       this.socket.close();

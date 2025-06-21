@@ -26,12 +26,20 @@ export async function authenticatedFetch(url: string, options: RequestInit = {})
     headers,
   };
 
-  const response = await fetch(url, newOptions);
+  try {
+    const response = await fetch(url, newOptions);
 
-  if (response.status === 401) {
-    authService.clearAuthToken();
-    window.location.href = '/'; 
+    if (response.status === 401) {
+      console.log('[API] Unauthorized request. Clearing session and redirecting to login.');
+      authService.clearAuthToken();
+      window.location.href = '/'; 
+    }
+
+    return response;
+  } catch (error) {
+    console.error(`[API] Network error during authenticated fetch for ${url}:`, error);
+    // Re-throw the error so the calling component can handle it (e.g., show a message)
+    // This prevents the app from crashing while still allowing for error handling.
+    throw error;
   }
-
-  return response;
 } 
