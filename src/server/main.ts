@@ -8,6 +8,8 @@ import apiRouter from './apiRouter';
 import { disconnectRedis } from './redisClient'; // Import disconnectRedis
 import { AppDataSource } from './data-source';
 import { initializeWebSocketServer } from './webSocketServer.js';
+import { WebSocketServer } from 'ws';
+import { ViteDevServer } from 'vite';
 
 process.on('uncaughtException', (err, origin) => {
   console.error(`[Server] Uncaught Exception. Origin: ${origin}`, err);
@@ -31,13 +33,15 @@ console.log(`Hexbound Server starting, version: ${config.appVersion}, mode: ${co
 console.log(`Using directory for operations: ${currentModuleDirname}`);
 
 let moduleLevelHttpServer: http.Server; // To store the server instance
+let moduleLevelWss: WebSocketServer; // To store the WebSocket server instance
+let moduleLevelVite: ViteDevServer; // To store the Vite server instance
 
 async function startServer() {
   const app = express();
   const httpServer = http.createServer(app); // Create HTTP server instance with Express app
 
   // Initialize WebSocket Server
-  initializeWebSocketServer(httpServer);
+  moduleLevelWss = initializeWebSocketServer(httpServer);
 
   // Initialize TypeORM
   try {
@@ -83,6 +87,7 @@ async function startServer() {
         },
         appType: 'spa',
       });
+      moduleLevelVite = vite; // Store the vite instance
       
       // Use vite's connect instance as middleware.
       // This will handle HMR and serve client-side assets.
@@ -119,7 +124,34 @@ const executeGracefulShutdown = async (signal: string) => {
   console.trace('[Server] Shutdown initiated from:');
   let exitCode = 0;
   try {
-    // Stop the HTTP server from accepting new connections
+    // 1. Close the Vite Dev Server to release its resources.
+    if (moduleLevelVite) {
+      await moduleLevelVite.close();
+      console.log('[Server] Vite dev server closed.');
+    }
+
+    // 2. Forcefully close all WebSocket connections
+    if (moduleLevelWss) {
+      console.log('[Server] Closing all WebSocket connections...');
+      for (const ws of moduleLevelWss.clients) {
+        ws.terminate();
+      }
+      // 3. Close the WebSocket server itself
+      await new Promise<void>((resolve, reject) => {
+        moduleLevelWss.close((err) => {
+          if (err) {
+            console.error('[Server] Error closing WebSocket server:', err);
+            // Don't reject on error, just log it and move on
+            // exitCode = 1; 
+            // return reject(err);
+          }
+          console.log('[Server] WebSocket server closed.');
+          resolve();
+        });
+      });
+    }
+
+    // 4. Stop the HTTP server from accepting new connections
     if (moduleLevelHttpServer) {
       await new Promise<void>((resolve, reject) => {
         // Add specific type for the error object
