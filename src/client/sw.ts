@@ -74,16 +74,17 @@ self.addEventListener('notificationclick', (event: NotificationEvent) => {
       type: 'window',
     });
 
-    // Check if there's already a window open with the app
-    const gameClient = allClients.find(client => {
-      // Use URL constructor to easily parse the path
-      const clientPath = new URL(client.url).pathname;
-      return clientPath.startsWith('/game/');
-    });
+    // Find a client to focus, preferably one that is already visible.
+    const clientToFocus = allClients.find(client => client.visibilityState === 'visible') || allClients[0];
 
-    if (gameClient) {
-      console.log('[SW] Found an existing game window. Focusing it.');
-      return gameClient.focus();
+    if (clientToFocus) {
+      console.log('[SW] Found an existing app window. Focusing and navigating.');
+      // Note: client.navigate() is not supported in all browsers.
+      // It's best to check for its existence.
+      if ('navigate' in clientToFocus && typeof clientToFocus.navigate === 'function') {
+        await clientToFocus.navigate(gameUrl);
+      }
+      return clientToFocus.focus();
     } else {
       console.log(`[SW] No existing window found. Opening new one at ${gameUrl}`);
       return self.clients.openWindow(gameUrl);

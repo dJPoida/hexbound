@@ -30,8 +30,8 @@ export const authMiddleware = async (req: AuthenticatedRequest, res: Response, n
       return res.status(401).json({ message: 'Invalid or expired session token.' });
     }
 
-    // Attach user information to the request object
-    req.user = { userId };
+    // Attach user information to the response locals object
+    res.locals.userId = userId;
 
     // Refresh the session expiration
     await redisClient.expire(sessionKey, 86400); // 24 hours

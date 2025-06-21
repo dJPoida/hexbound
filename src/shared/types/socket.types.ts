@@ -26,7 +26,8 @@ export interface IncrementCounterPayload {
 }
 
 export interface EndTurnPayload {
-    gameId: string;
+  gameId: string;
+  turnId: string;
 }
 
 

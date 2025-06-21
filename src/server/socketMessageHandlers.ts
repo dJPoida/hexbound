@@ -39,11 +39,6 @@ export function handleSocketMessage(ws: AuthenticatedWebSocket, message: Buffer)
     return;
   }
   
-  if (parsedMessage && parsedMessage.type === SOCKET_MESSAGE_TYPES.PING) {
-    ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.PONG }));
-    return;
-  }
-
   if (!isSocketMessage(parsedMessage)) {
     console.error(`[MessageHandler] Invalid message structure from ${ws.userId}:`, parsedMessage);
     ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Invalid message structure.' } }));
@@ -191,8 +186,8 @@ async function handleIncrementCounter(ws: AuthenticatedWebSocket, payload: Incre
 }
 
 async function handleEndTurn(ws: AuthenticatedWebSocket, payload: EndTurnPayload) {
-    const { gameId } = payload;
-    const { userId } = ws;
+    const { gameId, turnId } = payload;
+    const { userId: playerWhoSentMessage } = ws;
     const gameKey = createRedisKey(REDIS_KEY_PREFIXES.GAME_STATE, gameId);
 
     try {
@@ -203,18 +198,26 @@ async function handleEndTurn(ws: AuthenticatedWebSocket, payload: EndTurnPayload
         return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: `Game state not found for game ${gameId}.` } }));
       }
 
+      console.log(`[EndTurn] Received 'end_turn' for turnId: ${turnId}`);
+      console.log(`[EndTurn] Message from user: ${playerWhoSentMessage}`);
+      console.log(`[EndTurn] Current player in state is: ${gameState.currentPlayerId}`);
+
       // 2. Validate that it's the user's turn
-      if (gameState.currentPlayerId !== userId) {
+      if (gameState.currentPlayerId !== playerWhoSentMessage) {
         return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'It is not your turn to end.' } }));
       }
 
       // 3. Apply the logged actions to get the state at the end of the turn
       const stateAfterActions = getPlayerTurnPreview(gameState);
 
-      // 4. Determine the next player
-      const currentPlayerIndex = stateAfterActions.players.findIndex((p: { userId: string; }) => p.userId === userId);
-      const nextPlayerIndex = (currentPlayerIndex + 1) % stateAfterActions.players.length;
-      const nextPlayer = stateAfterActions.players[nextPlayerIndex];
+      // 4. Determine the next player based on the original state
+      const currentPlayerIndex = gameState.players.findIndex(
+        (p: { userId: string }) => p.userId === gameState.currentPlayerId
+      );
+      const nextPlayerIndex = (currentPlayerIndex + 1) % gameState.players.length;
+      const nextPlayer = gameState.players[nextPlayerIndex];
+      
+      console.log(`[EndTurn] Calculated next player is: ${nextPlayer.userId}`);
 
       // Send a push notification to the next player
       if (nextPlayer) {
@@ -224,11 +227,12 @@ async function handleEndTurn(ws: AuthenticatedWebSocket, payload: EndTurnPayload
           data: { gameId: stateAfterActions.gameId }
         };
         // We don't need to wait for this to complete
+        console.log(`[EndTurn] Sending push notification to: ${nextPlayer.userId}`);
         pushService.sendNotification(nextPlayer.userId, notificationPayload);
       }
 
       // 5. Determine the next turn number
-      const newTurnNumber = currentPlayerIndex === stateAfterActions.players.length - 1 
+      const newTurnNumber = currentPlayerIndex === gameState.players.length - 1 
         ? stateAfterActions.turnNumber + 1 
         : stateAfterActions.turnNumber;
 

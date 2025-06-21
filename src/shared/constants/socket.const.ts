@@ -1,8 +1,6 @@
 export const SOCKET_MESSAGE_TYPES = {
   // System messages
   ERROR: 'error',
-  PING: 'ping',
-  PONG: 'pong',
 
   // Game subscription
   GAME_SUBSCRIBE: 'game:subscribe',

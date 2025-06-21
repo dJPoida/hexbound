@@ -118,7 +118,7 @@ export function App() {
       setUserNameInput(lastUserName);
     }
 
-    // Check for existing user session using the auth service
+    // Check for existing user session on initial page load
     const session = authService.getSession();
     if (session) {
       setCurrentUserId(session.userId);
@@ -137,22 +137,6 @@ export function App() {
       }
     }
 
-    // Setup socket listeners
-    const handleGameStateUpdate = (payload: unknown) => {
-      setGameState(payload as ClientGameStatePayload);
-    };
-    const handleCounterUpdate = (payload: unknown) => {
-      const update = payload as { newCount: number };
-      setGameState((prev: ClientGameStatePayload | null) => prev ? { ...prev, gameState: { ...prev.gameState, placeholderCounter: update.newCount } } : null);
-    };
-    const handleStatusUpdate = (status: ConnectionStatus) => {
-      setConnectionStatus(status);
-    }
-
-    socketService.on('game:state_update', handleGameStateUpdate);
-    socketService.on('game:counter_update', handleCounterUpdate);
-    socketService.onStatus(handleStatusUpdate);
-
     const handlePopState = () => {
       const path = window.location.pathname;
       const gameIdMatch = path.match(/^\/game\/([a-zA-Z0-9-]+)/);
@@ -169,11 +153,34 @@ export function App() {
     window.addEventListener('popstate', handlePopState);
 
     return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
+  // This effect manages socket listeners based on login state
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    const handleGameStateUpdate = (payload: unknown) => {
+      setGameState(payload as ClientGameStatePayload);
+    };
+    const handleCounterUpdate = (payload: unknown) => {
+      const update = payload as { newCount: number };
+      setGameState((prev: ClientGameStatePayload | null) => prev ? { ...prev, gameState: { ...prev.gameState, placeholderCounter: update.newCount } } : null);
+    };
+    const handleStatusUpdate = (status: ConnectionStatus) => {
+      setConnectionStatus(status);
+    };
+
+    socketService.on('game:state_update', handleGameStateUpdate);
+    socketService.on('game:counter_update', handleCounterUpdate);
+    socketService.onStatus(handleStatusUpdate);
+
+    return () => {
       // Cleanup listeners on component unmount
       socketService.off('game:state_update', handleGameStateUpdate);
       socketService.off('game:counter_update', handleCounterUpdate);
       socketService.offStatus(handleStatusUpdate);
-      window.removeEventListener('popstate', handlePopState);
     };
   }, [isLoggedIn]);
 
@@ -331,8 +338,9 @@ export function App() {
   };
 
   const handleEndTurn = () => {
-      if (currentGameId) {
-          socketService.sendMessage('game:end_turn', { gameId: currentGameId });
+      if (currentGameId && gameState) {
+          const turnId = `${gameState.turnNumber}-${gameState.currentPlayerId}`;
+          socketService.sendMessage('game:end_turn', { gameId: currentGameId, turnId });
       }
   };
 
@@ -395,7 +403,7 @@ export function App() {
           <Button onClick={handleToggleDebugInfo} variant="icon" aria-label="Show Debug Info">
             <i class="hbi hbi-terminal"></i>
           </Button>
-          <Button onClick={handleEndTurn} variant="secondary" disabled={!isMyTurn}>End Turn</Button>
+          <Button onClick={handleEndTurn} variant="secondary" disabled={!isMyTurn || connectionStatus !== 'connected'}>End Turn</Button>
         </ActionBar>
       );
     }

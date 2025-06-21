@@ -6,6 +6,11 @@ import { AuthenticatedWebSocket } from '../shared/types/socket.types';
 import * as subManager from './socketSubscriptionManager';
 import { handleSocketMessage } from './socketMessageHandlers';
 
+// Extend the AuthenticatedWebSocket to include the isAlive flag for heartbeats
+interface HeartbeatWebSocket extends AuthenticatedWebSocket {
+  isAlive: boolean;
+}
+
 export function initializeWebSocketServer(server: http.Server) {
   const wss = new WebSocketServer({ noServer: true });
 
@@ -51,8 +56,14 @@ export function initializeWebSocketServer(server: http.Server) {
     }
   });
 
-  wss.on('connection', (ws: AuthenticatedWebSocket) => {
+  wss.on('connection', (ws: HeartbeatWebSocket) => {
     console.log(`[WebSocket] Client connected with userId: ${ws.userId}`);
+    
+    // Initialize heartbeat state for the new connection
+    ws.isAlive = true;
+    ws.on('pong', () => {
+      ws.isAlive = true;
+    });
 
     ws.on('message', (message: Buffer) => {
       handleSocketMessage(ws, message);
@@ -66,6 +77,25 @@ export function initializeWebSocketServer(server: http.Server) {
     ws.on('error', (error: Error) => {
       console.error(`[WebSocket] Error for ${ws.userId}:`, error);
     });
+  });
+
+  // Set up the heartbeat interval
+  const interval = setInterval(() => {
+    wss.clients.forEach((ws) => {
+      const hbWs = ws as HeartbeatWebSocket;
+      if (!hbWs.isAlive) {
+        console.log(`[WebSocket] Terminating inactive connection for user: ${hbWs.userId}`);
+        return hbWs.terminate();
+      }
+
+      hbWs.isAlive = false;
+      hbWs.ping(() => {}); // Send ping
+    });
+  }, 30000); // 30 seconds
+
+  // Clean up the interval when the server closes
+  wss.on('close', () => {
+    clearInterval(interval);
   });
 
   console.log('[WebSocket] Server initialized and attached to HTTP server.');

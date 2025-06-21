@@ -53,7 +53,17 @@ export const subscribeToPushNotifications = async (req: Request, res: Response) 
   const userId = res.locals.userId; // Provided by auth middleware
   const subscription = req.body;
 
+  console.log(`[API /subscribe-push] Received subscription request for user: ${userId}`);
+  
+  if (!userId) {
+    console.error(`[API /subscribe-push] Aborting: userId is missing from the request.`);
+    return res.status(401).json({ message: 'Authentication error: User ID is missing.' });
+  }
+
+  console.log(`[API /subscribe-push] Endpoint: ${subscription.endpoint}`);
+
   if (!subscription || !subscription.endpoint) {
+    console.error(`[API /subscribe-push] Invalid subscription object for user: ${userId}`);
     return res.status(400).json({ message: 'Invalid push subscription object.' });
   }
 
@@ -68,6 +78,7 @@ export const subscribeToPushNotifications = async (req: Request, res: Response) 
 
     // Remove existing subscriptions for the same endpoint to avoid duplicates
     await pushSubscriptionRepo.delete({ endpoint: subscription.endpoint });
+    console.log(`[API /subscribe-push] Removed any existing subscriptions for endpoint: ${subscription.endpoint}`);
 
     const newSubscription = pushSubscriptionRepo.create({
       user: user,
@@ -77,6 +88,7 @@ export const subscribeToPushNotifications = async (req: Request, res: Response) 
     });
 
     await pushSubscriptionRepo.save(newSubscription);
+    console.log(`[API /subscribe-push] Successfully saved new subscription for user: ${userId}`);
 
     res.status(201).json({ message: 'Successfully subscribed to push notifications.' });
 

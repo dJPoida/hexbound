@@ -13,11 +13,6 @@ class SocketService {
   private isManuallyClosed = false;
   private messageQueue: string[] = [];
 
-  private HEARTBEAT_INTERVAL = 20000; // 20s
-  private missedPongs = 0;
-  private MAX_MISSED_PONGS = 3;
-  private heartbeatTimer: number | undefined;
-
   private RECONNECT_BASE_DELAY = 1000; // 1s
   private MAX_RECONNECT_DELAY = 30000; // 30s
 
@@ -50,7 +45,6 @@ class SocketService {
       console.log('[SocketService] WebSocket connection established.');
       this.updateStatus('connected');
       this.reconnectAttempts = 0;
-      this.startHeartbeat();
       this.processMessageQueue();
       // Automatically subscribe to the game once connected
       this.sendMessage('game:subscribe', { gameId: this.lastGameId });
@@ -59,10 +53,6 @@ class SocketService {
     this.socket.onmessage = (event) => {
       try {
         const message: SocketMessage<unknown> = JSON.parse(event.data);
-        if (message.type === 'pong') {
-          this.missedPongs = 0;
-          return;
-        }
         if (message.type === 'error') {
           const payload = message.payload as ErrorPayload;
           console.error(`[SocketService] Server Error: ${payload.message}`, payload.details ?? '');
@@ -80,7 +70,6 @@ class SocketService {
 
     this.socket.onclose = (event) => {
       console.log(`[SocketService] WebSocket connection closed. Code: ${event.code}, Reason: ${event.reason}, Clean: ${event.wasClean}`);
-      this.stopHeartbeat();
       this.socket = null;
       if (!this.isManuallyClosed) {
         this.updateStatus('reconnecting');
@@ -106,28 +95,6 @@ class SocketService {
         this.connect(this.lastGameId);
       }
     }, delay);
-  }
-
-  private startHeartbeat() {
-    this.stopHeartbeat();
-    this.missedPongs = 0;
-    this.heartbeatTimer = window.setInterval(() => {
-      if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-        this.socket.send(JSON.stringify({ type: 'ping' }));
-        this.missedPongs++;
-        if (this.missedPongs > this.MAX_MISSED_PONGS) {
-          console.warn('[SocketService] Missed pong, closing socket to trigger reconnect.');
-          this.socket.close();
-        }
-      }
-    }, this.HEARTBEAT_INTERVAL);
-  }
-
-  private stopHeartbeat() {
-    if (this.heartbeatTimer) {
-      clearInterval(this.heartbeatTimer);
-      this.heartbeatTimer = undefined;
-    }
   }
 
   public sendMessage<T>(type: string, payload: T) {
@@ -180,7 +147,6 @@ class SocketService {
 
   public disconnect() {
     this.isManuallyClosed = true;
-    this.stopHeartbeat();
     if (this.socket) {
       this.socket.close();
     }
