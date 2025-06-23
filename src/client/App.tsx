@@ -3,7 +3,6 @@ import { useEffect, useState } from 'preact/hooks';
 import htm from 'htm';
 import './global.css'; // Import global styles
 import styles from './App.module.css'; // Import CSS Modules
-import { Router } from './components/Router/Router';
 import { UserLogin } from './components/UserLogin/UserLogin';
 import { LobbyView } from './components/LobbyView/LobbyView';
 import { GameContainer } from './components/GameContainer/GameContainer';
@@ -13,7 +12,6 @@ import { authenticatedFetch } from './services/api.service';
 import { socketService } from './services/socket.service';
 import { ClientGameStatePayload } from '../shared/types/socket.types';
 import { Game } from '../shared/types/game.types';
-import { Viewport } from './components/Viewport/Viewport';
 import { GameLayout } from './components/GameLayout/GameLayout';
 import { ActionBar } from './components/ActionBar/ActionBar';
 import { Button } from './components/Button/Button';
@@ -26,10 +24,9 @@ import type { NotificationPermission } from './components/GameSettingsDialog/Gam
 
 const NOTIFICATION_PENDING_KEY = 'hexbound-notifications-pending-activation';
 type ConnectionStatus = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
-type ExtendedPermissionState = 'prompt' | 'granted' | 'denied' | 'default';
 
 // Initialize htm with Preact's h function
-const html = htm.bind(h);
+htm.bind(h);
 
 // Define the main App component
 export function App() {
@@ -480,8 +477,6 @@ export function App() {
 
     return renderLoggedInView();
   };
-
-  const isMyTurn = gameState?.currentPlayerId === currentUserId;
 
   return (
     <div className={styles.appContainer}>

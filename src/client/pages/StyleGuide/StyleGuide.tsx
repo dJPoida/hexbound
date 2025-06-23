@@ -1,4 +1,3 @@
-import { h } from 'preact';
 import { Button } from '../../components/Button/Button';
 import { Logo } from '../../components/Logo/Logo';
 import styles from './StyleGuide.module.css';

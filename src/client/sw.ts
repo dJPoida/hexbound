@@ -20,7 +20,6 @@ precacheAndRoute(self.__WB_MANIFEST);
 // Remove old caches.
 cleanupOutdatedCaches();
 
-/*
 // Use a NetworkFirst strategy for game list API calls.
 // This ensures the user always sees the latest list of games when online,
 // and falls back to the cache only when offline.
@@ -36,7 +35,6 @@ registerRoute(
     ],
   })
 );
-*/
 
 // Use a StaleWhileRevalidate strategy for other GET API requests.
 // This is good for data that doesn't need to be real-time, like game assets or user profiles.
@@ -115,5 +113,3 @@ self.addEventListener('notificationclick', (event: NotificationEvent) => {
 
   event.waitUntil(openGamePromise());
 });
-
-// The manual fetch handler has been removed, as it can conflict with Workbox's precaching. 
