@@ -49,30 +49,49 @@ registerRoute(
 
 self.addEventListener('push', (event: PushEvent) => {
   const showNotification = async () => {
-    // Check for visible clients
+    if (!event.data) {
+      console.error('Push event but no data');
+      return;
+    }
+
+    const data = event.data.json();
+    const gameCode = data.data?.gameCode;
+
+    // Get all clients to check their visibility and URL.
     const allClients = await self.clients.matchAll({
       includeUncontrolled: true,
       type: 'window',
     });
 
-    const isAppVisible = allClients.some((client) => client.visibilityState === 'visible');
+    // If the notification is for a specific game, only suppress it if that game's
+    // URL is currently visible. This prevents silencing a "your turn" notification
+    // just because the user has the lobby open.
+    if (gameCode) {
+      const gameUrl = `/game/${gameCode}`;
+      const isGamePageVisible = allClients.some((client) => {
+        const clientUrl = new URL(client.url);
+        return client.visibilityState === 'visible' && clientUrl.pathname === gameUrl;
+      });
 
-    if (isAppVisible) {
-      console.log('[SW] Push event received, but a client is visible. Skipping notification.');
-      return;
+      if (isGamePageVisible) {
+        console.log(`[SW] User is already viewing game ${gameCode}. Skipping notification.`);
+        return;
+      }
+    } else {
+      // For general notifications (not game-specific), we can suppress the
+      // notification if any part of the app is visible.
+      const isAppVisible = allClients.some((client) => client.visibilityState === 'visible');
+      if (isAppVisible) {
+        console.log('[SW] Non-game push event received, but a client is visible. Skipping notification.');
+        return;
+      }
     }
 
-    if (!event.data) {
-      console.error('Push event but no data');
-      return;
-    }
-    
-    const data = event.data.json();
     const title = data.title || 'Hexbound';
     const options = {
       body: data.body || 'You have a new notification.',
-      icon: '/favicon/android-chrome-192x192.png', // Optional
-      badge: '/favicon/favicon-32x32.png', // Optional
+      icon: '/favicon/android-chrome-192x192.png',
+      badge: '/favicon/favicon-32x32.png',
       data: data.data, // Attach custom data
     };
 
