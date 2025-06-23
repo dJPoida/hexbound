@@ -10,6 +10,8 @@ import { ServerGameState, SocketMessage } from '../../shared/types/socket.types'
 import { RedisJSON } from '@redis/json/dist/commands';
 import { broadcastToGame } from '../socketSubscriptionManager';
 import { SOCKET_MESSAGE_TYPES } from '../../shared/constants/socket.const';
+import { generateMap } from '../helpers/map.helper';
+import config from '../config';
 
 export const getGameByCode = async (req: Request, res: Response) => {
   const { gameCode } = req.params;
@@ -211,7 +213,7 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
         },
       ],
       turnActionLog: [], // To store actions taken in a turn
-      mapData: {}, // To be determined later
+      mapData: generateMap(config.map.defaultWidth, config.map.defaultHeight),
       gameState: {
         placeholderCounter: 0
       }

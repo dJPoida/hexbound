@@ -25,6 +25,10 @@ const config = {
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
   },
+  map: {
+    defaultWidth: parseInt(process.env.MAP_WIDTH || '150', 10),
+    defaultHeight: parseInt(process.env.MAP_HEIGHT || '50', 10),
+  },
   webpush: {
     subject: process.env.VAPID_SUBJECT || 'mailto:admin@localhost.com',
     publicKey: process.env.VITE_VAPID_PUBLIC_KEY || '',

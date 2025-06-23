@@ -1,4 +1,5 @@
 import { WebSocket } from 'ws';
+import { MapData, Player } from './game.types';
 
 // Extend the WebSocket type to include user information
 export interface AuthenticatedWebSocket extends WebSocket {
@@ -51,12 +52,9 @@ export interface ServerGameState {
   gameCode: string;
   turnNumber: number;
   currentPlayerId: string;
-  players: {
-      userId: string;
-      userName:string;
-  }[];
+  players: Player[];
   turnActionLog: TurnAction[];
-  // mapData: any; // To be defined later
+  mapData: MapData;
   gameState: {
     placeholderCounter: number;
   };
@@ -69,11 +67,8 @@ export interface ClientGameStatePayload {
   gameCode: string;
   turnNumber: number;
   currentPlayerId: string;
-  players: {
-      userId: string;
-      userName:string;
-  }[];
-  // mapData: any; // To be defined later
+  players: Player[];
+  mapData: MapData;
   gameState: {
     placeholderCounter: number;
   };

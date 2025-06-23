@@ -61,7 +61,6 @@ export interface MapData {
 export type GameState = {
   gameId: string;
   gameCode: string;
-  gameName: string;
   players: Player[];
   status: GameStatus;
   map: MapData;
