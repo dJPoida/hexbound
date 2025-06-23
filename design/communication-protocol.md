@@ -27,13 +27,17 @@ All API endpoints are prefixed with `/api`. The routes are organized by feature.
           "sessionToken": "string"
         }
         ```
+-   **`POST /subscribe-push`**: Subscribes a user to receive push notifications.
+    -   **Authentication**: Required (Session Token)
+    -   **Request Body**: Standard PushSubscription JSON object from the browser.
+    -   **Response (201 Created)**: `{ "message": "Successfully subscribed to push notifications." }`
 
 #### Games (`/games`)
 
 *These endpoints require an authenticated user.*
 
 -   **`GET /`**: Fetches a list of games for the authenticated user.
-    -   **Response (200 OK)**: `Array<GameEntity>`
+    -   **Response (200 OK)**: `Array<Game & { currentPlayerId: string | null }>`
         ```json
         [
           {
@@ -48,12 +52,14 @@ All API endpoints are prefixed with `/api`. The routes are organized by feature.
             "status": {
               "statusId": "number",
               "statusName": "WAITING | IN_PROGRESS | FINISHED"
-            }
+            },
+            "currentTurn": 1,
+            "currentPlayerId": "string (uuid) | null"
           }
         ]
         ```
 -   **`POST /`**: Creates a new game.
-    -   **Request Body**: `{ "gameName": "string" }` (Note: `gameName` is not yet used)
+    -   **Request Body**: (None)
     -   **Response (201 Created)**:
         ```json
         {
@@ -62,6 +68,10 @@ All API endpoints are prefixed with `/api`. The routes are organized by feature.
           "gameCode": "string"
         }
         ```
+-   **`GET /by-code/:gameCode`**: Fetches a single game's details by its code.
+    -   **Response (200 OK)**: `GameEntity` (similar to the objects in the `GET /` array).
+-   **`POST /:gameCode/join`**: Allows the authenticated user to join a game.
+    -   **Response (200 OK)**: `{ "message": "Successfully joined game.", "gameId": "string" }`
 
 #### Misc (`/misc`)
 
@@ -103,34 +113,38 @@ The client establishes a WebSocket connection to the server. Once connected, it 
 
 ### Message Format
 
-All WebSocket messages are JSON objects with a `type` and a `payload`.
+All WebSocket messages are JSON objects with a `type` and a `payload`. The `type` string identifies the action or event, and is defined in `src/shared/constants/socket.const.ts` using a `feature:action` naming convention.
 
 ```typescript
 interface WebSocketMessage<T> {
-  type: keyof typeof SOCKET_MESSAGE_TYPES;
+  type: 'feature:action';
   payload: T;
 }
 ```
 
-The `type` string identifies the action or event, and is defined in `src/shared/constants/socket.const.ts`.
-
-### System Messages
--   **`ERROR`**: Sent from server to a client when an error occurs.
+### System Messages (Server-to-Client)
+-   **`error`**: Sent from server to a client when an error occurs.
     -   **Payload**: `{ "message": "string" }`
--   `PING`: Sent from client to server to check connection. (No payload)
--   `PONG`: Sent from server to client in response to a `PING`. (No payload)
 
-### Game Subscription
--   **`GAME_SUBSCRIBE`**: Client message to start receiving updates for a specific game.
+### Game Lifecycle
+
+A user can join a game in two ways:
+1.  **Via REST API**: By calling `POST /api/games/:gameCode/join`.
+2.  **Via WebSocket**: By sending a `game:subscribe` message for a game they are not yet a part of. The server will automatically add them if the game has not started.
+
+#### Subscription
+-   **`game:subscribe`**: Client message to start receiving updates for a specific game.
     -   **Payload**: `{ "gameId": "string" }` (Can be game UUID or game code)
--   **`GAME_UNSUBSCRIBE`**: Client message to stop receiving updates for a specific game.
+-   **`game:unsubscribe`**: Client message to stop receiving updates for a specific game.
     -   **Payload**: `{ "gameId": "string" }`
 
-### Game State Updates (Server-to-Client)
+### Game State
 
--   **`GAME_STATE_UPDATE`**: This is the primary message for synchronizing game state. The server sends this message in several scenarios:
+The authoritative game state is stored in Redis on the server (`ServerGameState`). This object contains sensitive or internal data like the `turnActionLog`. When the server sends state to clients, it uses a sanitized version called `ClientGameStatePayload`.
+
+-   **`game:state_update` (Server-to-Client)**: This is the primary message for synchronizing game state. The server sends this message:
     -   To a single player when they subscribe or reconnect, showing them the latest state.
-    -   To a single player after they perform an action (e.g., `GAME_INCREMENT_COUNTER`) to give them instant feedback on their turn's progress.
+    -   To a single player after they perform an action (e.g., `game:increment_counter`) to give them instant feedback (a "preview state").
     -   To all players in a game when a turn ends, broadcasting the official new state.
     -   **Payload (`ClientGameStatePayload`)**:
         ```json
@@ -154,10 +168,11 @@ The `type` string identifies the action or event, and is defined in `src/shared/
 
 ### Player Actions (Client-to-Server)
 
--   **`GAME_INCREMENT_COUNTER`**: Client requests to increment the placeholder counter. This action is logged by the server. The server responds by sending a `GAME_STATE_UPDATE` message with a *preview* of the new state back to only the player who sent the action.
+-   **`game:increment_counter`**: Client requests to increment the placeholder counter. This action is logged in the `turnActionLog` in Redis. The server then responds to *only the sender* with a `game:state_update` message containing a preview of the new state.
     -   **Payload**: `{ "gameId": "string" }`
--   **`GAME_END_TURN`**: Client message to end their current turn. This causes the server to apply all logged actions, calculate the next turn, and broadcast a `GAME_STATE_UPDATE` to all players.
-    -   **Payload**: `{ "gameId": "string" }`
+-   **`game:end_turn`**: Client message to end their current turn. This causes the server to apply all logged actions from the `turnActionLog`, calculate the next turn's state, advance the turn, and broadcast a final `game:state_update` to all players. It also triggers a push notification to the next player.
+    -   **Payload**: `{ "gameId": "string", "turnId": "string" }`
+      *(Note: `turnId` is not currently used by the server but is part of the payload.)*
 
 ### Client-to-Server Messages (Actions)
 
