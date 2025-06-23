@@ -123,6 +123,19 @@ export function App() {
       }
     }
 
+    const syncNotificationPermission = () => {
+      if ('Notification' in window && settingsService.getSettings().notificationsEnabled && Notification.permission === 'denied') {
+        console.log('[Permissions] Notification permission has been revoked by the user. Updating app settings.');
+        settingsService.updateSettings({ notificationsEnabled: false });
+      }
+    };
+
+    // Run on initial load
+    syncNotificationPermission();
+    
+    // Run whenever the tab becomes visible again
+    document.addEventListener('visibilitychange', syncNotificationPermission);
+
     const lastUserName = authService.getUserName();
     if(lastUserName) {
       setUserNameInput(lastUserName);
@@ -164,6 +177,7 @@ export function App() {
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
+      document.removeEventListener('visibilitychange', syncNotificationPermission);
     };
   }, []);
 
@@ -325,16 +339,14 @@ export function App() {
   };
 
   const navigateToGame = (gameId: string, gameCode: string) => {
-    // Aggressively check for notification permission inconsistencies
-    if ('Notification' in window) {
-      const permission = Notification.permission;
-      const settings = settingsService.getSettings();
-
-      if (permission === 'denied' && settings.notificationsEnabled) {
-        console.log('[Permissions] Notification permission has been revoked. Updating app settings.');
+    // Run the sync check upon navigation
+    const syncNotificationPermission = () => {
+      if ('Notification' in window && settingsService.getSettings().notificationsEnabled && Notification.permission === 'denied') {
+        console.log('[Permissions] Notification permission has been revoked by the user. Updating app settings.');
         settingsService.updateSettings({ notificationsEnabled: false });
       }
-    }
+    };
+    syncNotificationPermission();
     
     setCurrentGameId(gameId);
     setCurrentView('game');

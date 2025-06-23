@@ -31,6 +31,10 @@ All API endpoints are prefixed with `/api`. The routes are organized by feature.
     -   **Authentication**: Required (Session Token)
     -   **Request Body**: Standard PushSubscription JSON object from the browser.
     -   **Response (201 Created)**: `{ "message": "Successfully subscribed to push notifications." }`
+-   **`POST /unsubscribe-push`**: Unsubscribes a user from push notifications.
+    -   **Authentication**: Required (Session Token)
+    -   **Request Body**: `{ "endpoint": "string" }`
+    -   **Response (200 OK)**: `{ "message": "Successfully unsubscribed from push notifications." }`
 
 #### Games (`/games`)
 
@@ -140,51 +144,4 @@ A user can join a game in two ways:
 
 ### Game State
 
-The authoritative game state is stored in Redis on the server (`ServerGameState`). This object contains sensitive or internal data like the `turnActionLog`. When the server sends state to clients, it uses a sanitized version called `ClientGameStatePayload`.
-
--   **`game:state_update` (Server-to-Client)**: This is the primary message for synchronizing game state. The server sends this message:
-    -   To a single player when they subscribe or reconnect, showing them the latest state.
-    -   To a single player after they perform an action (e.g., `game:increment_counter`) to give them instant feedback (a "preview state").
-    -   To all players in a game when a turn ends, broadcasting the official new state.
-    -   **Payload (`ClientGameStatePayload`)**:
-        ```json
-        {
-          "gameId": "string",
-          "gameCode": "string",
-          "turnNumber": 1,
-          "currentPlayerId": "string",
-          "players": [
-            {
-              "userId": "string",
-              "userName": "string"
-            }
-          ],
-          "mapData": {},
-          "gameState": {
-            "placeholderCounter": 0
-          }
-        }
-        ```
-
-### Player Actions (Client-to-Server)
-
--   **`game:increment_counter`**: Client requests to increment the placeholder counter. This action is logged in the `turnActionLog` in Redis. The server then responds to *only the sender* with a `game:state_update` message containing a preview of the new state.
-    -   **Payload**: `{ "gameId": "string" }`
--   **`game:end_turn`**: Client message to end their current turn. This causes the server to apply all logged actions from the `turnActionLog`, calculate the next turn's state, advance the turn, and broadcast a final `game:state_update` to all players. It also triggers a push notification to the next player.
-    -   **Payload**: `{ "gameId": "string", "turnId": "string" }`
-      *(Note: `turnId` is not currently used by the server but is part of the payload.)*
-
-### Client-to-Server Messages (Actions)
-
-These are messages sent from the client to the server to perform an action.
-
-*(Examples will be added here as features are developed)*
-
--   **`JOIN_GAME`**: Client requests to join a specific game room.
--   **`PLAYER_ACTION`**: Client performs a game action (e.g., move unit, cast spell).
-
-### Server-to-Client Messages (Events)
-
-These are messages sent from the server to the client(s) to notify them of state changes.
-
--   **`PLAYER_JOINED`**: Notifies clients that a new player has joined the lobby. 
+The authoritative game state is stored in Redis on the server (`ServerGameState`

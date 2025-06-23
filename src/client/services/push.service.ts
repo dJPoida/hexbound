@@ -55,4 +55,42 @@ export const pushService = {
       return null;
     }
   },
+
+  async unsubscribeUser(): Promise<boolean> {
+    console.log('[PushService] Starting unsubscription process...');
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      console.warn('[PushService] Push messaging is not supported.');
+      return false;
+    }
+
+    try {
+      const swRegistration = await navigator.serviceWorker.ready;
+      const subscription = await swRegistration.pushManager.getSubscription();
+
+      if (!subscription) {
+        console.log('[PushService] No active subscription to unsubscribe.');
+        return true; // Already unsubscribed
+      }
+
+      // Tell our backend to remove the subscription
+      await authenticatedFetch(API_ROUTES.UNSUBSCRIBE_PUSH, {
+        method: 'POST',
+        body: JSON.stringify({ endpoint: subscription.endpoint }),
+      });
+      console.log('[PushService] Unsubscription request sent to server.');
+      
+      // Unsubscribe from the browser's push manager
+      const unsubscribed = await subscription.unsubscribe();
+      if (unsubscribed) {
+        console.log('[PushService] Successfully unsubscribed from browser push manager.');
+      } else {
+        console.warn('[PushService] Failed to unsubscribe from browser push manager.');
+      }
+
+      return unsubscribed;
+    } catch (error) {
+      console.error('[PushService] Failed to unsubscribe the user: ', error);
+      return false;
+    }
+  }
 }; 

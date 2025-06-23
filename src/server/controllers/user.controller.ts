@@ -104,4 +104,38 @@ export const subscribeToPushNotifications = async (req: Request, res: Response) 
     }
     res.status(500).json({ message: 'Failed to subscribe to push notifications.', error: (error as Error).message });
   }
+};
+
+export const unsubscribeFromPushNotifications = async (req: Request, res: Response) => {
+  const userId = res.locals.userId;
+  const { endpoint } = req.body;
+
+  if (!userId) {
+    return res.status(401).json({ message: 'Authentication error: User ID is missing.' });
+  }
+
+  if (!endpoint) {
+    return res.status(400).json({ message: 'Push subscription endpoint is required.' });
+  }
+
+  try {
+    const pushSubscriptionRepo = AppDataSource.getRepository(PushSubscriptionEntity);
+    
+    // We can delete directly based on the unique endpoint. 
+    // We could also add a check to ensure it belongs to the authenticated user, but the endpoint itself is a strong enough key.
+    const deleteResult = await pushSubscriptionRepo.delete({ endpoint: endpoint });
+
+    if (deleteResult.affected === 0) {
+      // This isn't necessarily an error, the subscription might have been removed already.
+      console.log(`[API /unsubscribe-push] No subscription found for endpoint. Nothing to delete.`);
+      return res.status(404).json({ message: 'Subscription not found.' });
+    }
+
+    console.log(`[API /unsubscribe-push] Successfully removed subscription for user ${userId} with endpoint ${endpoint}`);
+    res.status(200).json({ message: 'Successfully unsubscribed from push notifications.' });
+
+  } catch (error) {
+    console.error('[API /unsubscribe-push] Error:', error);
+    res.status(500).json({ message: 'Failed to unsubscribe from push notifications.', error: (error as Error).message });
+  }
 }; 

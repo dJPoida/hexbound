@@ -51,8 +51,16 @@ export const GameSettingsDialog = ({ onClose }: GameSettingsDialogProps) => {
       }
     } else {
       // If the user is disabling notifications
-      // TODO: We should also send a request to the backend to *remove* the subscription
-      settingsService.updateSettings({ notificationsEnabled: false });
+      setIsSubscribing(true);
+      try {
+        await pushService.unsubscribeUser();
+        // This will update the UI via the subscription
+        settingsService.updateSettings({ notificationsEnabled: false });
+      } catch (error) {
+        console.error("Failed to complete push unsubscription process.", error);
+      } finally {
+        setIsSubscribing(false);
+      }
     }
   };
   
