@@ -275,3 +275,20 @@ This script will automatically:
 - **`tsconfig.json`**: The configuration file for the TypeScript compiler, specifying how to compile `.ts` files.
 - **`vite.config.ts`**: The configuration file for Vite, used for the frontend development server and build process.
 - **`README.md`**: The main documentation file for the project, providing an overview and setup instructions. 
+
+
+# Map and Hex tile details for rendering in PixiJS
+- Hex tiles are designed to represent basalt columns, aka column jointing.
+- Hex tile orientation for the user makes them flat on the bottom and pointy on the sides.
+- Hex tiles have an aspect ratio of 2:1 with a default size of 600x400px.
+- The game allows for hex tiles to be raised and lowered, vertically offsetting them from the surrounding tiles. Therefore there are additional graphics for the two visible side walls and front wall of a hex tile.
+- The map is scalable in width and height. The width represents the number of tiles from west to east (x-axis) and the height represents the number of tiles from north to south (y-axis).
+- The map is finite in the y-axis (north to south) but cyclic in the x-axis (west to east). i.e. when a user is panning around the map, their viewport stops when it reaches the north-most or south-most tile, but when it reaches the east-most or westmost tile, it will render the next tile from the opposite end and allow the user to pan infinitely "around" the map in the x-axis.
+- Hex tile graphics are stored in transparent `.png` files
+  - The main hex graphic is 600x600px with a 5px margin resulting in a file that is 610x610px where the graphic content is inset by 5px. The hex, being 600x400px in nature, has a 200px buffer above it for future graphic elements such as buildings and other natural landscape features. Therefore, the "origin" of a hex graphic is pixel position [5, 405].
+  - The graphic for the eastern visible side of the hex tile wall is 150x600px with a 5px margin resulting in a file that is 160x610px where the graphic content is inset by 5px. This graphic is designed to align with the east most corner of the hex tile. Therefore the origin of this tile is [5, 205].
+  - The graphic for the front facing side of the hex tile is 300x400px with a 5px margin resulting in a file that is 310x410px where the graphic content is inset by 5px. This graphic is designed to align with the south-eastern most corner of the hex tile. Therefore the origin of this tile is [5, 205].
+  - The graphic for the western visible side of the hex tile wall is the identical graphic for the eastern visible side of the wall, but mirrored/reflected in the X axis.
+- Tiles need to be rendered within the user's viewport from North to South, West to East, to ensure they overlap and provide the illusion of the basalt columns.
+- Tiles default at a "elevation" of 0. Tiles can have their elevation raised or lowered 4 times. Each level of vertical elevation represents 50px in the graphic relative to the original source hex images.
+- The viewport that renders the "map" will be scalable/zoom-able by the user. All metrics provided in this ruleset are intrinsic.
