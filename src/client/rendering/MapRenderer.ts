@@ -35,7 +35,7 @@ export class MapRenderer {
     const HEX_WIDTH = 600;
     const HEX_HEIGHT = 400;
     const ELEVATION_STEP = 50;
-    const testElevation = 0;
+    const testElevation = 2;
 
     console.log('[MapRenderer] Rendering map with data:', this.mapData);
 
@@ -68,41 +68,29 @@ export class MapRenderer {
     topHex.y = elevatedY;
     tileContainer.addChild(topHex);
 
-    // Create textures for the walls, accounting for the 5px margin in the source assets.
-    const westWallTexture = new PIXI.Texture({
-        source: this.textures.hexWallSide.source,
-        frame: new PIXI.Rectangle(5, 5, 150, 600)
-    });
-    const eastWallTexture = new PIXI.Texture({
-        source: this.textures.hexWallSide.source,
-        frame: new PIXI.Rectangle(5, 5, 150, 600)
-    });
-    const southWallTexture = new PIXI.Texture({
-        source: this.textures.hexWallFront.source,
-        frame: new PIXI.Rectangle(5, 5, 300, 400)
-    });
+    if (testElevation > 0) {
+      // West Wall (reflected east wall texture)
+      const westWall = new PIXI.Sprite(this.textures.hexWallSide);
+      westWall.anchor.set(1, 0);
+      westWall.scale.x = -1; // Mirror the texture
+      westWall.x = 0;
+      westWall.y = (TILE_HEIGHT - (HEX_HEIGHT / 2)) + elevatedY;
+      tileContainer.addChild(westWall);
 
-    // West Wall (reflected east wall texture)
-    const westWall = new PIXI.Sprite(westWallTexture);
-    westWall.anchor.set(1, 0);
-    westWall.scale.x = -1; // Mirror the texture
-    westWall.x = 0;
-    westWall.y = TILE_HEIGHT - (HEX_HEIGHT / 2);
-    tileContainer.addChild(westWall);
+      // East Wall
+      const eastWall = new PIXI.Sprite(this.textures.hexWallSide);
+      eastWall.anchor.set(0, 0);
+      eastWall.x = 450;
+      eastWall.y = (TILE_HEIGHT - (HEX_HEIGHT / 2)) + elevatedY;
+      tileContainer.addChild(eastWall);
 
-    // East Wall
-    const eastWall = new PIXI.Sprite(eastWallTexture);
-    eastWall.anchor.set(0, 0);
-    eastWall.x = 450;
-    eastWall.y = TILE_HEIGHT - (HEX_HEIGHT / 2);
-    tileContainer.addChild(eastWall);
-
-    // South Wall
-    const southWall = new PIXI.Sprite(southWallTexture);
-    southWall.anchor.set(0, 0); // Anchor to top-center
-    southWall.x = HEX_WIDTH / 4;
-    southWall.y = TILE_HEIGHT;
-    tileContainer.addChild(southWall);
+      // South Wall
+      const southWall = new PIXI.Sprite(this.textures.hexWallFront);
+      southWall.anchor.set(0, 0); // Anchor to top-center
+      southWall.x = HEX_WIDTH / 4;
+      southWall.y = TILE_HEIGHT + elevatedY;
+      tileContainer.addChild(southWall);
+    }
     
     console.log('[MapRenderer] Rendered a single test tile with walls.');
   }
