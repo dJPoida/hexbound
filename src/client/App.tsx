@@ -10,7 +10,7 @@ import { Header } from './components/Header/Header';
 import { authService } from './services/auth.service';
 import { authenticatedFetch } from './services/api.service';
 import { socketService } from './services/socket.service';
-import { ClientGameStatePayload } from '../shared/types/socket.types';
+import { ClientGameStatePayload, GameTurnEndedPayload } from '../shared/types/socket.types';
 import { Game } from '../shared/types/game.types';
 import { GameLayout } from './components/GameLayout/GameLayout';
 import { ActionBar } from './components/ActionBar/ActionBar';
@@ -182,25 +182,49 @@ export function App() {
   useEffect(() => {
     if (!isLoggedIn) return;
 
-    const handleGameStateUpdate = (payload: unknown) => {
-      setGameState(payload as ClientGameStatePayload);
+    const handleGameStateUpdate = (payload: ClientGameStatePayload) => {
+      console.log('[App] Received game state update:', payload);
+      setGameState(payload);
     };
-    const handleCounterUpdate = (payload: unknown) => {
-      const update = payload as { newCount: number };
-      setGameState((prev: ClientGameStatePayload | null) => prev ? { ...prev, gameState: { ...prev.gameState, placeholderCounter: update.newCount } } : null);
+
+    const handleCounterUpdate = (payload: { value: number }) => {
+      setGameState(prevState => {
+        if (!prevState) return null;
+        return {
+          ...prevState,
+          gameState: {
+            ...prevState.gameState,
+            placeholderCounter: payload.value
+          }
+        };
+      });
     };
-    const handleStatusUpdate = (status: ConnectionStatus) => {
+
+    const handleTurnEnded = (payload: GameTurnEndedPayload) => {
+      console.log('[App] Received game turn ended:', payload);
+      setGameState(prevState => {
+        if (!prevState || prevState.gameId !== payload.gameId) return prevState;
+        return {
+          ...prevState,
+          currentPlayerId: payload.nextPlayerId,
+          turnNumber: payload.turnNumber,
+        };
+      });
+    };
+
+    const handleStatusUpdate = (status: 'connecting' | 'connected' | 'reconnecting' | 'disconnected') => {
       setConnectionStatus(status);
     };
 
     socketService.on('game:state_update', handleGameStateUpdate);
     socketService.on('game:counter_update', handleCounterUpdate);
+    socketService.on('game:turn_ended', handleTurnEnded);
     socketService.onStatus(handleStatusUpdate);
 
     return () => {
-      // Cleanup listeners on component unmount
       socketService.off('game:state_update', handleGameStateUpdate);
       socketService.off('game:counter_update', handleCounterUpdate);
+      socketService.off('game:turn_ended', handleTurnEnded);
       socketService.offStatus(handleStatusUpdate);
     };
   }, [isLoggedIn]);
@@ -397,6 +421,7 @@ export function App() {
         return (
           <>
             <GameContainer
+              gameId={gameState.gameId}
               gameState={gameState}
               onIncrementCounter={handleIncrementCounter}
               onEndTurn={handleEndTurn}

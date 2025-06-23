@@ -30,6 +30,11 @@ export interface EndTurnPayload {
   turnId: string;
 }
 
+export interface GameTurnEndedPayload {
+  gameId: string;
+  nextPlayerId: string;
+  turnNumber: number;
+}
 
 // --- Server -> Client Message Payloads ---
 

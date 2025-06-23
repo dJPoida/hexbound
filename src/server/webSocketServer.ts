@@ -1,17 +1,18 @@
-import { WebSocketServer } from 'ws';
-import http from 'http';
+import { WebSocketServer, WebSocket } from 'ws';
+import { Server } from 'http';
 import { parse } from 'url';
 import redisClient from './redisClient';
 import { AuthenticatedWebSocket } from '../shared/types/socket.types';
-import * as subManager from './socketSubscriptionManager';
+import { unsubscribeFromAll, handleDisconnect } from './socketSubscriptionManager';
 import { handleSocketMessage } from './socketMessageHandlers';
+import { User } from './entities/User.entity';
 
 // Extend the AuthenticatedWebSocket to include the isAlive flag for heartbeats
 interface HeartbeatWebSocket extends AuthenticatedWebSocket {
   isAlive: boolean;
 }
 
-export function initializeWebSocketServer(server: http.Server) {
+export function initializeWebSocketServer(server: Server) {
   const wss = new WebSocketServer({ noServer: true });
 
   server.on('upgrade', async (request, socket, head) => {
@@ -70,12 +71,22 @@ export function initializeWebSocketServer(server: http.Server) {
     });
 
     ws.on('close', () => {
-      console.log(`[WebSocket] Client ${ws.userId} disconnected`);
-      subManager.unsubscribeFromAll(ws); // Clean up subscriptions on disconnect
+      const userId = ws.userId; // Capture userId before any async operations
+      if (userId) {
+        console.log(`[WebSocket] Client ${userId} disconnected`);
+        unsubscribeFromAll(ws); // Clean up subscriptions synchronously
+        handleDisconnect(userId); // Handle async post-disconnect logic
+      } else {
+        console.log(`[WebSocket] Unauthenticated client disconnected`);
+      }
     });
 
     ws.on('error', (error: Error) => {
-      console.error(`[WebSocket] Error for ${ws.userId}:`, error);
+      if (ws.userId) {
+        console.error(`[WebSocket] Error for ${ws.userId}:`, error);
+      } else {
+        console.error(`[WebSocket] Error for unauthenticated client:`, error);
+      }
     });
   });
 
@@ -84,7 +95,11 @@ export function initializeWebSocketServer(server: http.Server) {
     wss.clients.forEach((ws) => {
       const hbWs = ws as HeartbeatWebSocket;
       if (!hbWs.isAlive) {
-        console.log(`[WebSocket] Terminating inactive connection for user: ${hbWs.userId}`);
+        if (hbWs.userId) {
+          console.log(`[WebSocket] Terminating inactive connection for user: ${hbWs.userId}`);
+        } else {
+          console.log(`[WebSocket] Terminating inactive unauthenticated connection.`);
+        }
         return hbWs.terminate();
       }
 

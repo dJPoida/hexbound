@@ -1,266 +1,197 @@
 import {
   AuthenticatedWebSocket,
-  SocketMessage,
-  GameSubscribePayload,
-  IncrementCounterPayload,
+  ClientGameStatePayload,
   EndTurnPayload,
   ServerGameState,
+  SocketMessage,
   TurnAction,
-  ClientGameStatePayload
 } from '../shared/types/socket.types';
-import * as subManager from './socketSubscriptionManager';
-import redisClient from './redisClient';
-import { broadcastToGame } from './socketSubscriptionManager';
-import { AppDataSource } from './data-source';
-import { Game } from './entities/Game.entity';
-import { User } from './entities/User.entity';
+import { broadcastToGame, isUserOnline, isUserViewingGame, removeActiveGameView, setActiveGameView, subscribe } from './socketSubscriptionManager';
 import { RedisJSON } from '@redis/json/dist/commands';
+import { Player } from '../shared/types/game.types';
 import { SOCKET_MESSAGE_TYPES } from '../shared/constants/socket.const';
-import { createRedisKey, REDIS_KEY_PREFIXES } from '../shared/constants/redis.const';
 import { getPlayerTurnPreview } from './helpers/gameState.helper';
-import { toClientState } from './helpers/clientState.helper';
 import { pushService } from './services/push.service';
+import redisClient from './redisClient';
+import { toClientState } from './helpers/clientState.helper';
 
 // A simple type guard to check if a message is a valid SocketMessage
-function isSocketMessage(msg: unknown): msg is SocketMessage<unknown> {
-  if (typeof msg !== 'object' || msg === null) {
-    return false;
-  }
+function isValidSocketMessage(msg: unknown): msg is SocketMessage<unknown> {
+  if (typeof msg !== 'object' || msg === null) return false;
   return 'type' in msg && 'payload' in msg;
 }
 
-export function handleSocketMessage(ws: AuthenticatedWebSocket, message: Buffer) {
-  let parsedMessage;
-  try {
-    parsedMessage = JSON.parse(message.toString());
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error) {
-    console.error(`[MessageHandler] Failed to parse message from ${ws.userId}:`, message.toString());
-    ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Invalid JSON format.' } }));
-    return;
-  }
+// Define payload type for messages that only contain a gameId
+interface GameIdPayload {
+  gameId: string;
+}
 
-  if (!isSocketMessage(parsedMessage)) {
-    console.error(`[MessageHandler] Invalid message structure from ${ws.userId}:`, parsedMessage);
-    ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Invalid message structure.' } }));
-    return;
-  }
+// Map to store pending notification timeouts
+const pendingTurnNotifications = new Map<string, NodeJS.Timeout>();
 
-  // Route message to appropriate handler based on type
-  switch (parsedMessage.type) {
-    case SOCKET_MESSAGE_TYPES.GAME_SUBSCRIBE:
-      handleSubscribe(ws, parsedMessage.payload as GameSubscribePayload);
-      break;
-
-    case SOCKET_MESSAGE_TYPES.GAME_UNSUBSCRIBE:
-      subManager.unsubscribe(ws, (parsedMessage.payload as GameSubscribePayload).gameId);
-      break;
-
-    case SOCKET_MESSAGE_TYPES.GAME_INCREMENT_COUNTER:
-      handleIncrementCounter(ws, parsedMessage.payload as IncrementCounterPayload);
-      break;
-    
-    case SOCKET_MESSAGE_TYPES.GAME_END_TURN:
-        handleEndTurn(ws, parsedMessage.payload as EndTurnPayload);
-        break;
-
-    default:
-      console.log(`[MessageHandler] Unknown message type from ${ws.userId}: ${parsedMessage.type}`);
-      ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: `Unknown message type: ${parsedMessage.type}` } }));
+/**
+ * Cancels a pending "Your Turn" notification for a user if one exists.
+ */
+function cancelTurnNotification(userId: string) {
+  if (pendingTurnNotifications.has(userId)) {
+    console.log(`[Activity] Cancelling pending turn notification for user ${userId}.`);
+    clearTimeout(pendingTurnNotifications.get(userId)!);
+    pendingTurnNotifications.delete(userId);
   }
 }
 
-async function handleSubscribe(ws: AuthenticatedWebSocket, payload: GameSubscribePayload) {
-  const { gameId: gameIdentifier } = payload;
-  const { userId } = ws;
-
-  if (!userId) {
+export function handleSocketMessage(ws: AuthenticatedWebSocket, message: Buffer) {
+  if (!ws.userId) {
     return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Authentication required.' } }));
   }
+  cancelTurnNotification(ws.userId);
 
+  let parsedMessage: SocketMessage<unknown>;
   try {
-    const gameRepository = AppDataSource.getRepository(Game);
-    const userRepository = AppDataSource.getRepository(User);
-    
-    // Check if gameIdentifier is a UUID (gameId) or a short code (gameCode)
-    const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
-    const game = await gameRepository.findOne({
-      where: uuidRegex.test(gameIdentifier) ? { gameId: gameIdentifier } : { gameCode: gameIdentifier },
-      relations: ['players'],
-    });
-
-    if (!game) {
-      return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: `Game not found: ${gameIdentifier}` } }));
+    const parsedData = JSON.parse(message.toString());
+    if (!isValidSocketMessage(parsedData)) {
+      console.warn(`[MessageHandler] Received malformed message from ${ws.userId}`);
+      return;
     }
-
-    const gameId = game.gameId;
-    const gameKey = createRedisKey(REDIS_KEY_PREFIXES.GAME_STATE, gameId);
-    const initialGameState = await redisClient.json.get(gameKey) as unknown as ServerGameState | null;
-
-    if (!initialGameState) {
-      console.error(`[MessageHandler] CRITICAL: Game ${gameId} found in DB but not in Redis.`);
-      return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Game state is inconsistent.' } }));
-    }
-
-    const user = await userRepository.findOneBy({ userId });
-    if (!user) {
-      return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Authenticated user not found.' } }));
-    }
-
-    const isPlayerInGame = game.players.some((p: User) => p.userId === user.userId);
-
-    // Subscribe the user's websocket to this game's broadcast channel first
-    subManager.subscribe(ws, gameId);
-
-    if (!isPlayerInGame) {
-      // Logic for a new player joining the game
-      if (initialGameState.turnNumber > 1) {
-        return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'This game has already started and cannot be joined.' } }));
-      }
-
-      game.players.push(user);
-      await gameRepository.save(game);
-      await redisClient.json.arrAppend(gameKey, '$.players', { userId: user.userId, userName: user.userName } as unknown as RedisJSON);
-      
-      // Fetch the state again since it was modified
-      const updatedGameState = await redisClient.json.get(gameKey) as unknown as ServerGameState;
-
-      // Broadcast the new state to all players
-      const broadcastMessage: SocketMessage<ClientGameStatePayload> = { type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE, payload: toClientState(updatedGameState) };
-      broadcastToGame(gameId, JSON.stringify(broadcastMessage));
-
-    } else {
-      // Logic for an existing player reconnecting
-      let stateToSend = initialGameState;
-      if (initialGameState.currentPlayerId === userId) {
-        // If it's the current player's turn, send them a preview of their actions
-        stateToSend = getPlayerTurnPreview(initialGameState);
-      }
-      
-      const updateMessage: SocketMessage<ClientGameStatePayload> = { type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE, payload: toClientState(stateToSend) };
-      ws.send(JSON.stringify(updateMessage));
-    }
-
+    parsedMessage = parsedData;
   } catch (error) {
-    console.error(`[MessageHandler] Error in handleSubscribe for game ${gameIdentifier}:`, error);
-    ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Failed to subscribe to game.' } }));
+    console.error('[MessageHandler] Failed to parse message:', error);
+    return;
+  }
+
+  switch (parsedMessage.type) {
+    case SOCKET_MESSAGE_TYPES.CLIENT_READY:
+      handleClientReady(ws, parsedMessage.payload as GameIdPayload);
+      break;
+    case SOCKET_MESSAGE_TYPES.GAME_INCREMENT_COUNTER:
+      handleIncrementCounter(ws, parsedMessage.payload as GameIdPayload);
+      break;
+    case SOCKET_MESSAGE_TYPES.GAME_END_TURN:
+      handleEndTurn(ws, parsedMessage.payload as EndTurnPayload);
+      break;
+    case SOCKET_MESSAGE_TYPES.USER_ALIVE_PING:
+      break;
+    case SOCKET_MESSAGE_TYPES.CLIENT_GAME_VIEW_ACTIVE:
+      if (ws.userId) {
+        setActiveGameView(ws.userId, (parsedMessage.payload as GameIdPayload).gameId);
+      }
+      break;
+    case SOCKET_MESSAGE_TYPES.CLIENT_GAME_VIEW_INACTIVE:
+      if (ws.userId) {
+        removeActiveGameView(ws.userId, (parsedMessage.payload as GameIdPayload).gameId);
+      }
+      break;
+    default:
+      console.warn(`[MessageHandler] Unknown message type: ${parsedMessage.type}`);
   }
 }
 
-async function handleIncrementCounter(ws: AuthenticatedWebSocket, payload: IncrementCounterPayload) {
-    const { gameId } = payload;
-    const { userId } = ws;
-    const gameKey = createRedisKey(REDIS_KEY_PREFIXES.GAME_STATE, gameId);
+async function handleClientReady(ws: AuthenticatedWebSocket, payload: GameIdPayload) {
+  const { userId } = ws;
+  const { gameId } = payload;
+  
+  if (!userId) return;
 
-    try {
-        const gameState = await redisClient.json.get(gameKey) as unknown as ServerGameState | null;
+  subscribe(ws, gameId);
 
-        if (!gameState) {
-          return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: `Game state not found for game ${gameId}.` } }));
-        }
+  const gameKey = `game:${gameId}`;
+  const gameState = (await redisClient.json.get(gameKey)) as ServerGameState | null;
 
-        if (gameState.currentPlayerId !== userId) {
-          return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'It is not your turn.' } }));
-        }
+  if (!gameState) {
+    return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: `Game state not found for game ${gameId}.` } }));
+  }
 
-        const action: TurnAction = { type: 'INCREMENT_COUNTER' };
-        
-        // Add the action to the turn log
-        await redisClient.json.arrAppend(gameKey, '$.turnActionLog', action as unknown as RedisJSON);
+  const stateToSend = toClientState(gameState);
+  ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE, payload: stateToSend }));
+}
 
-        // Re-fetch the state to get the updated action log
-        const updatedGameState = await redisClient.json.get(gameKey) as unknown as ServerGameState;
+async function handleIncrementCounter(ws: AuthenticatedWebSocket, payload: GameIdPayload) {
+  const { gameId } = payload;
+  const { userId } = ws;
 
-        // Generate the preview state for the current player
-        const previewState = getPlayerTurnPreview(updatedGameState);
+  if (!userId) return;
 
-        // Send the updated preview state back to only the current player
-        const updateMessage: SocketMessage<ClientGameStatePayload> = {
-            type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE,
-            payload: toClientState(previewState)
-        };
-        ws.send(JSON.stringify(updateMessage));
+  const gameKey = `game:${gameId}`;
+  const gameState = (await redisClient.json.get(gameKey)) as ServerGameState | null;
+  if (!gameState) return;
 
-    } catch (error) {
-        console.error(`[MessageHandler] Error incrementing counter for game ${gameId}:`, error);
-        ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Failed to increment counter.' } }));
-    }
+  if (gameState.currentPlayerId !== userId) {
+    return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'It is not your turn.' } }));
+  }
+
+  const action: TurnAction = { type: 'INCREMENT_COUNTER' };
+  await redisClient.json.arrAppend(gameKey, '$.turnActionLog', action as unknown as RedisJSON);
+  const updatedGameState = (await redisClient.json.get(gameKey)) as ServerGameState;
+  const previewState = getPlayerTurnPreview(updatedGameState);
+
+  const stateUpdateMessage: SocketMessage<ClientGameStatePayload> = {
+    type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE,
+    payload: toClientState(previewState),
+  };
+  ws.send(JSON.stringify(stateUpdateMessage));
 }
 
 async function handleEndTurn(ws: AuthenticatedWebSocket, payload: EndTurnPayload) {
-    const { gameId, turnId } = payload;
-    const { userId: playerWhoSentMessage } = ws;
-    const gameKey = createRedisKey(REDIS_KEY_PREFIXES.GAME_STATE, gameId);
+  const { gameId } = payload;
+  const { userId: playerWhoSentMessage } = ws;
+  if (!playerWhoSentMessage) return;
 
-    try {
-      // 1. Fetch the current game state
-      const gameState = await redisClient.json.get(gameKey) as unknown as ServerGameState | null;
+  const gameKey = `game:${gameId}`;
+  const gameState = (await redisClient.json.get(gameKey)) as ServerGameState | null;
+  if (!gameState) return;
 
-      if (!gameState) {
-        return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: `Game state not found for game ${gameId}.` } }));
-      }
+  if (gameState.currentPlayerId !== playerWhoSentMessage) {
+    return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'It is not your turn to end.' } }));
+  }
 
-      console.log(`[EndTurn] Received 'end_turn' for turnId: ${turnId}`);
-      console.log(`[EndTurn] Message from user: ${playerWhoSentMessage}`);
-      console.log(`[EndTurn] Current player in state is: ${gameState.currentPlayerId}`);
+  const stateAfterActions = getPlayerTurnPreview(gameState);
 
-      // 2. Validate that it's the user's turn
-      if (gameState.currentPlayerId !== playerWhoSentMessage) {
-        return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'It is not your turn to end.' } }));
-      }
+  const currentPlayerIndex = gameState.players.findIndex((p: Player) => p.userId === playerWhoSentMessage);
+  const nextPlayerIndex = (currentPlayerIndex + 1) % gameState.players.length;
+  const nextPlayer = gameState.players[nextPlayerIndex];
 
-      // 3. Apply the logged actions to get the state at the end of the turn
-      const stateAfterActions = getPlayerTurnPreview(gameState);
-
-      // 4. Determine the next player based on the original state
-      const currentPlayerIndex = gameState.players.findIndex(
-        (p: { userId: string }) => p.userId === gameState.currentPlayerId
-      );
-      const nextPlayerIndex = (currentPlayerIndex + 1) % gameState.players.length;
-      const nextPlayer = gameState.players[nextPlayerIndex];
-      
-      console.log(`[EndTurn] Calculated next player is: ${nextPlayer.userId}`);
-
-      // Send a push notification to the next player
-      if (nextPlayer) {
-        const notificationPayload = {
-          title: 'Hexbound: Your Turn!',
-          body: `It's your turn to make a move in game ${stateAfterActions.gameCode}.`,
-          data: { 
-            gameId: stateAfterActions.gameId,
-            gameCode: stateAfterActions.gameCode,
-          }
-        };
-        // We don't need to wait for this to complete
-        console.log(`[EndTurn] Sending push notification to: ${nextPlayer.userId}`);
-        pushService.sendNotification(nextPlayer.userId, notificationPayload);
-      }
-
-      // 5. Determine the next turn number
-      const newTurnNumber = currentPlayerIndex === gameState.players.length - 1 
-        ? stateAfterActions.turnNumber + 1 
-        : stateAfterActions.turnNumber;
-
-      // 6. Create the new game state object
-      const newGameState: ServerGameState = {
-        ...stateAfterActions,
-        turnActionLog: [], // Clear the log
-        currentPlayerId: nextPlayer.userId,
-        turnNumber: newTurnNumber,
+  const notificationTimeout = setTimeout(() => {
+    if (!isUserViewingGame(nextPlayer.userId, gameId)) {
+      const notification = {
+        title: 'Hexbound: Your Turn!',
+        body: `It's your turn to make a move in game ${stateAfterActions.gameCode}.`,
+        data: { gameCode: stateAfterActions.gameCode },
       };
-
-      // 7. Atomically update the entire game state in Redis
-      await redisClient.json.set(gameKey, '$', newGameState as unknown as RedisJSON);
-
-      // 8. Broadcast the new state to all players in the game
-      const updateMessage: SocketMessage<ClientGameStatePayload> = {
-        type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE,
-        payload: toClientState(newGameState),
-      };
-      broadcastToGame(gameId, JSON.stringify(updateMessage));
-
-    } catch (error) {
-      console.error(`[MessageHandler] Error ending turn for game ${gameId}:`, error);
-      ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Failed to end turn.' } }));
+      console.log(`[EndTurn] Sending delayed push notification to: ${nextPlayer.userId}`);
+      pushService.sendNotification(nextPlayer.userId, notification);
+    } else {
+      console.log(`[EndTurn] Next player ${nextPlayer.userId} is actively viewing the game. Skipping delayed notification.`);
     }
+    pendingTurnNotifications.delete(nextPlayer.userId);
+  }, 15000);
+
+  pendingTurnNotifications.set(nextPlayer.userId, notificationTimeout);
+
+  const newTurnNumber =
+    currentPlayerIndex === gameState.players.length - 1
+      ? stateAfterActions.turnNumber + 1
+      : stateAfterActions.turnNumber;
+
+  const newGameState: Partial<ServerGameState> = {
+    ...stateAfterActions,
+    currentPlayerId: nextPlayer.userId,
+    turnActionLog: [],
+    turnNumber: newTurnNumber,
+  };
+
+  await redisClient.json.set(gameKey, '$', newGameState as unknown as RedisJSON);
+
+  const updateMessage: SocketMessage<{
+    gameId: string;
+    nextPlayerId: string;
+    turnNumber: number;
+  }> = {
+    type: SOCKET_MESSAGE_TYPES.GAME_TURN_ENDED,
+    payload: {
+      gameId: gameId,
+      nextPlayerId: nextPlayer.userId,
+      turnNumber: newTurnNumber,
+    },
+  };
+  broadcastToGame(gameId, JSON.stringify(updateMessage));
 } 

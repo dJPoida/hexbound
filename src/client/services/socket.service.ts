@@ -1,5 +1,6 @@
 import { authService } from './auth.service';
 import { SocketMessage, ErrorPayload } from '../../shared/types/socket.types';
+import { SOCKET_MESSAGE_TYPES } from '../../shared/constants/socket.const';
 
 type MessageHandler = (payload: unknown) => void;
 type StatusHandler = (status: 'connecting' | 'connected' | 'reconnecting' | 'disconnected') => void;
@@ -47,8 +48,8 @@ class SocketService {
       this.updateStatus('connected');
       this.reconnectAttempts = 0;
       this.processMessageQueue();
-      // Automatically subscribe to the game once connected
-      this.sendMessage('game:subscribe', { gameId: this.lastGameId });
+      // Announce that the client is ready for the game state
+      this.sendMessage(SOCKET_MESSAGE_TYPES.CLIENT_READY, { gameId: this.lastGameId });
     };
 
     this.socket.onmessage = (event) => {
