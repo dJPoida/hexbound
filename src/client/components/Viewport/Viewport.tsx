@@ -1,64 +1,51 @@
-import { h, ComponentChildren } from 'preact';
-import htm from 'htm';
-import styles from './Viewport.module.css';
+import { h } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
+import styles from './Viewport.module.css';
 import * as PIXI from 'pixi.js';
-
-const html = htm.bind(h);
+import { MapData } from '../../../shared/types/game.types';
+import { MapRenderer } from '../../rendering/MapRenderer';
 
 interface ViewportProps {
-  children: ComponentChildren;
   pixiContainerId: string;
+  mapData: MapData | null;
 }
 
-export function Viewport({ children, pixiContainerId }: ViewportProps) {
+export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
   const pixiContainerRef = useRef<HTMLDivElement>(null);
-  const pixiAppRef = useRef<PIXI.Application | null>(null);
+  const appRef = useRef<PIXI.Application | null>(null);
 
   useEffect(() => {
-    if (pixiAppRef.current) {
-      // Already initialized
-      return;
-    }
+    const initPixi = async () => {
+      if (pixiContainerRef.current && mapData && !appRef.current) {
+        // Create Pixi Application
+        const app = new PIXI.Application();
+        appRef.current = app;
 
-    if (pixiContainerRef.current) {
-      const app = new PIXI.Application();
-      pixiAppRef.current = app;
-
-      (async () => {
+        // Initialize the application
         await app.init({
+          background: '#1a1a1a',
           resizeTo: pixiContainerRef.current,
-          backgroundColor: 0x1099bb,
-          resolution: window.devicePixelRatio || 1,
-          autoDensity: true,
         });
-        
-        if (pixiContainerRef.current) {
-          pixiContainerRef.current.appendChild(app.canvas);
 
-          // Simple graphic to test
-          const graphics = new PIXI.Graphics();
-          graphics.rect(50, 50, 100, 100);
-          graphics.fill(0xDE3249);
-          app.stage.addChild(graphics);
-        }
-      })();
-    }
+        // Append the Pixi canvas to the container
+        pixiContainerRef.current.appendChild(app.canvas);
 
-    return () => {
-      if (pixiAppRef.current) {
-        pixiAppRef.current.destroy(true, true);
-        pixiAppRef.current = null;
+        // Create and use the MapRenderer
+        const mapRenderer = new MapRenderer(app, mapData);
+        mapRenderer.render();
       }
     };
-  }, []);
 
-  return html`
-    <div class=${styles.viewport}>
-      <div id=${pixiContainerId} ref=${pixiContainerRef} class=${styles.pixiContainer}></div>
-      <div class=${styles.uiContainer}>
-        ${children}
-      </div>
-    </div>
-  `;
+    initPixi();
+
+    // Cleanup on component unmount
+    return () => {
+      if (appRef.current) {
+        appRef.current.destroy(true, { children: true, texture: true });
+        appRef.current = null;
+      }
+    };
+  }, [mapData]); // Rerun effect if mapData changes
+
+  return <div id={pixiContainerId} ref={pixiContainerRef} class={styles.viewport}></div>;
 } 

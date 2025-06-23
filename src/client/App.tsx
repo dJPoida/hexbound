@@ -11,7 +11,7 @@ import { authService } from './services/auth.service';
 import { authenticatedFetch } from './services/api.service';
 import { socketService } from './services/socket.service';
 import { ClientGameStatePayload, GameTurnEndedPayload } from '../shared/types/socket.types';
-import { Game } from '../shared/types/game.types';
+import { GameListItem } from '../shared/types/game.types';
 import { GameLayout } from './components/GameLayout/GameLayout';
 import { ActionBar } from './components/ActionBar/ActionBar';
 import { Button } from './components/Button/Button';
@@ -48,7 +48,7 @@ export function App() {
 
   // Game State
   const [gameState, setGameState] = useState<ClientGameStatePayload | null>(null);
-  const [myGames, setMyGames] = useState<Game[]>([]);
+  const [myGames, setMyGames] = useState<GameListItem[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('disconnected');
   const [isDebugInfoOpen, setIsDebugInfoOpen] = useState(false);
 
@@ -469,6 +469,7 @@ export function App() {
         header={headerContent}
         main={mainContent()}
         footer={footerContent}
+        gameState={gameState}
       />
     );
   };
