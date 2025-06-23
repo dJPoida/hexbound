@@ -1,19 +1,11 @@
-import { getModuleDir } from '@/shared/helpers/getModuleDir.helper';
 import dotenv from 'dotenv';
 import path from 'path';
+import { getModuleDir } from '../shared/helpers/getModuleDir.helper.js';
 
-// The 'import.meta.url' argument is only available in ESM context.
-// In a CJS context (like the production build), it will be undefined,
-// and the helper will fall back to using __dirname.
 const currentModuleDirname = getModuleDir(
   typeof import.meta?.url === 'string' ? import.meta?.url : undefined,
 );
 
-// Always load environment variables from .env.local.
-// This allows for both local development and previewing the production build locally.
-// In a true containerized environment (like Docker), the variables injected
-// into the container's environment will take precedence over the values in this file,
-// as dotenv does not override existing process.env variables.
 dotenv.config({ path: path.resolve(currentModuleDirname, '../../.env.local') });
 
 const config = {
@@ -34,18 +26,22 @@ const config = {
     database: process.env.POSTGRES_DB,
   },
   webpush: {
+    subject: process.env.VAPID_SUBJECT || 'mailto:admin@localhost.com',
     publicKey: process.env.VITE_VAPID_PUBLIC_KEY || '',
     privateKey: process.env.VAPID_PRIVATE_KEY || '',
-    subject: process.env.VAPID_SUBJECT || '',
   },
   appVersion: process.env.npm_package_version || 'unknown',
 };
 
 // Validate essential configuration
-if (!config.webpush.privateKey || !config.webpush.publicKey) {
-  console.error("VAPID keys (VITE_VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY) are not defined in the environment. Push notifications will not work.");
-  // In a production environment, you might want to prevent the server from starting.
-  // process.exit(1); 
+if (!config.webpush.publicKey || !config.webpush.privateKey) {
+  const message = "VAPID keys (VITE_VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY) are not defined in the environment. Push notifications will not work.";
+  if (config.nodeEnv === 'production') {
+    console.error(`[FATAL] ${message} Server shutting down.`);
+    process.exit(1);
+  } else {
+    console.warn(`[WARNING] ${message}`);
+  }
 }
 
 export default config; 

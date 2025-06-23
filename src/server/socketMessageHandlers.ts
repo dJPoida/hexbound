@@ -6,7 +6,7 @@ import {
   EndTurnPayload,
   ServerGameState,
   TurnAction,
-  ClientGameStatePayload,
+  ClientGameStatePayload
 } from '../shared/types/socket.types';
 import * as subManager from './socketSubscriptionManager';
 import redisClient from './redisClient';
@@ -33,12 +33,13 @@ export function handleSocketMessage(ws: AuthenticatedWebSocket, message: Buffer)
   let parsedMessage;
   try {
     parsedMessage = JSON.parse(message.toString());
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     console.error(`[MessageHandler] Failed to parse message from ${ws.userId}:`, message.toString());
     ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Invalid JSON format.' } }));
     return;
   }
-  
+
   if (!isSocketMessage(parsedMessage)) {
     console.error(`[MessageHandler] Invalid message structure from ${ws.userId}:`, parsedMessage);
     ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Invalid message structure.' } }));
@@ -81,10 +82,11 @@ async function handleSubscribe(ws: AuthenticatedWebSocket, payload: GameSubscrib
     const gameRepository = AppDataSource.getRepository(Game);
     const userRepository = AppDataSource.getRepository(User);
     
+    // Check if gameIdentifier is a UUID (gameId) or a short code (gameCode)
     const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
     const game = await gameRepository.findOne({
       where: uuidRegex.test(gameIdentifier) ? { gameId: gameIdentifier } : { gameCode: gameIdentifier },
-      relations: { players: true, status: true },
+      relations: ['players'],
     });
 
     if (!game) {

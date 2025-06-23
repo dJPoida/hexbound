@@ -1,14 +1,16 @@
 import webpush, { WebPushError } from 'web-push';
 import config from '../config';
-import { AppDataSource } from '../data-source';
+import { getDataSource } from '../data-source';
 import { PushSubscription } from '../entities/PushSubscription.entity';
 
-// Configure web-push with VAPID details
-webpush.setVapidDetails(
-  config.webpush.subject,
-  config.webpush.publicKey,
-  config.webpush.privateKey
-);
+// Configure web-push with VAPID details, only if they are provided.
+if (config.webpush.publicKey && config.webpush.privateKey) {
+  webpush.setVapidDetails(
+    config.webpush.subject,
+    config.webpush.publicKey,
+    config.webpush.privateKey
+  );
+}
 
 interface NotificationPayload {
   title: string;
@@ -20,7 +22,7 @@ interface NotificationPayload {
 export const pushService = {
   async sendNotification(userId: string, payload: NotificationPayload): Promise<void> {
     try {
-      const subscriptionRepo = AppDataSource.getRepository(PushSubscription);
+      const subscriptionRepo = getDataSource().getRepository(PushSubscription);
       const subscriptions = await subscriptionRepo.find({ where: { userId } });
 
       if (subscriptions.length === 0) {
