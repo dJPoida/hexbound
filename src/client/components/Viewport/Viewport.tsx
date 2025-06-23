@@ -32,6 +32,7 @@ export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
 
         // Create and use the MapRenderer
         const mapRenderer = new MapRenderer(app, mapData);
+        await mapRenderer.loadAssets();
         mapRenderer.render();
       }
     };
