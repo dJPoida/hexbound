@@ -50,8 +50,18 @@ export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
         
         // Add the map container to the viewport
         viewport.addChild(mapRenderer.stage);
+        
+        // Create all the tile objects once and cache them
+        mapRenderer.initializeMap();
 
-        mapRenderer.render();
+        // Set initial zoom and trigger first render
+        viewport.setZoom(0.1, true);
+        mapRenderer.render(viewport);
+
+        // Re-render on move
+        viewport.on('moved', () => {
+          mapRenderer.render(viewport);
+        });
       }
     };
 

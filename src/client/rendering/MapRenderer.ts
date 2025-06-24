@@ -1,11 +1,13 @@
 import * as PIXI from 'pixi.js';
-import { MapData } from '../../shared/types/game.types';
+import { Viewport as PixiViewport } from 'pixi-viewport';
+import { MapData, TileData } from '../../shared/types/game.types';
 
 export class MapRenderer {
   private app: PIXI.Application;
   private mapData: MapData;
   private container: PIXI.Container;
   private textures: Record<string, PIXI.Texture> = {};
+  private tileCache: Map<TileData, PIXI.Container> = new Map();
 
   constructor(app: PIXI.Application, mapData: MapData) {
     this.app = app;
@@ -56,11 +58,12 @@ export class MapRenderer {
     const tileContainer = new PIXI.Container();
     const elevatedY = -(elevation * ELEVATION_STEP);
 
+    // 1. Render Top Hex
     const topHex = new PIXI.Sprite(this.textures.hex);
     topHex.anchor.set(0);
     topHex.y = elevatedY;
     tileContainer.addChild(topHex);
-
+    
     const textStyle = new PIXI.TextStyle({
       fontFamily: 'Arial',
       fontSize: 100,
@@ -101,20 +104,12 @@ export class MapRenderer {
     
     return tileContainer;
   }
-
-  public render(): void {
-    console.log('[MapRenderer] Rendering map with data:', this.mapData);
-
+  
+  public initializeMap(): void {
     if (!this.textures.hex) {
-      console.error('[MapRenderer] Hex texture not loaded. Cannot render map.');
+      console.error('[MapRenderer] Cannot initialize map, textures not loaded.');
       return;
     }
-
-    // Clear the container for a fresh render
-    this.container.removeChildren();
-    
-    const groupScale = 0.1; // Make tiles smaller to see more of the map
-    this.container.scale.set(groupScale);
 
     const sortedTiles = [...this.mapData.tiles].sort((a, b) => {
       const aPos = this._axialToPixel(a.coordinates.q, a.coordinates.r);
@@ -133,9 +128,34 @@ export class MapRenderer {
       const tileContainer = this._createTile(tileData.elevation);
       tileContainer.x = x;
       tileContainer.y = y;
+      tileContainer.visible = false; // Initially hide all tiles
+      
       this.container.addChild(tileContainer);
+      this.tileCache.set(tileData, tileContainer);
     }
     
-    console.log(`[MapRenderer] Rendered ${sortedTiles.length} tiles.`);
+    console.log(`[MapRenderer] Initialized and cached ${this.tileCache.size} tiles.`);
+  }
+
+  public render(viewport: PixiViewport): void {
+    const visibleBounds = viewport.getVisibleBounds();
+    visibleBounds.pad(600); // Add padding to prevent tiles popping in at the edges
+
+    let renderedCount = 0;
+    for (const [tileData, tileContainer] of this.tileCache.entries()) {
+      const TILE_WIDTH = 600;
+      const TILE_HEIGHT = 600;
+      const tileRect = new PIXI.Rectangle(tileContainer.x, tileContainer.y, TILE_WIDTH, TILE_HEIGHT);
+      
+      if (visibleBounds.intersects(tileRect)) {
+        tileContainer.visible = true;
+        renderedCount++;
+      } else {
+        tileContainer.visible = false;
+      }
+    }
+    
+    // Optional: Throttle this log as it can be noisy
+    // console.log(`[MapRenderer] Rendered ${renderedCount} tiles.`);
   }
 } 
