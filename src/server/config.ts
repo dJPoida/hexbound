@@ -26,8 +26,8 @@ const config = {
     database: process.env.POSTGRES_DB,
   },
   map: {
-    defaultWidth: parseInt(process.env.MAP_WIDTH || '150', 10),
-    defaultHeight: parseInt(process.env.MAP_HEIGHT || '50', 10),
+    defaultWidth: parseInt(process.env.MAP_WIDTH || '100', 10),
+    defaultHeight: parseInt(process.env.MAP_HEIGHT || '30', 10),
   },
   webpush: {
     subject: process.env.VAPID_SUBJECT || 'mailto:admin@localhost.com',
