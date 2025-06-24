@@ -125,16 +125,30 @@ export class MapRenderer {
       const { q, r } = tileData.coordinates;
       const { x, y } = this._axialToPixel(q, r);
 
-      const tileContainer = this._createTile(tileData.elevation);
-      tileContainer.x = x;
-      tileContainer.y = y;
-      tileContainer.visible = false;
-      this.container.addChild(tileContainer);
+      const mapPixelWidth = this.mapData.width * 600 * 0.75;
+
+      const tileInstances = [
+        this._createTile(tileData.elevation), // Left copy
+        this._createTile(tileData.elevation), // Center copy
+        this._createTile(tileData.elevation), // Right copy
+      ];
+
+      tileInstances[0].x = x;
+      tileInstances[1].x = x + mapPixelWidth;
+      tileInstances[2].x = x + (mapPixelWidth * 2);
+
+      for (let i = 0; i < tileInstances.length; i++) {
+        const instance = tileInstances[i];
+        instance.y = y;
+        instance.visible = false;
+        this.container.addChild(instance);
+        // console.log(`Creating tile (q:${q}, r:${r}) at copy ${i}`);
+      }
       
-      this.tileCache.set(tileData, [tileContainer]);
+      this.tileCache.set(tileData, tileInstances);
     }
     
-    console.log(`[MapRenderer] Initialized and cached ${this.tileCache.size} tile sets.`);
+    console.log(`[MapRenderer] Initialized and cached ${this.tileCache.size} tile sets, creating a 3-map world.`);
   }
 
   public render(viewport: PixiViewport): void {

@@ -31,7 +31,8 @@ export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
         // Calculate world dimensions
         const HEX_WIDTH = 600;
         const HEX_HEIGHT = 400;
-        const worldWidth = mapData.width * HEX_WIDTH * 0.75;
+        const singleMapWidth = mapData.width * HEX_WIDTH * 0.75;
+        const worldWidth = singleMapWidth * 3;
         const worldHeight = mapData.height * HEX_HEIGHT;
 
         // Create and attach the viewport
@@ -70,17 +71,34 @@ export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
         // Create all the tile objects once and cache them
         mapRenderer.initializeMap();
 
-        // Move camera to the center of the world to start
-        viewport.moveCenter(worldWidth / 2, worldHeight / 2);
+        // Move camera to the center of the middle map
+        viewport.moveCenter(singleMapWidth * 1.5, worldHeight / 2);
 
         // Set initial zoom and trigger first render
         viewport.setZoom(0.1, true);
         mapRenderer.render(viewport);
 
-        // Re-render on move
-        viewport.on('moved', () => {
+        const handleMove = () => {
+          // Handle horizontal wrapping by keeping the viewport's center on the "treadmill"
+          if (viewport.center.x < singleMapWidth) {
+            viewport.off('moved', handleMove);
+            console.log(`[Wrap] Player panned left. Moving from ${viewport.center.x.toFixed(2)}...`);
+            viewport.moveCenter(viewport.center.x + singleMapWidth, viewport.center.y);
+            console.log(`...to ${viewport.center.x.toFixed(2)}`);
+            viewport.on('moved', handleMove);
+          } else if (viewport.center.x > singleMapWidth * 2) {
+            viewport.off('moved', handleMove);
+            console.log(`[Wrap] Player panned right. Moving from ${viewport.center.x.toFixed(2)}...`);
+            viewport.moveCenter(viewport.center.x - singleMapWidth, viewport.center.y);
+            console.log(`...to ${viewport.center.x.toFixed(2)}`);
+            viewport.on('moved', handleMove);
+          }
+          
           mapRenderer.render(viewport);
-        });
+        };
+
+        // Re-render on move
+        viewport.on('moved', handleMove);
       }
     };
 
