@@ -47,13 +47,13 @@ export const HEX_EAST_WALL_X_OFFSET = 125;
  */
 export const HEX_EAST_WALL_Y_OFFSET = 75;
 /**
- * The minimum width a tile should ever have on screen, in pixels. Used to calculate max zoom-out.
+ * At minimum zoom (fully zoomed out), this many tiles should be visible on screen.
  */
-export const MIN_TILE_WIDTH_ON_SCREEN = 60; // pixels
+export const MAX_TILES_ON_SCREEN = 150;
 /**
- * The maximum percentage of the screen width a single tile can occupy. Used to calculate max zoom-in.
+ * At maximum zoom (fully zoomed in), this many tiles should be visible on screen.
  */
-export const MAX_TILE_WIDTH_PERCENTAGE = 0.8; // 80% of screen width
+export const MIN_TILES_ON_SCREEN = 30;
 /**
  * The transparent margin around each tile asset, in pixels.
  */

@@ -1,10 +1,11 @@
+import { h } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 import styles from './Viewport.module.css';
 import * as PIXI from 'pixi.js';
 import { Viewport as PixiViewport, IViewportOptions } from 'pixi-viewport';
 import { MapData } from '../../../shared/types/game.types';
 import { MapRenderer } from '../../rendering/MapRenderer';
-import { HEX_HEIGHT, HEX_WIDTH, MAX_TILE_WIDTH_PERCENTAGE, MIN_TILE_WIDTH_ON_SCREEN } from '../../../shared/constants/map.const';
+import { HEX_HEIGHT, HEX_WIDTH, MAX_TILES_ON_SCREEN, MIN_TILES_ON_SCREEN } from '../../../shared/constants/map.const';
 
 interface ViewportProps {
   pixiContainerId: string;
@@ -14,8 +15,22 @@ interface ViewportProps {
 export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
   const pixiContainerRef = useRef<HTMLDivElement>(null);
   const appRef = useRef<PIXI.Application | null>(null);
+  const viewportRef = useRef<PixiViewport | null>(null);
+  const mapRendererRef = useRef<MapRenderer | null>(null);
 
   useEffect(() => {
+    const calculateZoomLimits = (width: number, height: number) => {
+      const screenArea = width * height;
+      const tileArea = HEX_WIDTH * HEX_HEIGHT;
+      
+      const minScale = Math.sqrt(screenArea / (MAX_TILES_ON_SCREEN * tileArea));
+      const maxScale = Math.sqrt(screenArea / (MIN_TILES_ON_SCREEN * tileArea));
+      
+      return { minScale, maxScale };
+    };
+    
+    let resizeObserver: ResizeObserver;
+    
     const initPixi = async () => {
       if (pixiContainerRef.current && mapData && !appRef.current) {
         // Create Pixi Application
@@ -41,8 +56,14 @@ export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
           worldHeight,
           events: app.renderer.events,
         } as IViewportOptions);
+        viewportRef.current = viewport;
 
         app.stage.addChild(viewport);
+
+        const initialZoomLimits = calculateZoomLimits(
+          pixiContainerRef.current.clientWidth,
+          pixiContainerRef.current.clientHeight
+        );
 
         // Activate basic interaction plugins
         viewport
@@ -51,16 +72,14 @@ export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
           .wheel()
           .decelerate()
           .clamp({ direction: 'y' })
-          .clampZoom({
-            minScale: MIN_TILE_WIDTH_ON_SCREEN / HEX_WIDTH,
-            maxScale: (pixiContainerRef.current.clientWidth * MAX_TILE_WIDTH_PERCENTAGE) / HEX_WIDTH,
-          });
+          .clampZoom(initialZoomLimits);
         
         // Append the Pixi canvas to the container
         pixiContainerRef.current.appendChild(app.canvas);
 
         // Create and use the MapRenderer
         const mapRenderer = new MapRenderer(app, mapData);
+        mapRendererRef.current = mapRenderer;
         await mapRenderer.loadAssets();
         
         // Add the map container to the viewport
@@ -73,22 +92,20 @@ export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
         viewport.moveCenter(singleMapWidth * 1.5, worldHeight / 2);
 
         // Set initial zoom and trigger first render
-        viewport.setZoom(0.1, true);
+        viewport.setZoom(initialZoomLimits.minScale, true);
         mapRenderer.render(viewport);
 
         const handleMove = () => {
+          if (!viewportRef.current || !mapRendererRef.current) return;
+          
           // Handle horizontal wrapping by keeping the viewport's center on the "treadmill"
           if (viewport.center.x < singleMapWidth) {
             viewport.off('moved', handleMove);
-            console.log(`[Wrap] Player panned left. Moving from ${viewport.center.x.toFixed(2)}...`);
             viewport.moveCenter(viewport.center.x + singleMapWidth, viewport.center.y);
-            console.log(`...to ${viewport.center.x.toFixed(2)}`);
             viewport.on('moved', handleMove);
           } else if (viewport.center.x > singleMapWidth * 2) {
             viewport.off('moved', handleMove);
-            console.log(`[Wrap] Player panned right. Moving from ${viewport.center.x.toFixed(2)}...`);
             viewport.moveCenter(viewport.center.x - singleMapWidth, viewport.center.y);
-            console.log(`...to ${viewport.center.x.toFixed(2)}`);
             viewport.on('moved', handleMove);
           }
           
@@ -97,6 +114,21 @@ export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
 
         // Re-render on move
         viewport.on('moved', handleMove);
+        
+        // Use ResizeObserver to update zoom limits on container resize
+        resizeObserver = new ResizeObserver(entries => {
+          if (!viewportRef.current || !mapRendererRef.current) return;
+
+          for (const entry of entries) {
+            const { width, height } = entry.contentRect;
+            const newLimits = calculateZoomLimits(width, height);
+            viewportRef.current.clampZoom(newLimits);
+            viewportRef.current.resize(width, height);
+            mapRendererRef.current.render(viewportRef.current);
+          }
+        });
+
+        resizeObserver.observe(pixiContainerRef.current);
       }
     };
 
@@ -104,12 +136,15 @@ export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
 
     // Cleanup on component unmount
     return () => {
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
       if (appRef.current) {
         appRef.current.destroy(true, { children: true, texture: true });
         appRef.current = null;
       }
     };
-  }, [mapData]); // Rerun effect if mapData changes
+  }, [mapData]);
 
   return <div id={pixiContainerId} ref={pixiContainerRef} class={styles.viewport}></div>;
 } 
