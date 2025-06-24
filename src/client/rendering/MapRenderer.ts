@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { Viewport as PixiViewport } from 'pixi-viewport';
 import { MapData, TileData } from '../../shared/types/game.types';
+import { ELEVATION_STEP, HEX_EAST_WALL_X_OFFSET, HEX_EAST_WALL_Y_OFFSET, HEX_FRONT_WALL_X_OFFSET, HEX_FRONT_WALL_Y_OFFSET, HEX_HEIGHT, HEX_OFFSET_X, HEX_OFFSET_Y, HEX_TEXT_OFFSET_X, HEX_TEXT_OFFSET_Y, HEX_WEST_WALL_X_OFFSET, HEX_WEST_WALL_Y_OFFSET, HEX_WIDTH, TILE_FONT, TILE_FONT_SIZE, TILE_PIXEL_MARGIN } from '../../shared/constants/map.const';
 
 export class MapRenderer {
   private app: PIXI.Application;
@@ -35,9 +36,6 @@ export class MapRenderer {
   }
 
   private _axialToPixel(q: number, r: number): { x: number; y: number } {
-    const HEX_WIDTH = 600;
-    const HEX_HEIGHT = 400;
-
     const x = HEX_WIDTH * 0.75 * q;
     let y = HEX_HEIGHT * r;
     
@@ -50,23 +48,19 @@ export class MapRenderer {
   }
 
   private _createTile(elevation: number): PIXI.Container {
-    const TILE_HEIGHT = 600;
-    const HEX_WIDTH = 600;
-    const HEX_HEIGHT = 400;
-    const ELEVATION_STEP = 50;
-    
     const tileContainer = new PIXI.Container();
-    const elevatedY = -(elevation * ELEVATION_STEP);
+    const elevationOffsetY = -(elevation * ELEVATION_STEP);
 
     // 1. Render Top Hex
     const topHex = new PIXI.Sprite(this.textures.hex);
     topHex.anchor.set(0);
-    topHex.y = elevatedY;
+    topHex.x = HEX_OFFSET_X;
+    topHex.y = HEX_OFFSET_Y + elevationOffsetY;
     tileContainer.addChild(topHex);
     
     const textStyle = new PIXI.TextStyle({
-      fontFamily: 'Arial',
-      fontSize: 100,
+      fontFamily: TILE_FONT,
+      fontSize: TILE_FONT_SIZE,
       fill: '#000000',
       align: 'center',
     });
@@ -76,30 +70,30 @@ export class MapRenderer {
       style: textStyle,
     });
     elevationText.anchor.set(0.5);
-    elevationText.x = HEX_WIDTH / 2;
-    elevationText.y = elevatedY + (TILE_HEIGHT - HEX_HEIGHT / 2);
+    elevationText.x = HEX_TEXT_OFFSET_X;
+    elevationText.y = HEX_TEXT_OFFSET_Y + elevationOffsetY;
     tileContainer.addChild(elevationText);
 
     // West Wall (reflected east wall texture)
     const westWall = new PIXI.Sprite(this.textures.hexWallSide);
-    westWall.anchor.set(1, 0);
-    westWall.scale.x = -1; // Mirror the texture
-    westWall.x = 0;
-    westWall.y = TILE_HEIGHT - HEX_HEIGHT / 2 + elevatedY;
+    westWall.anchor.set(0, 0);
+    westWall.x = HEX_WEST_WALL_X_OFFSET;
+    westWall.y = HEX_WEST_WALL_Y_OFFSET + elevationOffsetY;
     tileContainer.addChild(westWall);
-
+    
     // East Wall
     const eastWall = new PIXI.Sprite(this.textures.hexWallSide);
+    eastWall.scale.x = -1;
     eastWall.anchor.set(0, 0);
-    eastWall.x = 450;
-    eastWall.y = TILE_HEIGHT - HEX_HEIGHT / 2 + elevatedY;
+    eastWall.x = HEX_EAST_WALL_X_OFFSET;
+    eastWall.y = HEX_EAST_WALL_Y_OFFSET + elevationOffsetY;
     tileContainer.addChild(eastWall);
 
     // South Wall
     const southWall = new PIXI.Sprite(this.textures.hexWallFront);
-    southWall.anchor.set(0, 0); // Anchor to top-center
-    southWall.x = HEX_WIDTH / 4;
-    southWall.y = TILE_HEIGHT + elevatedY;
+    southWall.anchor.set(0, 0);
+    southWall.x = HEX_FRONT_WALL_X_OFFSET;
+    southWall.y = HEX_FRONT_WALL_Y_OFFSET + elevationOffsetY;
     tileContainer.addChild(southWall);
     
     return tileContainer;
@@ -125,8 +119,9 @@ export class MapRenderer {
       const { q, r } = tileData.coordinates;
       const { x, y } = this._axialToPixel(q, r);
 
-      const mapPixelWidth = this.mapData.width * 600 * 0.75;
+      const mapPixelWidth = this.mapData.width * HEX_WIDTH * 0.75;
 
+      // This is to enable the treadmill effect for wrapping in the x axis
       const tileInstances = [
         this._createTile(tileData.elevation), // Left copy
         this._createTile(tileData.elevation), // Center copy
@@ -142,7 +137,6 @@ export class MapRenderer {
         instance.y = y;
         instance.visible = false;
         this.container.addChild(instance);
-        // console.log(`Creating tile (q:${q}, r:${r}) at copy ${i}`);
       }
       
       this.tileCache.set(tileData, tileInstances);
@@ -153,13 +147,13 @@ export class MapRenderer {
 
   public render(viewport: PixiViewport): void {
     const visibleBounds = viewport.getVisibleBounds();
-    visibleBounds.pad(600); // Add padding to prevent tiles popping in at the edges
+    visibleBounds.pad(160); // Add padding to prevent tiles popping in at the edges
 
     let renderedCount = 0;
     for (const [tileData, tileContainers] of this.tileCache.entries()) {
       for (const tileContainer of tileContainers) {
-        const TILE_WIDTH = 600;
-        const TILE_HEIGHT = 600;
+        const TILE_WIDTH = HEX_WIDTH + (TILE_PIXEL_MARGIN * 2);
+        const TILE_HEIGHT = HEX_HEIGHT + (TILE_PIXEL_MARGIN * 2);
         const tileRect = new PIXI.Rectangle(tileContainer.x, tileContainer.y, TILE_WIDTH, TILE_HEIGHT);
         
         if (visibleBounds.intersects(tileRect)) {

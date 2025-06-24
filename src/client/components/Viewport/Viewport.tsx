@@ -1,10 +1,10 @@
-import { h } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 import styles from './Viewport.module.css';
 import * as PIXI from 'pixi.js';
 import { Viewport as PixiViewport, IViewportOptions } from 'pixi-viewport';
 import { MapData } from '../../../shared/types/game.types';
 import { MapRenderer } from '../../rendering/MapRenderer';
+import { HEX_HEIGHT, HEX_WIDTH, VIEWPORT_MAX_HEXES_VISIBLE, VIEWPORT_MIN_HEXES_VISIBLE } from '../../../shared/constants/map.const';
 
 interface ViewportProps {
   pixiContainerId: string;
@@ -28,9 +28,7 @@ export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
           resizeTo: pixiContainerRef.current,
         });
 
-        // Calculate world dimensions
-        const HEX_WIDTH = 600;
-        const HEX_HEIGHT = 400;
+        // Calculate world dimensions based on new asset sizes
         const singleMapWidth = mapData.width * HEX_WIDTH * 0.75;
         const worldWidth = singleMapWidth * 3;
         const worldHeight = mapData.height * HEX_HEIGHT;
@@ -54,8 +52,8 @@ export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
           .decelerate()
           .clamp({ direction: 'y' })
           .clampZoom({
-            minScale: pixiContainerRef.current.clientWidth / (30 * HEX_WIDTH * 0.75),
-            maxScale: pixiContainerRef.current.clientWidth / (15 * HEX_WIDTH * 0.75),
+            minScale: pixiContainerRef.current.clientWidth / (VIEWPORT_MAX_HEXES_VISIBLE * HEX_WIDTH * 0.75),
+            maxScale: pixiContainerRef.current.clientWidth / (VIEWPORT_MIN_HEXES_VISIBLE * HEX_WIDTH * 0.75),
           });
         
         // Append the Pixi canvas to the container
