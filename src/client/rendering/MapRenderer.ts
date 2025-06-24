@@ -76,22 +76,22 @@ export class MapRenderer {
 
     // West Wall (reflected east wall texture)
     const westWall = new PIXI.Sprite(this.textures.hexWallSide);
-    westWall.anchor.set(0, 0);
+    westWall.anchor.set(0);
     westWall.x = HEX_WEST_WALL_X_OFFSET;
     westWall.y = HEX_WEST_WALL_Y_OFFSET + elevationOffsetY;
     tileContainer.addChild(westWall);
     
     // East Wall
     const eastWall = new PIXI.Sprite(this.textures.hexWallSide);
+    eastWall.anchor.set(0);
     eastWall.scale.x = -1;
-    eastWall.anchor.set(0, 0);
     eastWall.x = HEX_EAST_WALL_X_OFFSET;
     eastWall.y = HEX_EAST_WALL_Y_OFFSET + elevationOffsetY;
     tileContainer.addChild(eastWall);
 
     // South Wall
     const southWall = new PIXI.Sprite(this.textures.hexWallFront);
-    southWall.anchor.set(0, 0);
+    southWall.anchor.set(0);
     southWall.x = HEX_FRONT_WALL_X_OFFSET;
     southWall.y = HEX_FRONT_WALL_Y_OFFSET + elevationOffsetY;
     tileContainer.addChild(southWall);
