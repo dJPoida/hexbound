@@ -2,7 +2,7 @@ import { h } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 import styles from './Viewport.module.css';
 import * as PIXI from 'pixi.js';
-import { Viewport as PixiViewport } from 'pixi-viewport';
+import { Viewport as PixiViewport, IViewportOptions } from 'pixi-viewport';
 import { MapData } from '../../../shared/types/game.types';
 import { MapRenderer } from '../../rendering/MapRenderer';
 
@@ -28,19 +28,35 @@ export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
           resizeTo: pixiContainerRef.current,
         });
 
+        // Calculate world dimensions
+        const HEX_WIDTH = 600;
+        const HEX_HEIGHT = 400;
+        const worldWidth = mapData.width * HEX_WIDTH * 0.75;
+        const worldHeight = mapData.height * HEX_HEIGHT;
+
         // Create and attach the viewport
         const viewport = new PixiViewport({
           screenWidth: pixiContainerRef.current.clientWidth,
           screenHeight: pixiContainerRef.current.clientHeight,
+          worldWidth,
+          worldHeight,
           events: app.renderer.events,
-          // worldWidth and worldHeight can be set if you want boundaries
-        });
+        } as IViewportOptions);
 
         app.stage.addChild(viewport);
 
-        // Activate plugins
-        viewport.drag().pinch().wheel().decelerate();
-
+        // Activate basic interaction plugins
+        viewport
+          .drag()
+          .pinch()
+          .wheel()
+          .decelerate()
+          .clamp({ direction: 'y' })
+          .clampZoom({
+            minScale: pixiContainerRef.current.clientWidth / (30 * HEX_WIDTH * 0.75),
+            maxScale: pixiContainerRef.current.clientWidth / (15 * HEX_WIDTH * 0.75),
+          });
+        
         // Append the Pixi canvas to the container
         pixiContainerRef.current.appendChild(app.canvas);
 
@@ -53,6 +69,9 @@ export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
         
         // Create all the tile objects once and cache them
         mapRenderer.initializeMap();
+
+        // Move camera to the center of the world to start
+        viewport.moveCenter(worldWidth / 2, worldHeight / 2);
 
         // Set initial zoom and trigger first render
         viewport.setZoom(0.1, true);

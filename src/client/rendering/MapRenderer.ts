@@ -7,7 +7,7 @@ export class MapRenderer {
   private mapData: MapData;
   private container: PIXI.Container;
   private textures: Record<string, PIXI.Texture> = {};
-  private tileCache: Map<TileData, PIXI.Container> = new Map();
+  private tileCache: Map<TileData, PIXI.Container[]> = new Map();
 
   constructor(app: PIXI.Application, mapData: MapData) {
     this.app = app;
@@ -128,13 +128,13 @@ export class MapRenderer {
       const tileContainer = this._createTile(tileData.elevation);
       tileContainer.x = x;
       tileContainer.y = y;
-      tileContainer.visible = false; // Initially hide all tiles
-      
+      tileContainer.visible = false;
       this.container.addChild(tileContainer);
-      this.tileCache.set(tileData, tileContainer);
+      
+      this.tileCache.set(tileData, [tileContainer]);
     }
     
-    console.log(`[MapRenderer] Initialized and cached ${this.tileCache.size} tiles.`);
+    console.log(`[MapRenderer] Initialized and cached ${this.tileCache.size} tile sets.`);
   }
 
   public render(viewport: PixiViewport): void {
@@ -142,16 +142,18 @@ export class MapRenderer {
     visibleBounds.pad(600); // Add padding to prevent tiles popping in at the edges
 
     let renderedCount = 0;
-    for (const [tileData, tileContainer] of this.tileCache.entries()) {
-      const TILE_WIDTH = 600;
-      const TILE_HEIGHT = 600;
-      const tileRect = new PIXI.Rectangle(tileContainer.x, tileContainer.y, TILE_WIDTH, TILE_HEIGHT);
-      
-      if (visibleBounds.intersects(tileRect)) {
-        tileContainer.visible = true;
-        renderedCount++;
-      } else {
-        tileContainer.visible = false;
+    for (const [tileData, tileContainers] of this.tileCache.entries()) {
+      for (const tileContainer of tileContainers) {
+        const TILE_WIDTH = 600;
+        const TILE_HEIGHT = 600;
+        const tileRect = new PIXI.Rectangle(tileContainer.x, tileContainer.y, TILE_WIDTH, TILE_HEIGHT);
+        
+        if (visibleBounds.intersects(tileRect)) {
+          tileContainer.visible = true;
+          renderedCount++;
+        } else {
+          tileContainer.visible = false;
+        }
       }
     }
     
