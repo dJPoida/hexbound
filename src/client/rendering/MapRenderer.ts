@@ -123,9 +123,7 @@ export class MapRenderer {
       return aPos.x - bPos.x;
     });
 
-    const filteredTiles = sortedTiles.filter(tile => tile.coordinates.r === 0);
-
-    for (const tileData of filteredTiles) {
+    for (const tileData of sortedTiles) {
       const { q, r } = tileData.coordinates;
       const { x, y } = this._axialToPixel(q, r);
 
@@ -135,6 +133,6 @@ export class MapRenderer {
       this.container.addChild(tileContainer);
     }
     
-    console.log(`[MapRenderer] Rendered ${filteredTiles.length} tiles.`);
+    console.log(`[MapRenderer] Rendered ${sortedTiles.length} tiles.`);
   }
 } 
