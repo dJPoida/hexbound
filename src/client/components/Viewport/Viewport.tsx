@@ -4,7 +4,7 @@ import * as PIXI from 'pixi.js';
 import { Viewport as PixiViewport, IViewportOptions } from 'pixi-viewport';
 import { MapData } from '../../../shared/types/game.types';
 import { MapRenderer } from '../../rendering/MapRenderer';
-import { HEX_HEIGHT, HEX_WIDTH, VIEWPORT_MAX_HEXES_VISIBLE, VIEWPORT_MIN_HEXES_VISIBLE } from '../../../shared/constants/map.const';
+import { HEX_HEIGHT, HEX_WIDTH, MAX_TILE_WIDTH_PERCENTAGE, MIN_TILE_WIDTH_ON_SCREEN } from '../../../shared/constants/map.const';
 
 interface ViewportProps {
   pixiContainerId: string;
@@ -52,8 +52,8 @@ export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
           .decelerate()
           .clamp({ direction: 'y' })
           .clampZoom({
-            minScale: pixiContainerRef.current.clientWidth / (VIEWPORT_MAX_HEXES_VISIBLE * HEX_WIDTH * 0.75),
-            maxScale: pixiContainerRef.current.clientWidth / (VIEWPORT_MIN_HEXES_VISIBLE * HEX_WIDTH * 0.75),
+            minScale: MIN_TILE_WIDTH_ON_SCREEN / HEX_WIDTH,
+            maxScale: (pixiContainerRef.current.clientWidth * MAX_TILE_WIDTH_PERCENTAGE) / HEX_WIDTH,
           });
         
         // Append the Pixi canvas to the container
