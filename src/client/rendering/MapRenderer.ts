@@ -11,8 +11,11 @@ export class MapRenderer {
     this.app = app;
     this.mapData = mapData;
     this.container = new PIXI.Container();
-    this.app.stage.addChild(this.container);
     console.log('[MapRenderer] Initialized.');
+  }
+
+  public get stage(): PIXI.Container {
+    return this.container;
   }
 
   public async loadAssets(): Promise<void> {
