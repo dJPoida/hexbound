@@ -70,7 +70,9 @@ export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
           .drag()
           .pinch()
           .wheel()
-          .decelerate()
+          .decelerate({
+            friction: 0.8,
+          })
           .clamp({ direction: 'y' })
           .clampZoom(initialZoomLimits);
         
