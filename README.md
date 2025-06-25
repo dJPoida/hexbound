@@ -64,6 +64,12 @@ Make sure you have the following software installed:
     ```
     Once the server is running, you can access the application at **[http://localhost:3000](http://localhost:3000)**.
 
+3.  **Run Database Migrations**
+    After starting the services and before running the application for the first time, or whenever there are new database schema changes, you need to run the migrations.
+    ```sh
+    npm run typeorm:run
+    ```
+
 ### Inspecting the Database
 
 This project's `docker-compose.yml` includes web-based tools for exploring the databases.
