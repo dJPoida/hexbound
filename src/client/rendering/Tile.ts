@@ -8,6 +8,7 @@ export class Tile {
   private westWall: PIXI.Sprite;
   private eastWall: PIXI.Sprite;
   private southWall: PIXI.Sprite;
+  private outline: PIXI.Sprite;
   private elevationText: PIXI.Text;
   private coordText: PIXI.Text;
 
@@ -23,11 +24,16 @@ export class Tile {
     this.westWall = new PIXI.Sprite(textures.hexWallSide);
     this.eastWall = new PIXI.Sprite(textures.hexWallSide);
     this.southWall = new PIXI.Sprite(textures.hexWallFront);
+    this.outline = new PIXI.Sprite(textures.hexOutline);
 
     // Configure sprites
     this.topHex.anchor.set(0);
     this.topHex.x = HEX_OFFSET_X;
     this.topHex.y = HEX_OFFSET_Y + elevationOffsetY;
+
+    this.outline.anchor.set(0);
+    this.outline.x = HEX_OFFSET_X;
+    this.outline.y = HEX_OFFSET_Y + elevationOffsetY;
 
     const textStyle: Partial<PIXI.TextStyle> = {
       fontFamily: TILE_FONT,
@@ -59,12 +65,13 @@ export class Tile {
     this.southWall.x = HEX_FRONT_WALL_X_OFFSET;
     this.southWall.y = HEX_FRONT_WALL_Y_OFFSET + elevationOffsetY;
 
-    // Add sprites to container
+    // Add sprites to container in the correct render order
     this.container.addChild(
-      this.topHex,
       this.westWall,
-      this.eastWall,
       this.southWall,
+      this.eastWall,
+      this.topHex,
+      this.outline,
       this.elevationText,
       this.coordText
     );

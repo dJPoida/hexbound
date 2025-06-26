@@ -31,6 +31,7 @@ export class MapRenderer {
   public async loadAssets(): Promise<void> {
     const assetsToLoad = [
       { alias: 'hex', src: '/images/tiles/hex.png' },
+      { alias: 'hexOutline', src: '/images/tiles/hex_outline.png' },
       { alias: 'hexWallFront', src: '/images/tiles/hex_wall_front.png' },
       { alias: 'hexWallSide', src: '/images/tiles/hex_wall_side.png' },
     ];

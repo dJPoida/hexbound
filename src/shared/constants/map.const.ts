@@ -49,7 +49,7 @@ export const HEX_EAST_WALL_Y_OFFSET = 75;
 /**
  * At minimum zoom (fully zoomed out), this many tiles should be visible on screen.
  */
-export const MAX_TILES_ON_SCREEN = 150;
+export const MAX_TILES_ON_SCREEN = 200;
 /**
  * At maximum zoom (fully zoomed in), this many tiles should be visible on screen.
  */
