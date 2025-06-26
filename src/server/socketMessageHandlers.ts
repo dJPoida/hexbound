@@ -15,6 +15,18 @@ import { pushService } from './services/push.service';
 import redisClient from './redisClient';
 import { toClientState } from './helpers/clientState.helper';
 
+// --- Temporary Test Logic ---
+const activeGameTimers = new Map<string, NodeJS.Timeout>();
+
+export function cleanupGameTimers(gameId: string) {
+  if (activeGameTimers.has(gameId)) {
+    clearInterval(activeGameTimers.get(gameId)!);
+    activeGameTimers.delete(gameId);
+    console.log(`[Test] Cleaned up timer for game ${gameId}`);
+  }
+}
+// -------------------------
+
 // A simple type guard to check if a message is a valid SocketMessage
 function isValidSocketMessage(msg: unknown): msg is SocketMessage<unknown> {
   if (typeof msg !== 'object' || msg === null) return false;
@@ -103,6 +115,31 @@ async function handleClientReady(ws: AuthenticatedWebSocket, payload: GameIdPayl
 
   const stateToSend = toClientState(gameState);
   ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE, payload: stateToSend }));
+
+  // --- Temporary Test Logic ---
+  console.log(`[Test] Starting chaos monkey for game ${gameId}`);
+  const chaosInterval = setInterval(async () => {
+    const currentState = (await redisClient.json.get(gameKey)) as ServerGameState | null;
+    if (!currentState || !currentState.mapData) return;
+
+    // Find the tile at (1,1) and change its elevation
+    const targetTile = currentState.mapData.tiles.find(t => t.coordinates.q === 1 && t.coordinates.r === 1);
+    if (targetTile) {
+      const newElevation = (targetTile.elevation + 1) % 5;
+      targetTile.elevation = newElevation;
+
+      // Save and broadcast the new state
+      await redisClient.json.set(gameKey, '$', currentState as unknown as RedisJSON);
+      const message: SocketMessage<ClientGameStatePayload> = {
+        type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE,
+        payload: toClientState(currentState),
+      };
+      broadcastToGame(gameId, JSON.stringify(message));
+    }
+  }, 1000); // Every second
+
+  activeGameTimers.set(gameId, chaosInterval);
+  // -------------------------
 }
 
 async function handleIncrementCounter(ws: AuthenticatedWebSocket, payload: GameIdPayload) {

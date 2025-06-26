@@ -10,7 +10,7 @@
    xml:space="preserve"
    inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
    sodipodi:docname="hex template.svg"
-   inkscape:export-filename="D:\Development\Cursor\hexbound\src\client\public\images\tiles\hex.png"
+   inkscape:export-filename="D:\Development\Cursor\hexbound\src\client\public\images\tiles\hex_outline.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -28,9 +28,9 @@
      inkscape:document-units="px"
      showgrid="true"
      showguides="true"
-     inkscape:zoom="7.9999999"
-     inkscape:cx="81.812501"
-     inkscape:cy="80.250001"
+     inkscape:zoom="11.313708"
+     inkscape:cx="58.159533"
+     inkscape:cy="82.99666"
      inkscape:window-width="2560"
      inkscape:window-height="1334"
      inkscape:window-x="2549"
@@ -55,7 +55,13 @@
      inkscape:groupmode="layer"
      id="layer1"
      style="display:inline"><path
-       style="fill:#ffffff;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke"
+       style="display:inline;fill:#aade87;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke"
        d="M 5,85 35,45 h 60 l 30,40 -30,40 H 35 Z"
        id="path4"
-       sodipodi:nodetypes="ccccccc" /></g></svg>
+       sodipodi:nodetypes="ccccccc" /><path
+       id="path1"
+       style="display:inline;fill:none;stroke:#999999;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke"
+       sodipodi:type="inkscape:offset"
+       inkscape:radius="-0.49718446"
+       inkscape:original="M 35 45 L 5 85 L 35 125 L 95 125 L 125 85 L 95 45 L 35 45 z "
+       d="M 35.248047,45.498047 5.6210937,85 35.248047,124.50195 H 94.751953 L 124.37891,85 94.751953,45.498047 Z" /></g></svg>

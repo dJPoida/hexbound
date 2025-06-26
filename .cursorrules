@@ -293,3 +293,16 @@ This script will automatically:
 - Tiles default at a "elevation" of 0. Tiles can have their elevation raised or lowered 4 times. Each level of vertical elevation represents 10px in the graphic relative to the original source hex images. The walls do not stretch or shrink to represent the elevation, they are anchored to the hex. By rendering the hex with an offset in the y axis, it will provide the illusion of elevation on a tile.
 - The viewport that renders the "map" will be scalable/zoom-able by the user. All metrics provided in this ruleset are intrinsic.
 - definitions for map metrics and configurable elements are stored in `src/shared/constants/map.const.ts`.
+
+# Architectural Patterns
+
+## Decoupling Rendering from Component Lifecycle
+
+To prevent race conditions and bugs related to the component lifecycle (e.g., a `useEffect` cleanup function destroying an object that another part of the effect is still trying to use), all complex, imperative rendering logic (e.g., PIXI.Application, viewport management) should be encapsulated within a singleton service (e.g., `rendering.service.ts`).
+
+React/Preact components (like `Viewport.tsx`) should remain "dumb". Their responsibility is limited to:
+- Calling the service's `initialize()` method in a `useEffect` with an empty dependency array (`[]`) to ensure it runs only on mount.
+- Calling the service's `destroy()` method in the cleanup function of that same `useEffect`.
+- Calling the service's data update methods (e.g., `updateMap()`) in a separate `useEffect` that watches for specific prop changes (e.g., `[mapData]`).
+
+This pattern ensures that the lifecycle of the complex rendering objects is managed independently from the component's re-render cycle.
