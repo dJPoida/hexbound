@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import { Viewport as PixiViewport } from 'pixi-viewport';
 import { MapData, TileData } from '../../shared/types/game.types';
 import { ELEVATION_STEP, HEX_EAST_WALL_X_OFFSET, HEX_EAST_WALL_Y_OFFSET, HEX_FRONT_WALL_X_OFFSET, HEX_FRONT_WALL_Y_OFFSET, HEX_HEIGHT, HEX_OFFSET_X, HEX_OFFSET_Y, HEX_TEXT_OFFSET_X, HEX_TEXT_OFFSET_Y, HEX_WEST_WALL_X_OFFSET, HEX_WEST_WALL_Y_OFFSET, HEX_WIDTH, TILE_FONT, TILE_FONT_SIZE, TILE_PIXEL_MARGIN } from '../../shared/constants/map.const';
+import { Tile } from './Tile';
 
 function getTileKey(q: number, r: number) {
   return `${q},${r}`;
@@ -12,7 +13,7 @@ export class MapRenderer {
   private mapData: MapData;
   private container: PIXI.Container;
   private textures: Record<string, PIXI.Texture> = {};
-  private tileCache: Map<TileData, PIXI.Container[]> = new Map();
+  private tileCache: Map<string, Tile[]> = new Map();
   private tileDataMap: Map<string, TileData> = new Map();
 
   constructor(app: PIXI.Application, mapData: MapData) {
@@ -137,68 +138,74 @@ export class MapRenderer {
 
     for (const tileData of sortedTiles) {
       const { q, r } = tileData.coordinates;
+      const key = getTileKey(q, r);
       const { x, y } = this._axialToPixel(q, r);
 
       const mapPixelWidth = this.mapData.width * HEX_WIDTH * 0.75;
 
-      // This is to enable the treadmill effect for wrapping in the x axis
       const tileInstances = [
-        this._createTile(tileData.elevation, q, r), // Left copy
-        this._createTile(tileData.elevation, q, r), // Center copy
-        this._createTile(tileData.elevation, q, r), // Right copy
+        new Tile(tileData, this.textures), // Left copy
+        new Tile(tileData, this.textures), // Center copy
+        new Tile(tileData, this.textures), // Right copy
       ];
 
-      tileInstances[0].x = x;
-      tileInstances[1].x = x + mapPixelWidth;
-      tileInstances[2].x = x + (mapPixelWidth * 2);
+      tileInstances[0].container.x = x;
+      tileInstances[0].container.y = y;
+      tileInstances[1].container.x = x + mapPixelWidth;
+      tileInstances[1].container.y = y;
+      tileInstances[2].container.x = x + (mapPixelWidth * 2);
+      tileInstances[2].container.y = y;
 
-      for (let i = 0; i < tileInstances.length; i++) {
-        const instance = tileInstances[i];
-        instance.y = y;
-        instance.visible = false;
-        this.container.addChild(instance);
+      for (const instance of tileInstances) {
+        instance.container.visible = false;
+        this.container.addChild(instance.container);
       }
       
-      this.tileCache.set(tileData, tileInstances);
-      this.tileDataMap.set(getTileKey(q, r), tileData);
+      this.tileCache.set(key, tileInstances);
+      this.tileDataMap.set(key, tileData);
     }
     
     console.log(`[MapRenderer] Initialized and cached ${this.tileCache.size} tile sets, creating a 3-map world.`);
   }
 
-  private _updateTile(tileContainer: PIXI.Container, newElevation: number, q: number, r: number) {
-    // Clear the old graphics
-    tileContainer.removeChildren();
-    
-    // Create new graphics with the new elevation
-    const newTileGraphics = this._createTile(newElevation, q, r);
-
-    // Add the new graphics to the existing container
-    for (const child of newTileGraphics.children) {
-      tileContainer.addChild(child);
-    }
-  }
-
   public updateMap(newMapData: MapData) {
     console.log('[MapRenderer] Received map update. Checking for changes...');
     let updatedCount = 0;
-    for (const newTile of newMapData.tiles) {
-      const key = getTileKey(newTile.coordinates.q, newTile.coordinates.r);
-      const oldTile = this.tileDataMap.get(key);
+    for (const newTileData of newMapData.tiles) {
+      const key = getTileKey(newTileData.coordinates.q, newTileData.coordinates.r);
+      const oldTileData = this.tileDataMap.get(key);
 
-      if (oldTile && oldTile.elevation !== newTile.elevation) {
-        console.log(`Tile ${key} changed elevation from ${oldTile.elevation} to ${newTile.elevation}`);
+      if (oldTileData && oldTileData.elevation !== newTileData.elevation) {
+        console.log(`Tile ${key} changed elevation from ${oldTileData.elevation} to ${newTileData.elevation}`);
         updatedCount++;
         
-        const tileContainers = this.tileCache.get(oldTile);
-        if (tileContainers) {
-          for (const container of tileContainers) {
-            this._updateTile(container, newTile.elevation, newTile.coordinates.q, newTile.coordinates.r);
+        const tileInstances = this.tileCache.get(key);
+        if (tileInstances) {
+          // Replace the old instances
+          for (let i = 0; i < tileInstances.length; i++) {
+            const oldContainer = tileInstances[i].container;
+
+            // Create a new Tile object for each instance to get a new container
+            const newTile = new Tile(newTileData, this.textures);
+            const newContainer = newTile.container;
+            
+            // Position the new container at the old container's position
+            newContainer.x = oldContainer.x;
+            newContainer.y = oldContainer.y;
+            newContainer.visible = oldContainer.visible;
+            
+            // Replace in the main container and destroy the old one
+            this.container.removeChild(oldContainer);
+            this.container.addChild(newContainer);
+            oldContainer.destroy();
+
+            // Update the instance in the array
+            tileInstances[i] = newTile;
           }
         }
         
         // Update the internal state
-        this.tileDataMap.set(key, newTile);
+        this.tileDataMap.set(key, newTileData);
       }
     }
     if (updatedCount > 0) {
@@ -208,25 +215,20 @@ export class MapRenderer {
 
   public render(viewport: PixiViewport): void {
     const visibleBounds = viewport.getVisibleBounds();
-    visibleBounds.pad(160); // Add padding to prevent tiles popping in at the edges
+    visibleBounds.pad(160);
 
-    let renderedCount = 0;
-    for (const [tileData, tileContainers] of this.tileCache.entries()) {
-      for (const tileContainer of tileContainers) {
-        const TILE_WIDTH = HEX_WIDTH + (TILE_PIXEL_MARGIN * 2);
-        const TILE_HEIGHT = HEX_HEIGHT + (TILE_PIXEL_MARGIN * 2);
-        const tileRect = new PIXI.Rectangle(tileContainer.x, tileContainer.y, TILE_WIDTH, TILE_HEIGHT);
+    for (const [key, tileInstances] of this.tileCache.entries()) {
+      for (const tile of tileInstances) {
+        const TILE_WIDTH = HEX_WIDTH + 10;
+        const TILE_HEIGHT = HEX_HEIGHT + 10;
+        const tileRect = new PIXI.Rectangle(tile.container.x, tile.container.y, TILE_WIDTH, TILE_HEIGHT);
         
         if (visibleBounds.intersects(tileRect)) {
-          tileContainer.visible = true;
-          renderedCount++;
+          tile.container.visible = true;
         } else {
-          tileContainer.visible = false;
+          tile.container.visible = false;
         }
       }
     }
-    
-    // Optional: Throttle this log as it can be noisy
-    // console.log(`[MapRenderer] Rendered ${renderedCount} tiles.`);
   }
 } 
