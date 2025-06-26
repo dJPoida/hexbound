@@ -306,3 +306,17 @@ React/Preact components (like `Viewport.tsx`) should remain "dumb". Their respon
 - Calling the service's data update methods (e.g., `updateMap()`) in a separate `useEffect` that watches for specific prop changes (e.g., `[mapData]`).
 
 This pattern ensures that the lifecycle of the complex rendering objects is managed independently from the component's re-render cycle.
+
+## Rendering Engine Architecture
+
+To manage the complexity of a dynamic, 2.5D hex grid, the rendering engine uses two primary patterns:
+
+### Tile Entity Pattern
+- **Encapsulation**: Each individual hex tile is represented by a `Tile` class instance (`src/client/rendering/Tile.ts`).
+- **Responsibilities**: This class is responsible for creating, positioning, and managing all the `PIXI.Sprite` objects that make up a single tile (the hex top, walls, and text). In the future, it will also manage its own state (e.g., `currentElevation`, `targetElevation`) and handle its own animations (e.g., tweening between elevations).
+- **Benefit**: This pattern simplifies the `MapRenderer`, turning it into a manager that orchestrates `Tile` objects rather than micromanaging thousands of individual sprites.
+
+### Layered Rendering for Z-Indexing
+- **The Problem**: Dynamically updating a tile's elevation can break the visual layering, causing a now-taller tile to incorrectly appear behind the tiles in front of it.
+- **The Solution**: The `MapRenderer` creates a dedicated `PIXI.Container` for each **row** of the map. All `Tile` objects for a given row are added to that row's container.
+- **Benefit**: This fixes the z-indexing issue permanently. The draw order of the rows is established once at initialization (North to South). When a tile is updated, it's only modified *within* its row container, preserving the overall draw order and ensuring correct visual layering without expensive re-sorting of all sprites.

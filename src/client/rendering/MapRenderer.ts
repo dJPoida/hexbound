@@ -15,6 +15,7 @@ export class MapRenderer {
   private textures: Record<string, PIXI.Texture> = {};
   private tileCache: Map<string, Tile[]> = new Map();
   private tileDataMap: Map<string, TileData> = new Map();
+  private rowContainers: Map<number, PIXI.Container> = new Map();
 
   constructor(app: PIXI.Application, mapData: MapData) {
     this.app = app;
@@ -64,13 +65,13 @@ export class MapRenderer {
     topHex.y = HEX_OFFSET_Y + elevationOffsetY;
     tileContainer.addChild(topHex);
     
+    // 2. Render the Elevation Text
     const textStyle = new PIXI.TextStyle({
       fontFamily: TILE_FONT,
       fontSize: TILE_FONT_SIZE,
       fill: '#000000',
       align: 'center',
     });
-
     const elevationText = new PIXI.Text({
       text: elevation.toString(),
       style: textStyle,
@@ -80,6 +81,7 @@ export class MapRenderer {
     elevationText.y = HEX_TEXT_OFFSET_Y + elevationOffsetY;
     tileContainer.addChild(elevationText);
 
+    // 3. Render the Coordinates Text
     const coordStyle = new PIXI.TextStyle({
       fontFamily: TILE_FONT,
       fontSize: TILE_FONT_SIZE / 2,
@@ -95,14 +97,14 @@ export class MapRenderer {
     coordText.y = elevationText.y + TILE_FONT_SIZE;
     tileContainer.addChild(coordText);
 
-    // West Wall (reflected east wall texture)
+    // 4. Render the West Wall
     const westWall = new PIXI.Sprite(this.textures.hexWallSide);
     westWall.anchor.set(0);
     westWall.x = HEX_WEST_WALL_X_OFFSET;
     westWall.y = HEX_WEST_WALL_Y_OFFSET + elevationOffsetY;
     tileContainer.addChild(westWall);
     
-    // East Wall
+    // 5. Render the East Wall (reflected west wall texture)
     const eastWall = new PIXI.Sprite(this.textures.hexWallSide);
     eastWall.anchor.set(0);
     eastWall.scale.x = -1;
@@ -136,6 +138,13 @@ export class MapRenderer {
       return aPos.x - bPos.x;
     });
 
+    // Ensure all row containers are created and added in order first
+    for (let r = 0; r < this.mapData.height; r++) {
+      const rowContainer = new PIXI.Container();
+      this.container.addChild(rowContainer);
+      this.rowContainers.set(r, rowContainer);
+    }
+
     for (const tileData of sortedTiles) {
       const { q, r } = tileData.coordinates;
       const key = getTileKey(q, r);
@@ -156,9 +165,12 @@ export class MapRenderer {
       tileInstances[2].container.x = x + (mapPixelWidth * 2);
       tileInstances[2].container.y = y;
 
-      for (const instance of tileInstances) {
-        instance.container.visible = false;
-        this.container.addChild(instance.container);
+      const rowContainer = this.rowContainers.get(r);
+      if (rowContainer) {
+        for (const instance of tileInstances) {
+          instance.container.visible = false;
+          rowContainer.addChild(instance.container);
+        }
       }
       
       this.tileCache.set(key, tileInstances);
@@ -181,27 +193,33 @@ export class MapRenderer {
         
         const tileInstances = this.tileCache.get(key);
         if (tileInstances) {
-          // Replace the old instances
+          // Create new Tile objects with the updated data
+          // We must create new instances for each copy to maintain correct positioning and state.
+          const newLeft = new Tile(newTileData, this.textures);
+          const newCenter = new Tile(newTileData, this.textures);
+          const newRight = new Tile(newTileData, this.textures);
+          
+          const newInstances = [newLeft, newCenter, newRight];
+
           for (let i = 0; i < tileInstances.length; i++) {
             const oldContainer = tileInstances[i].container;
-
-            // Create a new Tile object for each instance to get a new container
-            const newTile = new Tile(newTileData, this.textures);
-            const newContainer = newTile.container;
+            const newContainer = newInstances[i].container;
             
             // Position the new container at the old container's position
             newContainer.x = oldContainer.x;
             newContainer.y = oldContainer.y;
             newContainer.visible = oldContainer.visible;
             
-            // Replace in the main container and destroy the old one
-            this.container.removeChild(oldContainer);
-            this.container.addChild(newContainer);
+            // Replace in the row container and destroy the old one
+            const rowContainer = oldContainer.parent;
+            if (rowContainer) {
+              rowContainer.removeChild(oldContainer);
+              rowContainer.addChild(newContainer);
+            }
             oldContainer.destroy();
-
-            // Update the instance in the array
-            tileInstances[i] = newTile;
           }
+          // Update the cache with the new instances
+          this.tileCache.set(key, newInstances);
         }
         
         // Update the internal state
