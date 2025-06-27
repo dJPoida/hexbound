@@ -281,18 +281,22 @@ This script will automatically:
 - Hex tiles are designed to represent basalt columns, aka column jointing.
 - Hex tile orientation for the user makes them flat on the bottom and pointy on the sides.
 - Hex tiles have an aspect ratio of 2:1 with a default size of 120x80px.
-- The game allows for hex tiles to be raised and lowered, vertically offsetting them from the surrounding tiles. Therefore there are additional graphics for the two visible side walls and front wall of a hex tile. The three rear walls are not relevant and cannot be seen.
+- The game allows for hex tiles to be raised and lowered, vertically offsetting them from the surrounding tiles. Therefore the sprite for a hex tile has two visible side walls and a front wall or the hex tile. The three rear walls are not relevant as they cannot be seen by the user.
 - The map is scalable in width and height. The width represents the number of tiles from west to east (x-axis) and the height represents the number of tiles from north to south (y-axis).
 - The map is finite in the y-axis (north to south) but cyclic in the x-axis (west to east). i.e. when a user is panning around the map, their viewport stops when it reaches the north-most or south-most tile, but when it reaches the east-most or westmost tile, it will render the next tile from the opposite end and allow the user to pan infinitely "around" the map in the x-axis.
-- Hex tile graphics are stored in transparent `.png` files
-  - The main hex graphic file is 120x120px with a 5px margin resulting in a file that is 130x130px where the graphic content is inset by 5px. The hex, being 120x80px in nature, has a 40px buffer above it for future graphic elements such as buildings and other natural landscape features. Therefore, the "local origin" of a hex graphic is pixel position [5, 45].
-  - The graphic file for the south-eastern visible side of the hex tile wall is 30x120px with a 5px margin resulting in a file that is 40x130px where the graphic content is inset by 5px. This graphic is designed to align with the south-east edge of the hex tile. Therefore the local origin of this tile is [5, 5] and its origin should align with the hex local coordinates of [5, 85]. If a Hex is divided in the x axis into 12, the side wall spans 3 divisions.
-  - The graphic file for the front facing side of the hex tile is 60x80px with a 5px margin resulting in a file that is 70x90px where the graphic content is inset by 5px. This graphic is designed to align with the south most edge of the hex tile. Therefore the "local origin" of this tile is [5, 5] and should align with the hex tile local coordinates of [35, 125]. If a Hex is divided in the x axis into 12, the front face is 6 divisions, offset by 3 divisions on each side.
-  - The graphic for the south-eastern visible side of the hex tile wall is the identical graphic for the south-western visible side of the wall, but mirrored/reflected in the X axis. If a Hex is divided in the x axis into 12, the side wall spans 3 divisions.
+- The hex sprite graphic file is a transparent .png whose content is 120x150px with a 5px margin resulting in a file that is 130x160px. The hex component of the graphic is located in the file 5px from the edge and is 120x80px in nature. Therefore, the "local origin" of a hex graphic is pixel position [5, 5].
+- The three walls of the hex are embedded in the same sprite.
 - Tiles need to be rendered within the user's viewport in honeycomb rows where the tiles are sorted in render order from North-most to South-most, West to East, to ensure they overlap and provide the illusion of the basalt columns.
 - Tiles default at a "elevation" of 0. Tiles can have their elevation raised or lowered 4 times. Each level of vertical elevation represents 10px in the graphic relative to the original source hex images. The walls do not stretch or shrink to represent the elevation, they are anchored to the hex. By rendering the hex with an offset in the y axis, it will provide the illusion of elevation on a tile.
 - The viewport that renders the "map" will be scalable/zoom-able by the user. All metrics provided in this ruleset are intrinsic.
 - definitions for map metrics and configurable elements are stored in `src/shared/constants/map.const.ts`.
+- each tile has a variant or "biome" that is used to determine the sprite chosen to render the file. Biomes include:
+  - plains (`tile_plains.png`)
+  - ocean (`tile_ocean.png`)
+  - icecap (`tile_icecap.png`)
+- There are two outline sprites used to visually define the hex grid
+  - outline (`hex_outline.png`) is used on every tile to define the grid for the user
+  - selected (`hex_selected.png`) is used to indicate the tile the user has "selected" on the map
 
 # Architectural Patterns
 
