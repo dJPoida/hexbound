@@ -30,7 +30,7 @@ export class MapRenderer {
 
   public async loadAssets(): Promise<void> {
     const assetsToLoad = [
-      { alias: 'tile_plains', src: '/images/tiles/tile_plains.png' },
+      { alias: 'tile_grassland', src: '/images/tiles/tile_grassland.png' },
       { alias: 'tile_ocean', src: '/images/tiles/tile_ocean.png' },
       { alias: 'tile_icecap', src: '/images/tiles/tile_icecap.png' },
       { alias: 'hex_outline', src: '/images/tiles/hex_outline.png' },
@@ -104,7 +104,7 @@ export class MapRenderer {
   }
   
   public initializeMap(): void {
-    if (!this.textures.tile_plains) {
+    if (!this.textures.tile_grassland) {
       console.error('[MapRenderer] Cannot initialize map, textures not loaded.');
       return;
     }

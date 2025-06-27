@@ -16,8 +16,8 @@ export class Tile {
     this.container = new PIXI.Container();
     const elevationOffsetY = -(elevation * ELEVATION_STEP);
 
-    // For now, all tiles are plains. This will be dynamic later.
-    this.body = new PIXI.Sprite(textures.tile_plains);
+    // For now, all tiles are grassland. This will be dynamic later.
+    this.body = new PIXI.Sprite(textures.tile_grassland);
     this.body.anchor.set(0);
     this.body.x = HEX_OFFSET_X;
     this.body.y = HEX_OFFSET_Y + elevationOffsetY;
