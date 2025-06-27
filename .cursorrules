@@ -121,6 +121,14 @@ The server-side application follows a clear structure for handling API requests.
 - **Routes**: Located in `src/server/routes/`, these files define the API endpoints using Express Router. They are responsible for mapping HTTP methods and paths to controller functions. Route paths should use constants defined in `src/shared/constants/api.const.ts`.
 - **Controllers**: Located in `src/server/controllers/`, these files contain the business logic for each API endpoint. They handle the request, interact with services or data models, and send the response.
 
+### Map Generation Pipeline
+
+To create complex and believable worlds, map generation uses a layered, pipeline-based approach encapsulated within the `MapGenerator` class (`src/server/helpers/mapGenerator.ts`). This strategy is designed for clarity, extensibility, and control over the order of operations.
+
+- **Pipeline Structure**: The `MapGenerator`'s main `generate()` method executes a series of private methods in a specific sequence. Each method acts as a "generation pass," responsible for applying a specific rule or feature to the map.
+- **Layered Rules**: The order of the passes is critical. Early passes lay down foundational terrain (e.g., ice caps, oceans), while later passes fill in the remaining areas (e.g., grasslands) or add details based on the existing terrain (e.g., forests next to mountains).
+- **Extensibility**: To add a new map feature, a new private method (a "pass") is created and inserted into the `generate()` pipeline at the appropriate stage. This keeps each rule's logic isolated and makes the system easy to expand.
+
 # Frontend Structure
 Client-side code is organized to promote modularity and maintainability.
 - **Components**: Reusable UI components are located in `src/client/components/`.
