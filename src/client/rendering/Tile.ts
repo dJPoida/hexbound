@@ -1,6 +1,20 @@
 import * as PIXI from 'pixi.js';
-import { TileData } from '../../shared/types/game.types';
+import { TileData, TerrainType } from '../../shared/types/game.types';
 import { ELEVATION_STEP, HEX_OFFSET_X, HEX_OFFSET_Y, HEX_TEXT_OFFSET_X, HEX_TEXT_OFFSET_Y, HEX_WIDTH, TILE_FONT, TILE_FONT_SIZE } from '../../shared/constants/map.const';
+
+function getTextureForTerrain(terrain: TerrainType, textures: Record<string, PIXI.Texture>): PIXI.Texture {
+  switch (terrain) {
+    case TerrainType.GRASSLAND:
+      return textures.tile_grassland;
+    case TerrainType.OCEAN:
+      return textures.tile_ocean;
+    case TerrainType.ICECAP:
+      return textures.tile_icecap;
+    // Add other cases as new terrain types are implemented
+    default:
+      return textures.tile_grassland; // Default to grassland if texture is missing
+  }
+}
 
 export class Tile {
   public container: PIXI.Container;
@@ -16,8 +30,8 @@ export class Tile {
     this.container = new PIXI.Container();
     const elevationOffsetY = -(elevation * ELEVATION_STEP);
 
-    // For now, all tiles are grassland. This will be dynamic later.
-    this.body = new PIXI.Sprite(textures.tile_grassland);
+    const bodyTexture = getTextureForTerrain(tileData.terrain, textures);
+    this.body = new PIXI.Sprite(bodyTexture);
     this.body.anchor.set(0);
     this.body.x = HEX_OFFSET_X;
     this.body.y = HEX_OFFSET_Y + elevationOffsetY;
