@@ -76,14 +76,42 @@ export class MapGenerator {
   }
 
   private _fillGrassland(): void {
-    // Step 3: Logic to fill remaining tiles with grassland will go here
+    for (let r = 0; r < this.height; r++) {
+      for (let q = 0; q < this.width; q++) {
+        // If the tile has not been set by a previous pass
+        if (!this.tiles[r][q]) {
+          let baseElevation: number;
+          const west = this._getNeighborElevation(q - 1, r);
+          const north = this._getNeighborElevation(q, r - 1);
+
+          if (west !== null && north !== null) {
+            baseElevation = Math.round((west + north) / 2);
+          } else if (west !== null) {
+            baseElevation = west;
+          } else if (north !== null) {
+            baseElevation = north;
+          } else {
+            baseElevation = 1; // Default starting elevation for continents
+          }
+          
+          const elevationChange = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+          const newElevation = Math.max(0, Math.min(4, baseElevation + elevationChange));
+
+          this.tiles[r][q] = {
+            coordinates: { q, r },
+            elevation: newElevation,
+            terrain: TerrainType.GRASSLAND,
+          };
+        }
+      }
+    }
   }
 
   public generate(): MapData {
     this._initializeGrid();
     this._applyIceCaps();
     this._applyOceans();
-    // this._fillGrassland();
+    this._fillGrassland();
 
     // Flatten the 2D grid into a 1D array for the final MapData object
     const flattenedTiles = this.tiles.flat();
