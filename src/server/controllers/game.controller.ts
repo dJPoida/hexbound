@@ -10,7 +10,7 @@ import { ServerGameState, SocketMessage } from '../../shared/types/socket.types'
 import { RedisJSON } from '@redis/json/dist/commands';
 import { broadcastToGame } from '../socketSubscriptionManager';
 import { SOCKET_MESSAGE_TYPES } from '../../shared/constants/socket.const';
-import { generateMap } from '../helpers/map.helper';
+import { MapGenerator } from '../helpers/mapGenerator';
 import config from '../config';
 
 export const getGameByCode = async (req: Request, res: Response) => {
@@ -201,6 +201,9 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
     await gameRepository.save(game);
 
     // 4. Initialize game state in Redis
+    const mapGenerator = new MapGenerator(config.map.defaultWidth, config.map.defaultHeight);
+    const mapData = mapGenerator.generate();
+
     const initialGameState: ServerGameState = {
       gameId: game.gameId,
       gameCode: game.gameCode,
@@ -213,7 +216,7 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
         },
       ],
       turnActionLog: [], // To store actions taken in a turn
-      mapData: generateMap(config.map.defaultWidth, config.map.defaultHeight),
+      mapData: mapData,
       gameState: {
         placeholderCounter: 0
       }

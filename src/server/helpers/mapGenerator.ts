@@ -3,7 +3,7 @@ import { MapData, TileData, TerrainType, AxialCoordinates } from '../../shared/t
 export class MapGenerator {
   private width: number;
   private height: number;
-  private tiles: TileData[][] = [];
+  private tiles: (TileData | null)[][] = [];
 
   constructor(width: number, height: number) {
     this.width = width;
@@ -12,14 +12,7 @@ export class MapGenerator {
 
   private _initializeGrid(): void {
     for (let r = 0; r < this.height; r++) {
-      this.tiles[r] = [];
-      for (let q = 0; q < this.width; q++) {
-        this.tiles[r][q] = {
-          coordinates: { q, r },
-          elevation: 0, // Default elevation
-          terrain: TerrainType.GRASSLAND, // Placeholder
-        };
-      }
+      this.tiles[r] = Array(this.width).fill(null);
     }
   }
 
@@ -79,7 +72,7 @@ export class MapGenerator {
     for (let r = 0; r < this.height; r++) {
       for (let q = 0; q < this.width; q++) {
         // If the tile has not been set by a previous pass
-        if (!this.tiles[r][q]) {
+        if (this.tiles[r][q] === null) {
           let baseElevation: number;
           const west = this._getNeighborElevation(q - 1, r);
           const north = this._getNeighborElevation(q, r - 1);
@@ -119,7 +112,7 @@ export class MapGenerator {
     return {
       width: this.width,
       height: this.height,
-      tiles: flattenedTiles,
+      tiles: flattenedTiles.filter(t => t !== null) as TileData[],
     };
   }
 } 
