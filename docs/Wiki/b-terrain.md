@@ -17,6 +17,7 @@ Land tiles can be in 1 of **(?)** levels of elevation. Refer to Unit Movement, T
 |Forest|Y |Y |
 |Tundra|Y | |
 |Bog| | |
+|Icecap| | |
 
 ### Terrain Upgrades
 
@@ -30,3 +31,4 @@ Land tiles can be in 1 of **(?)** levels of elevation. Refer to Unit Movement, T
 |Forest|Lumberjack |Gold|Archers|
 |Tundra|Trapping Hut|Gold|Siege Mammoths|
 |Bog|Peat Pits||Engineers Guild|
+|Icecap|N/A|N/A|N/A|
