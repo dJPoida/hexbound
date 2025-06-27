@@ -6,7 +6,6 @@ import { ServerGameState } from '../shared/types/socket.types';
 import { Player } from '../shared/types/game.types';
 import { User } from './entities/User.entity';
 import { AuthenticatedWebSocket } from '../shared/types/socket.types';
-import { cleanupGameTimers } from './socketMessageHandlers';
 
 // Maps a gameId to a Set of connected clients (sockets) for that game
 const gameSubscriptions = new Map<string, Set<AuthenticatedWebSocket>>();
@@ -76,7 +75,6 @@ export function unsubscribeFromAll(ws: AuthenticatedWebSocket): void {
   // Unsubscribe from all game rooms
   gameSubscriptions.forEach((subscribers, gameId) => {
     if (subscribers.has(ws)) {
-      cleanupGameTimers(gameId);
       unsubscribe(ws, gameId);
     }
   });
