@@ -1,0 +1,1 @@
+We need to document the map generation engine. It's a pipeline and it implements each stage in the pipeline additively. The first step is initialising te grid, second applying ice caps, third applying oceans, and fourth is fill grassland.
