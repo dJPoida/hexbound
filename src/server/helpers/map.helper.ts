@@ -10,10 +10,11 @@ import {
  */
 function getRandomTerrain(): TerrainType {
   const rand = Math.random();
-  if (rand < 0.8) return TerrainType.GRASSLAND; // 80% chance for Grassland
-  if (rand < 0.9) return TerrainType.PLAINS; // 10% chance for Plains
-  if (rand < 0.95) return TerrainType.DESERT; // 5% chance for Desert
-  return TerrainType.TUNDRA; // 5% chance for Tundra
+  if (rand < 0.6) return TerrainType.GRASSLAND; 
+  if (rand < 0.75) return TerrainType.DESERT;
+  if (rand < 0.9) return TerrainType.TUNDRA;
+  if (rand < 0.98) return TerrainType.OCEAN;
+  return TerrainType.ICECAP;
 }
 
 /**

@@ -38,10 +38,10 @@ export type AxialCoordinates = {
 
 export enum TerrainType {
   GRASSLAND = 'GRASSLAND',
-  PLAINS = 'PLAINS',
   DESERT = 'DESERT',
   TUNDRA = 'TUNDRA',
   OCEAN = 'OCEAN',
+  ICECAP = 'ICECAP',
 }
 
 export interface TileData {
