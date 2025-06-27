@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { Viewport as PixiViewport } from 'pixi-viewport';
 import { MapData, TileData } from '../../shared/types/game.types';
-import { ELEVATION_STEP, HEX_EAST_WALL_X_OFFSET, HEX_EAST_WALL_Y_OFFSET, HEX_FRONT_WALL_X_OFFSET, HEX_FRONT_WALL_Y_OFFSET, HEX_HEIGHT, HEX_OFFSET_X, HEX_OFFSET_Y, HEX_TEXT_OFFSET_X, HEX_TEXT_OFFSET_Y, HEX_WEST_WALL_X_OFFSET, HEX_WEST_WALL_Y_OFFSET, HEX_WIDTH, TILE_FONT, TILE_FONT_SIZE, TILE_PIXEL_MARGIN } from '../../shared/constants/map.const';
+import { ELEVATION_STEP, HEX_HEIGHT, HEX_OFFSET_X, HEX_OFFSET_Y, HEX_TEXT_OFFSET_X, HEX_TEXT_OFFSET_Y, HEX_WIDTH, TILE_FONT, TILE_FONT_SIZE } from '../../shared/constants/map.const';
 import { Tile } from './Tile';
 
 function getTileKey(q: number, r: number) {
@@ -30,10 +30,11 @@ export class MapRenderer {
 
   public async loadAssets(): Promise<void> {
     const assetsToLoad = [
-      { alias: 'hex', src: '/images/tiles/hex.png' },
-      { alias: 'hexOutline', src: '/images/tiles/hex_outline.png' },
-      { alias: 'hexWallFront', src: '/images/tiles/hex_wall_front.png' },
-      { alias: 'hexWallSide', src: '/images/tiles/hex_wall_side.png' },
+      { alias: 'tile_plains', src: '/images/tiles/tile_plains.png' },
+      { alias: 'tile_ocean', src: '/images/tiles/tile_ocean.png' },
+      { alias: 'tile_icecap', src: '/images/tiles/tile_icecap.png' },
+      { alias: 'hex_outline', src: '/images/tiles/hex_outline.png' },
+      { alias: 'hex_selected', src: '/images/tiles/hex_selected.png' },
     ];
     try {
       this.textures = await PIXI.Assets.load(assetsToLoad);
@@ -98,33 +99,12 @@ export class MapRenderer {
     coordText.y = elevationText.y + TILE_FONT_SIZE;
     tileContainer.addChild(coordText);
 
-    // 4. Render the West Wall
-    const westWall = new PIXI.Sprite(this.textures.hexWallSide);
-    westWall.anchor.set(0);
-    westWall.x = HEX_WEST_WALL_X_OFFSET;
-    westWall.y = HEX_WEST_WALL_Y_OFFSET + elevationOffsetY;
-    tileContainer.addChild(westWall);
-    
-    // 5. Render the East Wall (reflected west wall texture)
-    const eastWall = new PIXI.Sprite(this.textures.hexWallSide);
-    eastWall.anchor.set(0);
-    eastWall.scale.x = -1;
-    eastWall.x = HEX_EAST_WALL_X_OFFSET;
-    eastWall.y = HEX_EAST_WALL_Y_OFFSET + elevationOffsetY;
-    tileContainer.addChild(eastWall);
-
-    // South Wall
-    const southWall = new PIXI.Sprite(this.textures.hexWallFront);
-    southWall.anchor.set(0);
-    southWall.x = HEX_FRONT_WALL_X_OFFSET;
-    southWall.y = HEX_FRONT_WALL_Y_OFFSET + elevationOffsetY;
-    tileContainer.addChild(southWall);
-    
+       
     return tileContainer;
   }
   
   public initializeMap(): void {
-    if (!this.textures.hex) {
+    if (!this.textures.tile_plains) {
       console.error('[MapRenderer] Cannot initialize map, textures not loaded.');
       return;
     }

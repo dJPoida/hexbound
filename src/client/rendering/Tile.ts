@@ -1,13 +1,10 @@
 import * as PIXI from 'pixi.js';
 import { TileData } from '../../shared/types/game.types';
-import { ELEVATION_STEP, HEX_EAST_WALL_X_OFFSET, HEX_EAST_WALL_Y_OFFSET, HEX_FRONT_WALL_X_OFFSET, HEX_FRONT_WALL_Y_OFFSET, HEX_HEIGHT, HEX_OFFSET_X, HEX_OFFSET_Y, HEX_TEXT_OFFSET_X, HEX_TEXT_OFFSET_Y, HEX_WEST_WALL_X_OFFSET, HEX_WEST_WALL_Y_OFFSET, HEX_WIDTH, TILE_FONT, TILE_FONT_SIZE } from '../../shared/constants/map.const';
+import { ELEVATION_STEP, HEX_OFFSET_X, HEX_OFFSET_Y, HEX_TEXT_OFFSET_X, HEX_TEXT_OFFSET_Y, HEX_WIDTH, TILE_FONT, TILE_FONT_SIZE } from '../../shared/constants/map.const';
 
 export class Tile {
   public container: PIXI.Container;
-  private topHex: PIXI.Sprite;
-  private westWall: PIXI.Sprite;
-  private eastWall: PIXI.Sprite;
-  private southWall: PIXI.Sprite;
+  private body: PIXI.Sprite;
   private outline: PIXI.Sprite;
   private elevationText: PIXI.Text;
   private coordText: PIXI.Text;
@@ -19,22 +16,17 @@ export class Tile {
     this.container = new PIXI.Container();
     const elevationOffsetY = -(elevation * ELEVATION_STEP);
 
-    // Create all sprites
-    this.topHex = new PIXI.Sprite(textures.hex);
-    this.westWall = new PIXI.Sprite(textures.hexWallSide);
-    this.eastWall = new PIXI.Sprite(textures.hexWallSide);
-    this.southWall = new PIXI.Sprite(textures.hexWallFront);
-    this.outline = new PIXI.Sprite(textures.hexOutline);
+    // For now, all tiles are plains. This will be dynamic later.
+    this.body = new PIXI.Sprite(textures.tile_plains);
+    this.body.anchor.set(0);
+    this.body.x = HEX_OFFSET_X;
+    this.body.y = HEX_OFFSET_Y + elevationOffsetY;
 
-    // Configure sprites
-    this.topHex.anchor.set(0);
-    this.topHex.x = HEX_OFFSET_X;
-    this.topHex.y = HEX_OFFSET_Y + elevationOffsetY;
-
+    this.outline = new PIXI.Sprite(textures.hex_outline);
     this.outline.anchor.set(0);
     this.outline.x = HEX_OFFSET_X;
     this.outline.y = HEX_OFFSET_Y + elevationOffsetY;
-
+    
     const textStyle: Partial<PIXI.TextStyle> = {
       fontFamily: TILE_FONT,
       fontSize: TILE_FONT_SIZE,
@@ -52,25 +44,9 @@ export class Tile {
     this.coordText.x = HEX_TEXT_OFFSET_X;
     this.coordText.y = this.elevationText.y + TILE_FONT_SIZE;
     
-    this.westWall.anchor.set(0);
-    this.westWall.x = HEX_WEST_WALL_X_OFFSET;
-    this.westWall.y = HEX_WEST_WALL_Y_OFFSET + elevationOffsetY;
-
-    this.eastWall.anchor.set(0);
-    this.eastWall.scale.x = -1;
-    this.eastWall.x = HEX_EAST_WALL_X_OFFSET;
-    this.eastWall.y = HEX_EAST_WALL_Y_OFFSET + elevationOffsetY;
-
-    this.southWall.anchor.set(0);
-    this.southWall.x = HEX_FRONT_WALL_X_OFFSET;
-    this.southWall.y = HEX_FRONT_WALL_Y_OFFSET + elevationOffsetY;
-
     // Add sprites to container in the correct render order
     this.container.addChild(
-      this.westWall,
-      this.southWall,
-      this.eastWall,
-      this.topHex,
+      this.body,
       this.outline,
       this.elevationText,
       this.coordText
