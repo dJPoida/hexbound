@@ -9,9 +9,11 @@ interface HeaderProps {
     currentView: 'login' | 'lobby' | 'game';
     onNavigateToLobby: () => void;
     turnNumber: number | null;
+    counter: number | null;
+    onToggleCounterDialog: () => void;
 }
 
-export function Header({ currentUserName, onLogout, currentView, onNavigateToLobby, turnNumber }: HeaderProps) {
+export function Header({ currentUserName, onLogout, currentView, onNavigateToLobby, turnNumber, counter, onToggleCounterDialog }: HeaderProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [copyStatus, setCopyStatus] = useState<'idle' | 'copied'>('idle');
@@ -47,6 +49,13 @@ export function Header({ currentUserName, onLogout, currentView, onNavigateToLob
                 <div className={styles.resourceItem}>
                     <i className="hbi-award"></i>
                     <span>567</span>
+                </div>
+                <div className={styles.resourceItem}>
+                    <i className="hbi-smile"></i>
+                    <span>{counter ?? 0}</span>
+                    <button onClick={onToggleCounterDialog} className={styles.editButton}>
+                        <i className="hbi-edit"></i>
+                    </button>
                 </div>
             </div>
             <div className={styles.headerActions}>

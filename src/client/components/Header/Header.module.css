@@ -28,6 +28,20 @@
   font-size: 1.5rem;
 }
 
+.editButton {
+  background: none;
+  border: none;
+  color: var(--color-stone-grey);
+  padding: 0 0 0 0.5rem;
+  margin: 0;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.editButton:hover {
+  color: var(--color-hex-amber);
+}
+
 .headerActions {
   display: flex;
   align-items: center;

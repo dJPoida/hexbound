@@ -14,6 +14,8 @@ interface GameContainerProps {
   onEndTurn: () => void;
   connectionStatus: 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
   isMyTurn: boolean;
+  isCounterDialogOpen: boolean;
+  onToggleCounterDialog: () => void;
 }
 
 export function GameContainer({ 
@@ -22,7 +24,9 @@ export function GameContainer({
   onIncrementCounter,
   onEndTurn,
   connectionStatus,
-  isMyTurn
+  isMyTurn,
+  isCounterDialogOpen,
+  onToggleCounterDialog
 }: GameContainerProps) {
 
   useEffect(() => {
@@ -90,11 +94,6 @@ export function GameContainer({
      return <Dialog title="Disconnected">There is no active connection to the game server.</Dialog>;
   }
 
-  const gameCode = gameState?.gameCode ?? 'Loading...';
-  const playerNames = gameState?.players
-    ? gameState.players.map(p => p.userName).join(', ')
-    : 'Loading...';
-  const currentTurn = gameState?.turnNumber ?? '-';
   const counter = gameState?.gameState.placeholderCounter ?? 0;
   
   const currentPlayer = gameState?.players.find(
@@ -118,18 +117,12 @@ export function GameContainer({
     return null;
   };
 
+  if (!isCounterDialogOpen) {
+    return null;
+  }
+
   return (
-    <Dialog title="Game Status">
-      <div className={styles.section}>
-        <div className={styles.gameMetaRow}><span>Game Code:</span> <strong>{gameCode}</strong></div>
-        <div className={styles.gameMetaRow}><span>Players:</span> <strong>{playerNames}</strong></div>
-        <div className={styles.gameMetaRow}><span>Current Turn:</span> <strong>{currentTurn}</strong></div>
-      </div>
-
-      <div className={styles.section}>
-        {renderTurnStatus()}
-      </div>
-
+    <Dialog title="Increment Counter" onClose={onToggleCounterDialog}>
       <div className={styles.section}>
         <div className={styles.gameMetaRow}>
           <span>Counter:</span> 

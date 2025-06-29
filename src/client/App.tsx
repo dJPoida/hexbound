@@ -51,6 +51,7 @@ export function App() {
   const [myGames, setMyGames] = useState<GameListItem[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('disconnected');
   const [isDebugInfoOpen, setIsDebugInfoOpen] = useState(false);
+  const [isCounterDialogOpen, setIsCounterDialogOpen] = useState(false);
 
   const [afterPromptAction, setAfterPromptAction] = useState<() => void>(() => {});
 
@@ -403,6 +404,10 @@ export function App() {
     setIsDebugInfoOpen(!isDebugInfoOpen);
   };
 
+  const handleToggleCounterDialog = () => {
+    setIsCounterDialogOpen(!isCounterDialogOpen);
+  };
+
   const renderLoggedInView = () => {
     const isMyTurn = gameState?.currentPlayerId === currentUserId;
 
@@ -427,6 +432,8 @@ export function App() {
               onEndTurn={handleEndTurn}
               connectionStatus={connectionStatus}
               isMyTurn={isMyTurn}
+              isCounterDialogOpen={isCounterDialogOpen}
+              onToggleCounterDialog={handleToggleCounterDialog}
             />
             {isDebugInfoOpen && (
               <Dialog title="Debug Game State" onClose={handleToggleDebugInfo}>
@@ -450,6 +457,8 @@ export function App() {
         currentView={currentView}
         onNavigateToLobby={navigateToLobby}
         turnNumber={gameState?.turnNumber || null}
+        counter={gameState?.gameState.placeholderCounter || null}
+        onToggleCounterDialog={handleToggleCounterDialog}
       />
     );
 
