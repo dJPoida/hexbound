@@ -12,27 +12,22 @@ interface ViewportProps {
 export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
   const pixiContainerRef = useRef<HTMLDivElement>(null);
 
-  // This effect will run on every render, but the renderingService
-  // is now responsible for ensuring initialization only happens once.
+  // This effect handles initialization and subsequent updates.
   useEffect(() => {
-    if (pixiContainerRef.current) {
+    if (pixiContainerRef.current && mapData) {
+      // The service now handles its own initialization state, so we can
+      // safely call initialize and update without creating a race condition.
       renderingService.initialize(pixiContainerRef.current, mapData);
+      renderingService.updateMap(mapData);
     }
-  }); // No dependency array, runs on every render
+  }, [mapData]); // This correctly runs when mapData is first available and on subsequent changes.
 
-  // This effect handles cleanup when the component unmounts
+  // This effect handles cleanup when the component unmounts.
   useEffect(() => {
     return () => {
       renderingService.destroy();
-    }
-  }, []); // Empty dependency array, runs only on unmount
-
-  // This effect handles updates to the map data
-  useEffect(() => {
-    if (mapData) {
-      renderingService.updateMap(mapData);
-    }
-  }, [mapData]);
+    };
+  }, []); // Empty dependency array ensures this runs only on unmount.
 
   return <div id={pixiContainerId} ref={pixiContainerRef} class={styles.viewport}></div>;
 } 

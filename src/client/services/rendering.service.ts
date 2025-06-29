@@ -8,12 +8,17 @@ class RenderingService {
   private app: PIXI.Application | null = null;
   private viewport: PixiViewport | null = null;
   private mapRenderer: MapRenderer | null = null;
+  private isInitialized: Promise<void> | null = null;
+  private initializationResolver: (() => void) | null = null;
 
   public async initialize(containerElement: HTMLDivElement, mapData: MapData | null): Promise<void> {
     if (this.app || !mapData) {
-      // If already initialized or no map data, do nothing.
-      return;
+      return this.isInitialized ?? Promise.resolve();
     }
+
+    this.isInitialized = new Promise(resolve => {
+      this.initializationResolver = resolve;
+    });
 
     // --- Create Pixi Application ---
     const app = new PIXI.Application();
@@ -27,7 +32,7 @@ class RenderingService {
     // --- Create Viewport ---
     const singleMapWidth = mapData.width * HEX_WIDTH * 0.75;
     const worldWidth = singleMapWidth * 3;
-    const worldHeight = mapData.height * HEX_HEIGHT;
+    const worldHeight = (mapData.height * HEX_HEIGHT) + (HEX_HEIGHT / 2);
 
     const viewport = new PixiViewport({
       screenWidth: containerElement.clientWidth,
@@ -42,11 +47,17 @@ class RenderingService {
     // --- Activate Plugins ---
     const initialZoomLimits = this.calculateZoomLimits(containerElement.clientWidth, containerElement.clientHeight);
     viewport
+      .clamp({ 
+        direction: 'y',
+        top: 0,
+        right: false,
+        bottom: worldHeight - (HEX_HEIGHT / 2),
+        left: false
+      })
       .drag()
       .pinch()
       .wheel()
       .decelerate({ friction: 0.8 })
-      .clamp({ direction: 'y' })
       .clampZoom(initialZoomLimits);
 
     // --- Initialize Map Renderer ---
@@ -77,9 +88,25 @@ class RenderingService {
       this.mapRenderer.render(this.viewport);
     };
     viewport.on('moved', handleMove);
+
+    if (this.initializationResolver) {
+      this.initializationResolver();
+    }
   }
 
-  public updateMap(newMapData: MapData): void {
+  public async updateMap(newMapData: MapData): Promise<void> {
+    if (!this.isInitialized) {
+      // This can happen if updateMap is called before initialize (e.g., due to React lifecycle).
+      // We wait for the initialization to complete before proceeding.
+      await new Promise(resolve => setTimeout(resolve, 100)); // Small delay to allow initialization to start
+      if (!this.isInitialized) {
+        console.warn('[RenderingService] Cannot update map, service is not initializing.');
+        return;
+      }
+    }
+    
+    await this.isInitialized;
+
     if (!this.mapRenderer) {
       console.warn('[RenderingService] Cannot update map, renderer not initialized.');
       return;
@@ -93,6 +120,7 @@ class RenderingService {
       this.app = null;
       this.viewport = null;
       this.mapRenderer = null;
+      this.isInitialized = null;
       console.log('[RenderingService] Destroyed.');
     }
   }
