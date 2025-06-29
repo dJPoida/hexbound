@@ -449,6 +449,7 @@ export function App() {
         onLogout={handleLogout}
         currentView={currentView}
         onNavigateToLobby={navigateToLobby}
+        turnNumber={gameState?.turnNumber || null}
       />
     );
 

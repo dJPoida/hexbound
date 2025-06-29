@@ -4,6 +4,28 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 1rem;
+  background-image: var(--texture-paper);
+  background-color: var(--color-canvas-white);
+  border-bottom: 2px solid var(--color-stone-grey);
+}
+
+.resources {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.resourceItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.2rem;
+  color: var(--color-charcoal);
+  font-weight: 500;
+}
+
+.resourceItem i {
+  font-size: 1.5rem;
 }
 
 .headerActions {
@@ -11,13 +33,6 @@
   align-items: center;
   gap: 1rem;
   position: relative;
-}
-
-.welcomeMessage {
-  font-size: 1.1em;
-  font-weight: 500;
-  margin: 0;
-  color: var(--color-charcoal);
 }
 
 .logoutButton {
