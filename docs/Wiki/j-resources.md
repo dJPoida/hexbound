@@ -25,3 +25,4 @@ Worship can be spent in numerous ways:
 3. Summoning tribal unique temporary Units
 4. Blessing of units (additional attack/defense)
 5. Town celebration (buff of food, gold and worship output)
+6. Terraform a tile into a different terrain type
