@@ -51,6 +51,7 @@ export interface TileData {
 }
 
 export interface MapData {
+  gameId: string;
   width: number;
   height: number;
   tiles: TileData[];

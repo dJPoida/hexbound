@@ -3,6 +3,7 @@ import { Viewport as PixiViewport, IViewportOptions } from 'pixi-viewport';
 import { MapData } from '../../shared/types/game.types';
 import { HEX_HEIGHT, HEX_WIDTH, MAX_TILES_ON_SCREEN, MIN_TILES_ON_SCREEN } from '../../shared/constants/map.const';
 import { MapRenderer } from '../rendering/MapRenderer';
+import { GameViewportState, gameStateService } from './gameState.service';
 
 class RenderingService {
   private app: PIXI.Application | null = null;
@@ -12,6 +13,36 @@ class RenderingService {
   private initializationResolver: (() => void) | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private resizeTimeout: ReturnType<typeof setTimeout> | null = null;
+  
+  // Event handlers need to be stored so they can be removed in destroy()
+  private onDragEnd: (() => void) | null = null;
+  private onPinchEnd: (() => void) | null = null;
+  private onWheelEnd: (() => void) | null = null;
+
+  private saveState = (gameId: string) => {
+    if (this.viewport) {
+      const state: GameViewportState = {
+        zoom: this.viewport.scale.x,
+        center: { x: this.viewport.center.x, y: this.viewport.center.y }
+      };
+      gameStateService.saveViewportState(gameId, state);
+      console.log(`[RenderingService] State saved for gameId: ${gameId}`);
+    } else {
+      console.warn('[RenderingService] Could not save state: viewport is missing.');
+    }
+  };
+
+  private handleDragEnd = (gameId: string) => {
+    this.saveState(gameId);
+  };
+
+  private handlePinchEnd = (gameId: string) => {
+    this.saveState(gameId);
+  };
+
+  private handleWheelEnd = (gameId: string) => {
+    this.saveState(gameId);
+  };
 
   public async initialize(containerElement: HTMLDivElement, mapData: MapData | null): Promise<void> {
     if (this.app || !mapData) {
@@ -21,6 +52,8 @@ class RenderingService {
     this.isInitialized = new Promise(resolve => {
       this.initializationResolver = resolve;
     });
+
+    const gameId = mapData.gameId;
 
     // --- Create Pixi Application ---
     const app = new PIXI.Application();
@@ -67,9 +100,15 @@ class RenderingService {
     mapRenderer.initializeMap();
 
     // --- Set Initial Camera State ---
-    viewport.moveCenter(singleMapWidth * 1.5, trueWorldHeight / 2);
-    viewport.setZoom(initialZoomLimits.minScale, true);
-    mapRenderer.render(viewport);
+    const savedState = gameId ? gameStateService.loadViewportState(gameId) : null;
+    if (savedState) {
+      viewport.setZoom(savedState.zoom, true);
+      viewport.moveCenter(savedState.center.x, savedState.center.y);
+    } else {
+      viewport.moveCenter(singleMapWidth * 1.5, trueWorldHeight / 2);
+      viewport.setZoom(initialZoomLimits.minScale, true);
+    }
+    mapRenderer.render(this.viewport);
 
     // --- Attach Event Handlers ---
     const handleMove = () => {
@@ -87,6 +126,15 @@ class RenderingService {
       this.mapRenderer.render(this.viewport);
     };
     viewport.on('moved', handleMove);
+
+    // --- State Saving ---
+    this.onDragEnd = () => this.handleDragEnd(gameId);
+    this.onPinchEnd = () => this.handlePinchEnd(gameId);
+    this.onWheelEnd = () => this.handleWheelEnd(gameId);
+
+    viewport.on('drag-end', this.onDragEnd);
+    viewport.on('pinch-end', this.onPinchEnd);
+    viewport.on('wheel-end', this.onWheelEnd);
 
     this.resizeObserver = new ResizeObserver(entries => {
       for (const entry of entries) {
@@ -133,6 +181,11 @@ class RenderingService {
   }
 
   public destroy(): void {
+    if (this.viewport && this.onDragEnd && this.onPinchEnd && this.onWheelEnd) {
+      this.viewport.off('drag-end', this.onDragEnd);
+      this.viewport.off('pinch-end', this.onPinchEnd);
+      this.viewport.off('wheel-end', this.onWheelEnd);
+    }
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
       this.resizeObserver = null;
