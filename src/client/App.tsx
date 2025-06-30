@@ -460,6 +460,7 @@ export function App() {
         turnNumber={gameState?.turnNumber || null}
         counter={gameState?.gameState.placeholderCounter || null}
         onToggleCounterDialog={handleToggleCounterDialog}
+        currentView={currentView}
       />
     );
 

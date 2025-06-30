@@ -18,7 +18,7 @@ export function GameLayout({ header, main, footer, gameState, isMapReady, onRead
 
   return (
     <div class={styles.gameLayout}>
-      <div className={`${styles.fadeOverlay} ${isMapReady ? styles.fadeOut : ''}`}></div>
+      {isGameView && <div className={`${styles.fadeOverlay} ${isMapReady ? styles.fadeOut : ''}`}></div>}
       <div class={styles.viewportContainer}>
         {isGameView && <Viewport pixiContainerId="pixi-container" mapData={gameState.mapData} gameId={gameState.gameId} onReady={onReady} />}
       </div>

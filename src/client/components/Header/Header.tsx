@@ -41,25 +41,29 @@ export function Header({ currentUserName, onLogout, currentView, onNavigateToLob
 
     return (
         <div className={styles.header}>
-            <div className={styles.resources}>
-                <div className={styles.resourceItem}>
-                    <i className="hbi-dollar-sign"></i>
-                    <span>1,234</span>
+            {currentView === 'game' ? (
+                <div className={styles.resources}>
+                    <div className={styles.resourceItem}>
+                        <i className="hbi-dollar-sign"></i>
+                        <span>1,234</span>
+                    </div>
+                    <div className={styles.resourceItem}>
+                        <i className="hbi-award"></i>
+                        <span>567</span>
+                    </div>
+                    <div className={styles.resourceItem}>
+                        <i className="hbi-smile"></i>
+                        <span>{counter ?? 0}</span>
+                        <button onClick={onToggleCounterDialog} className={styles.editButton}>
+                            <i className="hbi-edit"></i>
+                        </button>
+                    </div>
                 </div>
-                <div className={styles.resourceItem}>
-                    <i className="hbi-award"></i>
-                    <span>567</span>
-                </div>
-                <div className={styles.resourceItem}>
-                    <i className="hbi-smile"></i>
-                    <span>{counter ?? 0}</span>
-                    <button onClick={onToggleCounterDialog} className={styles.editButton}>
-                        <i className="hbi-edit"></i>
-                    </button>
-                </div>
-            </div>
+            ) : (
+                <div></div> // Empty div to maintain layout
+            )}
             <div className={styles.headerActions}>
-                <span>{currentUserName} {turnNumber && `(Turn: ${turnNumber})`}</span>
+                <span>{currentUserName} {currentView === 'game' && turnNumber && `(Turn: ${turnNumber})`}</span>
                 <MenuButton onClick={toggleMenu} ariaLabel="Open menu" variant="secondary" />
                 {isMenuOpen && (
                     <div className={styles.menuDropdown}>
