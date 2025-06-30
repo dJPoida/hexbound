@@ -84,7 +84,8 @@
   display: flex;
   flex-direction: column;
   z-index: 20;
-  width: 180px;
+  min-width: 180px;
+  max-width: 80vw;
   padding: 0.5rem 0;
   overflow: hidden;
 }
@@ -100,6 +101,17 @@
   font-size: 1em;
   border-radius: 0;
   border-bottom: 1px solid #eee;
+  white-space: nowrap;
+}
+
+.menuItem > i {
+  margin-right: 0.75rem;
+  font-size: 1.1em;
+  vertical-align: middle;
+}
+
+.menuItem > span {
+  vertical-align: middle;
 }
 
 .menuItem:last-child {

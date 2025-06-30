@@ -64,22 +64,38 @@ export function GameHeader({ currentUserName, onLogout, currentView, onNavigateT
                     <div className={styles.menuDropdown}>
                         {currentView === 'game' && (
                             <>
-                                <button className={styles.menuItem} onClick={() => { onOpenSettings(); toggleMenu(); }}>Game Settings</button>
-                                <button className={styles.menuItem} onClick={handleCopyLink}>
-                                    {copyStatus === 'copied' ? 'Link Copied!' : 'Copy Game Link'}
+                                <button className={styles.menuItem} onClick={() => { onOpenSettings(); toggleMenu(); }}>
+                                    <i class="hbi hbi-settings"></i>
+                                    <span>Game Settings</span>
                                 </button>
-                                <button className={styles.menuItem} onClick={() => { onNavigateToLobby(); toggleMenu(); }}>Return to Lobby</button>
+                                <button className={styles.menuItem} onClick={handleCopyLink}>
+                                    <i class="hbi hbi-link"></i>
+                                    <span>{copyStatus === 'copied' ? 'Link Copied!' : 'Copy Game Link'}</span>
+                                </button>
+                                <button className={styles.menuItem} onClick={() => { onNavigateToLobby(); toggleMenu(); }}>
+                                    <i class="hbi hbi-exit"></i>
+                                    <span>Return to Lobby</span>
+                                </button>
                             </>
                         )}
                         {currentView === 'lobby' && (
                              <>
-                                <button className={styles.menuItem} onClick={() => { onOpenSettings(); toggleMenu(); }}>Game Settings</button>
-                                <button className={styles.menuItem} onClick={() => { onLogout(); toggleMenu(); }}>Logout</button>
+                                <button className={styles.menuItem} onClick={() => { onOpenSettings(); toggleMenu(); }}>
+                                    <i class="hbi hbi-settings"></i>
+                                    <span>Game Settings</span>
+                                </button>
+                                <button className={styles.menuItem} onClick={() => { onLogout(); toggleMenu(); }}>
+                                    <i class="hbi hbi-exit"></i>
+                                    <span>Logout</span>
+                                </button>
                             </>
                         )}
                         {currentView === 'login' && (
                              <>
-                                <button className={styles.menuItem} onClick={() => { onOpenSettings(); toggleMenu(); }}>Game Settings</button>
+                                <button className={styles.menuItem} onClick={() => { onOpenSettings(); toggleMenu(); }}>
+                                    <i class="hbi hbi-settings"></i>
+                                    <span>Game Settings</span>
+                                </button>
                             </>
                         )}
                     </div>

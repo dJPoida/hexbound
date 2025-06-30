@@ -20,8 +20,14 @@ export function LobbyHeader({ currentUserName, onLogout, onOpenSettings }: Lobby
                 <MenuButton onClick={toggleMenu} ariaLabel="Open menu" variant="secondary" />
                 {isMenuOpen && (
                     <div className={styles.menuDropdown}>
-                        <button className={styles.menuItem} onClick={() => { onOpenSettings(); toggleMenu(); }}>Game Settings</button>
-                        <button className={styles.menuItem} onClick={() => { onLogout(); toggleMenu(); }}>Logout</button>
+                        <button className={styles.menuItem} onClick={() => { onOpenSettings(); toggleMenu(); }}>
+                            <i class="hbi hbi-settings"></i>
+                            <span>Game Settings</span>
+                        </button>
+                        <button className={styles.menuItem} onClick={() => { onLogout(); toggleMenu(); }}>
+                            <i class="hbi hbi-exit"></i>
+                            <span>Logout</span>
+                        </button>
                     </div>
                 )}
             </div>
