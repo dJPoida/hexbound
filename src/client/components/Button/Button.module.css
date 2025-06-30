@@ -1,5 +1,5 @@
 .button {
-  font-family: 'Imperator Bronze Smallcaps', 'Times New Roman', serif;
+  font-family: 'Imperator', 'Times New Roman', serif;
   color: #2a2a2a;
   padding: 0.7em 1.5em;
   border-radius: 8px;
@@ -71,15 +71,15 @@
 }
 
 .green {
-  background: linear-gradient(to bottom, #a0d187, #6a9b4d); /* Green */
+  background: linear-gradient(to bottom, #a0d187, #6a9b4d);
 }
 
 .red {
-  background: linear-gradient(to bottom, #e08c7e, #c75c4a); /* Red */
+  background: linear-gradient(to bottom, #e08c7e, #c75c4a);
 }
 
 .purple {
-    background: linear-gradient(to bottom, #9f8fb1, #7b6a8f); /* Purple */
+    background: linear-gradient(to bottom, #9f8fb1, #7b6a8f);
 }
 
 .fullWidth {

@@ -22,11 +22,12 @@ export interface GameStatus {
   statusName: GameStatusName;
 }
 
-export type GameListItem = {
-  gameId: string;
-  gameCode: string;
-  status: GameStatus;
-  createdByUser: boolean;
+import { Game } from "../../server/entities/Game.entity";
+
+export type GameListItem = Pick<Game, 'gameId' | 'gameCode' | 'status' | 'players'> & {
+  playerCount: number;
+  isMyTurn: boolean;
+  currentPlayerId: string;
 };
 
 // --- Map & Tile Objects ---

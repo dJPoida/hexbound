@@ -65,4 +65,8 @@
   background-color: var(--color-hex-amber);
   color: white;
   border-color: var(--color-hex-amber);
+}
+
+.menuButtonContainer .hbi-menu {
+  color: var(--color-canvas-white);
 } 

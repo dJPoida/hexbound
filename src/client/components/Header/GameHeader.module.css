@@ -114,6 +114,10 @@
   vertical-align: middle;
 }
 
+.menuButtonContainer .hbi-menu {
+    color: var(--color-canvas-white);
+}
+
 .menuItem:last-child {
   border-bottom: none;
 }

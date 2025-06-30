@@ -102,6 +102,9 @@ html {
   --color-clay-red: #d47a6a;
   --color-deep-purple: #5d4f6b;
 
+  /* UI Colors */
+  --color-background-hover: #f5f2e9;
+
   /* Typography */
   --font-family-main: 'Hexbound', sans-serif;
   --font-family-body: 'Imperator', 'Times New Roman', serif;

@@ -17,7 +17,13 @@ export function LobbyHeader({ currentUserName, onLogout, onOpenSettings }: Lobby
             <div></div> {/* Empty div for spacing */}
             <div className={styles.headerActions}>
                 <span>{currentUserName}</span>
-                <MenuButton onClick={toggleMenu} ariaLabel="Open menu" variant="secondary" />
+                <div className={styles.menuButtonContainer}>
+                    <MenuButton 
+                        onClick={toggleMenu} 
+                        ariaLabel="Open menu" 
+                        variant={isMenuOpen ? 'primary' : 'secondary'}
+                    />
+                </div>
                 {isMenuOpen && (
                     <div className={styles.menuDropdown}>
                         <button className={styles.menuItem} onClick={() => { onOpenSettings(); toggleMenu(); }}>

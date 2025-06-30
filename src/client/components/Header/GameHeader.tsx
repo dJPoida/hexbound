@@ -59,7 +59,13 @@ export function GameHeader({ currentUserName, onLogout, currentView, onNavigateT
             )}
             <div className={styles.headerActions}>
                 <span>{currentUserName} {currentView === 'game' && turnNumber && `(Turn: ${turnNumber})`}</span>
-                <MenuButton onClick={toggleMenu} ariaLabel="Open menu" variant="secondary" />
+                <div className={styles.menuButtonContainer}>
+                    <MenuButton 
+                        onClick={toggleMenu} 
+                        ariaLabel="Open menu" 
+                        variant={isMenuOpen ? 'primary' : 'secondary'}
+                    />
+                </div>
                 {isMenuOpen && (
                     <div className={styles.menuDropdown}>
                         {currentView === 'game' && (
