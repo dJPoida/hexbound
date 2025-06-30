@@ -23,6 +23,7 @@ const gracefulShutdownHandler = (signal: string) => {
 
 process.on('SIGINT', () => gracefulShutdownHandler('SIGINT'));
 process.on('SIGTERM', () => gracefulShutdownHandler('SIGTERM'));
+process.on('SIGUSR2', () => gracefulShutdownHandler('SIGUSR2')); // Nodemon restart signal
 
 server.start().catch((err) => {
   console.error('[Server] Failed to start server:', err);

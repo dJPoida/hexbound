@@ -51,18 +51,6 @@
   pointer-events: auto;
 }
 
-.footer {
-  grid-area: footer;
-  z-index: 1;
-  width: 100%;
-  pointer-events: none; /* Allow clicks to pass through */
-}
-
-/* Enable pointer events for children of the footer */
-.footer > * {
-  pointer-events: auto;
-}
-
 .fadeOverlay {
   position: absolute;
   top: 0;
@@ -80,4 +68,14 @@
   opacity: 0;
 }
 
-/* REMOVING RESPONSIVE STYLES FOR MOBILE */ 
+.footer {
+  grid-area: footer;
+  z-index: 1;
+  width: 100%;
+  pointer-events: none; /* Allow clicks to pass through */
+}
+
+/* Enable pointer events for children of the footer */
+.footer > * {
+  pointer-events: auto;
+} 

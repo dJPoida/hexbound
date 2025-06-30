@@ -4,15 +4,13 @@ import htm from 'htm';
 import './global.css'; // Import global styles
 import styles from './App.module.css'; // Import CSS Modules
 import { UserLogin } from './components/UserLogin/UserLogin';
-import { LobbyView } from './components/LobbyView/LobbyView';
-import { GameContainer } from './components/GameContainer/GameContainer';
-import { Header } from './components/Header/Header';
 import { authService } from './services/auth.service';
 import { authenticatedFetch } from './services/api.service';
 import { socketService } from './services/socket.service';
 import { ClientGameStatePayload, GameTurnEndedPayload } from '../shared/types/socket.types';
 import { GameListItem } from '../shared/types/game.types';
-import { GameLayout } from './components/GameLayout/GameLayout';
+import { GameViewLayout } from './components/GameViewLayout/GameViewLayout';
+import { LobbyLayout } from './components/LobbyLayout/LobbyLayout';
 import { ActionBar } from './components/ActionBar/ActionBar';
 import { Button } from './components/Button/Button';
 import { Dialog } from './components/Dialog/Dialog';
@@ -21,6 +19,9 @@ import { EnableNotificationsDialog } from './components/EnableNotificationsDialo
 import { settingsService } from './services/settings.service';
 import { pushService } from './services/push.service';
 import type { NotificationPermission } from './components/GameSettingsDialog/GameSettingsDialog';
+import { GameHeader } from './components/Header/GameHeader';
+import { GameContainer } from './components/GameContainer/GameContainer';
+import { GameSettingsDialog } from './components/GameSettingsDialog/GameSettingsDialog';
 
 const NOTIFICATION_PENDING_KEY = 'hexbound-notifications-pending-activation';
 type ConnectionStatus = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
@@ -53,6 +54,7 @@ export function App() {
   const [isDebugInfoOpen, setIsDebugInfoOpen] = useState(false);
   const [isCounterDialogOpen, setIsCounterDialogOpen] = useState(false);
   const [isGameLoaded, setIsGameLoaded] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const [afterPromptAction, setAfterPromptAction] = useState<() => void>(() => {});
 
@@ -409,64 +411,63 @@ export function App() {
     setIsCounterDialogOpen(!isCounterDialogOpen);
   };
 
+  const openSettings = () => setIsSettingsOpen(true);
+  const closeSettings = () => setIsSettingsOpen(false);
+
   const renderLoggedInView = () => {
-    const isMyTurn = gameState?.currentPlayerId === currentUserId;
+    if (currentView === 'lobby') {
+      return (
+        <LobbyLayout
+          currentUserName={currentUserName}
+          onLogout={handleLogout}
+          onNavigateToGame={navigateToGame}
+          onCreateNewGame={handleCreateNewGame}
+          myGames={myGames}
+          currentUserId={currentUserId}
+          onOpenSettings={openSettings}
+        />
+      );
+    }
+  
+    if (currentView === 'game' && gameState) {
+      const isMyTurn = gameState.currentPlayerId === currentUserId;
+      const headerContent = (
+        <GameHeader
+          currentUserName={currentUserName}
+          onLogout={handleLogout}
+          currentView={currentView}
+          onNavigateToLobby={navigateToLobby}
+          turnNumber={gameState?.turnNumber || null}
+          counter={gameState?.gameState.placeholderCounter || null}
+          onToggleCounterDialog={handleToggleCounterDialog}
+        />
+      );
 
-    const mainContent = () => {
-      if (currentView === 'lobby') {
-        return (
-          <LobbyView
-            onNavigateToGame={navigateToGame}
-            onCreateNewGame={handleCreateNewGame}
-            myGames={myGames}
-            currentUserId={currentUserId}
+      const mainContent = (
+        <>
+          <GameContainer
+            gameId={gameState.gameId}
+            gameState={gameState}
+            onIncrementCounter={handleIncrementCounter}
+            onEndTurn={handleEndTurn}
+            connectionStatus={connectionStatus}
+            isMyTurn={isMyTurn}
+            isCounterDialogOpen={isCounterDialogOpen}
+            onToggleCounterDialog={handleToggleCounterDialog}
           />
-        );
-      }
-      if (currentView === 'game' && gameState) {
-        return (
-          <>
-            <GameContainer
-              gameId={gameState.gameId}
-              gameState={gameState}
-              onIncrementCounter={handleIncrementCounter}
-              onEndTurn={handleEndTurn}
-              connectionStatus={connectionStatus}
-              isMyTurn={isMyTurn}
-              isCounterDialogOpen={isCounterDialogOpen}
-              onToggleCounterDialog={handleToggleCounterDialog}
-            />
-            {isDebugInfoOpen && (
-              <Dialog title="Debug Game State" onClose={handleToggleDebugInfo}>
-                <div className={styles.debugContent}>
-                  <pre>
-                    {gameState ? JSON.stringify(gameState, null, 2) : 'No game state available.'}
-                  </pre>
-                </div>
-              </Dialog>
-            )}
-          </>
-        );
-      }
-      return null;
-    };
-
-    const headerContent = (
-      <Header
-        currentUserName={currentUserName}
-        onLogout={handleLogout}
-        currentView={currentView}
-        onNavigateToLobby={navigateToLobby}
-        turnNumber={gameState?.turnNumber || null}
-        counter={gameState?.gameState.placeholderCounter || null}
-        onToggleCounterDialog={handleToggleCounterDialog}
-        currentView={currentView}
-      />
-    );
-
-    let footerContent = null;
-    if (currentView === 'game') {
-      footerContent = (
+          {isDebugInfoOpen && (
+            <Dialog title="Debug Game State" onClose={handleToggleDebugInfo}>
+              <div className={styles.debugContent}>
+                <pre>
+                  {gameState ? JSON.stringify(gameState, null, 2) : 'No game state available.'}
+                </pre>
+              </div>
+            </Dialog>
+          )}
+        </>
+      );
+      
+      const footerContent = (
         <ActionBar>
           <Button onClick={handleToggleDebugInfo} variant="icon" aria-label="Show Debug Info">
             <i class="hbi hbi-terminal"></i>
@@ -474,18 +475,24 @@ export function App() {
           <Button onClick={handleEndTurn} variant="secondary" disabled={!isMyTurn || connectionStatus !== 'connected'}>End Turn</Button>
         </ActionBar>
       );
+
+      return (
+        <GameViewLayout
+          header={headerContent}
+          main={mainContent}
+          footer={footerContent}
+          gameState={gameState}
+          isMapReady={isGameLoaded}
+          onReady={() => setIsGameLoaded(true)}
+          onLogout={handleLogout}
+          onNavigateToLobby={navigateToLobby}
+          onToggleCounterDialog={handleToggleCounterDialog}
+          onOpenSettings={openSettings}
+        />
+      );
     }
 
-    return (
-      <GameLayout
-        header={headerContent}
-        main={mainContent()}
-        footer={footerContent}
-        gameState={gameState}
-        isMapReady={isGameLoaded}
-        onReady={() => setIsGameLoaded(true)}
-      />
-    );
+    return null; // Should not happen if logic is correct
   };
 
   const viewToRender = () => {
@@ -515,7 +522,12 @@ export function App() {
       );
     }
 
-    return renderLoggedInView();
+    return (
+      <>
+        {renderLoggedInView()}
+        {isSettingsOpen && <GameSettingsDialog onClose={closeSettings} />}
+      </>
+    );
   };
 
   return (

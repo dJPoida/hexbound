@@ -1,9 +1,9 @@
 import { useState } from 'preact/hooks';
 import { MenuButton } from '../Button/MenuButton';
 import { GameSettingsDialog } from '../GameSettingsDialog/GameSettingsDialog';
-import styles from './Header.module.css';
+import styles from './GameHeader.module.css';
 
-interface HeaderProps {
+interface GameHeaderProps {
     currentUserName: string | null;
     onLogout: () => void;
     currentView: 'login' | 'lobby' | 'game';
@@ -11,20 +11,15 @@ interface HeaderProps {
     turnNumber: number | null;
     counter: number | null;
     onToggleCounterDialog: () => void;
+    onOpenSettings: () => void;
 }
 
-export function Header({ currentUserName, onLogout, currentView, onNavigateToLobby, turnNumber, counter, onToggleCounterDialog }: HeaderProps) {
+export function GameHeader({ currentUserName, onLogout, currentView, onNavigateToLobby, turnNumber, counter, onToggleCounterDialog, onOpenSettings }: GameHeaderProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [copyStatus, setCopyStatus] = useState<'idle' | 'copied'>('idle');
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-    const openSettings = () => {
-        setIsMenuOpen(false);
-        setIsSettingsOpen(true);
-    }
-    const closeSettings = () => setIsSettingsOpen(false);
-
+    
     const handleCopyLink = () => {
         navigator.clipboard.writeText(window.location.href).then(() => {
             setCopyStatus('copied');
@@ -69,7 +64,7 @@ export function Header({ currentUserName, onLogout, currentView, onNavigateToLob
                     <div className={styles.menuDropdown}>
                         {currentView === 'game' && (
                             <>
-                                <button className={styles.menuItem} onClick={openSettings}>Game Settings</button>
+                                <button className={styles.menuItem} onClick={() => { onOpenSettings(); toggleMenu(); }}>Game Settings</button>
                                 <button className={styles.menuItem} onClick={handleCopyLink}>
                                     {copyStatus === 'copied' ? 'Link Copied!' : 'Copy Game Link'}
                                 </button>
@@ -78,19 +73,18 @@ export function Header({ currentUserName, onLogout, currentView, onNavigateToLob
                         )}
                         {currentView === 'lobby' && (
                              <>
-                                <button className={styles.menuItem} onClick={openSettings}>Game Settings</button>
+                                <button className={styles.menuItem} onClick={() => { onOpenSettings(); toggleMenu(); }}>Game Settings</button>
                                 <button className={styles.menuItem} onClick={() => { onLogout(); toggleMenu(); }}>Logout</button>
                             </>
                         )}
                         {currentView === 'login' && (
                              <>
-                                <button className={styles.menuItem} onClick={openSettings}>Game Settings</button>
+                                <button className={styles.menuItem} onClick={() => { onOpenSettings(); toggleMenu(); }}>Game Settings</button>
                             </>
                         )}
                     </div>
                 )}
             </div>
-            {isSettingsOpen && <GameSettingsDialog onClose={closeSettings} />}
         </div>
     );
 } 
