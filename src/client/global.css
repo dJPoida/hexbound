@@ -1,6 +1,49 @@
 @import url('https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&display=swap');
 
 @font-face {
+  font-family: 'Imperator';
+  src: url('/fonts/Imperator/Imperator.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Imperator Bold';
+  src: url('/fonts/Imperator/Imperator Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'ImperatorSmallCaps';
+  src: url('/fonts/Imperator/ImperatorSmallCaps.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'ImperatorSmallCaps Bold';
+  src: url('/fonts/Imperator/ImperatorSmallCaps Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'ImperatorPlaque';
+  src: url('/fonts/Imperator/ImperatorPlaque.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'ImperatorBronze';
+  src: url('/fonts/Imperator/ImperatorBronze.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'ImperatorBronzeSmallCaps';
+  src: url('/fonts/Imperator/ImperatorBronzeSmallCaps.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
   font-family: 'Hexbound';
   src: url('/fonts/Hexbound/Hexbound.woff') format('woff');
   font-weight: normal;
@@ -8,22 +51,22 @@
 }
 
 @font-face {
-  font-family: 'Junction';
-  src: url('/fonts/Junction/Junction-light.woff') format('woff');
+  font-family: 'LTCushion';
+  src: url('/fonts/LTCushion/LTCushion-Light.woff') format('woff');
   font-weight: 300;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Junction';
-  src: url('/fonts/Junction/Junction-regular.woff') format('woff');
-  font-weight: 400;
+  font-family: 'LTCushion';
+  src: url('/fonts/LTCushion/LTCushion-Medium.woff') format('woff');
+  font-weight: 500;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Junction';
-  src: url('/fonts/Junction/Junction-bold.woff') format('woff');
+  font-family: 'LTCushion';
+  src: url('/fonts/LTCushion/LTCushion-Bold.woff') format('woff');
   font-weight: 700;
   font-style: normal;
 }
@@ -51,15 +94,17 @@ html {
   --color-charcoal: #2d2d2d;
   --color-stone-grey: #7a7a7a;
   --color-hex-amber: #f48550;
+  --color-hex-amber-light: #f6a37f;
   --color-glow-yellow: #ffef9f;
   --color-pastel-sky: #a9d7e8;
+  --color-pastel-sky-light: #cbe6f2;
   --color-moss-green: #87a06f;
   --color-clay-red: #d47a6a;
   --color-deep-purple: #5d4f6b;
 
   /* Typography */
   --font-family-main: 'Hexbound', sans-serif;
-  --font-family-body: 'Junction', sans-serif;
+  --font-family-body: 'Imperator', 'Times New Roman', serif;
   --font-size-heading: 2.5rem;
   --font-size-body: 1rem;
   --font-size-caption: 0.8rem;
@@ -73,6 +118,8 @@ html {
   --border-radius-medium: 14px;
   --border-width: 2px;
   --border-color: var(--color-charcoal);
+
+  --font-family-display: 'Hexbound', sans-serif;
 }
 
 body {

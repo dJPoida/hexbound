@@ -38,12 +38,19 @@ export const StyleGuide = () => {
         <h2>Typography</h2>
         <div class={styles.typographySample}>
           <h1>Heading 1 (Hexbound)</h1>
-          <p style={{ fontWeight: 'var(--font-weight-light)' }}>This is body text in Junction Light.</p>
-          <p style={{ fontWeight: 'var(--font-weight-regular)' }}>This is body text in Junction Regular.</p>
-          <p style={{ fontWeight: 'var(--font-weight-bold)' }}>This is body text in Junction Bold.</p>
+          <p style={{ fontWeight: 'var(--font-weight-light)' }}>This is body text in Imperator Light.</p>
+          <p style={{ fontWeight: 'var(--font-weight-regular)' }}>This is body text in Imperator Regular.</p>
+          <p style={{ fontWeight: 'var(--font-weight-bold)' }}>This is body text in Imperator Bold.</p>
           <span class={styles.caption}>This is a caption.</span>
         </div>
       </section>
+
+      <div class={styles.section}>
+        <h2>Body Text</h2>
+        <p>This is body text. Used for longer descriptions and content.</p>
+        <p style={{ fontWeight: 'var(--font-weight-regular)' }}>This is body text in Imperator Regular.</p>
+        <p style={{ fontFamily: 'Imperator Bold', fontWeight: 'var(--font-weight-bold)' }}>This is body text in Imperator Bold.</p>
+      </div>
 
       <section class={styles.section}>
         <h2>Buttons</h2>
@@ -55,6 +62,11 @@ export const StyleGuide = () => {
           <Button onClick={() => {}} variant="purple">Purple</Button>
           <Button onClick={() => {}} variant="primary" disabled>Disabled</Button>
         </div>
+      </section>
+
+      <section class={styles.section}>
+        <h2>Icons</h2>
+        <p>This is the Hexbound Icon font. Use it for UI elements.</p>
       </section>
     </div>
   );

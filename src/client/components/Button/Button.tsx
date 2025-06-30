@@ -29,7 +29,7 @@ export const Button = ({
 
   return (
     <button class={buttonClasses} onClick={() => onClick()} disabled={disabled} aria-label={ariaLabel}>
-      {children}
+      <span>{children}</span>
     </button>
   );
 }; 
