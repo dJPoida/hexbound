@@ -36,6 +36,7 @@
 
 .mainContent {
   grid-area: main;
+  position: relative; /* Establish positioning context for children */
   z-index: 1;
   display: flex;
   justify-content: center;
