@@ -7,20 +7,19 @@ import { renderingService } from '../../services/rendering.service';
 interface ViewportProps {
   pixiContainerId: string;
   mapData: MapData | null;
+  gameId: string;
 }
 
-export function Viewport({ pixiContainerId, mapData }: ViewportProps) {
+export function Viewport({ pixiContainerId, mapData, gameId }: ViewportProps) {
   const pixiContainerRef = useRef<HTMLDivElement>(null);
 
   // This effect handles initialization and subsequent updates.
   useEffect(() => {
     if (pixiContainerRef.current && mapData) {
-      // The service now handles its own initialization state, so we can
-      // safely call initialize and update without creating a race condition.
-      renderingService.initialize(pixiContainerRef.current, mapData);
+      renderingService.initialize(pixiContainerRef.current, mapData, gameId);
       renderingService.updateMap(mapData);
     }
-  }, [mapData]); // This correctly runs when mapData is first available and on subsequent changes.
+  }, [mapData, gameId]); // This correctly runs when mapData is first available and on subsequent changes.
 
   // This effect handles cleanup when the component unmounts.
   useEffect(() => {

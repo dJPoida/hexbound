@@ -63,4 +63,21 @@
   pointer-events: auto;
 }
 
+.fadeOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #1a1a1a; /* Same as canvas background */
+  z-index: 5; /* Above main content, below dialogs */
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+  pointer-events: none; /* Allow clicks through */
+}
+
+.fadeOut {
+  opacity: 0;
+}
+
 /* REMOVING RESPONSIVE STYLES FOR MOBILE */ 

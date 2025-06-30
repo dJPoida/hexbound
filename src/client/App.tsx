@@ -52,6 +52,7 @@ export function App() {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('disconnected');
   const [isDebugInfoOpen, setIsDebugInfoOpen] = useState(false);
   const [isCounterDialogOpen, setIsCounterDialogOpen] = useState(false);
+  const [isMapReady, setIsMapReady] = useState(false);
 
   const [afterPromptAction, setAfterPromptAction] = useState<() => void>(() => {});
 
@@ -186,6 +187,7 @@ export function App() {
     const handleGameStateUpdate = (payload: ClientGameStatePayload) => {
       console.log('[App] Received game state update:', payload);
       setGameState(payload);
+      setIsMapReady(true);
     };
 
     const handleCounterUpdate = (payload: { value: number }) => {
@@ -480,6 +482,7 @@ export function App() {
         main={mainContent()}
         footer={footerContent}
         gameState={gameState}
+        isMapReady={isMapReady}
       />
     );
   };

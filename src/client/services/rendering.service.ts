@@ -13,11 +13,16 @@ class RenderingService {
   private initializationResolver: (() => void) | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private resizeTimeout: ReturnType<typeof setTimeout> | null = null;
+  private gameId: string | null;
   
   // Event handlers need to be stored so they can be removed in destroy()
   private onDragEnd: (() => void) | null = null;
   private onPinchEnd: (() => void) | null = null;
-  private onWheelEnd: (() => void) | null = null;
+  private onWheel: (() => void) | null = null;
+
+  constructor() {
+    this.gameId = null;
+  }
 
   private saveState = (gameId: string) => {
     if (this.viewport) {
@@ -32,28 +37,27 @@ class RenderingService {
     }
   };
 
-  private handleDragEnd = (gameId: string) => {
-    this.saveState(gameId);
+  private handleDragEnd = () => {
+    this.saveState(this.gameId!);
   };
 
-  private handlePinchEnd = (gameId: string) => {
-    this.saveState(gameId);
+  private handlePinchEnd = () => {
+    this.saveState(this.gameId!);
   };
 
-  private handleWheelEnd = (gameId: string) => {
-    this.saveState(gameId);
+  private handleWheel = () => {
+    this.saveState(this.gameId!);
   };
 
-  public async initialize(containerElement: HTMLDivElement, mapData: MapData | null): Promise<void> {
-    if (this.app || !mapData) {
+  public async initialize(containerElement: HTMLDivElement, mapData: MapData, gameId: string): Promise<void> {
+    if (this.app) {
       return this.isInitialized ?? Promise.resolve();
     }
 
+    this.gameId = gameId;
     this.isInitialized = new Promise(resolve => {
       this.initializationResolver = resolve;
     });
-
-    const gameId = mapData.gameId;
 
     // --- Create Pixi Application ---
     const app = new PIXI.Application();
@@ -100,7 +104,7 @@ class RenderingService {
     mapRenderer.initializeMap();
 
     // --- Set Initial Camera State ---
-    const savedState = gameId ? gameStateService.loadViewportState(gameId) : null;
+    const savedState = this.gameId ? gameStateService.loadViewportState(this.gameId) : null;
     if (savedState) {
       viewport.setZoom(savedState.zoom, true);
       viewport.moveCenter(savedState.center.x, savedState.center.y);
@@ -128,13 +132,20 @@ class RenderingService {
     viewport.on('moved', handleMove);
 
     // --- State Saving ---
-    this.onDragEnd = () => this.handleDragEnd(gameId);
-    this.onPinchEnd = () => this.handlePinchEnd(gameId);
-    this.onWheelEnd = () => this.handleWheelEnd(gameId);
+    this.onDragEnd = () => this.handleDragEnd();
+    this.onPinchEnd = () => this.handlePinchEnd();
+
+    let wheelTimeout: ReturnType<typeof setTimeout>;
+    this.onWheel = () => {
+      if (wheelTimeout) {
+        clearTimeout(wheelTimeout);
+      }
+      wheelTimeout = setTimeout(() => this.handleWheel(), 1000);
+    };
 
     viewport.on('drag-end', this.onDragEnd);
     viewport.on('pinch-end', this.onPinchEnd);
-    viewport.on('wheel-end', this.onWheelEnd);
+    viewport.on('wheel', this.onWheel);
 
     this.resizeObserver = new ResizeObserver(entries => {
       for (const entry of entries) {
@@ -181,10 +192,10 @@ class RenderingService {
   }
 
   public destroy(): void {
-    if (this.viewport && this.onDragEnd && this.onPinchEnd && this.onWheelEnd) {
+    if (this.viewport && this.onDragEnd && this.onPinchEnd && this.onWheel) {
       this.viewport.off('drag-end', this.onDragEnd);
       this.viewport.off('pinch-end', this.onPinchEnd);
-      this.viewport.off('wheel-end', this.onWheelEnd);
+      this.viewport.off('wheel', this.onWheel);
     }
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();

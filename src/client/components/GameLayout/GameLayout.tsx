@@ -5,25 +5,27 @@ import { ClientGameStatePayload } from '../../../shared/types/socket.types';
 
 interface GameLayoutProps {
   header: ComponentChild;
-  main: ComponentChild;
-  footer: ComponentChild;
+  main: ComponentChild | null;
+  footer: ComponentChild | null;
   gameState: ClientGameStatePayload | null;
+  isMapReady: boolean;
 }
 
-export function GameLayout({ header, main, footer, gameState }: GameLayoutProps) {
+export function GameLayout({ header, main, footer, gameState, isMapReady }: GameLayoutProps) {
+  // Determine if the game view is active
+  const isGameView = !!gameState;
+
   return (
     <div class={styles.gameLayout}>
-      <header class={styles.header}>{header}</header>
-      <main class={styles.mainContent}>{main}</main>
+      <div className={`${styles.fadeOverlay} ${isMapReady ? styles.fadeOut : ''}`}></div>
       <div class={styles.viewportContainer}>
-        <Viewport
-          pixiContainerId="pixi-container"
-          mapData={gameState?.mapData || null}
-        >
-          {null}
-        </Viewport>
+        {isGameView && <Viewport pixiContainerId="pixi-container" mapData={gameState.mapData} gameId={gameState.gameId} />}
       </div>
-      <footer class={styles.footer}>{footer}</footer>
+      <header class={styles.header}>{header}</header>
+      <main class={styles.mainContent}>
+        {main}
+      </main>
+      {footer && <footer class={styles.footer}>{footer}</footer>}
     </div>
   );
 } 
