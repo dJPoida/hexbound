@@ -95,27 +95,6 @@ export function GameContainer({
   }
 
   const counter = gameState?.gameState.placeholderCounter ?? 0;
-  
-  const currentPlayer = gameState?.players.find(
-    (p) => p.userId === gameState.currentPlayerId
-  );
-
-  const renderTurnStatus = () => {
-    if (!gameState) return null;
-
-    if (isMyTurn) {
-      return <div className={`${styles.turnStatus} ${styles.myTurn}`}>It&apos;s your turn!</div>;
-    }
-
-    if (currentPlayer) {
-      return (
-        <div className={`${styles.turnStatus} ${styles.waitingTurn}`}>
-          Waiting for <strong>{currentPlayer.userName}</strong>...
-        </div>
-      );
-    }
-    return null;
-  };
 
   if (!isCounterDialogOpen) {
     return null;

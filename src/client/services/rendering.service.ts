@@ -32,13 +32,16 @@ class RenderingService {
     // --- Create Viewport ---
     const singleMapWidth = mapData.width * HEX_WIDTH * 0.75;
     const worldWidth = singleMapWidth * 3;
-    const worldHeight = (mapData.height * HEX_HEIGHT) + (HEX_HEIGHT / 2);
+    const trueWorldHeight = (mapData.height * HEX_HEIGHT) + (HEX_HEIGHT / 2);
+    
+    // Lie to the viewport about its height to create the bottom clamp effect
+    const worldHeightForClamping = trueWorldHeight - (HEX_HEIGHT * 1.5);
 
     const viewport = new PixiViewport({
       screenWidth: containerElement.clientWidth,
       screenHeight: containerElement.clientHeight,
       worldWidth,
-      worldHeight,
+      worldHeight: worldHeightForClamping,
       events: app.renderer.events,
     } as IViewportOptions);
     this.viewport = viewport;
@@ -47,13 +50,7 @@ class RenderingService {
     // --- Activate Plugins ---
     const initialZoomLimits = this.calculateZoomLimits(containerElement.clientWidth, containerElement.clientHeight);
     viewport
-      .clamp({ 
-        direction: 'y',
-        top: 0,
-        right: false,
-        bottom: worldHeight - (HEX_HEIGHT / 2),
-        left: false
-      })
+      .clamp({ direction: 'y' })
       .drag()
       .pinch()
       .wheel()
@@ -68,7 +65,7 @@ class RenderingService {
     mapRenderer.initializeMap();
 
     // --- Set Initial Camera State ---
-    viewport.moveCenter(singleMapWidth * 1.5, worldHeight / 2);
+    viewport.moveCenter(singleMapWidth * 1.5, trueWorldHeight / 2);
     viewport.setZoom(initialZoomLimits.minScale, true);
     mapRenderer.render(viewport);
 
