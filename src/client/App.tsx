@@ -406,6 +406,7 @@ export function App() {
     setCurrentGameId(null);
     setGameState(null);
     setCurrentView('lobby');
+    setIsGameLoaded(false);
     window.history.pushState({}, '', '/');
   };
 
