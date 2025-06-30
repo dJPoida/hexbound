@@ -10,6 +10,8 @@ class RenderingService {
   private mapRenderer: MapRenderer | null = null;
   private isInitialized: Promise<void> | null = null;
   private initializationResolver: (() => void) | null = null;
+  private resizeObserver: ResizeObserver | null = null;
+  private resizeTimeout: ReturnType<typeof setTimeout> | null = null;
 
   public async initialize(containerElement: HTMLDivElement, mapData: MapData | null): Promise<void> {
     if (this.app || !mapData) {
@@ -86,6 +88,25 @@ class RenderingService {
     };
     viewport.on('moved', handleMove);
 
+    this.resizeObserver = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        if (this.resizeTimeout) {
+          clearTimeout(this.resizeTimeout);
+        }
+        this.resizeTimeout = setTimeout(() => {
+          const { width, height } = entry.contentRect;
+          if (this.viewport && this.mapRenderer) {
+            this.viewport.resize(width, height);
+            const newZoomLimits = this.calculateZoomLimits(width, height);
+            this.viewport.clampZoom(newZoomLimits);
+            this.mapRenderer.render(this.viewport);
+            console.log(`[RenderingService] Viewport resized and re-rendered to ${width}x${height}.`);
+          }
+        }, 100); // 100ms debounce
+      }
+    });
+    this.resizeObserver.observe(containerElement);
+
     if (this.initializationResolver) {
       this.initializationResolver();
     }
@@ -112,6 +133,10 @@ class RenderingService {
   }
 
   public destroy(): void {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
     if (this.app) {
       this.app.destroy(true, { children: true, texture: true });
       this.app = null;
