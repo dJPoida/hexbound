@@ -9,9 +9,10 @@ interface GameLayoutProps {
   footer: ComponentChild | null;
   gameState: ClientGameStatePayload | null;
   isMapReady: boolean;
+  onReady?: () => void;
 }
 
-export function GameLayout({ header, main, footer, gameState, isMapReady }: GameLayoutProps) {
+export function GameLayout({ header, main, footer, gameState, isMapReady, onReady }: GameLayoutProps) {
   // Determine if the game view is active
   const isGameView = !!gameState;
 
@@ -19,7 +20,7 @@ export function GameLayout({ header, main, footer, gameState, isMapReady }: Game
     <div class={styles.gameLayout}>
       <div className={`${styles.fadeOverlay} ${isMapReady ? styles.fadeOut : ''}`}></div>
       <div class={styles.viewportContainer}>
-        {isGameView && <Viewport pixiContainerId="pixi-container" mapData={gameState.mapData} gameId={gameState.gameId} />}
+        {isGameView && <Viewport pixiContainerId="pixi-container" mapData={gameState.mapData} gameId={gameState.gameId} onReady={onReady} />}
       </div>
       <header class={styles.header}>{header}</header>
       <main class={styles.mainContent}>

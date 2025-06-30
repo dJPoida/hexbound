@@ -8,16 +8,25 @@ interface ViewportProps {
   pixiContainerId: string;
   mapData: MapData | null;
   gameId: string;
+  onReady?: () => void;
 }
 
-export function Viewport({ pixiContainerId, mapData, gameId }: ViewportProps) {
+export function Viewport({ pixiContainerId, mapData, gameId, onReady }: ViewportProps) {
   const pixiContainerRef = useRef<HTMLDivElement>(null);
 
   // This effect handles initialization and subsequent updates.
   useEffect(() => {
-    if (pixiContainerRef.current && mapData) {
-      renderingService.initialize(pixiContainerRef.current, mapData, gameId);
-      renderingService.updateMap(mapData);
+    const container = pixiContainerRef.current;
+    if (container && mapData) {
+      const init = async () => {
+        await renderingService.initialize(container, mapData, gameId);
+        // We only call update and fade-in *after* initialization is complete.
+        renderingService.updateMap(mapData);
+        if (onReady) {
+          onReady();
+        }
+      };
+      init();
     }
   }, [mapData, gameId]); // This correctly runs when mapData is first available and on subsequent changes.
 
