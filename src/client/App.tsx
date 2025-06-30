@@ -72,6 +72,7 @@ export function App() {
   };
   const popDialog = () => setDialogStack(dialogStack.slice(0, -1));
   const replaceDialog = (dialog: DialogType) => setDialogStack([...dialogStack.slice(0, -1), dialog]);
+  const clearDialogs = () => setDialogStack([]);
 
   const handleJoinGame = async (gameCode: string) => {
     try {
@@ -372,6 +373,7 @@ export function App() {
 
   const handleLogout = () => {
     navigateToLobby();
+    clearDialogs();
     authService.clearAuthToken();
     setIsLoggedIn(false);
     setCurrentUserId(null);
@@ -388,6 +390,7 @@ export function App() {
     };
     syncNotificationPermission();
     
+    clearDialogs();
     setCurrentGameId(gameId);
     setCurrentView('game');
     socketService.connect(gameId);
@@ -398,6 +401,7 @@ export function App() {
     if (currentGameId) {
       socketService.sendMessage('game:unsubscribe', { gameId: currentGameId });
     }
+    clearDialogs();
     socketService.disconnect();
     setCurrentGameId(null);
     setGameState(null);
