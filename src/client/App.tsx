@@ -22,9 +22,11 @@ import type { NotificationPermission } from './components/GameSettingsDialog/Gam
 import { GameHeader } from './components/Header/GameHeader';
 import { GameContainer } from './components/GameContainer/GameContainer';
 import { GameSettingsDialog } from './components/GameSettingsDialog/GameSettingsDialog';
+import { IncrementCounterDialog } from './components/IncrementCounterDialog/IncrementCounterDialog';
 
 const NOTIFICATION_PENDING_KEY = 'hexbound-notifications-pending-activation';
 type ConnectionStatus = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+type DialogType = 'gameSettings' | 'incrementCounter' | 'debugInfo';
 
 // Initialize htm with Preact's h function
 htm.bind(h);
@@ -56,7 +58,20 @@ export function App() {
   const [isGameLoaded, setIsGameLoaded] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
+  // UI State
+  const [dialogStack, setDialogStack] = useState<DialogType[]>([]);
+
   const [afterPromptAction, setAfterPromptAction] = useState<() => void>(() => {});
+
+  const pushDialog = (dialog: DialogType) => {
+    // Prevent pushing the same dialog if it's already at the top of the stack
+    if (dialogStack[dialogStack.length - 1] === dialog) {
+      return;
+    }
+    setDialogStack([...dialogStack, dialog]);
+  };
+  const popDialog = () => setDialogStack(dialogStack.slice(0, -1));
+  const replaceDialog = (dialog: DialogType) => setDialogStack([...dialogStack.slice(0, -1), dialog]);
 
   const handleJoinGame = async (gameCode: string) => {
     try {
@@ -415,6 +430,41 @@ export function App() {
   const closeSettings = () => setIsSettingsOpen(false);
 
   const renderLoggedInView = () => {
+    const currentDialogType = dialogStack[dialogStack.length - 1];
+    let dialogComponent = null;
+
+    switch (currentDialogType) {
+      case 'gameSettings':
+        dialogComponent = <GameSettingsDialog onClose={popDialog} />;
+        break;
+      case 'incrementCounter':
+        if (gameState) {
+          dialogComponent = (
+            <IncrementCounterDialog
+              counter={gameState.gameState.placeholderCounter ?? 0}
+              isMyTurn={gameState.currentPlayerId === currentUserId}
+              onIncrement={handleIncrementCounter}
+              onClose={popDialog}
+              onOpenSettings={() => replaceDialog('gameSettings')}
+            />
+          );
+        }
+        break;
+      case 'debugInfo':
+        if (gameState) {
+          dialogComponent = (
+            <Dialog title="Debug Game State" onClose={popDialog}>
+              <div className={styles.debugContent}>
+                <pre>
+                  {JSON.stringify(gameState, null, 2)}
+                </pre>
+              </div>
+            </Dialog>
+          );
+        }
+        break;
+    }
+
     if (currentView === 'lobby') {
       return (
         <LobbyLayout
@@ -424,70 +474,25 @@ export function App() {
           onCreateNewGame={handleCreateNewGame}
           myGames={myGames}
           currentUserId={currentUserId}
-          onOpenSettings={openSettings}
+          onOpenSettings={() => pushDialog('gameSettings')}
+          dialog={dialogComponent}
         />
       );
     }
   
     if (currentView === 'game' && gameState) {
-      const isMyTurn = gameState.currentPlayerId === currentUserId;
-      const headerContent = (
-        <GameHeader
-          currentUserName={currentUserName}
-          onLogout={handleLogout}
-          currentView={currentView}
-          onNavigateToLobby={navigateToLobby}
-          turnNumber={gameState?.turnNumber || null}
-          counter={gameState?.gameState.placeholderCounter || null}
-          onToggleCounterDialog={handleToggleCounterDialog}
-        />
-      );
-
-      const mainContent = (
-        <>
-          <GameContainer
-            gameId={gameState.gameId}
-            gameState={gameState}
-            onIncrementCounter={handleIncrementCounter}
-            onEndTurn={handleEndTurn}
-            connectionStatus={connectionStatus}
-            isMyTurn={isMyTurn}
-            isCounterDialogOpen={isCounterDialogOpen}
-            onToggleCounterDialog={handleToggleCounterDialog}
-          />
-          {isDebugInfoOpen && (
-            <Dialog title="Debug Game State" onClose={handleToggleDebugInfo}>
-              <div className={styles.debugContent}>
-                <pre>
-                  {gameState ? JSON.stringify(gameState, null, 2) : 'No game state available.'}
-                </pre>
-              </div>
-            </Dialog>
-          )}
-        </>
-      );
-      
-      const footerContent = (
-        <ActionBar>
-          <Button onClick={handleToggleDebugInfo} variant="icon" aria-label="Show Debug Info">
-            <i class="hbi hbi-terminal"></i>
-          </Button>
-          <Button onClick={handleEndTurn} variant="secondary" disabled={!isMyTurn || connectionStatus !== 'connected'}>End Turn</Button>
-        </ActionBar>
-      );
-
       return (
         <GameViewLayout
-          header={headerContent}
-          main={mainContent}
-          footer={footerContent}
           gameState={gameState}
           isMapReady={isGameLoaded}
           onReady={() => setIsGameLoaded(true)}
           onLogout={handleLogout}
           onNavigateToLobby={navigateToLobby}
-          onToggleCounterDialog={handleToggleCounterDialog}
-          onOpenSettings={openSettings}
+          onEndTurn={handleEndTurn}
+          onPushDialog={pushDialog}
+          isMyTurn={gameState.currentPlayerId === currentUserId}
+          currentUserName={currentUserName}
+          dialog={dialogComponent}
         />
       );
     }
@@ -525,7 +530,6 @@ export function App() {
     return (
       <>
         {renderLoggedInView()}
-        {isSettingsOpen && <GameSettingsDialog onClose={closeSettings} />}
       </>
     );
   };

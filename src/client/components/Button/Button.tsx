@@ -4,7 +4,7 @@ import styles from './Button.module.css';
 interface ButtonProps {
   onClick: () => void;
   children: preact.ComponentChildren;
-  variant?: 'primary' | 'secondary' | 'green' | 'red' | 'purple' | 'icon';
+  variant?: 'primary' | 'secondary' | 'green' | 'red' | 'purple' | 'icon' | 'link';
   disabled?: boolean;
   fullWidth?: boolean;
   className?: string;

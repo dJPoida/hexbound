@@ -12,23 +12,27 @@ interface LobbyLayoutProps {
     myGames: GameListItem[];
     currentUserId: string | null;
     onOpenSettings: () => void;
+    dialog: h.JSX.Element | null;
 }
 
-export function LobbyLayout({ currentUserName, onLogout, onNavigateToGame, onCreateNewGame, myGames, currentUserId, onOpenSettings }: LobbyLayoutProps) {
+export function LobbyLayout(props: LobbyLayoutProps) {
     return (
         <div class={styles.lobbyLayout}>
             <LobbyHeader 
-                currentUserName={currentUserName} 
-                onLogout={onLogout} 
-                onOpenSettings={onOpenSettings}
+                currentUserName={props.currentUserName} 
+                onLogout={props.onLogout} 
+                onOpenSettings={props.onOpenSettings}
             />
             <main class={styles.mainContent}>
-                <LobbyView 
-                    onNavigateToGame={onNavigateToGame}
-                    onCreateNewGame={onCreateNewGame}
-                    myGames={myGames}
-                    currentUserId={currentUserId}
-                />
+                {!props.dialog && (
+                    <LobbyView 
+                        onNavigateToGame={props.onNavigateToGame}
+                        onCreateNewGame={props.onCreateNewGame}
+                        myGames={props.myGames}
+                        currentUserId={props.currentUserId}
+                    />
+                )}
+                {props.dialog}
             </main>
         </div>
     );

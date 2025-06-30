@@ -3,24 +3,62 @@ import { GameHeader } from '../Header/GameHeader';
 import { Viewport } from '../Viewport/Viewport';
 import { ClientGameStatePayload } from '../../../shared/types/socket.types';
 import styles from './GameViewLayout.module.css';
+import { ActionBar } from '../ActionBar/ActionBar';
+import { Button } from '../Button/Button';
+
+type DialogType = 'gameSettings' | 'incrementCounter' | 'debugInfo';
 
 interface GameViewLayoutProps {
-  header: h.JSX.Element;
-  main: h.JSX.Element | null;
-  footer: h.JSX.Element | null;
   gameState: ClientGameStatePayload;
   isMapReady: boolean;
   onReady?: () => void;
   onLogout: () => void;
   onNavigateToLobby: () => void;
-  onToggleCounterDialog: () => void;
-  onOpenSettings: () => void;
+  onEndTurn: () => void;
+  onPushDialog: (dialog: DialogType) => void;
+  isMyTurn: boolean;
+  currentUserName: string | null;
+  dialog: h.JSX.Element | null;
 }
 
-export function GameViewLayout({ header, main, footer, gameState, isMapReady, onReady, onLogout, onNavigateToLobby, onToggleCounterDialog, onOpenSettings }: GameViewLayoutProps) {
+export function GameViewLayout({ 
+  gameState, 
+  isMapReady, 
+  onReady, 
+  onLogout, 
+  onNavigateToLobby, 
+  onEndTurn,
+  onPushDialog,
+  isMyTurn,
+  currentUserName,
+  dialog
+}: GameViewLayoutProps) {
+  
+  const headerContent = (
+    <GameHeader
+      currentUserName={currentUserName}
+      onLogout={onLogout}
+      currentView='game'
+      onNavigateToLobby={onNavigateToLobby}
+      turnNumber={gameState.turnNumber}
+      counter={gameState.gameState.placeholderCounter}
+      onToggleCounterDialog={() => onPushDialog('incrementCounter')}
+      onOpenSettings={() => onPushDialog('gameSettings')}
+    />
+  );
+
+  const footerContent = (
+    <ActionBar>
+      <Button onClick={() => onPushDialog('debugInfo')} variant="icon" aria-label="Show Debug Info">
+        <i class="hbi hbi-terminal"></i>
+      </Button>
+      <Button onClick={onEndTurn} variant="secondary" disabled={!isMyTurn}>End Turn</Button>
+    </ActionBar>
+  );
+  
   return (
     <div class={styles.gameLayout}>
-      {<div className={`${styles.fadeOverlay} ${isMapReady ? styles.fadeOut : ''}`}></div>}
+      <div className={`${styles.fadeOverlay} ${isMapReady ? styles.fadeOut : ''}`}></div>
       <div class={styles.viewportContainer}>
         <Viewport 
             pixiContainerId="pixi-container" 
@@ -29,11 +67,11 @@ export function GameViewLayout({ header, main, footer, gameState, isMapReady, on
             onReady={onReady} 
         />
       </div>
-      <header class={styles.header}>{header}</header>
+      <header class={styles.header}>{headerContent}</header>
       <main class={styles.mainContent}>
-        {main}
+        {dialog}
       </main>
-      {footer && <footer class={styles.footer}>{footer}</footer>}
+      <footer class={styles.footer}>{footerContent}</footer>
     </div>
   );
 } 

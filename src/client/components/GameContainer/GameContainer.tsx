@@ -10,23 +10,13 @@ import { SOCKET_MESSAGE_TYPES } from '../../../shared/constants/socket.const';
 interface GameContainerProps {
   gameId: string;
   gameState: ClientGameStatePayload | null;
-  onIncrementCounter: () => void;
-  onEndTurn: () => void;
   connectionStatus: 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
-  isMyTurn: boolean;
-  isCounterDialogOpen: boolean;
-  onToggleCounterDialog: () => void;
 }
 
 export function GameContainer({ 
   gameId,
   gameState,
-  onIncrementCounter,
-  onEndTurn,
   connectionStatus,
-  isMyTurn,
-  isCounterDialogOpen,
-  onToggleCounterDialog
 }: GameContainerProps) {
 
   useEffect(() => {
@@ -41,7 +31,7 @@ export function GameContainer({
       });
     };
 
-    if (isMyTurn) {
+    if (gameState?.currentPlayerId === authService.getSession()?.userId) {
       console.log("[Activity] It's my turn, adding activity listeners.");
       activityEvents.forEach(event => {
         window.addEventListener(event, sendAlivePingOnce);
@@ -55,7 +45,7 @@ export function GameContainer({
         window.removeEventListener(event, sendAlivePingOnce);
       });
     };
-  }, [isMyTurn]);
+  }, [gameState?.currentPlayerId]);
 
   useEffect(() => {
     // Handler for page visibility changes
@@ -94,21 +84,5 @@ export function GameContainer({
      return <Dialog title="Disconnected">There is no active connection to the game server.</Dialog>;
   }
 
-  const counter = gameState?.gameState.placeholderCounter ?? 0;
-
-  if (!isCounterDialogOpen) {
-    return null;
-  }
-
-  return (
-    <Dialog title="Increment Counter" onClose={onToggleCounterDialog}>
-      <div className={styles.section}>
-        <div className={styles.gameMetaRow}>
-          <span>Counter:</span> 
-          <strong>{counter}</strong>
-        </div>
-        <Button onClick={onIncrementCounter} variant="primary" disabled={!isMyTurn} fullWidth={true}>Increment</Button>
-      </div>
-    </Dialog>
-  );
+  return null; // GameContainer no longer renders a dialog directly
 } 
