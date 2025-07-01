@@ -10,8 +10,7 @@ const ColorSwatch = ({ name, colorName, hex, role }: { name: string; colorName: 
     <div class={styles.colorInfo}>
       <Text font="bold">{name}</Text>
       {role && <Text variant="label">{role}</Text>}
-      <Text variant="caption" color="subtle" as="span">{hex}</Text>
-      <Text variant="caption" color="subtle" as="span">var(--color-{colorName})</Text>
+      <Text variant="caption" color="subtle" as="span" class={styles.hexValue}>{hex}</Text>
     </div>
   </div>
 );
