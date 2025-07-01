@@ -45,27 +45,30 @@ export const StyleGuide = () => {
           <code>{'<Text>'}</code> for all other copy.
         </Text>
 
-        <div class={styles.subSection}>
+        <section class={styles.subSection}>
           <div class={styles.typographySample}>
             <Heading level={1} variant="pageTitle">Page Title</Heading>
             <Heading level={2} variant="sectionHeader">Section Header</Heading>
             <Heading level={3} variant="subSectionHeader" color="subtle">Sub-Section Header</Heading>
           </div>
+        </section>
+
+        <section class={styles.subSection}>
           <div class={styles.typographySample}>
             <Text>This is default body text.</Text>
             <Text font="bold">This is bold body text.</Text>
             <Text variant="label">This is a label.</Text>
             <Text variant="caption" color="subtle">This is a caption (or subtext).</Text>
           </div>
-        </div>
+        </section>
 
-        <div class={styles.subSection}>
+        <section class={styles.subSection}>
           <Heading level={3} variant="subSectionHeader" color="subtle">Future Components (TODO)</Heading>
           <Text color="subtle">
             Placeholders for components we may need later.
           </Text>
           {/* TODO: Implement Quote and other typography components */}
-        </div>
+        </section>
 
       </section>
 
