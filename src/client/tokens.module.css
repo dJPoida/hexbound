@@ -9,16 +9,59 @@
   /* ==========================================================================
      Color Palette
      ========================================================================== */
+  
+  /* General Colors */
   --color-canvas-white: #fefaeF;
+  --color-canvas-white-dark: #d5d1c9;
+  --color-canvas-white-light: #ffffff;
+  --color-canvas-white-highlight: #ffffff;
+
   --color-charcoal: #2d2d2d;
+  --color-charcoal-dark: #1e1e1e;
+  --color-charcoal-light: #4c4c4c;
+  --color-charcoal-highlight: #6b6b6b;
+
   --color-stone-grey: #7a7a7a;
-  --color-hex-amber: #f48550;
+  --color-stone-grey-dark: #5c5c5c;
+  --color-stone-grey-light: #999999;
+  --color-stone-grey-highlight: #b8b8b8;
+
   --color-glow-yellow: #ffef9f;
+  --color-glow-yellow-dark: #dccb86;
+  --color-glow-yellow-light: #fff5bc;
+  --color-glow-yellow-highlight: #fffbe0;
+
+  /* Accent & Feature Colors */
+  --color-hex-amber: #f48550;
+  --color-hex-amber-dark: #d46c3b;
+  --color-hex-amber-light: #f7a075;
+  --color-hex-amber-highlight: #f9bba0;
+
   --color-pastel-sky: #a9d7e8;
+  --color-pastel-sky-dark: #8cb6c6;
+  --color-pastel-sky-light: #c2e2ee;
+  --color-pastel-sky-highlight: #dcf0f8;
+
+  /* Ancillary Colors */
   --color-moss-green: #87a06f;
+  --color-moss-green-dark: #6e8558;
+  --color-moss-green-light: #a0b88b;
+  --color-moss-green-highlight: #bad0a8;
+
   --color-clay-red: #d47a6a;
+  --color-clay-red-dark: #b56254;
+  --color-clay-red-light: #e1988b;
+  --color-clay-red-highlight: #edb6ac;
+
   --color-deep-purple: #7e718c;
+  --color-deep-purple-dark: #645a70;
+  --color-deep-purple-light: #988fa6;
+  --color-deep-purple-highlight: #b3a9be;
+
   --color-slate-blue: #5B6B7A;
+  --color-slate-blue-dark: #465460;
+  --color-slate-blue-light: #7a8a99;
+  --color-slate-blue-highlight: #9caab8;
 
   /* ==========================================================================
      Font Families
