@@ -6,9 +6,7 @@ import styles from './StyleGuide.module.css';
 
 const ColorSwatch = ({ name, colorName }: { name: string; colorName: string }) => (
   <div class={styles.colorSwatch}>
-    <div class={styles.colorBox} data-color-name={colorName}>
-      <img src="/images/gem-bezel.svg" alt="" class={styles.gemBezel} />
-    </div>
+    <div class={styles.colorBox} data-color-name={colorName} />
     <div class={styles.colorInfo}>
       <Text font="bold">{name}</Text>
       <Text variant="caption" color="subtle" as="span">var(--color-{colorName})</Text>
