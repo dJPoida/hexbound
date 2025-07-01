@@ -61,6 +61,7 @@
 .colorBox[data-color-name='moss-green'] { background-color: var(--color-moss-green); }
 .colorBox[data-color-name='clay-red'] { background-color: var(--color-clay-red); }
 .colorBox[data-color-name='deep-purple'] { background-color: var(--color-deep-purple); }
+.colorBox[data-color-name='slate-blue'] { background-color: var(--color-slate-blue); }
 
 .colorInfo strong {
     font-weight: var(--font-weight-bold);
