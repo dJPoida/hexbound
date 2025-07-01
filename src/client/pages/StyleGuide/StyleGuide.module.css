@@ -16,6 +16,12 @@
     margin-bottom: 2rem;
 }
 
+.subSection {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px dashed var(--color-stone-grey);
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -38,6 +44,16 @@
   border: var(--border-width) solid var(--border-color);
 }
 
+.colorBox[data-color-name='canvas-white'] { background-color: var(--color-canvas-white); }
+.colorBox[data-color-name='charcoal'] { background-color: var(--color-charcoal); }
+.colorBox[data-color-name='stone-grey'] { background-color: var(--color-stone-grey); }
+.colorBox[data-color-name='hex-amber'] { background-color: var(--color-hex-amber); }
+.colorBox[data-color-name='glow-yellow'] { background-color: var(--color-glow-yellow); }
+.colorBox[data-color-name='pastel-sky'] { background-color: var(--color-pastel-sky); }
+.colorBox[data-color-name='moss-green'] { background-color: var(--color-moss-green); }
+.colorBox[data-color-name='clay-red'] { background-color: var(--color-clay-red); }
+.colorBox[data-color-name='deep-purple'] { background-color: var(--color-deep-purple); }
+
 .colorInfo {
   display: flex;
   flex-direction: column;
@@ -59,7 +75,8 @@
 .typographySample {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    align-items: center;
+    margin-bottom: 2rem;
 }
 
 .caption {

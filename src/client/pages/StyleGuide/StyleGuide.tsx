@@ -1,13 +1,15 @@
 import { Button } from '../../components/Button/Button';
 import { Logo } from '../../components/Logo/Logo';
+import { Heading } from '../../components/Typography/Heading';
+import { Text } from '../../components/Typography/Text';
 import styles from './StyleGuide.module.css';
 
-const ColorSwatch = ({ name, hex }: { name: string; hex: string }) => (
+const ColorSwatch = ({ name, colorName }: { name: string; colorName: string }) => (
   <div class={styles.colorSwatch}>
-    <div class={styles.colorBox} style={{ backgroundColor: hex }} />
+    <div class={styles.colorBox} data-color-name={colorName} />
     <div class={styles.colorInfo}>
       <strong>{name}</strong>
-      <span>{hex}</span>
+      <span>var(--color-{colorName})</span>
     </div>
   </div>
 );
@@ -15,45 +17,65 @@ const ColorSwatch = ({ name, hex }: { name: string; hex: string }) => (
 export const StyleGuide = () => {
   return (
     <div class={styles.container}>
-      <Logo size="large" />
-      <h1>Style Guide</h1>
-      <p>This page is a visual inventory of all UI components and design tokens.</p>
+      <Logo />
+      <Heading level={1} variant="pageTitle" color="brand">Style Guide</Heading>
+      <Text color="subtle">
+        This page is a visual inventory of all UI components and design tokens.
+      </Text>
 
       <section class={styles.section}>
-        <h2>Color Palette</h2>
+        <Heading level={2} variant="sectionHeader">Color Palette</Heading>
         <div class={styles.grid}>
-          <ColorSwatch name="Canvas White" hex="#FEFAEF" />
-          <ColorSwatch name="Charcoal" hex="#2d2d2d" />
-          <ColorSwatch name="Stone Grey" hex="#7a7a7a" />
-          <ColorSwatch name="Hex Amber" hex="#f48550" />
-          <ColorSwatch name="Glow Yellow" hex="#ffef9f" />
-          <ColorSwatch name="Pastel Sky" hex="#a9d7e8" />
-          <ColorSwatch name="Moss Green" hex="#87a06f" />
-          <ColorSwatch name="Clay Red" hex="#d47a6a" />
-          <ColorSwatch name="Deep Purple" hex="#5d4f6b" />
+          <ColorSwatch name="Canvas White" colorName="canvas-white" />
+          <ColorSwatch name="Charcoal" colorName="charcoal" />
+          <ColorSwatch name="Stone Grey" colorName="stone-grey" />
+          <ColorSwatch name="Hex Amber" colorName="hex-amber" />
+          <ColorSwatch name="Glow Yellow" colorName="glow-yellow" />
+          <ColorSwatch name="Pastel Sky" colorName="pastel-sky" />
+          <ColorSwatch name="Moss Green" colorName="moss-green" />
+          <ColorSwatch name="Clay Red" colorName="clay-red" />
+          <ColorSwatch name="Deep Purple" colorName="deep-purple" />
         </div>
       </section>
 
       <section class={styles.section}>
-        <h2>Typography</h2>
-        <div class={styles.typographySample}>
-          <h1>Heading 1 (Hexbound)</h1>
-          <p style={{ fontWeight: 'var(--font-weight-light)' }}>This is body text in Imperator Light.</p>
-          <p style={{ fontWeight: 'var(--font-weight-regular)' }}>This is body text in Imperator Regular.</p>
-          <p style={{ fontWeight: 'var(--font-weight-bold)' }}>This is body text in Imperator Bold.</p>
-          <span class={styles.caption}>This is a caption.</span>
+        <Heading level={2} variant="sectionHeader">Typography</Heading>
+        <Text color="subtle">
+          Here are the reusable typography components. Use <code>{'<Heading>'}</code> for all titles and 
+          <code>{'<Text>'}</code> for all other copy.
+        </Text>
+
+        <div class={styles.subSection}>
+          <Heading level={3} variant="subSectionHeader">Headings</Heading>
+          <div class={styles.typographySample}>
+            <Heading level={1} variant="pageTitle" color="brand">Page Title (H1)</Heading>
+            <Heading level={2} variant="sectionHeader">Section Header (H2)</Heading>
+            <Heading level={3} variant="subSectionHeader" color="subtle">Sub-Section Header (H3)</Heading>
+          </div>
         </div>
+
+        <div class={styles.subSection}>
+          <Heading level={3} variant="subSectionHeader">Body Text</Heading>
+          <div class={styles.typographySample}>
+            <Text>This is default body text.</Text>
+            <Text font="bold">This is bold body text.</Text>
+            <Text variant="label">This is a label.</Text>
+            <Text variant="caption" color="subtle">This is a caption (or subtext).</Text>
+          </div>
+        </div>
+
+        <div class={styles.subSection}>
+          <Heading level={3} variant="subSectionHeader" color="subtle">Future Components (TODO)</Heading>
+          <Text color="subtle">
+            Placeholders for components we may need later.
+          </Text>
+          {/* TODO: Implement Quote and other typography components */}
+        </div>
+
       </section>
 
-      <div class={styles.section}>
-        <h2>Body Text</h2>
-        <p>This is body text. Used for longer descriptions and content.</p>
-        <p style={{ fontWeight: 'var(--font-weight-regular)' }}>This is body text in Imperator Regular.</p>
-        <p style={{ fontFamily: 'Imperator Bold', fontWeight: 'var(--font-weight-bold)' }}>This is body text in Imperator Bold.</p>
-      </div>
-
       <section class={styles.section}>
-        <h2>Buttons</h2>
+        <Heading level={2} variant="sectionHeader">Buttons</Heading>
         <div class={styles.grid}>
           <Button onClick={() => {}} variant="primary">Primary</Button>
           <Button onClick={() => {}} variant="secondary">Secondary</Button>
@@ -65,8 +87,8 @@ export const StyleGuide = () => {
       </section>
 
       <section class={styles.section}>
-        <h2>Icons</h2>
-        <p>This is the Hexbound Icon font. Use it for UI elements.</p>
+        <Heading level={2} variant="sectionHeader">Icons</Heading>
+        <Text>This is the Hexbound Icon font. Use it for UI elements.</Text>
       </section>
     </div>
   );

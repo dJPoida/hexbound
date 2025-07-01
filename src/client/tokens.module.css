@@ -1,0 +1,74 @@
+/* 
+  src/client/tokens.module.css
+  This file defines the design tokens for the application.
+  These tokens are used to maintain consistency in styling across all components.
+  They are defined as CSS custom properties on the :root scope, making them globally available.
+*/
+
+:root {
+  /* ==========================================================================
+     Color Palette
+     ========================================================================== */
+  --color-canvas-white: #fefaeF;
+  --color-charcoal: #2d2d2d;
+  --color-stone-grey: #7a7a7a;
+  --color-hex-amber: #f48550;
+  --color-glow-yellow: #ffef9f;
+  --color-pastel-sky: #a9d7e8;
+  --color-moss-green: #87a06f;
+  --color-clay-red: #d47a6a;
+  --color-deep-purple: #5d4f6b;
+
+  /* ==========================================================================
+     Font Families
+     ========================================================================== */
+  --font-brand: 'Hexbound', serif;
+  --font-primary-normal: 'Imperator', serif;
+  --font-primary-bold: 'Imperator Bold', serif;
+  --font-primary-small-caps: 'ImperatorSmallCaps', serif;
+  --font-primary-small-caps-bold: 'ImperatorSmallCaps Bold', serif;
+  --font-primary-bronze: 'ImperatorBronze', serif;
+  --font-primary-bronze-small-caps: 'ImperatorBronzeSmallCaps', serif;
+
+  /* ==========================================================================
+     Font Weights
+     ========================================================================== */
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+
+  /* ==========================================================================
+     Font Sizes
+     ========================================================================== */
+  --font-size-caption: 0.875rem; /* 14px */
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-md: 1rem; /* 16px */
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-xl: 1.25rem; /* 20px */
+  --font-size-2xl: 1.5rem; /* 24px */
+  --font-size-3xl: 1.875rem; /* 30px */
+  --font-size-4xl: 2.25rem; /* 36px */
+
+  /* ==========================================================================
+     Spacing & Sizing
+     ========================================================================== */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 40px;
+
+  /* ==========================================================================
+     Borders
+     ========================================================================== */
+  --border-width: 2px;
+  --border-radius-medium: 8px;
+  --border-color: var(--color-charcoal);
+
+  /* ==========================================================================
+     Game-specific & Responsive Tokens
+     ========================================================================== */
+  --touch-target-min: 44px;
+  --breakpoint-mobile: 768px;
+} 

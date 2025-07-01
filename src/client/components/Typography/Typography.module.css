@@ -1,0 +1,74 @@
+/* Typography.module.css */
+
+/* Base Text & Heading Styles */
+.text, .heading {
+  margin: 0;
+  padding: 0;
+}
+
+/* ==========================================================================
+   Text Variants
+   ========================================================================== */
+.body {
+  font-family: var(--font-primary-normal);
+  font-size: var(--font-size-lg);
+  line-height: 1.6;
+  margin-bottom: var(--space-md);
+}
+
+.caption {
+  font-family: var(--font-primary-normal);
+  font-size: var(--font-size-md);
+  line-height: 1.4;
+  text-transform: uppercase;
+  margin-bottom: var(--space-sm);
+}
+
+.label {
+  font-family: var(--font-primary-small-caps);
+  font-size: var(--font-size-md);
+  line-height: 1.2;
+  margin-bottom: var(--space-xs);
+}
+
+/* ==========================================================================
+   Heading Variants
+   ========================================================================== */
+.pageTitle {
+  font-family: var(--font-primary-small-caps-bold);
+  font-size: var(--font-size-4xl);
+  margin-bottom: var(--space-lg);
+}
+
+.sectionHeader {
+  font-family: var(--font-primary-bold);
+  font-size: var(--font-size-3xl);
+  margin-bottom: var(--space-md);
+}
+
+.subSectionHeader {
+  font-family: var(--font-primary-small-caps);
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--space-sm);
+}
+
+/* ==========================================================================
+   Color Variants
+   ========================================================================== */
+.defaultColor {
+  color: var(--color-charcoal);
+}
+
+.subtleColor {
+  color: var(--color-stone-grey);
+}
+
+.brandColor {
+  color: var(--color-hex-amber);
+}
+
+/* ==========================================================================
+   Font Variants (for Text component)
+   ========================================================================== */
+.fontNormal { font-family: var(--font-primary-normal); }
+.fontBold { font-family: var(--font-primary-bold); } 
