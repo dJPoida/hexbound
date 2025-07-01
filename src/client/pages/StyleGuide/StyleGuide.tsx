@@ -18,7 +18,7 @@ export const StyleGuide = () => {
   return (
     <div class={styles.container}>
       <Logo />
-      <Heading level={1} variant="pageTitle" color="brand">Style Guide</Heading>
+      <Heading level={1} variant="pageTitle">Style Guide</Heading>
       <Text color="subtle">
         This page is a visual inventory of all UI components and design tokens.
       </Text>
@@ -46,16 +46,11 @@ export const StyleGuide = () => {
         </Text>
 
         <div class={styles.subSection}>
-          <Heading level={3} variant="subSectionHeader">Headings</Heading>
           <div class={styles.typographySample}>
-            <Heading level={1} variant="pageTitle" color="brand">Page Title (H1)</Heading>
-            <Heading level={2} variant="sectionHeader">Section Header (H2)</Heading>
-            <Heading level={3} variant="subSectionHeader" color="subtle">Sub-Section Header (H3)</Heading>
+            <Heading level={1} variant="pageTitle">Page Title</Heading>
+            <Heading level={2} variant="sectionHeader">Section Header</Heading>
+            <Heading level={3} variant="subSectionHeader" color="subtle">Sub-Section Header</Heading>
           </div>
-        </div>
-
-        <div class={styles.subSection}>
-          <Heading level={3} variant="subSectionHeader">Body Text</Heading>
           <div class={styles.typographySample}>
             <Text>This is default body text.</Text>
             <Text font="bold">This is bold body text.</Text>
