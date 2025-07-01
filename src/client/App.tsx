@@ -161,13 +161,22 @@ export function App() {
     // Check for existing user session on initial page load
     const session = authService.getSession();
     if (session) {
+      // If a session exists, check the path *before* doing anything else.
+      const path = window.location.pathname;
+      if (path.startsWith('/styleguide')) {
+        // We are on a utility page, just set login state and do nothing else.
+        setCurrentUserId(session.userId);
+        setCurrentUserName(session.userName);
+        setIsLoggedIn(true);
+        return; // Early exit to prevent game-related fetches
+      }
+      
       setCurrentUserId(session.userId);
       setCurrentUserName(session.userName);
       setIsLoggedIn(true);
       fetchMyGames(); // Fetch games if session exists
 
       // Check URL for game code
-      const path = window.location.pathname;
       const gameIdMatch = path.match(/^\/game\/([a-zA-Z0-9-]+)/);
       if (gameIdMatch) {
         const gameCode = gameIdMatch[1];
