@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks';
-import { MenuButton } from '../Button/MenuButton';
+import { OldMenuButton } from '../OldButton/OldMenuButton';
 import { GameSettingsDialog } from '../GameSettingsDialog/GameSettingsDialog';
 import styles from './GameHeader.module.css';
 
@@ -60,7 +60,7 @@ export function GameHeader({ currentUserName, onLogout, currentView, onNavigateT
             <div className={styles.headerActions}>
                 <span>{currentUserName} {currentView === 'game' && turnNumber && `(Turn: ${turnNumber})`}</span>
                 <div className={styles.menuButtonContainer}>
-                    <MenuButton 
+                    <OldMenuButton 
                         onClick={toggleMenu} 
                         ariaLabel="Open menu" 
                         variant={isMenuOpen ? 'primary' : 'secondary'}

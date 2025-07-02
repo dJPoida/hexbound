@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks';
-import { MenuButton } from '../Button/MenuButton';
+import { OldMenuButton } from '../OldButton/OldMenuButton';
 import styles from './LobbyHeader.module.css';
 
 interface LobbyHeaderProps {
@@ -18,7 +18,7 @@ export function LobbyHeader({ currentUserName, onLogout, onOpenSettings }: Lobby
             <div className={styles.headerActions}>
                 <span>{currentUserName}</span>
                 <div className={styles.menuButtonContainer}>
-                    <MenuButton 
+                    <OldMenuButton 
                         onClick={toggleMenu} 
                         ariaLabel="Open menu" 
                         variant={isMenuOpen ? 'primary' : 'secondary'}

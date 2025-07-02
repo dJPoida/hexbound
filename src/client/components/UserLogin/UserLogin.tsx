@@ -2,7 +2,7 @@ import { useEffect } from 'preact/hooks';
 import { authService } from '../../services/auth.service';
 import styles from './UserLogin.module.css';
 import { Logo } from '../Logo/Logo';
-import { Button } from '../Button/Button';
+import { OldButton } from '../OldButton/OldButton';
 
 interface UserLoginProps {
   userNameInput: string;
@@ -59,7 +59,7 @@ export function UserLogin({
           />
         </div>
 
-        <Button
+        <OldButton
           onClick={onLogin}
           variant="primary"
           disabled={isLoading}
@@ -67,7 +67,7 @@ export function UserLogin({
           className={styles.loginButton}
         >
           {isLoading ? 'Logging in...' : 'Play'}
-        </Button>
+        </OldButton>
 
         {error && <p className={styles.authError}>{error}</p>}
         {isLoading && <div className={styles.loadingIndicator}>Verifying...</div>}

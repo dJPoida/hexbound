@@ -1,6 +1,6 @@
 import { ClientGameStatePayload } from '../../../shared/types/socket.types';
 import { authService } from '../../services/auth.service';
-import { Button } from '../Button/Button';
+import { OldButton } from '../OldButton/OldButton';
 import { Dialog } from '../Dialog/Dialog';
 import styles from './GameContainer.module.css';
 import { useEffect } from 'preact/hooks';

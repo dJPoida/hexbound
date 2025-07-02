@@ -3,7 +3,7 @@ import { useState } from 'preact/hooks';
 import htm from 'htm';
 import styles from './Utils.module.css';
 import { authenticatedFetch } from '../../services/api.service';
-import { Button } from '../../components/Button/Button';
+import { OldButton } from '../../components/OldButton/OldButton';
 
 const html = htm.bind(h);
 
@@ -49,13 +49,13 @@ export function Utils() {
         <p class=${styles.cardDescription}>
           This will permanently delete all games, player associations, and game states from both the Postgres database and the Redis cache.
         </p>
-        <${Button} 
+        <${OldButton} 
           onClick=${handleResetData} 
           disabled=${isLoading}
           variant="danger"
         >
           ${isLoading ? 'Resetting...' : 'Reset All Game Data'}
-        </${Button}>
+        </${OldButton}>
 
         ${message && html`<p class=${styles.successMessage}>${message}</p>`}
         ${error && html`<p class=${styles.errorMessage}>${error}</p>`}

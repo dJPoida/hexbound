@@ -4,7 +4,7 @@ import { Viewport } from '../Viewport/Viewport';
 import { ClientGameStatePayload } from '../../../shared/types/socket.types';
 import styles from './GameViewLayout.module.css';
 import { ActionBar } from '../ActionBar/ActionBar';
-import { Button } from '../Button/Button';
+import { OldButton } from '../OldButton/OldButton';
 
 type DialogType = 'gameSettings' | 'incrementCounter' | 'debugInfo';
 
@@ -49,10 +49,10 @@ export function GameViewLayout({
 
   const footerContent = (
     <ActionBar>
-      <Button onClick={() => onPushDialog('debugInfo')} variant="icon" aria-label="Show Debug Info">
+      <OldButton onClick={() => onPushDialog('debugInfo')} variant="icon" aria-label="Show Debug Info">
         <i class="hbi hbi-terminal"></i>
-      </Button>
-      <Button onClick={onEndTurn} variant="secondary" disabled={!isMyTurn}>End Turn</Button>
+      </OldButton>
+      <OldButton onClick={onEndTurn} variant="secondary" disabled={!isMyTurn}>End Turn</OldButton>
     </ActionBar>
   );
   

@@ -1,4 +1,4 @@
-import { Button } from '../../components/Button/Button';
+import { OldButton } from '../../components/OldButton/OldButton';
 import { Logo } from '../../components/Logo/Logo';
 import { Heading } from '../../components/Typography/Heading';
 import { Text } from '../../components/Typography/Text';
@@ -102,14 +102,14 @@ export const StyleGuide = () => {
       </section>
 
       <section class={styles.section}>
-        <Heading level={2} variant="sectionHeader">Buttons</Heading>
+        <Heading level={2} variant="sectionHeader">Old Buttons</Heading>
         <div class={styles.grid}>
-          <Button onClick={() => {}} variant="primary">Primary</Button>
-          <Button onClick={() => {}} variant="secondary">Secondary</Button>
-          <Button onClick={() => {}} variant="green">Green</Button>
-          <Button onClick={() => {}} variant="red">Red</Button>
-          <Button onClick={() => {}} variant="purple">Purple</Button>
-          <Button onClick={() => {}} variant="primary" disabled>Disabled</Button>
+          <OldButton onClick={() => {}} variant="primary">Primary</OldButton>
+          <OldButton onClick={() => {}} variant="secondary">Secondary</OldButton>
+          <OldButton onClick={() => {}} variant="green">Green</OldButton>
+          <OldButton onClick={() => {}} variant="red">Red</OldButton>
+          <OldButton onClick={() => {}} variant="purple">Purple</OldButton>
+          <OldButton onClick={() => {}} variant="primary" disabled>Disabled</OldButton>
         </div>
       </section>
 
