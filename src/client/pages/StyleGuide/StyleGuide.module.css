@@ -30,6 +30,34 @@
   justify-content: center;
 }
 
+/* Button Grids */
+.buttonGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+  margin: 1.5rem 0;
+}
+
+.buttonRow:first-child {
+  margin-top: 1rem;
+}
+
+.buttonRow:last-child {
+  margin-bottom: 2rem;
+}
+
 /* Color Swatch */
 .colorSwatch {
   display: flex;

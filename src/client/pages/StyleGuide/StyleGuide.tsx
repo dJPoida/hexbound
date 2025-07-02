@@ -107,19 +107,29 @@ export const StyleGuide = () => {
         <Text color="subtle">
           New dynamic SVG-based buttons that scale horizontally without distortion.
         </Text>
-        <div class={styles.grid}>
-          <Button onClick={() => {}} variant="primary">Primary</Button>
-          <Button onClick={() => {}} variant="secondary">Secondary</Button>
-          <Button onClick={() => {}} variant="green">Green</Button>
-          <Button onClick={() => {}} variant="red">Red</Button>
-          <Button onClick={() => {}} variant="purple">Purple</Button>
-          <Button onClick={() => {}} variant="primary" disabled>Disabled</Button>
-        </div>
-        <div class={styles.grid}>
-          <Button onClick={() => {}} variant="primary">Short</Button>
-          <Button onClick={() => {}} variant="secondary">Medium Length Text</Button>
-          <Button onClick={() => {}} variant="green">Very Long Button Text Example</Button>
-        </div>
+        
+        <section class={styles.subSection}>
+          <Heading level={3} variant="subSectionHeader" color="subtle">Button Variants</Heading>
+          <div class={styles.buttonRow}>
+            <Button onClick={() => {}} variant="primary">Primary</Button>
+            <Button onClick={() => {}} variant="secondary">Secondary</Button>
+            <Button onClick={() => {}} variant="green">Green</Button>
+            <Button onClick={() => {}} variant="red">Red</Button>
+          </div>
+          <div class={styles.buttonRow}>
+            <Button onClick={() => {}} variant="purple">Purple</Button>
+            <Button onClick={() => {}} variant="primary" disabled>Disabled</Button>
+          </div>
+        </section>
+
+        <section class={styles.subSection}>
+          <Heading level={3} variant="subSectionHeader" color="subtle">Dynamic Width Examples</Heading>
+          <div class={styles.buttonGrid}>
+            <Button onClick={() => {}} variant="primary">Short</Button>
+            <Button onClick={() => {}} variant="secondary">Medium Length Text</Button>
+            <Button onClick={() => {}} variant="green">Very Long Button Text Example</Button>
+          </div>
+        </section>
       </section>
 
       <section class={styles.section}>
