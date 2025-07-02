@@ -1,0 +1,44 @@
+GIMP Palette
+Name: Hexbound
+Columns: 4
+#
+254 250 239	Canvas White
+213 209 201	Canvas White Dark
+255 255 255	Canvas White Light
+255 255 255	Canvas White Highlight
+45 45 45	Charcoal
+30 30 30	Charcoal Dark
+76 76 76	Charcoal Light
+107 107 107	Charcoal Highlight
+122 122 122	Stone Grey
+92 92 92	Stone Grey Dark
+153 153 153	Stone Grey Light
+184 184 184	Stone Grey Highlight
+255 239 159	Glow Yellow
+220 203 134	Glow Yellow Dark
+255 245 188	Glow Yellow Light
+255 251 224	Glow Yellow Highlight
+244 133 80	Hex Amber
+212 108 59	Hex Amber Dark
+247 160 117	Hex Amber Light
+249 187 160	Hex Amber Highlight
+169 215 232	Pastel Sky
+140 182 198	Pastel Sky Dark
+194 226 238	Pastel Sky Light
+220 240 248	Pastel Sky Highlight
+135 160 111	Moss Green
+110 133 88	Moss Green Dark
+160 184 139	Moss Green Light
+186 208 168	Moss Green Highlight
+212 122 106	Clay Red
+181 98 84	Clay Red Dark
+225 152 139	Clay Red Light
+237 182 172	Clay Red Highlight
+126 113 140	Deep Purple
+100 90 112	Deep Purple Dark
+152 143 166	Deep Purple Light
+179 169 190	Deep Purple Highlight
+91 107 122	Slate Blue
+70 84 96	Slate Blue Dark
+122 138 153	Slate Blue Light
+156 170 184	Slate Blue Highlight 
