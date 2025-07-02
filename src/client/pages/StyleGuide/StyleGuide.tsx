@@ -1,4 +1,5 @@
 import { OldButton } from '../../components/OldButton/OldButton';
+import { Button } from '../../components/Button/Button';
 import { Logo } from '../../components/Logo/Logo';
 import { Heading } from '../../components/Typography/Heading';
 import { Text } from '../../components/Typography/Text';
@@ -102,7 +103,30 @@ export const StyleGuide = () => {
       </section>
 
       <section class={styles.section}>
+        <Heading level={2} variant="sectionHeader">New SVG Buttons</Heading>
+        <Text color="subtle">
+          New dynamic SVG-based buttons that scale horizontally without distortion.
+        </Text>
+        <div class={styles.grid}>
+          <Button onClick={() => {}} variant="primary">Primary</Button>
+          <Button onClick={() => {}} variant="secondary">Secondary</Button>
+          <Button onClick={() => {}} variant="green">Green</Button>
+          <Button onClick={() => {}} variant="red">Red</Button>
+          <Button onClick={() => {}} variant="purple">Purple</Button>
+          <Button onClick={() => {}} variant="primary" disabled>Disabled</Button>
+        </div>
+        <div class={styles.grid}>
+          <Button onClick={() => {}} variant="primary">Short</Button>
+          <Button onClick={() => {}} variant="secondary">Medium Length Text</Button>
+          <Button onClick={() => {}} variant="green">Very Long Button Text Example</Button>
+        </div>
+      </section>
+
+      <section class={styles.section}>
         <Heading level={2} variant="sectionHeader">Old Buttons</Heading>
+        <Text color="subtle">
+          Legacy button components (will be removed once new buttons are complete).
+        </Text>
         <div class={styles.grid}>
           <OldButton onClick={() => {}} variant="primary">Primary</OldButton>
           <OldButton onClick={() => {}} variant="secondary">Secondary</OldButton>

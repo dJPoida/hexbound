@@ -71,8 +71,8 @@
 }
 
 .secondary {
-  background-color: var(--color-stone-grey);
-  border-color: var(--color-stone-grey-dark);
+  background-color: var(--color-pastel-sky);
+  border-color: var(--color-pastel-sky-dark);
   color: var(--color-canvas-white);
 }
 

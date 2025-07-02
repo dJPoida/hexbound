@@ -1,0 +1,137 @@
+.button {
+  position: relative;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-button);
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.2;
+  transition: all 0.2s ease-in-out;
+  min-width: var(--button-width, 100px);
+  height: var(--button-height, 50px);
+}
+
+.buttonSvg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.buttonText {
+  position: relative;
+  z-index: 1;
+  padding: 10px 25px;
+  white-space: nowrap;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* SVG Element Styling */
+/* .background, .leftCap {
+  transition: all 0.2s ease-in-out;
+} */
+
+/* Button States */
+.button:hover:not(.disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.button:hover:not(.disabled) .buttonText {
+  text-shadow: 0 1px 0px rgba(255, 255, 255, 0.5);
+}
+
+.button:active:not(.disabled) {
+  transform: translateY(1px);
+  filter: brightness(0.95);
+}
+
+.button.disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  filter: grayscale(0.5);
+}
+
+.button.disabled .buttonText {
+  color: var(--color-stone-grey-light);
+  text-shadow: 0 1px 0px rgba(255, 255, 255, 0.2);
+}
+
+/* Variant Styles */
+.primary .background,
+.primary .leftCap {
+  fill: var(--color-hex-amber);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.primary .buttonText {
+  color: var(--color-canvas-white);
+}
+
+.secondary .background,
+.secondary .leftCap {
+  fill: var(--color-pastel-sky);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.secondary .buttonText {
+  color: var(--color-canvas-white);
+}
+
+.green .background,
+.green .leftCap {
+  fill: var(--color-moss-green);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.green .buttonText {
+  color: var(--color-canvas-white);
+}
+
+.red .background,
+.red .leftCap {
+  fill: var(--color-clay-red);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.red .buttonText {
+  color: var(--color-canvas-white);
+}
+
+.purple .background,
+.purple .leftCap {
+  fill: var(--color-deep-purple);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.purple .buttonText {
+  color: var(--color-canvas-white);
+}
+
+/* Disabled state overrides */
+.button.disabled .background,
+.button.disabled .leftCap {
+  fill: var(--color-stone-grey-dark);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+} 
