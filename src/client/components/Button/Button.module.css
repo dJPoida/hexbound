@@ -1,71 +1,17 @@
 .button {
+  font-family: var(--font-button);
+  font-size: var(--font-size-md);
   padding: var(--space-sm) var(--space-lg);
   cursor: pointer;
   border-radius: var(--border-radius-medium);
   border: var(--border-width) solid var(--border-color);
-  font-family: var(--font-primary-bold);
-  font-size: var(--font-size-lg);
-  color: var(--color-canvas-white);
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+  color: var(--color-charcoal);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease-in-out;
-}
-
-.button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.button:active {
-  transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
-}
-
-.button:disabled {
-  filter: saturate(0) brightness(0.7);
-  cursor: not-allowed;
-}
-
-.primary {
-  background-color: var(--color-hex-amber);
-  border-color: var(--color-charcoal);
-}
-
-.secondary {
-  background-color: var(--color-stone-grey);
-  border-color: var(--color-charcoal);
-}
-
-.green {
-  background-color: var(--color-moss-green);
-  border-color: var(--color-charcoal);
-}
-
-.red {
-  background-color: var(--color-clay-red);
-  border-color: var(--color-charcoal);
-}
-
-.purple {
-  background-color: var(--color-deep-purple);
-  border-color: var(--color-charcoal);
-}
-
-.button {
-  font-family: 'Imperator', 'Times New Roman', serif;
-  color: #2a2a2a;
-  padding: 0.7em 1.5em;
-  border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
   position: relative;
-  cursor: pointer;
-  text-shadow: 0 1px 0px rgba(255, 255, 255, 0.4);
-  transition: all 0.15s ease-in-out;
   text-transform: uppercase;
-  font-size: 1.1rem;
-  letter-spacing: 0.05em;
   font-weight: 700;
   line-height: 1.2;
-  
   box-shadow: 
     0 2px 2px rgba(0,0,0,0.2),
     inset 0 1px 0px rgba(255, 255, 255, 0.3),
@@ -89,29 +35,63 @@
 }
 
 .button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0px rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0px rgba(0, 0, 0, 0.2);
   filter: brightness(1.05);
   text-shadow: 0 1px 0px rgba(255, 255, 255, 0.5);
 }
 
 .button:active:not(:disabled) {
   transform: translateY(1px);
-  filter: brightness(0.95);
   box-shadow: 0 1px 1px rgba(0,0,0,0.2), inset 0 1px 2px rgba(0,0,0,0.4);
+  filter: brightness(0.95);
 }
 
 .button:disabled {
   cursor: not-allowed;
-  background-color: #b0b0b0;
-  color: #666;
+  background-color: var(--color-stone-grey-dark);
+  color: var(--color-stone-grey-light);
   text-shadow: 0 1px 0px rgba(255, 255, 255, 0.2);
   filter: grayscale(0.5);
   opacity: 0.7;
-  border-color: #888;
+  border-color: var(--color-charcoal-dark);
   box-shadow: 0 1px 1px rgba(0,0,0,0.1);
 }
 
 .button:disabled::after {
   background: none;
+}
+
+.primary {
+  background-color: var(--color-hex-amber);
+  border-color: var(--color-hex-amber-dark);
+  color: var(--color-canvas-white);
+}
+
+.secondary {
+  background-color: var(--color-stone-grey);
+  border-color: var(--color-stone-grey-dark);
+  color: var(--color-canvas-white);
+}
+
+.green {
+  background-color: var(--color-moss-green);
+  border-color: var(--color-moss-green-dark);
+  color: var(--color-canvas-white);
+}
+
+.red {
+  background-color: var(--color-clay-red);
+  border-color: var(--color-clay-red-dark);
+  color: var(--color-canvas-white);
+}
+
+.purple {
+  background-color: var(--color-deep-purple);
+  border-color: var(--color-deep-purple-dark);
+  color: var(--color-canvas-white);
 }
 
 .fullWidth {
@@ -132,7 +112,7 @@
   text-decoration: underline;
   padding: 0;
   font-size: 0.9em;
-  font-family: var(--font-family-body);
+  font-family: var(--font-primary-normal);
   font-weight: 400;
   text-shadow: none;
   box-shadow: none;

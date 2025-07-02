@@ -2,6 +2,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&display=swap');
 
 @font-face {
+  font-family: 'Bubblegum Sans';
+  src: url('/fonts/BubblegumSans/BubblegumSans.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Imperator';
   src: url('/fonts/Imperator/Imperator.woff2') format('woff2');
   font-weight: 400;
@@ -118,6 +126,11 @@ html {
   --border-color: var(--color-charcoal);
 
   --font-family-display: 'Hexbound', sans-serif;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -128,11 +141,6 @@ body {
   background-image: url('/images/paper-texture.png');
   background-repeat: repeat;
   /* TODO: Add paper texture background */
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 h1,
