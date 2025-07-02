@@ -205,21 +205,23 @@ The application uses a **dual-button architecture** during the transition period
 - **`Button`**: New SVG-based gem buttons (`src/client/components/Button/`)
 
 ### SVG Gem Button Structure
-The new `Button` component uses **6 layered SVG elements** for 3D gem lighting effects:
+The new `Button` component uses **7 layered SVG elements** for 3D gem lighting effects:
 1. **Background**: Base color fill that stretches horizontally
 2. **Left Edge**: Light color, fixed position 
 3. **Right Edge**: Light color, dynamic position
 4. **Top Edge**: Light color, stretches horizontally
 5. **Bottom Edge**: Dark color, creates shadow effect
 6. **Accents**: Highlight color, reflective overlay effect
+7. **Outline**: Charcoal stroke for grounding and definition
 
 ### Button Color Implementation Rules
-- **Background**: Uses base color token (`--color-hex-amber`)
+- **Background**: Uses base color token (`--color-hex-amber`) with no stroke
 - **Edges (left, right, top)**: Use light color token (`--color-hex-amber-light`)
 - **Bottom edge**: Uses dark color token (`--color-hex-amber-dark`) for shadow
 - **Accents**: Uses highlight color token (`--color-hex-amber-highlight`) for reflections
+- **Outline**: Uses charcoal stroke (`--color-charcoal`) with 1px width for grounding
 - **Text**: Always uses `--color-canvas-white` for contrast
-- **Disabled state**: All elements use `--color-stone-grey-dark`
+- **Disabled state**: Outline uses `--color-stone-grey` for muted appearance
 
 ### Dynamic Width Scaling System
 The gem buttons scale horizontally without distortion:
@@ -231,7 +233,7 @@ The gem buttons scale horizontally without distortion:
 
 ### Button Implementation Guidelines
 - **NEVER** modify existing `OldButton` components - they are preserved for stability
-- **ALWAYS** use the established 6-layer SVG structure for new button variants
+- **ALWAYS** use the established 7-layer SVG structure for new button variants
 - **ALWAYS** follow the 4-tier color system (base/light/dark/highlight) for gem lighting
 - **ALWAYS** include touch prevention CSS: `user-select: none`, `-webkit-tap-highlight-color: transparent`
 - **ALWAYS** use `line-height: 1` for proper text vertical alignment
@@ -240,7 +242,7 @@ The gem buttons scale horizontally without distortion:
 ### Button Variant Creation
 When creating new button variants:
 1. Add the variant to the `ButtonProps` interface
-2. Create CSS rules for all 6 SVG elements using the 4-tier color system
+2. Create CSS rules for all 7 SVG elements using the 4-tier color system
 3. Ensure disabled state handling for all elements
 4. Test with various text lengths to verify proper scaling
 5. Verify touch/mobile behavior to prevent selection highlighting

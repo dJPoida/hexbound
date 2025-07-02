@@ -34,11 +34,10 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
   pointer-events: none;
   z-index: 0;
   user-select: none;
+  overflow: visible;
 }
 
 .buttonText {
@@ -124,6 +123,16 @@
   color: var(--color-canvas-white);
 }
 
+.primary .outline {
+  fill: none;
+  stroke: var(--color-charcoal);
+  stroke-width: 1;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  stroke-opacity: 1;
+  paint-order: fill markers stroke;
+}
+
 .secondary .background {
   fill: var(--color-pastel-sky);
   stroke: none;
@@ -168,6 +177,16 @@
 
 .secondary .buttonText {
   color: var(--color-canvas-white);
+}
+
+.secondary .outline {
+  fill: none;
+  stroke: var(--color-charcoal);
+  stroke-width: 1;
+  stroke-linecap: butt;
+  stroke-linejoin: bevel;
+  stroke-opacity: 1;
+  paint-order: fill markers stroke;
 }
 
 .green .background {
@@ -216,6 +235,16 @@
   color: var(--color-canvas-white);
 }
 
+.green .outline {
+  fill: none;
+  stroke: var(--color-charcoal);
+  stroke-width: 1;
+  stroke-linecap: butt;
+  stroke-linejoin: bevel;
+  stroke-opacity: 1;
+  paint-order: fill markers stroke;
+}
+
 .red .background {
   fill: var(--color-clay-red);
   stroke: none;
@@ -260,6 +289,16 @@
 
 .red .buttonText {
   color: var(--color-canvas-white);
+}
+
+.red .outline {
+  fill: none;
+  stroke: var(--color-charcoal);
+  stroke-width: 1;
+  stroke-linecap: butt;
+  stroke-linejoin: bevel;
+  stroke-opacity: 1;
+  paint-order: fill markers stroke;
 }
 
 .purple .background {
@@ -308,6 +347,16 @@
   color: var(--color-canvas-white);
 }
 
+.purple .outline {
+  fill: none;
+  stroke: var(--color-charcoal);
+  stroke-width: 1;
+  stroke-linecap: butt;
+  stroke-linejoin: bevel;
+  stroke-opacity: 1;
+  paint-order: fill markers stroke;
+}
+
 /* Disabled state overrides */
 .button.disabled .background,
 .button.disabled .leftEdge,
@@ -318,5 +367,15 @@
   fill: var(--color-stone-grey-dark);
   stroke: none;
   stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.button.disabled .outline {
+  fill: none;
+  stroke: var(--color-stone-grey);
+  stroke-width: 1;
+  stroke-linecap: butt;
+  stroke-linejoin: bevel;
+  stroke-opacity: 1;
   paint-order: fill markers stroke;
 } 
