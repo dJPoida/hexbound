@@ -94,6 +94,12 @@ Environment variables are managed as follows:
 - Whenever making a change to an API endpoint, WebSocket message, or their associated data payloads, you MUST update the `design/communication-protocol.md` file to reflect the changes.
 - Prefer ENUMS or `as const` key/value types instead of hard-coded strings or values for switching data or configuration values.
 
+### Design System Compliance Rules
+- **CSS Tokens**: ALWAYS reference the "CSS Design Tokens System" section before creating or modifying colors, fonts, or spacing. Use `tokens.module.css` as the single source of truth.
+- **Button Implementation**: ALWAYS reference the "Button Implementation Architecture" section before modifying buttons. Follow the established SVG gem button system and dual-architecture during migration.
+- **Color Usage**: ALWAYS use the 4-tier color system (base/light/dark/highlight) for any new UI elements requiring depth or lighting effects.
+- **Token Consistency**: NEVER create hardcoded color values - always check existing tokens first or add new ones to `tokens.module.css` following the established patterns.
+
 # Data Models
 
 This section outlines the primary data entities used in the application, managed by TypeORM.
@@ -152,6 +158,105 @@ Client-side code is organized to promote modularity and maintainability.
   - **UI Scaling**: Proportional scaling based on screen size rather than content reflow
   - **Touch Targets**: Minimum 44px touch targets for mobile interactions
   - **Form Factors**: Optimize for both mobile portrait gameplay and desktop landscape gameplay
+
+## CSS Design Tokens System
+
+### Token Source of Truth
+- **`src/client/tokens.module.css`** is the ONLY source of truth for design tokens
+- **NEVER** declare color, font, or spacing tokens in `global.css` or component CSS files
+- If a token doesn't exist in `tokens.module.css`, add it there rather than creating local variables
+
+### Color Token Naming Convention
+All colors follow a 4-tier system for depth and lighting effects:
+- **Base color**: `--color-{name}` (e.g., `--color-hex-amber`)
+- **Light variant**: `--color-{name}-light` (for highlights, top edges)
+- **Dark variant**: `--color-{name}-dark` (for shadows, bottom edges) 
+- **Highlight variant**: `--color-{name}-highlight` (for brightest reflections)
+
+### Adding New Color Tokens
+When adding a new color family:
+1. Define all 4 variants in `tokens.module.css` under the appropriate section
+2. Use semantic names that describe the color, not its usage
+3. Follow the existing pattern: `#base → #light → #dark → #highlight`
+4. Example:
+   ```css
+   --color-forest-green: #2d5a3d;
+   --color-forest-green-dark: #1f3d2a;
+   --color-forest-green-light: #4a7c5a;
+   --color-forest-green-highlight: #6b9b7a;
+   ```
+
+### Font Token Guidelines
+- Use semantic naming: `--font-primary-normal`, `--font-button`, etc.
+- Maintain legacy aliases for compatibility when refactoring
+- Font sizes use rem units with px comments: `--font-size-lg: 1.125rem; /* 18px */`
+
+### Token Usage Rules
+- **ALWAYS** use `var(--token-name)` instead of hardcoded values
+- **NEVER** create component-specific color variants - use the 4-tier system
+- **ALWAYS** check `tokens.module.css` first before adding new tokens
+- Use semantic color mapping: success → moss-green, warning → glow-yellow, etc.
+
+## Button Implementation Architecture
+
+### Current Button System
+The application uses a **dual-button architecture** during the transition period:
+- **`OldButton`** and **`OldMenuButton`**: Legacy CSS-based buttons (`src/client/components/OldButton/`)
+- **`Button`**: New SVG-based gem buttons (`src/client/components/Button/`)
+
+### SVG Gem Button Structure
+The new `Button` component uses **6 layered SVG elements** for 3D gem lighting effects:
+1. **Background**: Base color fill that stretches horizontally
+2. **Left Edge**: Light color, fixed position 
+3. **Right Edge**: Light color, dynamic position
+4. **Top Edge**: Light color, stretches horizontally
+5. **Bottom Edge**: Dark color, creates shadow effect
+6. **Accents**: Highlight color, reflective overlay effect
+
+### Button Color Implementation Rules
+- **Background**: Uses base color token (`--color-hex-amber`)
+- **Edges (left, right, top)**: Use light color token (`--color-hex-amber-light`)
+- **Bottom edge**: Uses dark color token (`--color-hex-amber-dark`) for shadow
+- **Accents**: Uses highlight color token (`--color-hex-amber-highlight`) for reflections
+- **Text**: Always uses `--color-canvas-white` for contrast
+- **Disabled state**: All elements use `--color-stone-grey-dark`
+
+### Dynamic Width Scaling System
+The gem buttons scale horizontally without distortion:
+- **ViewBox**: `0 0 ${buttonWidth} 50` for a 50px height
+- **Fixed elements**: Left edge coordinates remain static
+- **Dynamic elements**: Right edge and stretching sections scale with `buttonWidth`
+- **Opacity rendering**: Buttons start invisible until width is calculated to prevent visual jumping
+- **Text measurement**: Uses DOM measurement to calculate required button width
+
+### Button Implementation Guidelines
+- **NEVER** modify existing `OldButton` components - they are preserved for stability
+- **ALWAYS** use the established 6-layer SVG structure for new button variants
+- **ALWAYS** follow the 4-tier color system (base/light/dark/highlight) for gem lighting
+- **ALWAYS** include touch prevention CSS: `user-select: none`, `-webkit-tap-highlight-color: transparent`
+- **ALWAYS** use `line-height: 1` for proper text vertical alignment
+- **ALWAYS** implement opacity-based rendering to prevent width transition flicker
+
+### Button Variant Creation
+When creating new button variants:
+1. Add the variant to the `ButtonProps` interface
+2. Create CSS rules for all 6 SVG elements using the 4-tier color system
+3. Ensure disabled state handling for all elements
+4. Test with various text lengths to verify proper scaling
+5. Verify touch/mobile behavior to prevent selection highlighting
+
+### Migration Strategy
+- **Phase 1**: New `Button` component complete and tested (✅ DONE)
+- **Phase 2**: Gradually replace `OldButton` usage in components
+- **Phase 3**: Remove `OldButton` components when all usage is migrated
+- **NEVER** rush the migration - test thoroughly in each component
+
+### Button Accessibility & UX
+- **Touch targets**: Minimum 50px height (current gem buttons meet this)
+- **Text shadows**: Use `2px 2px 1px rgba(0, 0, 0, 0.5)` for readability
+- **Hover effects**: `translateY(-1px)` and `filter: brightness(1.05)`
+- **Active effects**: `translateY(1px)` and `filter: brightness(0.95)`
+- **Disabled state**: `opacity: 0.7` and `filter: grayscale(0.5)`
 
 # Backend Development & TypeORM
 - **`reflect-metadata` Requirement**: For all TypeORM operations, especially migration generation, ensure `import 'reflect-metadata';` is the very first import in the server's entry point (`src/server/main.ts`).
