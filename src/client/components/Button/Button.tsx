@@ -68,10 +68,16 @@ export const Button = ({
           className={styles.background} 
         />
 
-        {/* Left cap - fixed position (from actual artwork) */}
+        {/* Left edge - fixed position (from actual artwork) */}
         <path 
           d="M 4,42 V 8 L 0,6 v 38 z" 
-          className={styles.leftCap} 
+          className={styles.leftEdge} 
+        />
+
+        {/* Right edge - dynamic position (from actual artwork) */}
+        <path 
+          d={`m ${buttonWidth - 4},8 4,-2 v 38 l -4,-2 z`} 
+          className={styles.rightEdge} 
         />
       </svg>
       

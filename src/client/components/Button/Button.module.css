@@ -40,11 +40,6 @@
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-/* SVG Element Styling */
-/* .background, .leftCap {
-  transition: all 0.2s ease-in-out;
-} */
-
 /* Button States */
 .button:hover:not(.disabled) {
   transform: translateY(-1px);
@@ -72,9 +67,22 @@
 }
 
 /* Variant Styles */
-.primary .background,
-.primary .leftCap {
+.primary .background {
   fill: var(--color-hex-amber);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.primary .leftEdge {
+  fill: var(--color-hex-amber-light);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.primary .rightEdge {
+  fill: var(--color-hex-amber-light);
   stroke: none;
   stroke-width: 0.115583;
   paint-order: fill markers stroke;
@@ -84,9 +92,22 @@
   color: var(--color-canvas-white);
 }
 
-.secondary .background,
-.secondary .leftCap {
+.secondary .background {
   fill: var(--color-pastel-sky);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.secondary .leftEdge {
+  fill: var(--color-pastel-sky-light);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.secondary .rightEdge {
+  fill: var(--color-pastel-sky-light);
   stroke: none;
   stroke-width: 0.115583;
   paint-order: fill markers stroke;
@@ -96,9 +117,22 @@
   color: var(--color-canvas-white);
 }
 
-.green .background,
-.green .leftCap {
+.green .background {
   fill: var(--color-moss-green);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.green .leftEdge {
+  fill: var(--color-moss-green-light);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.green .rightEdge {
+  fill: var(--color-moss-green-light);
   stroke: none;
   stroke-width: 0.115583;
   paint-order: fill markers stroke;
@@ -108,9 +142,22 @@
   color: var(--color-canvas-white);
 }
 
-.red .background,
-.red .leftCap {
+.red .background {
   fill: var(--color-clay-red);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.red .leftEdge {
+  fill: var(--color-clay-red-light);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.red .rightEdge {
+  fill: var(--color-clay-red-light);
   stroke: none;
   stroke-width: 0.115583;
   paint-order: fill markers stroke;
@@ -120,9 +167,22 @@
   color: var(--color-canvas-white);
 }
 
-.purple .background,
-.purple .leftCap {
+.purple .background {
   fill: var(--color-deep-purple);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.purple .leftEdge {
+  fill: var(--color-deep-purple-light);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.purple .rightEdge {
+  fill: var(--color-deep-purple-light);
   stroke: none;
   stroke-width: 0.115583;
   paint-order: fill markers stroke;
@@ -134,7 +194,8 @@
 
 /* Disabled state overrides */
 .button.disabled .background,
-.button.disabled .leftCap {
+.button.disabled .leftEdge,
+.button.disabled .rightEdge {
   fill: var(--color-stone-grey-dark);
   stroke: none;
   stroke-width: 0.115583;
