@@ -71,54 +71,14 @@
 }
 
 /* Active state - invert gem lighting for pressed effect */
-.button.primary:active:not(.disabled) .leftEdge,
-.button.primary:active:not(.disabled) .rightEdge,
-.button.primary:active:not(.disabled) .topEdge {
-  fill: var(--color-hex-amber-dark);
+.button:active:not(.disabled) .leftEdge,
+.button:active:not(.disabled) .rightEdge,
+.button:active:not(.disabled) .topEdge {
+  fill: var(--variant-dark);
 }
 
-.button.primary:active:not(.disabled) .bottomEdge {
-  fill: var(--color-hex-amber-light);
-}
-
-.button.secondary:active:not(.disabled) .leftEdge,
-.button.secondary:active:not(.disabled) .rightEdge,
-.button.secondary:active:not(.disabled) .topEdge {
-  fill: var(--color-pastel-sky-dark);
-}
-
-.button.secondary:active:not(.disabled) .bottomEdge {
-  fill: var(--color-pastel-sky-light);
-}
-
-.button.green:active:not(.disabled) .leftEdge,
-.button.green:active:not(.disabled) .rightEdge,
-.button.green:active:not(.disabled) .topEdge {
-  fill: var(--color-moss-green-dark);
-}
-
-.button.green:active:not(.disabled) .bottomEdge {
-  fill: var(--color-moss-green-light);
-}
-
-.button.red:active:not(.disabled) .leftEdge,
-.button.red:active:not(.disabled) .rightEdge,
-.button.red:active:not(.disabled) .topEdge {
-  fill: var(--color-clay-red-dark);
-}
-
-.button.red:active:not(.disabled) .bottomEdge {
-  fill: var(--color-clay-red-light);
-}
-
-.button.purple:active:not(.disabled) .leftEdge,
-.button.purple:active:not(.disabled) .rightEdge,
-.button.purple:active:not(.disabled) .topEdge {
-  fill: var(--color-deep-purple-dark);
-}
-
-.button.purple:active:not(.disabled) .bottomEdge {
-  fill: var(--color-deep-purple-light);
+.button:active:not(.disabled) .bottomEdge {
+  fill: var(--variant-light);
 }
 
 .button.disabled {
@@ -132,286 +92,104 @@
   text-shadow: 0 1px 0px rgba(255, 255, 255, 0.2);
 }
 
-/* Variant Styles */
-.primary .background {
-  fill: var(--color-hex-amber);
+/* Base SVG Element Styles */
+.background,
+.leftEdge,
+.rightEdge,
+.topEdge,
+.bottomEdge,
+.accents {
   stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
 }
 
-.primary .leftEdge {
-  fill: var(--color-hex-amber-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.primary .rightEdge {
-  fill: var(--color-hex-amber-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.primary .topEdge {
-  fill: var(--color-hex-amber-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.primary .bottomEdge {
-  fill: var(--color-hex-amber-dark);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.primary .accents {
-  fill: var(--color-hex-amber-highlight);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.primary .buttonText {
-  color: var(--color-canvas-white);
-}
-
-.primary .outline {
+.outline {
   fill: none;
-  stroke: var(--color-charcoal);
-  stroke-width: 1;
-  stroke-linecap: butt;
-  stroke-linejoin: miter;
-  stroke-opacity: 1;
-  paint-order: fill markers stroke;
-}
-
-.secondary .background {
-  fill: var(--color-pastel-sky);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.secondary .leftEdge {
-  fill: var(--color-pastel-sky-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.secondary .rightEdge {
-  fill: var(--color-pastel-sky-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.secondary .topEdge {
-  fill: var(--color-pastel-sky-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.secondary .bottomEdge {
-  fill: var(--color-pastel-sky-dark);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.secondary .accents {
-  fill: var(--color-pastel-sky-highlight);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.secondary .buttonText {
-  color: var(--color-canvas-white);
-}
-
-.secondary .outline {
-  fill: none;
-  stroke: var(--color-charcoal);
   stroke-width: 1;
   stroke-linecap: butt;
   stroke-linejoin: bevel;
   stroke-opacity: 1;
-  paint-order: fill markers stroke;
 }
 
-.green .background {
-  fill: var(--color-moss-green);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
+/* Variant Color Definitions */
+.primary {
+  --variant-base: var(--color-hex-amber);
+  --variant-light: var(--color-hex-amber-light);
+  --variant-dark: var(--color-hex-amber-dark);
+  --variant-highlight: var(--color-hex-amber-highlight);
 }
 
-.green .leftEdge {
-  fill: var(--color-moss-green-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
+.primary .background { fill: var(--variant-base); }
+.primary .leftEdge,
+.primary .rightEdge,
+.primary .topEdge { fill: var(--variant-light); }
+.primary .bottomEdge { fill: var(--variant-dark); }
+.primary .accents { fill: var(--variant-highlight); }
+.primary .buttonText { color: var(--color-canvas-white); }
+.primary .outline { stroke: var(--color-charcoal); }
+
+.secondary {
+  --variant-base: var(--color-pastel-sky);
+  --variant-light: var(--color-pastel-sky-light);
+  --variant-dark: var(--color-pastel-sky-dark);
+  --variant-highlight: var(--color-pastel-sky-highlight);
 }
 
-.green .rightEdge {
-  fill: var(--color-moss-green-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
+.secondary .background { fill: var(--variant-base); }
+.secondary .leftEdge,
+.secondary .rightEdge,
+.secondary .topEdge { fill: var(--variant-light); }
+.secondary .bottomEdge { fill: var(--variant-dark); }
+.secondary .accents { fill: var(--variant-highlight); }
+.secondary .buttonText { color: var(--color-canvas-white); }
+.secondary .outline { stroke: var(--color-charcoal); }
+
+.green {
+  --variant-base: var(--color-moss-green);
+  --variant-light: var(--color-moss-green-light);
+  --variant-dark: var(--color-moss-green-dark);
+  --variant-highlight: var(--color-moss-green-highlight);
 }
 
-.green .topEdge {
-  fill: var(--color-moss-green-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
+.green .background { fill: var(--variant-base); }
+.green .leftEdge,
+.green .rightEdge,
+.green .topEdge { fill: var(--variant-light); }
+.green .bottomEdge { fill: var(--variant-dark); }
+.green .accents { fill: var(--variant-highlight); }
+.green .buttonText { color: var(--color-canvas-white); }
+.green .outline { stroke: var(--color-charcoal); }
+
+.red {
+  --variant-base: var(--color-clay-red);
+  --variant-light: var(--color-clay-red-light);
+  --variant-dark: var(--color-clay-red-dark);
+  --variant-highlight: var(--color-clay-red-highlight);
 }
 
-.green .bottomEdge {
-  fill: var(--color-moss-green-dark);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
+.red .background { fill: var(--variant-base); }
+.red .leftEdge,
+.red .rightEdge,
+.red .topEdge { fill: var(--variant-light); }
+.red .bottomEdge { fill: var(--variant-dark); }
+.red .accents { fill: var(--variant-highlight); }
+.red .buttonText { color: var(--color-canvas-white); }
+.red .outline { stroke: var(--color-charcoal); }
+
+.purple {
+  --variant-base: var(--color-deep-purple);
+  --variant-light: var(--color-deep-purple-light);
+  --variant-dark: var(--color-deep-purple-dark);
+  --variant-highlight: var(--color-deep-purple-highlight);
 }
 
-.green .accents {
-  fill: var(--color-moss-green-highlight);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.green .buttonText {
-  color: var(--color-canvas-white);
-}
-
-.green .outline {
-  fill: none;
-  stroke: var(--color-charcoal);
-  stroke-width: 1;
-  stroke-linecap: butt;
-  stroke-linejoin: bevel;
-  stroke-opacity: 1;
-  paint-order: fill markers stroke;
-}
-
-.red .background {
-  fill: var(--color-clay-red);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.red .leftEdge {
-  fill: var(--color-clay-red-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.red .rightEdge {
-  fill: var(--color-clay-red-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.red .topEdge {
-  fill: var(--color-clay-red-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.red .bottomEdge {
-  fill: var(--color-clay-red-dark);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.red .accents {
-  fill: var(--color-clay-red-highlight);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.red .buttonText {
-  color: var(--color-canvas-white);
-}
-
-.red .outline {
-  fill: none;
-  stroke: var(--color-charcoal);
-  stroke-width: 1;
-  stroke-linecap: butt;
-  stroke-linejoin: bevel;
-  stroke-opacity: 1;
-  paint-order: fill markers stroke;
-}
-
-.purple .background {
-  fill: var(--color-deep-purple);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.purple .leftEdge {
-  fill: var(--color-deep-purple-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.purple .rightEdge {
-  fill: var(--color-deep-purple-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.purple .topEdge {
-  fill: var(--color-deep-purple-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.purple .bottomEdge {
-  fill: var(--color-deep-purple-dark);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.purple .accents {
-  fill: var(--color-deep-purple-highlight);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.purple .buttonText {
-  color: var(--color-canvas-white);
-}
-
-.purple .outline {
-  fill: none;
-  stroke: var(--color-charcoal);
-  stroke-width: 1;
-  stroke-linecap: butt;
-  stroke-linejoin: bevel;
-  stroke-opacity: 1;
-  paint-order: fill markers stroke;
-}
+.purple .background { fill: var(--variant-base); }
+.purple .leftEdge,
+.purple .rightEdge,
+.purple .topEdge { fill: var(--variant-light); }
+.purple .bottomEdge { fill: var(--variant-dark); }
+.purple .accents { fill: var(--variant-highlight); }
+.purple .buttonText { color: var(--color-canvas-white); }
+.purple .outline { stroke: var(--color-charcoal); }
 
 /* Disabled state overrides */
 .button.disabled .background,
@@ -421,19 +199,10 @@
 .button.disabled .bottomEdge,
 .button.disabled .accents {
   fill: var(--color-stone-grey-dark);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
 }
 
 .button.disabled .outline {
-  fill: none;
   stroke: var(--color-stone-grey);
-  stroke-width: 1;
-  stroke-linecap: butt;
-  stroke-linejoin: bevel;
-  stroke-opacity: 1;
-  paint-order: fill markers stroke;
 }
 
 /* Full width support */
@@ -447,74 +216,22 @@
   min-width: 50px;
   width: 50px !important;
   padding: 0;
+  --variant-base: var(--color-pastel-sky);
+  --variant-light: var(--color-pastel-sky-light);
+  --variant-dark: var(--color-pastel-sky-dark);
+  --variant-highlight: var(--color-pastel-sky-highlight);
 }
 
-.icon .background {
-  fill: var(--color-pastel-sky);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
+.icon .background { fill: var(--variant-base); }
+.icon .leftEdge,
+.icon .rightEdge,
+.icon .topEdge { fill: var(--variant-light); }
+.icon .bottomEdge { fill: var(--variant-dark); }
+.icon .accents { fill: var(--variant-highlight); }
+.icon .buttonText { color: var(--color-canvas-white); }
+.icon .outline { stroke: var(--color-charcoal); }
 
-.icon .leftEdge {
-  fill: var(--color-pastel-sky-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
 
-.icon .rightEdge {
-  fill: var(--color-pastel-sky-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.icon .topEdge {
-  fill: var(--color-pastel-sky-light);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.icon .bottomEdge {
-  fill: var(--color-pastel-sky-dark);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.icon .accents {
-  fill: var(--color-pastel-sky-highlight);
-  stroke: none;
-  stroke-width: 0.115583;
-  paint-order: fill markers stroke;
-}
-
-.icon .buttonText {
-  color: var(--color-canvas-white);
-}
-
-.icon .outline {
-  fill: none;
-  stroke: var(--color-charcoal);
-  stroke-width: 1;
-  stroke-linecap: butt;
-  stroke-linejoin: bevel;
-  stroke-opacity: 1;
-  paint-order: fill markers stroke;
-}
-
-/* Icon active state */
-.button.icon:active:not(.disabled) .leftEdge,
-.button.icon:active:not(.disabled) .rightEdge,
-.button.icon:active:not(.disabled) .topEdge {
-  fill: var(--color-pastel-sky-dark);
-}
-
-.button.icon:active:not(.disabled) .bottomEdge {
-  fill: var(--color-pastel-sky-light);
-}
 
 /* Link variant - minimal styling, no gem appearance */
 .link {
