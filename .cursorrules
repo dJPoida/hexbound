@@ -224,12 +224,13 @@ The new `Button` component uses **7 layered SVG elements** for 3D gem lighting e
 - **Disabled state**: Outline uses `--color-stone-grey` for muted appearance
 
 ### Dynamic Width Scaling System
-The gem buttons scale horizontally without distortion:
-- **ViewBox**: `0 0 ${buttonWidth} 50` for a 50px height
-- **Fixed elements**: Left edge coordinates remain static
-- **Dynamic elements**: Right edge and stretching sections scale with `buttonWidth`
+The gem buttons adapt to both content and container requirements:
+- **Content-based sizing**: Uses `min-width` based on text measurement for baseline size
+- **Flex-responsive**: With `fullWidth={true}`, buttons grow to fill flex containers using `flex: 1`
+- **SVG scaling**: Responsive SVG sizing - 100% width for fullWidth, calculated width for content-based
+- **ViewBox coordination**: `preserveAspectRatio='none'` allows fullWidth buttons to stretch properly
 - **Opacity rendering**: Buttons start invisible until width is calculated to prevent visual jumping
-- **Text measurement**: Uses DOM measurement to calculate required button width
+- **Text measurement**: Uses DOM measurement to calculate minimum required button width
 
 ### Button Implementation Guidelines
 - **NEVER** modify existing `OldButton` components - they are preserved for stability

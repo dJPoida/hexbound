@@ -13,8 +13,9 @@
   text-transform: uppercase;
   line-height: 1.2;
   transition: opacity 0.15s ease-in-out;
-  width: var(--button-width, 100px);
+  min-width: var(--button-width, 100px);
   height: var(--button-height, 50px);
+  min-height: var(--button-height, 50px);
   
   /* Prevent touch/tap highlighting and selection */
   user-select: none;
@@ -58,11 +59,15 @@
 }
 
 .button:active:not(.disabled) {
-  filter: brightness(0.9);
+  filter: brightness(0.95);
 }
 
 .button:active:not(.disabled) .buttonText {
   transform: translate(1px, 1px);
+}
+
+.button:focus:not(.disabled) .outline {
+  stroke: var(--color-glow-yellow);
 }
 
 /* Active state - invert gem lighting for pressed effect */
@@ -433,8 +438,8 @@
 
 /* Full width support */
 .button.fullWidth {
+  flex: 1;
   width: 100%;
-  display: block;
 }
 
 /* Icon variant - similar to secondary but square */
