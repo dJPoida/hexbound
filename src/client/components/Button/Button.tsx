@@ -24,12 +24,14 @@ export const Button = ({
 }: ButtonProps) => {
   const textRef = useRef<HTMLSpanElement>(null);
   const [buttonWidth, setButtonWidth] = useState(minWidth);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     if (textRef.current) {
       const textWidth = textRef.current.getBoundingClientRect().width;
       const calculatedWidth = Math.max(minWidth, textWidth + padding * 2);
       setButtonWidth(calculatedWidth);
+      setIsReady(true);
     }
   }, [children, minWidth, padding]);
 
@@ -37,6 +39,7 @@ export const Button = ({
     styles.button,
     styles[variant],
     disabled ? styles.disabled : '',
+    !isReady ? styles.measuring : '',
     className
   ].filter(Boolean).join(' ');
 
