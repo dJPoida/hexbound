@@ -13,7 +13,7 @@
   text-transform: uppercase;
   line-height: 1.2;
   transition: opacity 0.15s ease-in-out;
-  min-width: var(--button-width, 100px);
+  width: var(--button-width, 100px);
   height: var(--button-height, 50px);
   
   /* Prevent touch/tap highlighting and selection */
@@ -34,6 +34,8 @@
   position: absolute;
   top: 0;
   left: 0;
+  width: var(--button-width, 100px);
+  height: var(--button-height, 50px);
   pointer-events: none;
   z-index: 0;
   user-select: none;
@@ -43,7 +45,7 @@
 .buttonText {
   position: relative;
   z-index: 1;
-  padding: 10px 25px;
+  padding: 0 6px;
   white-space: nowrap;
   text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.5);
   line-height: 1;
