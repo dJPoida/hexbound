@@ -54,17 +54,11 @@
 
 /* Button States */
 .button:hover:not(.disabled) {
-  transform: translateY(-1px);
-  filter: brightness(1.05);
-}
-
-.button:hover:not(.disabled) .buttonText {
-  text-shadow: 0 1px 0px rgba(255, 255, 255, 0.5);
+  filter: brightness(1.1);
 }
 
 .button:active:not(.disabled) {
-  transform: translateY(1px);
-  filter: brightness(0.95);
+  filter: brightness(0.9);
 }
 
 .button.disabled {
