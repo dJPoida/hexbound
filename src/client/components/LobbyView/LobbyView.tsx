@@ -60,7 +60,7 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
             className={styles.input}
             placeholder="Paste Game Code" 
           />
-          <Button onClick={handleJoinByCode} variant="secondary">
+          <Button onClick={handleJoinByCode} variant="secondary"  fullWidth={true}>
             Join
           </Button>
         </div>
