@@ -63,6 +63,19 @@
   --color-slate-blue-light: #7a8a99;
   --color-slate-blue-highlight: #9caab8;
 
+  /* UI & Semantic Colors */
+  --color-background: var(--color-canvas-white);
+  --color-parchment-light: var(--color-canvas-white-light);
+  
+  /* Status Colors */
+  --color-success: var(--color-moss-green);
+  --color-success-dark: var(--color-moss-green-dark);
+  --color-success-light: var(--color-moss-green-light);
+  
+  --color-warning: var(--color-glow-yellow);
+  --color-warning-dark: var(--color-glow-yellow-dark);
+  --color-warning-light: var(--color-glow-yellow-light);
+
   /* ==========================================================================
      Font Families
      ========================================================================== */
@@ -75,10 +88,18 @@
   --font-primary-bronze-small-caps: 'ImperatorBronzeSmallCaps', serif;
   --font-button: 'Bubblegum Sans', sans-serif;
 
+  /* Legacy font family aliases */
+  --font-family-main: 'Hexbound', sans-serif;
+  --font-family-body: 'Imperator', 'Times New Roman', serif;
+  --font-family-display: 'Hexbound', sans-serif;
+
   /* ==========================================================================
      Font Weights
      ========================================================================== */
+  --font-weight-light: 300;
   --font-weight-normal: 400;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
   --font-weight-bold: 700;
 
   /* ==========================================================================
@@ -93,6 +114,10 @@
   --font-size-2xl: 1.5rem; /* 24px */
   --font-size-3xl: 1.875rem; /* 30px */
   --font-size-4xl: 2.25rem; /* 36px */
+
+  /* Legacy font size aliases */
+  --font-size-body: var(--font-size-md);
+  --font-size-heading: var(--font-size-3xl);
 
   /* ==========================================================================
      Spacing & Sizing

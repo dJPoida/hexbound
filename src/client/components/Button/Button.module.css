@@ -15,6 +15,14 @@
   transition: opacity 0.15s ease-in-out;
   min-width: var(--button-width, 100px);
   height: var(--button-height, 50px);
+  
+  /* Prevent touch/tap highlighting and selection */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
 }
 
 .button.measuring {
@@ -30,6 +38,7 @@
   height: 100%;
   pointer-events: none;
   z-index: 0;
+  user-select: none;
 }
 
 .buttonText {
@@ -39,6 +48,7 @@
   white-space: nowrap;
   text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.5);
   line-height: 1;
+  user-select: none;
 }
 
 /* Button States */
