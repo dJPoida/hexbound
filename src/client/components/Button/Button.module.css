@@ -1,6 +1,7 @@
 .button {
   position: relative;
   border: none;
+  outline: none;
   background: transparent;
   padding: 0;
   cursor: pointer;
@@ -67,7 +68,7 @@
 }
 
 .button:focus:not(.disabled) .outline {
-  stroke: var(--color-glow-yellow);
+  stroke: var(--color-charcoal-highlight);
 }
 
 /* Active state - invert gem lighting for pressed effect */
