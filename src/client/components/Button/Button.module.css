@@ -61,6 +61,61 @@
   filter: brightness(0.9);
 }
 
+.button:active:not(.disabled) .buttonText {
+  transform: translate(1px, 1px);
+}
+
+/* Active state - invert gem lighting for pressed effect */
+.button.primary:active:not(.disabled) .leftEdge,
+.button.primary:active:not(.disabled) .rightEdge,
+.button.primary:active:not(.disabled) .topEdge {
+  fill: var(--color-hex-amber-dark);
+}
+
+.button.primary:active:not(.disabled) .bottomEdge {
+  fill: var(--color-hex-amber-light);
+}
+
+.button.secondary:active:not(.disabled) .leftEdge,
+.button.secondary:active:not(.disabled) .rightEdge,
+.button.secondary:active:not(.disabled) .topEdge {
+  fill: var(--color-pastel-sky-dark);
+}
+
+.button.secondary:active:not(.disabled) .bottomEdge {
+  fill: var(--color-pastel-sky-light);
+}
+
+.button.green:active:not(.disabled) .leftEdge,
+.button.green:active:not(.disabled) .rightEdge,
+.button.green:active:not(.disabled) .topEdge {
+  fill: var(--color-moss-green-dark);
+}
+
+.button.green:active:not(.disabled) .bottomEdge {
+  fill: var(--color-moss-green-light);
+}
+
+.button.red:active:not(.disabled) .leftEdge,
+.button.red:active:not(.disabled) .rightEdge,
+.button.red:active:not(.disabled) .topEdge {
+  fill: var(--color-clay-red-dark);
+}
+
+.button.red:active:not(.disabled) .bottomEdge {
+  fill: var(--color-clay-red-light);
+}
+
+.button.purple:active:not(.disabled) .leftEdge,
+.button.purple:active:not(.disabled) .rightEdge,
+.button.purple:active:not(.disabled) .topEdge {
+  fill: var(--color-deep-purple-dark);
+}
+
+.button.purple:active:not(.disabled) .bottomEdge {
+  fill: var(--color-deep-purple-light);
+}
+
 .button.disabled {
   cursor: not-allowed;
   opacity: 0.7;
