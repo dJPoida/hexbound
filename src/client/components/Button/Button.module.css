@@ -102,6 +102,13 @@
   paint-order: fill markers stroke;
 }
 
+.primary .accents {
+  fill: var(--color-hex-amber-highlight);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
 .primary .buttonText {
   color: var(--color-canvas-white);
 }
@@ -136,6 +143,13 @@
 
 .secondary .bottomEdge {
   fill: var(--color-pastel-sky-dark);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.secondary .accents {
+  fill: var(--color-pastel-sky-highlight);
   stroke: none;
   stroke-width: 0.115583;
   paint-order: fill markers stroke;
@@ -180,6 +194,13 @@
   paint-order: fill markers stroke;
 }
 
+.green .accents {
+  fill: var(--color-moss-green-highlight);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
 .green .buttonText {
   color: var(--color-canvas-white);
 }
@@ -214,6 +235,13 @@
 
 .red .bottomEdge {
   fill: var(--color-clay-red-dark);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.red .accents {
+  fill: var(--color-clay-red-highlight);
   stroke: none;
   stroke-width: 0.115583;
   paint-order: fill markers stroke;
@@ -258,6 +286,13 @@
   paint-order: fill markers stroke;
 }
 
+.purple .accents {
+  fill: var(--color-deep-purple-highlight);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
 .purple .buttonText {
   color: var(--color-canvas-white);
 }
@@ -267,7 +302,8 @@
 .button.disabled .leftEdge,
 .button.disabled .rightEdge,
 .button.disabled .topEdge,
-.button.disabled .bottomEdge {
+.button.disabled .bottomEdge,
+.button.disabled .accents {
   fill: var(--color-stone-grey-dark);
   stroke: none;
   stroke-width: 0.115583;
