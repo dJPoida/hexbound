@@ -79,6 +79,18 @@ export const Button = ({
           d={`m ${buttonWidth - 4},8 4,-2 v 38 l -4,-2 z`} 
           className={styles.rightEdge} 
         />
+
+        {/* Top edge - stretches with button width (from actual artwork) */}
+        <path 
+          d={`M 8,4 6,0 h ${buttonWidth - 12} l -2,4 z`} 
+          className={styles.topEdge} 
+        />
+
+        {/* Bottom edge - stretches with button width (from actual artwork) */}
+        <path 
+          d={`M ${buttonWidth - 8},46 H 8 L 6.234375,50 H ${buttonWidth - 6} Z`} 
+          className={styles.bottomEdge} 
+        />
       </svg>
       
       <span ref={textRef} className={styles.buttonText}>

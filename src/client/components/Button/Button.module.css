@@ -88,6 +88,20 @@
   paint-order: fill markers stroke;
 }
 
+.primary .topEdge {
+  fill: var(--color-hex-amber-light);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.primary .bottomEdge {
+  fill: var(--color-hex-amber-dark);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
 .primary .buttonText {
   color: var(--color-canvas-white);
 }
@@ -108,6 +122,20 @@
 
 .secondary .rightEdge {
   fill: var(--color-pastel-sky-light);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.secondary .topEdge {
+  fill: var(--color-pastel-sky-light);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.secondary .bottomEdge {
+  fill: var(--color-pastel-sky-dark);
   stroke: none;
   stroke-width: 0.115583;
   paint-order: fill markers stroke;
@@ -138,6 +166,20 @@
   paint-order: fill markers stroke;
 }
 
+.green .topEdge {
+  fill: var(--color-moss-green-light);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.green .bottomEdge {
+  fill: var(--color-moss-green-dark);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
 .green .buttonText {
   color: var(--color-canvas-white);
 }
@@ -158,6 +200,20 @@
 
 .red .rightEdge {
   fill: var(--color-clay-red-light);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.red .topEdge {
+  fill: var(--color-clay-red-light);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.red .bottomEdge {
+  fill: var(--color-clay-red-dark);
   stroke: none;
   stroke-width: 0.115583;
   paint-order: fill markers stroke;
@@ -188,6 +244,20 @@
   paint-order: fill markers stroke;
 }
 
+.purple .topEdge {
+  fill: var(--color-deep-purple-light);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.purple .bottomEdge {
+  fill: var(--color-deep-purple-dark);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
 .purple .buttonText {
   color: var(--color-canvas-white);
 }
@@ -195,7 +265,9 @@
 /* Disabled state overrides */
 .button.disabled .background,
 .button.disabled .leftEdge,
-.button.disabled .rightEdge {
+.button.disabled .rightEdge,
+.button.disabled .topEdge,
+.button.disabled .bottomEdge {
   fill: var(--color-stone-grey-dark);
   stroke: none;
   stroke-width: 0.115583;
