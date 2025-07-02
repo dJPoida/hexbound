@@ -1,4 +1,4 @@
-import { OldButton } from '../../components/OldButton/OldButton';
+
 import { Button } from '../../components/Button/Button';
 import { Logo } from '../../components/Logo/Logo';
 import { Heading } from '../../components/Typography/Heading';
@@ -103,9 +103,9 @@ export const StyleGuide = () => {
       </section>
 
       <section class={styles.section}>
-        <Heading level={2} variant="sectionHeader">New SVG Buttons</Heading>
+        <Heading level={2} variant="sectionHeader">Buttons</Heading>
         <Text color="subtle">
-          New dynamic SVG-based buttons that scale horizontally without distortion.
+          Dynamic SVG-based gem buttons that scale horizontally without distortion.
         </Text>
         
         <section class={styles.subSection}>
@@ -120,6 +120,10 @@ export const StyleGuide = () => {
             <Button onClick={() => {}} variant="purple">Purple</Button>
             <Button onClick={() => {}} variant="primary" disabled>Disabled</Button>
           </div>
+          <div class={styles.buttonRow}>
+            <Button onClick={() => {}} variant="icon" ariaLabel="Menu"><span class="hbi-menu"></span></Button>
+            <Button onClick={() => {}} variant="link">Link Button</Button>
+          </div>
         </section>
 
         <section class={styles.subSection}>
@@ -132,20 +136,7 @@ export const StyleGuide = () => {
         </section>
       </section>
 
-      <section class={styles.section}>
-        <Heading level={2} variant="sectionHeader">Old Buttons</Heading>
-        <Text color="subtle">
-          Legacy button components (will be removed once new buttons are complete).
-        </Text>
-        <div class={styles.grid}>
-          <OldButton onClick={() => {}} variant="primary">Primary</OldButton>
-          <OldButton onClick={() => {}} variant="secondary">Secondary</OldButton>
-          <OldButton onClick={() => {}} variant="green">Green</OldButton>
-          <OldButton onClick={() => {}} variant="red">Red</OldButton>
-          <OldButton onClick={() => {}} variant="purple">Purple</OldButton>
-          <OldButton onClick={() => {}} variant="primary" disabled>Disabled</OldButton>
-        </div>
-      </section>
+
 
       <section class={styles.section}>
         <Heading level={2} variant="sectionHeader">Icons</Heading>

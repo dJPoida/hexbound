@@ -12,7 +12,7 @@ import { GameListItem } from '../shared/types/game.types';
 import { GameViewLayout } from './components/GameViewLayout/GameViewLayout';
 import { LobbyLayout } from './components/LobbyLayout/LobbyLayout';
 import { ActionBar } from './components/ActionBar/ActionBar';
-import { OldButton } from './components/OldButton/OldButton';
+import { Button } from './components/Button/Button';
 import { Dialog } from './components/Dialog/Dialog';
 import { API_ROUTES } from '../shared/constants/api.const';
 import { EnableNotificationsDialog } from './components/EnableNotificationsDialog/EnableNotificationsDialog';

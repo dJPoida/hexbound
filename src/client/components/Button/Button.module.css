@@ -429,4 +429,127 @@
   stroke-linejoin: bevel;
   stroke-opacity: 1;
   paint-order: fill markers stroke;
+}
+
+/* Full width support */
+.button.fullWidth {
+  width: 100%;
+  display: block;
+}
+
+/* Icon variant - similar to secondary but square */
+.icon {
+  min-width: 50px;
+  width: 50px !important;
+  padding: 0;
+}
+
+.icon .background {
+  fill: var(--color-pastel-sky);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.icon .leftEdge {
+  fill: var(--color-pastel-sky-light);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.icon .rightEdge {
+  fill: var(--color-pastel-sky-light);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.icon .topEdge {
+  fill: var(--color-pastel-sky-light);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.icon .bottomEdge {
+  fill: var(--color-pastel-sky-dark);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.icon .accents {
+  fill: var(--color-pastel-sky-highlight);
+  stroke: none;
+  stroke-width: 0.115583;
+  paint-order: fill markers stroke;
+}
+
+.icon .buttonText {
+  color: var(--color-canvas-white);
+}
+
+.icon .outline {
+  fill: none;
+  stroke: var(--color-charcoal);
+  stroke-width: 1;
+  stroke-linecap: butt;
+  stroke-linejoin: bevel;
+  stroke-opacity: 1;
+  paint-order: fill markers stroke;
+}
+
+/* Icon active state */
+.button.icon:active:not(.disabled) .leftEdge,
+.button.icon:active:not(.disabled) .rightEdge,
+.button.icon:active:not(.disabled) .topEdge {
+  fill: var(--color-pastel-sky-dark);
+}
+
+.button.icon:active:not(.disabled) .bottomEdge {
+  fill: var(--color-pastel-sky-light);
+}
+
+/* Link variant - minimal styling, no gem appearance */
+.link {
+  background: transparent;
+  border: none;
+  color: var(--color-hex-amber);
+  text-decoration: underline;
+  font-weight: normal;
+  text-transform: none;
+  padding: 0.5rem 1rem;
+  min-width: auto;
+  height: auto;
+}
+
+.link .buttonSvg {
+  display: none;
+}
+
+.link .buttonText {
+  text-shadow: none;
+  color: var(--color-hex-amber);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-normal);
+}
+
+.link:hover:not(.disabled) {
+  filter: none;
+  color: var(--color-hex-amber-light);
+}
+
+.link:hover:not(.disabled) .buttonText {
+  color: var(--color-hex-amber-light);
+}
+
+.link:active:not(.disabled) {
+  filter: none;
+  color: var(--color-hex-amber-dark);
+}
+
+.link:active:not(.disabled) .buttonText {
+  color: var(--color-hex-amber-dark);
+  transform: none;
 } 

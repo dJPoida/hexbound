@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks';
-import { OldMenuButton } from '../OldButton/OldMenuButton';
+import { Button } from '../Button/Button';
 import styles from './LobbyHeader.module.css';
 
 interface LobbyHeaderProps {
@@ -18,11 +18,13 @@ export function LobbyHeader({ currentUserName, onLogout, onOpenSettings }: Lobby
             <div className={styles.headerActions}>
                 <span>{currentUserName}</span>
                 <div className={styles.menuButtonContainer}>
-                    <OldMenuButton 
+                    <Button 
                         onClick={toggleMenu} 
                         ariaLabel="Open menu" 
-                        variant={isMenuOpen ? 'primary' : 'secondary'}
-                    />
+                        variant="icon"
+                    >
+                        <span class="hbi-menu" aria-hidden="true"></span>
+                    </Button>
                 </div>
                 {isMenuOpen && (
                     <div className={styles.menuDropdown}>

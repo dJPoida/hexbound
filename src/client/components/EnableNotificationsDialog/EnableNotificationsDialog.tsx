@@ -1,7 +1,7 @@
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
 import { Dialog } from '../Dialog/Dialog';
-import { OldButton } from '../OldButton/OldButton';
+import { Button } from '../Button/Button';
 import styles from './EnableNotificationsDialog.module.css';
 import { pushService } from '../../services/push.service';
 import { settingsService } from '../../services/settings.service';
@@ -47,12 +47,12 @@ export const EnableNotificationsDialog = ({ onComplete, permissionState }: Enabl
 
   const footer = (
     <div class={styles.footerActions}>
-        <OldButton onClick={handleSkipClick} variant="secondary">
+        <Button onClick={handleSkipClick} variant="secondary">
             Skip For Now
-        </OldButton>
-        <OldButton onClick={handleEnableClick} variant="primary" disabled={isEnableButtonDisabled}>
+        </Button>
+        <Button onClick={handleEnableClick} variant="primary" disabled={isEnableButtonDisabled}>
             {isLoading ? 'Subscribing...' : 'Enable Notifications'}
-        </OldButton>
+        </Button>
     </div>
   );
 

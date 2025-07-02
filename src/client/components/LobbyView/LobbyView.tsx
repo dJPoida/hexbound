@@ -1,6 +1,6 @@
 import { useRef } from 'preact/hooks';
 import { GameListItem, Player } from '../../../shared/types/game.types';
-import { OldButton } from '../OldButton/OldButton';
+import { Button } from '../Button/Button';
 import styles from './LobbyView.module.css';
 import { Logo } from '../Logo/Logo';
 
@@ -50,9 +50,9 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
       </div>
 
       <div className={styles.actionsSection}>
-        <OldButton onClick={onCreateNewGame} variant="primary" fullWidth={true}>
-          Create New Game
-        </OldButton>
+                    <Button onClick={onCreateNewGame} variant="primary" fullWidth={true}>
+              Create New Game
+            </Button>
         <div className={styles.joinByIdContainer}>
           <input 
             type="text" 
@@ -60,9 +60,9 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
             className={styles.input}
             placeholder="Paste Game Code" 
           />
-          <OldButton onClick={handleJoinByCode} variant="secondary">
+          <Button onClick={handleJoinByCode} variant="secondary">
             Join
-          </OldButton>
+          </Button>
         </div>
       </div>
     </div>
