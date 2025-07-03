@@ -100,7 +100,7 @@ export const StyleGuidePage = () => {
           <Text color="subtle">Used to highlight important actions and features.</Text>
           <div class={styles.grid}>
             <ColorSwatch name="Hex Amber" colorName="hex-amber" hex="#f48550" role="Primary" variants={{ dark: '#d46c3b', light: '#f7a075', highlight: '#f9bba0' }} />
-            <ColorSwatch name="Pastel Sky" colorName="pastel-sky" hex="#a9d7e8" role="Secondary" variants={{ dark: '#8cb6c6', light: '#c2e2ee', highlight: '#dcf0f8' }} />
+            <ColorSwatch name="Slate Blue" colorName="slate-blue" hex="#5B6B7A" role="Secondary" variants={{ dark: '#465460', light: '#7a8a99', highlight: '#9caab8' }} />
           </div>
         </section>
 
@@ -111,7 +111,7 @@ export const StyleGuidePage = () => {
             <ColorSwatch name="Moss Green" colorName="moss-green" hex="#87a06f" variants={{ dark: '#6e8558', light: '#a0b88b', highlight: '#bad0a8' }} />
             <ColorSwatch name="Clay Red" colorName="clay-red" hex="#d47a6a" variants={{ dark: '#b56254', light: '#e1988b', highlight: '#edb6ac' }} />
             <ColorSwatch name="Deep Purple" colorName="deep-purple" hex="#7e718c" variants={{ dark: '#645a70', light: '#988fa6', highlight: '#b3a9be' }} />
-            <ColorSwatch name="Slate Blue" colorName="slate-blue" hex="#5B6B7A" variants={{ dark: '#465460', light: '#7a8a99', highlight: '#9caab8' }} />
+            <ColorSwatch name="Pastel Sky" colorName="pastel-sky" hex="#a9d7e8" variants={{ dark: '#8cb6c6', light: '#c2e2ee', highlight: '#dcf0f8' }} />
           </div>
         </section>
       </section>

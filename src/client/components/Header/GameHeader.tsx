@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useState, useEffect, useRef } from 'preact/hooks';
 import { Button } from '../Button/Button';
 import { GameSettingsDialog } from '../GameSettingsDialog/GameSettingsDialog';
 import styles from './GameHeader.module.css';
@@ -17,20 +17,49 @@ interface GameHeaderProps {
 export function GameHeader({ currentUserName, onLogout, currentView, onNavigateToLobby, turnNumber, counter, onToggleCounterDialog, onOpenSettings }: GameHeaderProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [copyStatus, setCopyStatus] = useState<'idle' | 'copied'>('idle');
+    const menuRef = useRef<HTMLDivElement>(null);
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+    const closeMenu = () => setIsMenuOpen(false);
+
+    // Close menu when clicking outside or pressing Escape
+    useEffect(() => {
+        if (!isMenuOpen) return;
+
+        const handleClickOutside = (event: Event) => {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                closeMenu();
+            }
+        };
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                closeMenu();
+            }
+        };
+
+        // Add event listeners
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('keydown', handleKeyDown);
+
+        // Cleanup function
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isMenuOpen]);
     
     const handleCopyLink = () => {
         navigator.clipboard.writeText(window.location.href).then(() => {
             setCopyStatus('copied');
             setTimeout(() => {
                 setCopyStatus('idle');
-                toggleMenu(); 
+                closeMenu(); 
             }, 1500);
         }).catch(err => {
             console.error('Failed to copy text: ', err);
             // Optionally, handle the error (e.g., show an error message)
-            toggleMenu();
+            closeMenu();
         });
     };
 
@@ -59,7 +88,7 @@ export function GameHeader({ currentUserName, onLogout, currentView, onNavigateT
             )}
             <div className={styles.headerActions}>
                 <span>{currentUserName} {currentView === 'game' && turnNumber && `(Turn: ${turnNumber})`}</span>
-                <div className={styles.menuButtonContainer}>
+                <div className={styles.menuButtonContainer} ref={menuRef}>
                     <Button 
                         onClick={toggleMenu} 
                         ariaLabel="Open menu" 
@@ -67,47 +96,47 @@ export function GameHeader({ currentUserName, onLogout, currentView, onNavigateT
                     >
                         <span class="hbi-menu" aria-hidden="true"></span>
                     </Button>
+                    {isMenuOpen && (
+                        <div className={styles.menuDropdown}>
+                            {currentView === 'game' && (
+                                <>
+                                    <button className={styles.menuItem} onClick={() => { onOpenSettings(); closeMenu(); }}>
+                                        <i class="hbi hbi-settings"></i>
+                                        <span>Game Settings</span>
+                                    </button>
+                                    <button className={styles.menuItem} onClick={handleCopyLink}>
+                                        <i class="hbi hbi-link"></i>
+                                        <span>{copyStatus === 'copied' ? 'Link Copied!' : 'Copy Game Link'}</span>
+                                    </button>
+                                    <button className={styles.menuItem} onClick={() => { onNavigateToLobby(); closeMenu(); }}>
+                                        <i class="hbi hbi-exit"></i>
+                                        <span>Return to Lobby</span>
+                                    </button>
+                                </>
+                            )}
+                            {currentView === 'lobby' && (
+                                 <>
+                                    <button className={styles.menuItem} onClick={() => { onOpenSettings(); closeMenu(); }}>
+                                        <i class="hbi hbi-settings"></i>
+                                        <span>Game Settings</span>
+                                    </button>
+                                    <button className={styles.menuItem} onClick={() => { onLogout(); closeMenu(); }}>
+                                        <i class="hbi hbi-exit"></i>
+                                        <span>Logout</span>
+                                    </button>
+                                </>
+                            )}
+                            {currentView === 'login' && (
+                                 <>
+                                    <button className={styles.menuItem} onClick={() => { onOpenSettings(); closeMenu(); }}>
+                                        <i class="hbi hbi-settings"></i>
+                                        <span>Game Settings</span>
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    )}
                 </div>
-                {isMenuOpen && (
-                    <div className={styles.menuDropdown}>
-                        {currentView === 'game' && (
-                            <>
-                                <button className={styles.menuItem} onClick={() => { onOpenSettings(); toggleMenu(); }}>
-                                    <i class="hbi hbi-settings"></i>
-                                    <span>Game Settings</span>
-                                </button>
-                                <button className={styles.menuItem} onClick={handleCopyLink}>
-                                    <i class="hbi hbi-link"></i>
-                                    <span>{copyStatus === 'copied' ? 'Link Copied!' : 'Copy Game Link'}</span>
-                                </button>
-                                <button className={styles.menuItem} onClick={() => { onNavigateToLobby(); toggleMenu(); }}>
-                                    <i class="hbi hbi-exit"></i>
-                                    <span>Return to Lobby</span>
-                                </button>
-                            </>
-                        )}
-                        {currentView === 'lobby' && (
-                             <>
-                                <button className={styles.menuItem} onClick={() => { onOpenSettings(); toggleMenu(); }}>
-                                    <i class="hbi hbi-settings"></i>
-                                    <span>Game Settings</span>
-                                </button>
-                                <button className={styles.menuItem} onClick={() => { onLogout(); toggleMenu(); }}>
-                                    <i class="hbi hbi-exit"></i>
-                                    <span>Logout</span>
-                                </button>
-                            </>
-                        )}
-                        {currentView === 'login' && (
-                             <>
-                                <button className={styles.menuItem} onClick={() => { onOpenSettings(); toggleMenu(); }}>
-                                    <i class="hbi hbi-settings"></i>
-                                    <span>Game Settings</span>
-                                </button>
-                            </>
-                        )}
-                    </div>
-                )}
             </div>
         </div>
     );

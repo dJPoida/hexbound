@@ -129,10 +129,10 @@
 .primary .outline { stroke: var(--color-charcoal); }
 
 .secondary {
-  --variant-base: var(--color-pastel-sky);
-  --variant-light: var(--color-pastel-sky-light);
-  --variant-dark: var(--color-pastel-sky-dark);
-  --variant-highlight: var(--color-pastel-sky-highlight);
+  --variant-base: var(--color-slate-blue);
+  --variant-light: var(--color-slate-blue-light);
+  --variant-dark: var(--color-slate-blue-dark);
+  --variant-highlight: var(--color-slate-blue-highlight);
 }
 
 .secondary .background { fill: var(--variant-base); }
@@ -217,10 +217,10 @@
   min-width: 50px;
   width: 50px !important;
   padding: 0;
-  --variant-base: var(--color-pastel-sky);
-  --variant-light: var(--color-pastel-sky-light);
-  --variant-dark: var(--color-pastel-sky-dark);
-  --variant-highlight: var(--color-pastel-sky-highlight);
+  --variant-base: var(--color-slate-blue);
+  --variant-light: var(--color-slate-blue-light);
+  --variant-dark: var(--color-slate-blue-dark);
+  --variant-highlight: var(--color-slate-blue-highlight);
 }
 
 .icon .background { fill: var(--variant-base); }
