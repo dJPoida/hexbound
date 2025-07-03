@@ -99,7 +99,7 @@ export const StyleGuidePage = () => {
           <Heading level={3} variant="subSectionHeader">Accent & Feature Colors</Heading>
           <Text color="subtle">Used to highlight important actions and features.</Text>
           <div class={styles.grid}>
-            <ColorSwatch name="Hex Amber" colorName="hex-amber" hex="#f48550" role="Primary" variants={{ dark: '#d46c3b', light: '#f7a075', highlight: '#f9bba0' }} />
+            <ColorSwatch name="Hex Amber" colorName="hex-amber" hex="#FEC859" role="Primary" variants={{ dark: '#D4A73C', light: '#FED67B', highlight: '#FFE4A3' }} />
             <ColorSwatch name="Slate Blue" colorName="slate-blue" hex="#5B6B7A" role="Secondary" variants={{ dark: '#465460', light: '#7a8a99', highlight: '#9caab8' }} />
           </div>
         </section>

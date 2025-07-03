@@ -52,7 +52,7 @@ export function GameViewLayout({
       <Button onClick={() => onPushDialog('debugInfo')} variant="icon" ariaLabel="Show Debug Info">
         <i class="hbi hbi-terminal"></i>
       </Button>
-      <Button onClick={onEndTurn} variant="secondary" disabled={!isMyTurn}>End Turn</Button>
+      <Button onClick={onEndTurn} variant="primary" disabled={!isMyTurn}>End Turn</Button>
     </ActionBar>
   );
   

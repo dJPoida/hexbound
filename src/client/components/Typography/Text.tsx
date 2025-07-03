@@ -1,6 +1,5 @@
 import styles from './Typography.module.css';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { JSX } from 'preact/jsx-runtime';
 
 const textStyles = cva(styles.text, {
   variants: {
