@@ -263,6 +263,96 @@ When creating new button variants:
 - **Active effects**: `translateY(1px)` and `filter: brightness(0.95)`
 - **Disabled state**: `opacity: 0.7` and `filter: grayscale(0.5)`
 
+## Form Components Architecture
+
+### Form Component Philosophy
+All form components follow consistent patterns for medieval/fantasy styling, accessibility, and user experience. Form components include Input, Checkbox, and future components like Select, Radio, and Textarea.
+
+### Input Component Implementation
+The `Input` component (`src/client/components/Input/Input.tsx`) provides a comprehensive text input solution:
+
+**Visual Design:**
+- **Parchment-like styling**: Subtle inset shadows and canvas-white background
+- **Focus states**: Amber highlight ring with enhanced background
+- **Error states**: Clay-red coloring for validation feedback  
+- **Disabled states**: Muted colors with reduced opacity
+- **Size variants**: Default and large options
+
+**Typography & Layout:**
+- **Font**: Uses `--font-primary-normal` (Imperator) for consistency
+- **Vertical alignment**: Asymmetric padding to compensate for font baseline (10px top, 6px bottom for default; 18px top, 14px bottom for large)
+- **Line height**: Reduced to 1.2 for better visual centering
+- **Touch targets**: Minimum 44px height for mobile accessibility
+
+**Form Integration:**
+- **Controlled/Uncontrolled**: Supports both controlled (value prop) and uncontrolled (defaultValue) patterns
+- **Event handling**: Comprehensive event support (onChange, onFocus, onBlur, onInput, onKeyDown, onKeyUp)
+- **Validation**: Built-in support for required, pattern, minLength, maxLength attributes
+- **Accessibility**: Full ARIA support with labels, descriptions, and error states
+
+### Checkbox Component Implementation  
+The `Checkbox` component (`src/client/components/Checkbox/Checkbox.tsx`) provides toggle selection functionality:
+
+**Visual Design:**
+- **Clean styling**: No background or border frames - focused on icon and text
+- **Icon system**: Uses Hexbound icon font (`hbi-square` and `hbi-check-square`)
+- **Interactive effects**: Icon scaling and color changes on hover/focus/checked states
+- **Size variants**: Default and large options with proportional scaling
+
+**Typography & Layout:**
+- **Font alignment**: Uses `margin-top: 0.5em` to compensate for Imperator font baseline
+- **Spacing**: Proportional spacing between icon and text (`--space-sm` for default, `--space-md` for large)
+- **Touch targets**: Minimum 44px height with appropriate padding
+
+**Accessibility & Form Integration:**
+- **Keyboard navigation**: Space/Enter key support with focus management
+- **ARIA compliance**: Full role="checkbox", aria-checked, and labeling support
+- **Form compatibility**: Hidden native checkbox for proper form submission
+- **State management**: Controlled component pattern with onChange callback
+
+### Form Component Design Guidelines
+
+**Visual Consistency:**
+- **ALWAYS** use design tokens from `tokens.module.css` for colors, fonts, and spacing
+- **ALWAYS** follow the 4-tier color system for interactive states (base/light/dark/highlight)
+- **NEVER** use hardcoded color values or spacing - reference existing tokens
+
+**Typography Considerations:**
+- **Imperator font baseline**: Form components must compensate for font baseline alignment issues
+- **Text inputs**: Use asymmetric padding (more top than bottom)
+- **Labels/text**: Use positive margin-top in `em` units for proportional scaling
+- **Line height**: Use 1.2 for optimal vertical centering
+
+**Interactive States:**
+- **Focus**: Use amber highlight ring (`--color-hex-amber-light`) for consistency
+- **Hover**: Subtle transforms and color changes for feedback
+- **Disabled**: Muted colors with `--color-stone-grey` variants and reduced opacity
+- **Error**: Use clay-red color family for validation feedback
+
+**Accessibility Requirements:**
+- **Touch targets**: Minimum 44px hit areas for mobile devices
+- **Keyboard support**: Full keyboard navigation and activation
+- **Screen readers**: Proper ARIA attributes and semantic HTML structure
+- **High contrast**: Support for `prefers-contrast: high` media query
+- **Reduced motion**: Support for `prefers-reduced-motion: reduce` media query
+
+### Form Component Creation Process
+When creating new form components:
+
+1. **Component Structure**: Follow the established pattern with comprehensive TypeScript interfaces
+2. **CSS Architecture**: Use CSS Modules with design token references
+3. **Event Handling**: Use proper JSX.TargetedEvent types for Preact compatibility  
+4. **State Management**: Support both controlled and uncontrolled patterns
+5. **Accessibility**: Include full ARIA support and keyboard navigation
+6. **StyleGuide Integration**: Add examples to demonstrate all states and variants
+7. **Testing**: Verify proper form submission and validation behavior
+
+### Legacy Form Element Migration
+- **Replace all native HTML form elements** with styled components for consistency
+- **Preserve functionality**: Ensure all existing features and validation work unchanged
+- **Clean up CSS**: Remove redundant styles from component CSS files after migration
+- **Update imports**: Add new component imports where needed
+
 # Backend Development & TypeORM
 - **`reflect-metadata` Requirement**: For all TypeORM operations, especially migration generation, ensure `import 'reflect-metadata';` is the very first import in the server's entry point (`src/server/main.ts`).
 - **Explicit Column Types**: If TypeORM migration generation fails with a type inference error (e.g., "cannot be guessed"), explicitly define the column type (e.g., `@Column('varchar')`) in the entity definition.
