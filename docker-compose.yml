@@ -37,6 +37,18 @@ services:
     depends_on:
       - postgres
 
+  docs:
+    build:
+      context: ./docs-site
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./docs:/app/docs:ro
+    environment:
+      - NODE_ENV=production
+
 volumes:
   redis_data:
   postgres_data:

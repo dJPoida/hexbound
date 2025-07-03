@@ -1,3 +1,10 @@
+---
+title: Terrain
+description: Understanding the hex grid terrain system in Hexbound
+---
+
+# Terrain
+
 The terrain is a hex grid, viewed in isometric from the south.
 
 Terrain consists of water and land tiles.

@@ -16,7 +16,11 @@
     "typeorm:run": "npm run typeorm -- migration:run",
     "typeorm:run:prod": "node node_modules/typeorm/cli.js -d dist/server/data-source.js migration:run",
     "db:reset": "npm run typeorm -- schema:drop",
-    "update:icons": "node scripts/update-icons.mjs"
+    "update:icons": "node scripts/update-icons.mjs",
+    "docs:dev": "cd docs-site && npm start",
+    "docs:build": "cd docs-site && npm run build",
+    "docs:install": "cd docs-site && npm install",
+    "docs:serve": "cd docs-site && npm run serve"
   },
   "devDependencies": {
     "@types/express": "^4.17.22",

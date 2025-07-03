@@ -1,0 +1,415 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* Import custom fonts */
+@font-face {
+  font-family: 'Hexbound';
+  src: url('/fonts/Hexbound/Hexbound.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Imperator';
+  src: url('/fonts/Imperator/Imperator.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Imperator Bold';
+  src: url('/fonts/Imperator/Imperator Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ImperatorSmallCaps';
+  src: url('/fonts/Imperator/ImperatorSmallCaps.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ImperatorBronze';
+  src: url('/fonts/Imperator/ImperatorBronze.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Bubblegum Sans';
+  src: url('/fonts/BubblegumSans/BubblegumSans.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Design Tokens - Mirrored from tokens.module.css */
+:root {
+  /* ==========================================================================
+     Color Palette
+     ========================================================================== */
+  
+  /* General Colors */
+  --color-canvas-white: #fefaeF;
+  --color-canvas-white-dark: #d5d1c9;
+  --color-canvas-white-light: #ffffff;
+  --color-canvas-white-highlight: #ffffff;
+
+  --color-charcoal: #2d2d2d;
+  --color-charcoal-dark: #1e1e1e;
+  --color-charcoal-light: #4c4c4c;
+  --color-charcoal-highlight: #6b6b6b;
+
+  --color-stone-grey: #7a7a7a;
+  --color-stone-grey-dark: #5c5c5c;
+  --color-stone-grey-light: #999999;
+  --color-stone-grey-highlight: #b8b8b8;
+
+  --color-glow-yellow: #ffef9f;
+  --color-glow-yellow-dark: #dccb86;
+  --color-glow-yellow-light: #fff5bc;
+  --color-glow-yellow-highlight: #fffbe0;
+
+  /* Accent & Feature Colors */
+  --color-hex-amber: #f5b83d;
+  --color-hex-amber-dark: #d19a2f;
+  --color-hex-amber-light: #f8c659;
+  --color-hex-amber-highlight: #fbd47b;
+
+  --color-pastel-sky: #a9d7e8;
+  --color-pastel-sky-dark: #8cb6c6;
+  --color-pastel-sky-light: #c2e2ee;
+  --color-pastel-sky-highlight: #dcf0f8;
+
+  /* Ancillary Colors */
+  --color-moss-green: #87a06f;
+  --color-moss-green-dark: #6e8558;
+  --color-moss-green-light: #a0b88b;
+  --color-moss-green-highlight: #bad0a8;
+
+  --color-clay-red: #d47a6a;
+  --color-clay-red-dark: #b56254;
+  --color-clay-red-light: #e1988b;
+  --color-clay-red-highlight: #edb6ac;
+
+  --color-deep-purple: #7e718c;
+  --color-deep-purple-dark: #645a70;
+  --color-deep-purple-light: #988fa6;
+  --color-deep-purple-highlight: #b3a9be;
+
+  --color-slate-blue: #5B6B7A;
+  --color-slate-blue-dark: #465460;
+  --color-slate-blue-light: #7a8a99;
+  --color-slate-blue-highlight: #9caab8;
+
+  /* Font Families */
+  --font-brand: 'Hexbound', serif;
+  --font-primary-normal: 'Imperator', serif;
+  --font-primary-bold: 'Imperator Bold', serif;
+  --font-primary-small-caps: 'ImperatorSmallCaps', serif;
+  --font-primary-bronze: 'ImperatorBronze', serif;
+  --font-button: 'Bubblegum Sans', sans-serif;
+
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 40px;
+
+  /* Shadows */
+  --shadow-warm-subtle: rgba(60, 50, 30, 0.06);
+  --shadow-warm-soft: rgba(60, 50, 30, 0.10);
+  --shadow-warm-medium: rgba(60, 50, 30, 0.16);
+  --shadow-card-warm: 0 8px 32px 0 var(--shadow-warm-soft), 0 1.5px 4px 0 var(--shadow-warm-subtle);
+
+  /* Override Docusaurus color variables */
+  --ifm-color-primary: var(--color-hex-amber);
+  --ifm-color-primary-dark: var(--color-hex-amber-dark);
+  --ifm-color-primary-darker: var(--color-hex-amber-dark);
+  --ifm-color-primary-darkest: var(--color-hex-amber-dark);
+  --ifm-color-primary-light: var(--color-hex-amber-light);
+  --ifm-color-primary-lighter: var(--color-hex-amber-light);
+  --ifm-color-primary-lightest: var(--color-hex-amber-highlight);
+  
+  --ifm-background-color: var(--color-canvas-white);
+  --ifm-font-family-base: var(--font-primary-normal);
+  --ifm-heading-font-family: var(--font-primary-bold);
+  --ifm-font-color-base: var(--color-charcoal);
+  
+  --ifm-navbar-background-color: var(--color-canvas-white);
+  --ifm-navbar-shadow: var(--shadow-card-warm);
+  
+  --ifm-footer-background-color: var(--color-charcoal);
+  --ifm-footer-color: var(--color-canvas-white);
+  --ifm-footer-link-color: var(--color-hex-amber-light);
+  --ifm-footer-title-color: var(--color-canvas-white);
+  
+  --ifm-sidebar-background-color: var(--color-canvas-white);
+  --ifm-menu-color: var(--color-charcoal);
+  --ifm-menu-color-background-active: var(--color-hex-amber-light);
+  --ifm-menu-color-background-hover: var(--color-glow-yellow-light);
+}
+
+/* Global body styling */
+body {
+  font-family: var(--font-primary-normal);
+  background-color: var(--color-canvas-white);
+  color: var(--color-charcoal);
+  line-height: 1.6;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary-bold);
+  color: var(--color-charcoal);
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+h1 {
+  font-size: var(--font-size-4xl);
+  border-bottom: 3px solid var(--color-hex-amber);
+  padding-bottom: var(--space-sm);
+}
+
+h2 {
+  font-size: var(--font-size-3xl);
+  border-bottom: 2px solid var(--color-hex-amber-light);
+  padding-bottom: var(--space-xs);
+}
+
+h3 {
+  font-size: var(--font-size-2xl);
+  color: var(--color-hex-amber-dark);
+}
+
+/* Navigation styling */
+.navbar {
+  box-shadow: var(--shadow-card-warm);
+  border-bottom: 2px solid var(--color-hex-amber-light);
+}
+
+.navbar__brand {
+  font-family: var(--font-brand);
+  font-size: var(--font-size-2xl);
+  color: var(--color-hex-amber-dark);
+  text-decoration: none;
+}
+
+.navbar__item {
+  font-family: var(--font-primary-normal);
+  font-weight: 500;
+}
+
+.navbar__link {
+  color: var(--color-charcoal);
+  transition: color 0.2s ease;
+}
+
+.navbar__link:hover {
+  color: var(--color-hex-amber-dark);
+}
+
+/* Sidebar styling */
+.menu__link {
+  font-family: var(--font-primary-normal);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.menu__link:hover {
+  background-color: var(--color-glow-yellow-light);
+  color: var(--color-charcoal);
+}
+
+.menu__link--active {
+  background-color: var(--color-hex-amber-light);
+  color: var(--color-charcoal);
+  font-weight: 600;
+}
+
+.menu__list-item-collapsible {
+  border-radius: 6px;
+}
+
+.menu__caret {
+  color: var(--color-hex-amber-dark);
+}
+
+/* Content styling */
+.markdown {
+  font-family: var(--font-primary-normal);
+  line-height: 1.7;
+}
+
+.markdown p {
+  margin-bottom: var(--space-md);
+}
+
+.markdown blockquote {
+  border-left: 4px solid var(--color-hex-amber);
+  background-color: var(--color-glow-yellow-light);
+  padding: var(--space-md);
+  margin: var(--space-lg) 0;
+  border-radius: 0 6px 6px 0;
+}
+
+.markdown code {
+  background-color: var(--color-glow-yellow-light);
+  color: var(--color-charcoal);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+}
+
+.markdown pre {
+  background-color: var(--color-charcoal);
+  color: var(--color-canvas-white);
+  padding: var(--space-md);
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: var(--space-lg) 0;
+}
+
+.markdown pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+/* Tables */
+.markdown table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: var(--space-lg) 0;
+  box-shadow: var(--shadow-card-warm);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.markdown table th {
+  background-color: var(--color-hex-amber);
+  color: var(--color-charcoal);
+  padding: var(--space-md);
+  font-family: var(--font-primary-bold);
+  font-weight: 600;
+  text-align: left;
+}
+
+.markdown table td {
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--color-stone-grey-light);
+}
+
+.markdown table tr:nth-child(even) {
+  background-color: var(--color-glow-yellow-light);
+}
+
+.markdown table tr:hover {
+  background-color: var(--color-hex-amber-light);
+}
+
+/* Links */
+.markdown a {
+  color: var(--color-hex-amber-dark);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.markdown a:hover {
+  border-bottom-color: var(--color-hex-amber-dark);
+}
+
+/* Lists */
+.markdown ul, .markdown ol {
+  padding-left: var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+.markdown li {
+  margin-bottom: var(--space-xs);
+}
+
+/* Footer styling */
+.footer {
+  background-color: var(--color-charcoal);
+  color: var(--color-canvas-white);
+}
+
+.footer__title {
+  font-family: var(--font-primary-bold);
+  color: var(--color-canvas-white);
+}
+
+.footer__item {
+  font-family: var(--font-primary-normal);
+}
+
+.footer__link-item {
+  color: var(--color-hex-amber-light);
+}
+
+.footer__link-item:hover {
+  color: var(--color-hex-amber-highlight);
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+  font-family: var(--font-primary-normal);
+  font-size: var(--font-size-sm);
+  color: var(--color-stone-grey);
+}
+
+.breadcrumbs__link {
+  color: var(--color-hex-amber-dark);
+}
+
+.breadcrumbs__link:hover {
+  color: var(--color-hex-amber);
+}
+
+/* Pagination */
+.pagination-nav {
+  margin-top: var(--space-2xl);
+}
+
+.pagination-nav__link {
+  border: 2px solid var(--color-hex-amber-light);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.pagination-nav__link:hover {
+  border-color: var(--color-hex-amber);
+  box-shadow: var(--shadow-card-warm);
+}
+
+/* Search */
+.DocSearch {
+  --docsearch-primary-color: var(--color-hex-amber);
+  --docsearch-text-color: var(--color-charcoal);
+  --docsearch-highlight-color: var(--color-hex-amber-light);
+} 
