@@ -6,9 +6,11 @@ interface LobbyHeaderProps {
     currentUserName: string | null;
     onLogout: () => void;
     onOpenSettings: () => void;
+    onNavigateToStyleGuide: () => void;
+    onNavigateToUtils: () => void;
 }
 
-export function LobbyHeader({ currentUserName, onLogout, onOpenSettings }: LobbyHeaderProps) {
+export function LobbyHeader({ currentUserName, onLogout, onOpenSettings, onNavigateToStyleGuide, onNavigateToUtils }: LobbyHeaderProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -28,6 +30,14 @@ export function LobbyHeader({ currentUserName, onLogout, onOpenSettings }: Lobby
                 </div>
                 {isMenuOpen && (
                     <div className={styles.menuDropdown}>
+                        <button className={styles.menuItem} onClick={() => { onNavigateToStyleGuide(); toggleMenu(); }}>
+                            <i class="hbi hbi-eye"></i>
+                            <span>Style Guide</span>
+                        </button>
+                        <button className={styles.menuItem} onClick={() => { onNavigateToUtils(); toggleMenu(); }}>
+                            <i class="hbi hbi-terminal"></i>
+                            <span>Utils</span>
+                        </button>
                         <button className={styles.menuItem} onClick={() => { onOpenSettings(); toggleMenu(); }}>
                             <i class="hbi hbi-settings"></i>
                             <span>Game Settings</span>

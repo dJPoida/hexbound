@@ -1,12 +1,12 @@
 
 import { useState } from 'preact/hooks';
-import { Button } from '../../components/Button/Button';
-import { Checkbox } from '../../components/Checkbox/Checkbox';
-import { Input } from '../../components/Input/Input';
-import { Logo } from '../../components/Logo/Logo';
-import { Heading } from '../../components/Typography/Heading';
-import { Text } from '../../components/Typography/Text';
-import styles from './StyleGuide.module.css';
+import { Button } from '../../Button/Button';
+import { Checkbox } from '../../Checkbox/Checkbox';
+import { Input } from '../../Input/Input';
+import { Logo } from '../../Logo/Logo';
+import { Heading } from '../../Typography/Heading';
+import { Text } from '../../Typography/Text';
+import styles from './StyleGuidePage.module.css';
 
 const ColorSwatch = ({ name, colorName, hex, role, variants }: { name: string; colorName: string; hex: string; role?: string; variants: { dark: string; light: string; highlight: string; }}) => (
   <div class={styles.colorSwatch}>
@@ -58,7 +58,7 @@ const iconList = [
   'sound-on', 'sound-off'
 ] as const;
 
-export const StyleGuide = () => {
+export const StyleGuidePage = () => {
   // State for checkbox examples
   const [checkboxStates, setCheckboxStates] = useState({
     default: false,

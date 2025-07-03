@@ -1,18 +1,15 @@
 import { h } from 'preact';
 import { LobbyHeader } from '../LobbyHeader/LobbyHeader';
-import { LobbyView } from '../LobbyView/LobbyView';
 import styles from './LobbyLayout.module.css';
-import { GameListItem } from '../../../shared/types/game.types';
 
 interface LobbyLayoutProps {
     currentUserName: string | null;
     onLogout: () => void;
-    onNavigateToGame: (gameId: string, gameCode: string) => void;
-    onCreateNewGame: () => void;
-    myGames: GameListItem[];
-    currentUserId: string | null;
     onOpenSettings: () => void;
+    onNavigateToStyleGuide: () => void;
+    onNavigateToUtils: () => void;
     dialog: h.JSX.Element | null;
+    children: h.JSX.Element | null;
 }
 
 export function LobbyLayout(props: LobbyLayoutProps) {
@@ -22,16 +19,11 @@ export function LobbyLayout(props: LobbyLayoutProps) {
                 currentUserName={props.currentUserName} 
                 onLogout={props.onLogout} 
                 onOpenSettings={props.onOpenSettings}
+                onNavigateToStyleGuide={props.onNavigateToStyleGuide}
+                onNavigateToUtils={props.onNavigateToUtils}
             />
             <main class={styles.mainContent}>
-                {!props.dialog && (
-                    <LobbyView 
-                        onNavigateToGame={props.onNavigateToGame}
-                        onCreateNewGame={props.onCreateNewGame}
-                        myGames={props.myGames}
-                        currentUserId={props.currentUserId}
-                    />
-                )}
+                {!props.dialog && props.children}
                 {props.dialog}
             </main>
         </div>

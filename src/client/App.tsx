@@ -8,9 +8,7 @@ import { authService } from './services/auth.service';
 import { authenticatedFetch } from './services/api.service';
 import { socketService } from './services/socket.service';
 import { ClientGameStatePayload, GameTurnEndedPayload } from '../shared/types/socket.types';
-import { GameListItem } from '../shared/types/game.types';
 import { GameViewLayout } from './components/GameViewLayout/GameViewLayout';
-import { LobbyLayout } from './components/LobbyLayout/LobbyLayout';
 import { ActionBar } from './components/ActionBar/ActionBar';
 import { Button } from './components/Button/Button';
 import { Dialog } from './components/Dialog/Dialog';
@@ -23,6 +21,7 @@ import { GameHeader } from './components/Header/GameHeader';
 import { GameContainer } from './components/GameContainer/GameContainer';
 import { GameSettingsDialog } from './components/GameSettingsDialog/GameSettingsDialog';
 import { IncrementCounterDialog } from './components/IncrementCounterDialog/IncrementCounterDialog';
+import { LobbyPage } from './components/pages/LobbyPage/LobbyPage';
 
 const NOTIFICATION_PENDING_KEY = 'hexbound-notifications-pending-activation';
 type ConnectionStatus = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
@@ -51,7 +50,6 @@ export function App() {
 
   // Game State
   const [gameState, setGameState] = useState<ClientGameStatePayload | null>(null);
-  const [myGames, setMyGames] = useState<GameListItem[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('disconnected');
   const [isDebugInfoOpen, setIsDebugInfoOpen] = useState(false);
   const [isCounterDialogOpen, setIsCounterDialogOpen] = useState(false);
@@ -100,19 +98,7 @@ export function App() {
     }
   };
 
-  const fetchMyGames = async () => {
-    try {
-      const response = await authenticatedFetch('/api/games');
-      if (response.ok) {
-        const games = await response.json();
-        setMyGames(games);
-      } else {
-        console.error('Failed to fetch user games');
-      }
-    } catch (error) {
-      console.error('Error fetching user games:', error);
-    }
-  };
+
 
   useEffect(() => {
     // VITE_APP_VERSION is injected by Vite during the build process
@@ -161,22 +147,12 @@ export function App() {
     // Check for existing user session on initial page load
     const session = authService.getSession();
     if (session) {
-      // If a session exists, check the path *before* doing anything else.
-      const path = window.location.pathname;
-      if (path.startsWith('/styleguide')) {
-        // We are on a utility page, just set login state and do nothing else.
-        setCurrentUserId(session.userId);
-        setCurrentUserName(session.userName);
-        setIsLoggedIn(true);
-        return; // Early exit to prevent game-related fetches
-      }
-      
       setCurrentUserId(session.userId);
       setCurrentUserName(session.userName);
       setIsLoggedIn(true);
-      fetchMyGames(); // Fetch games if session exists
 
       // Check URL for game code
+      const path = window.location.pathname;
       const gameIdMatch = path.match(/^\/game\/([a-zA-Z0-9-]+)/);
       if (gameIdMatch) {
         const gameCode = gameIdMatch[1];
@@ -258,18 +234,7 @@ export function App() {
     };
   }, [isLoggedIn]);
 
-  useEffect(() => {
-    if (currentView === 'lobby' && isLoggedIn) {
-      // Fetch games immediately when entering the lobby
-      fetchMyGames();
 
-      // Set up an interval to poll every 60 seconds
-      const pollInterval = setInterval(fetchMyGames, 60000);
-
-      // Clean up the interval when the component unmounts or the view changes
-      return () => clearInterval(pollInterval);
-    }
-  }, [currentView, isLoggedIn]);
 
   const handleUserNameInputChange = (name: string) => {
     setUserNameInput(name);
@@ -368,7 +333,6 @@ export function App() {
       const data = await response.json();
       if (response.ok) {
         console.log('Game created successfully:', data);
-        fetchMyGames(); // Refresh the game list
         navigateToGame(data.gameId, data.gameCode);
       } else {
         setAuthError(data.message || 'Failed to create game.');
@@ -418,6 +382,8 @@ export function App() {
     setIsGameLoaded(false);
     window.history.pushState({}, '', '/');
   };
+
+
 
   const handleIncrementCounter = () => {
     if (currentGameId) {
@@ -481,15 +447,14 @@ export function App() {
 
     if (currentView === 'lobby') {
       return (
-        <LobbyLayout
+        <LobbyPage
           currentUserName={currentUserName}
+          currentUserId={currentUserId}
           onLogout={handleLogout}
           onNavigateToGame={navigateToGame}
           onCreateNewGame={handleCreateNewGame}
-          myGames={myGames}
-          currentUserId={currentUserId}
-          onOpenSettings={() => pushDialog('gameSettings')}
-          dialog={dialogComponent}
+          isLoading={isLoading}
+          authError={authError}
         />
       );
     }
@@ -510,6 +475,8 @@ export function App() {
         />
       );
     }
+
+
 
     return null; // Should not happen if logic is correct
   };
