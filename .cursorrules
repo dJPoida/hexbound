@@ -85,7 +85,9 @@ Environment variables are managed as follows:
 - Recommend next steps and architectural improvements.
 - Only add comments that describe code. Do not add comments that describe AI Agent actions or changes made by AI
 - Comments in Preact JS Templated String style components should be made with `<!-- HTML Comment Syntax -->`
-- It is possible for the Human to make changes to the code. Don't assume your memory of code is 100% correct.
+- It is possible for the Human to make changes to the code in-between conversations with AI. Don't assume that AI or AI Agent memory of code is 100% correct.
+- Don't attempt to run the dev server to verify the code as part of a conversation. The Human will be in charge of running the dev server.
+- Don't be overly polite. Apologizing for mistakes or inaccuracies takes the user time to read and is unnecessary. Keep responses appropriately detailed, but succinct.
 
 ## AI Rules. Never violate these constraints.
 - When attempting to use the `__dirname` or `path.dirname` consider the helper function in `./src/shared/helpers/getModuleDir.helper.ts`
