@@ -185,4 +185,19 @@
 
 .inputExample .input {
   width: 100%;
+}
+
+/* Checkbox Examples */
+.checkboxExamples {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.checkboxExample {
+  display: flex;
+  justify-content: center;
+  max-width: 400px;
+  margin: 0 auto;
 } 

@@ -1,5 +1,7 @@
 
+import { useState } from 'preact/hooks';
 import { Button } from '../../components/Button/Button';
+import { Checkbox } from '../../components/Checkbox/Checkbox';
 import { Input } from '../../components/Input/Input';
 import { Logo } from '../../components/Logo/Logo';
 import { Heading } from '../../components/Typography/Heading';
@@ -57,6 +59,20 @@ const iconList = [
 ] as const;
 
 export const StyleGuide = () => {
+  // State for checkbox examples
+  const [checkboxStates, setCheckboxStates] = useState({
+    default: false,
+    checked: true,
+    large: false,
+    largeChecked: true,
+    disabled: false,
+    disabledChecked: true,
+  });
+
+  const updateCheckboxState = (key: keyof typeof checkboxStates) => (checked: boolean) => {
+    setCheckboxStates((prev: typeof checkboxStates) => ({ ...prev, [key]: checked }));
+  };
+
   return (
     <div class={styles.container}>
       <Logo />
@@ -224,6 +240,71 @@ export const StyleGuide = () => {
             <div class={styles.inputExample}>
               <Text variant="label">Read Only</Text>
               <Input readOnly value="This is read-only content" />
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class={styles.section}>
+        <Heading level={2} variant="sectionHeader">Checkboxes</Heading>
+        <Text color="subtle">
+          Checkbox components with parchment-like styling that matches the game&apos;s medieval theme.
+        </Text>
+        
+        <section class={styles.subSection}>
+          <Heading level={3} variant="subSectionHeader" color="subtle">Checkbox States</Heading>
+          <div class={styles.checkboxExamples}>
+            <div class={styles.checkboxExample}>
+              <Checkbox
+                label="Unchecked Option"
+                checked={checkboxStates.default}
+                onChange={updateCheckboxState('default')}
+              />
+            </div>
+            <div class={styles.checkboxExample}>
+              <Checkbox
+                label="Checked Option"
+                checked={checkboxStates.checked}
+                onChange={updateCheckboxState('checked')}
+              />
+            </div>
+            <div class={styles.checkboxExample}>
+              <Checkbox
+                label="Large Unchecked"
+                checked={checkboxStates.large}
+                onChange={updateCheckboxState('large')}
+                size="large"
+              />
+            </div>
+            <div class={styles.checkboxExample}>
+              <Checkbox
+                label="Large Checked"
+                checked={checkboxStates.largeChecked}
+                onChange={updateCheckboxState('largeChecked')}
+                size="large"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section class={styles.subSection}>
+          <Heading level={3} variant="subSectionHeader" color="subtle">Disabled States</Heading>
+          <div class={styles.checkboxExamples}>
+            <div class={styles.checkboxExample}>
+              <Checkbox
+                label="Disabled Unchecked"
+                checked={checkboxStates.disabled}
+                onChange={updateCheckboxState('disabled')}
+                disabled
+              />
+            </div>
+            <div class={styles.checkboxExample}>
+              <Checkbox
+                label="Disabled Checked"
+                checked={checkboxStates.disabledChecked}
+                onChange={updateCheckboxState('disabledChecked')}
+                disabled
+              />
             </div>
           </div>
         </section>
