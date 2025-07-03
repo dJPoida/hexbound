@@ -65,12 +65,12 @@
 
 .logoutButton {
   background-color: transparent;
-  border: 1px solid #555;
-  color: #a0a0a0;
+  border: 1px solid var(--color-charcoal-light);
+  color: var(--color-stone-grey-light);
 }
 .logoutButton:hover {
-  background-color: #333;
-  border-color: #777;
+  background-color: var(--color-charcoal-light);
+  border-color: var(--color-charcoal-highlight);
 }
 
 .linkButton {
@@ -91,15 +91,15 @@
   border: none;
   width: 100%;
   max-width: 800px;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid var(--color-stone-grey-light);
   margin: 2rem 0;
 }
 
 /* Input Fields Polish */
 
 .input {
-  background: #f8f7f3;
-  border: var(--border-width) solid #d6d2c4;
+  background: var(--color-canvas-white);
+  border: var(--border-width) solid var(--color-canvas-white-dark);
   color: var(--color-charcoal);
   border-radius: var(--border-radius-small);
   font-size: 1.1rem;
@@ -112,7 +112,7 @@
   outline: none;
   border-color: var(--color-hex-amber);
   box-shadow: 0 0 0 2px var(--color-glow-yellow);
-  background: #fffbe6;
+  background: var(--color-glow-yellow-highlight);
 }
 
 
@@ -129,7 +129,7 @@
 }
 
 .hamburgerButton:hover {
-  border-color: #646cff;
+  border-color: var(--color-hex-amber);
 }
 
 .menuDropdown {
@@ -137,9 +137,9 @@
   top: 120%;
   right: 0;
   background-color: var(--color-canvas-white);
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-stone-grey-light);
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card-neutral);
   display: flex;
   flex-direction: column;
   z-index: 10;
@@ -158,7 +158,7 @@
   cursor: pointer;
   font-size: 1em;
   border-radius: 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-stone-grey-light);
 }
 
 .menuItem:last-child {
@@ -167,7 +167,7 @@
 
 .menuItem:hover {
   background-color: var(--color-hex-amber);
-  color: white;
+  color: var(--color-canvas-white-light);
   border-color: var(--color-hex-amber);
 }
 
@@ -191,10 +191,11 @@
 }
 
 .lobbySection {
+  /* Using canvas white (#fefaeF) with transparency */
   background: rgba(254, 250, 239, 0.97);
   border-radius: var(--border-radius-medium);
-  border: var(--border-width) solid #d6d2c4;
-  box-shadow: 0 8px 32px 0 rgba(60, 50, 30, 0.10), 0 1.5px 4px 0 rgba(60, 50, 30, 0.06);
+  border: var(--border-width) solid var(--color-canvas-white-dark);
+  box-shadow: var(--shadow-card-warm);
   padding: 2.2rem;
   margin-bottom: 3rem;
 }
@@ -205,7 +206,7 @@
   font-weight: var(--font-weight-bold);
   margin-top: 0;
   margin-bottom: 1.2rem;
-  border-bottom: 1px solid #e0ddd2;
+  border-bottom: 1px solid var(--color-canvas-white-dark);
   padding-bottom: 0.5rem;
   color: var(--color-charcoal);
   letter-spacing: 0.04em;
@@ -227,10 +228,11 @@
 
 /* Game List Item Styles */
 .gameListItem {
-  background: linear-gradient(180deg, #f9f6e8 90%, #f3ecd2 100%);
+  /* Using canvas white tones - could be replaced with single background if gradient not needed */
+  background: linear-gradient(180deg, var(--color-canvas-white) 90%, var(--color-canvas-white-dark) 100%);
   border-radius: var(--border-radius-medium);
-  border: var(--border-width) solid #e0ddd2;
-  box-shadow: 0 6px 24px 0 rgba(60, 50, 30, 0.10);
+  border: var(--border-width) solid var(--color-canvas-white-dark);
+  box-shadow: 0 6px 24px 0 var(--shadow-warm-soft);
   margin-bottom: 2rem;
   padding: 1.3rem 2rem 1.3rem 0.7rem;
   display: flex;
@@ -252,7 +254,7 @@
   background: var(--color-hex-amber);
 }
 .gameListItem:hover {
-  box-shadow: 0 12px 32px 0 rgba(60, 50, 30, 0.16);
+  box-shadow: var(--shadow-elevated-warm);
   transform: translateY(-2px) scale(1.012);
 }
 
@@ -285,7 +287,8 @@
 .turnCount, .playerCount {
   font-size: 0.95rem;
   color: var(--color-stone-grey);
-  background: rgba(180,170,150,0.13);
+  background: var(--color-stone-grey-highlight);
+  opacity: 0.3;
   border-radius: 5px;
   padding: 0.1rem 0.5rem;
   margin-right: 0.5rem;
@@ -308,11 +311,11 @@
   align-items: center;
   gap: 1.1rem;
   margin-top: 1.2rem;
-  background: #f8f7f3;
+  background: var(--color-canvas-white);
   border-radius: var(--border-radius-medium);
   padding: 0.7rem 0.7rem 0.7rem 1rem;
-  box-shadow: 0 2px 8px 0 rgba(60, 50, 30, 0.06);
-  border: 1.5px solid #e0ddd2;
+  box-shadow: var(--shadow-form-element);
+  border: 1.5px solid var(--color-canvas-white-dark);
 }
 
 
@@ -327,7 +330,7 @@
 
 /* Divider between Create New Game and join-by-ID row */
 .lobbySection > button + .joinByIdContainer {
-  border-top: 1.5px solid #e0ddd2;
+  border-top: 1.5px solid var(--color-canvas-white-dark);
   margin-top: 1.7rem;
   padding-top: 1.3rem;
 }
@@ -338,7 +341,7 @@
   display: flex;
   justify-content: space-between;
   padding: 0.5rem 0;
-  border-bottom: 1px solid #e0ddd2;
+  border-bottom: 1px solid var(--color-canvas-white-dark);
   color: var(--color-stone-grey);
 }
 
@@ -358,9 +361,9 @@
 }
 
 .debugContent {
-  background-color: #333;
-  color: #f0f0f0;
-  border: 1px solid #555;
+  background-color: var(--color-charcoal-light);
+  color: var(--color-canvas-white);
+  border: 1px solid var(--color-charcoal-light);
   padding: 1rem;
   max-height: 50vh;
   overflow-y: auto;

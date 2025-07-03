@@ -57,7 +57,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #1a1a1a; /* Same as canvas background */
+  background-color: var(--color-charcoal-dark); /* Dark canvas background */
   z-index: 5; /* Above main content, below dialogs */
   opacity: 1;
   transition: opacity 0.5s ease-in-out;

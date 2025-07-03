@@ -51,12 +51,12 @@
 
 .logoutButton {
   background-color: transparent;
-  border: 1px solid #555;
-  color: #a0a0a0;
+  border: 1px solid var(--color-charcoal-light);
+  color: var(--color-stone-grey-light);
 }
 .logoutButton:hover {
-  background-color: #333;
-  border-color: #777;
+  background-color: var(--color-charcoal-light);
+  border-color: var(--color-charcoal-highlight);
 }
 
 .linkButton {
@@ -78,9 +78,9 @@
   top: 120%;
   right: 0;
   background-color: var(--color-canvas-white);
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-stone-grey-light);
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card-neutral);
   display: flex;
   flex-direction: column;
   z-index: 20;
@@ -100,7 +100,7 @@
   cursor: pointer;
   font-size: 1em;
   border-radius: 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-stone-grey-light);
   white-space: nowrap;
 }
 
@@ -124,6 +124,6 @@
 
 .menuItem:hover {
   background-color: var(--color-hex-amber);
-  color: white;
+  color: var(--color-canvas-white-light);
   border-color: var(--color-hex-amber);
 } 

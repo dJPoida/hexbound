@@ -93,7 +93,7 @@ html {
 
 :root {
   /* UI Colors - Non-duplicated tokens */
-  --color-background-hover: #f5f2e9;
+  --color-background-hover: var(--color-canvas-white-dark);
 
   /* Borders and Effects */
   --border-radius-small: 8px;

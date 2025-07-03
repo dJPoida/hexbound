@@ -1,10 +1,11 @@
 
 
 .loginForm {
-  background: rgba(254, 250, 239, 0.92); /* lighter, parchment-like */
+  /* Using canvas white (#fefaeF) with transparency */
+  background: rgba(254, 250, 239, 0.92);
   border-radius: var(--border-radius-medium);
-  box-shadow: 0 8px 32px 0 rgba(60, 50, 30, 0.10), 0 0 0 2px rgba(0,0,0,0.05);
-  border: 1.5px solid #d6d2c4;
+  box-shadow: 0 8px 32px 0 var(--shadow-warm-soft), 0 0 0 2px var(--shadow-subtle);
+  border: 1.5px solid var(--color-canvas-white-dark);
   padding: 3rem 2.5rem 2.5rem 2.5rem;
   max-width: 90%;
   width: 100%;
@@ -31,7 +32,7 @@
   margin-bottom: 0.5rem;
   font-size: 2em;
   font-weight: 700;
-  color: #fff;
+  color: var(--color-canvas-white-light);
 }
 
 .loginSubtitle {
@@ -100,7 +101,7 @@
 }
 
 .loginButton:hover {
-  background-color: #535bf2;
+  background-color: var(--color-hex-amber-dark);
 }
 
 .authError {

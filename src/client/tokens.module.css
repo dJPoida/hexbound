@@ -137,6 +137,32 @@
   --border-color: var(--color-charcoal);
 
   /* ==========================================================================
+     Shadows
+     ========================================================================== */
+  
+  /* Box Shadows - Warm brown theme (medieval/fantasy) */
+  --shadow-warm-subtle: rgba(60, 50, 30, 0.06);
+  --shadow-warm-soft: rgba(60, 50, 30, 0.10);
+  --shadow-warm-medium: rgba(60, 50, 30, 0.16);
+  
+  /* Box Shadows - Neutral black */
+  --shadow-subtle: rgba(0, 0, 0, 0.05);
+  --shadow-soft: rgba(0, 0, 0, 0.08);
+  --shadow-medium: rgba(0, 0, 0, 0.1);
+  --shadow-strong: rgba(0, 0, 0, 0.2);
+  
+  /* Text Shadows */
+  --text-shadow-dark: rgba(0, 0, 0, 0.5);
+  --text-shadow-light: rgba(255, 255, 255, 0.2);
+  
+  /* Common Shadow Combinations */
+  --shadow-card-warm: 0 8px 32px 0 var(--shadow-warm-soft), 0 1.5px 4px 0 var(--shadow-warm-subtle);
+  --shadow-card-neutral: 0 4px 12px var(--shadow-medium);
+  --shadow-elevated-warm: 0 12px 32px 0 var(--shadow-warm-medium);
+  --shadow-form-element: 0 2px 8px 0 var(--shadow-warm-subtle);
+  --shadow-dialog: 0 8px 24px var(--shadow-strong);
+
+  /* ==========================================================================
      Game-specific & Responsive Tokens
      ========================================================================== */
   --touch-target-min: 44px;
