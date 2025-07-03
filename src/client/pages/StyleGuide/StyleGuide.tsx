@@ -1,5 +1,6 @@
 
 import { Button } from '../../components/Button/Button';
+import { Input } from '../../components/Input/Input';
 import { Logo } from '../../components/Logo/Logo';
 import { Heading } from '../../components/Typography/Heading';
 import { Text } from '../../components/Typography/Text';
@@ -167,7 +168,66 @@ export const StyleGuide = () => {
         </section>
       </section>
 
+      <section class={styles.section}>
+        <Heading level={2} variant="sectionHeader">Inputs</Heading>
+        <Text color="subtle">
+          Text input components with parchment-like styling that matches the game&apos;s medieval theme.
+        </Text>
+        
+        <section class={styles.subSection}>
+          <Heading level={3} variant="subSectionHeader" color="subtle">Input States</Heading>
+          <div class={styles.inputExamples}>
+            <div class={styles.inputExample}>
+              <Text variant="label">Default</Text>
+              <Input placeholder="Enter your text here..." />
+            </div>
+            <div class={styles.inputExample}>
+              <Text variant="label">With Value</Text>
+              <Input value="Sample text content" readOnly />
+            </div>
+            <div class={styles.inputExample}>
+              <Text variant="label">Large Variant</Text>
+              <Input variant="large" placeholder="Large input field..." />
+            </div>
+          </div>
+        </section>
 
+        <section class={styles.subSection}>
+          <Heading level={3} variant="subSectionHeader" color="subtle">Input Types</Heading>
+          <div class={styles.inputExamples}>
+            <div class={styles.inputExample}>
+              <Text variant="label">Email</Text>
+              <Input type="email" placeholder="your@email.com" />
+            </div>
+            <div class={styles.inputExample}>
+              <Text variant="label">Password</Text>
+              <Input type="password" placeholder="Password" />
+            </div>
+            <div class={styles.inputExample}>
+              <Text variant="label">Number</Text>
+              <Input type="number" placeholder="123" />
+            </div>
+          </div>
+        </section>
+
+        <section class={styles.subSection}>
+          <Heading level={3} variant="subSectionHeader" color="subtle">Error & Disabled States</Heading>
+          <div class={styles.inputExamples}>
+            <div class={styles.inputExample}>
+              <Text variant="label">Error State</Text>
+              <Input hasError placeholder="This field has an error" />
+            </div>
+            <div class={styles.inputExample}>
+              <Text variant="label">Disabled</Text>
+              <Input disabled placeholder="Disabled input" />
+            </div>
+            <div class={styles.inputExample}>
+              <Text variant="label">Read Only</Text>
+              <Input readOnly value="This is read-only content" />
+            </div>
+          </div>
+        </section>
+      </section>
 
       <section class={styles.section}>
         <Heading level={2} variant="sectionHeader">Icons</Heading>

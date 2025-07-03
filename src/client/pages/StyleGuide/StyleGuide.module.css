@@ -165,4 +165,24 @@
   font-family: monospace;
   font-size: var(--font-size-caption);
   text-align: center;
+}
+
+/* Input Examples */
+.inputExamples {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.inputExample {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.inputExample .input {
+  width: 100%;
 } 
