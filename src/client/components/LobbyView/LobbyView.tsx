@@ -3,6 +3,7 @@ import { JSX } from 'preact/jsx-runtime';
 import { GameListItem, Player } from '../../../shared/types/game.types';
 import { Button } from '../Button/Button';
 import { Input } from '../Input/Input';
+import { Text } from '../Typography/Text';
 import styles from './LobbyView.module.css';
 import { Logo } from '../Logo/Logo';
 
@@ -33,7 +34,7 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
       <Logo />
 
       <div className={styles.gameListSection}>
-        {myGames.length > 0 && (
+        {myGames.length > 0 ? (
           <ul className={styles.gameList}>
             {myGames.map(game => {
               const isMyTurn = game.currentPlayerId === currentUserId;
@@ -52,6 +53,10 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
               );
             })}
           </ul>
+        ) : (
+          <div className={styles.noGamesMessage}>
+            <Text color="subtle">You have no active games</Text>
+          </div>
         )}
       </div>
 
