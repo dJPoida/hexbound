@@ -1,6 +1,8 @@
-import { useRef } from 'preact/hooks';
+import { useState } from 'preact/hooks';
+import { JSX } from 'preact/jsx-runtime';
 import { GameListItem, Player } from '../../../shared/types/game.types';
 import { Button } from '../Button/Button';
+import { Input } from '../Input/Input';
 import styles from './LobbyView.module.css';
 import { Logo } from '../Logo/Logo';
 
@@ -12,14 +14,18 @@ interface LobbyViewProps {
 }
 
 export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentUserId }: LobbyViewProps) {
-  const gameCodeInputRef = useRef<HTMLInputElement>(null);
+  const [gameCode, setGameCode] = useState('');
 
   const handleJoinByCode = () => {
-    const gameCode = gameCodeInputRef.current?.value.trim();
-    if (gameCode) {
-      window.history.pushState({ gameCode }, '', `/game/${gameCode}`);
+    const trimmedGameCode = gameCode.trim();
+    if (trimmedGameCode) {
+      window.history.pushState({ gameCode: trimmedGameCode }, '', `/game/${trimmedGameCode}`);
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
+  };
+
+  const handleGameCodeChange = (event: JSX.TargetedEvent<HTMLInputElement>) => {
+    setGameCode(event.currentTarget.value);
   };
 
   return (
@@ -54,11 +60,11 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
               Create New Game
             </Button>
         <div className={styles.joinByIdContainer}>
-          <input 
-            type="text" 
-            ref={gameCodeInputRef}
-            className={styles.input}
-            placeholder="Paste Game Code" 
+          <Input
+            type="text"
+            value={gameCode}
+            onInput={handleGameCodeChange}
+            placeholder="Paste Game Code"
           />
           <Button onClick={handleJoinByCode} variant="secondary"  fullWidth={true}>
             Join

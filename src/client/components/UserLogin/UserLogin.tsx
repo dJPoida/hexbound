@@ -1,8 +1,10 @@
 import { useEffect } from 'preact/hooks';
+import { JSX } from 'preact/jsx-runtime';
 import { authService } from '../../services/auth.service';
 import styles from './UserLogin.module.css';
 import { Logo } from '../Logo/Logo';
 import { Button } from '../Button/Button';
+import { Input } from '../Input/Input';
 
 interface UserLoginProps {
   userNameInput: string;
@@ -26,10 +28,8 @@ export function UserLogin({
     }
   }, []);
 
-  const handleInput = (event: Event) => {
-    if (event.target instanceof HTMLInputElement) {
-      onUserNameInputChange(event.target.value);
-    }
+  const handleInput = (event: JSX.TargetedEvent<HTMLInputElement>) => {
+    onUserNameInputChange(event.currentTarget.value);
   };
 
   const handleSubmit = (event: Event) => {
@@ -42,17 +42,16 @@ export function UserLogin({
   return (
     <div className={styles.loginForm}>
       <form onSubmit={handleSubmit}>
-        <Logo size="medium" />
+        <Logo />
         <p className={styles.loginSubtitle}>Enter your name to begin your journey.</p>
         
         <div className={styles.inputGroup}>
           <label htmlFor={userNameInputId} className={styles.label}>Player Name</label>
-          <input 
-            type="text" 
+          <Input
+            type="text"
             id={userNameInputId}
-            className={styles.input}
-            value={userNameInput} 
-            onInput={handleInput} 
+            value={userNameInput}
+            onInput={handleInput}
             disabled={isLoading}
             placeholder="e.g., Aragorn"
             maxLength={20}

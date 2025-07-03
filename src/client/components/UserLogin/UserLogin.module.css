@@ -51,23 +51,7 @@
   margin-bottom: 0.5rem;
 }
 
-.input {
-  width: 100%;
-  padding: 0.9rem 1.2rem;
-  border-radius: var(--border-radius-small);
-  border: var(--border-width) solid #d6d2c4;
-  font-family: var(--font-family-body);
-  font-size: 1.1rem;
-  color: var(--color-charcoal);
-  background: #fdfaf2;
-  transition: border-color 0.2s, background 0.2s;
-}
-.input:focus {
-  outline: none;
-  border-color: var(--color-hex-amber);
-  box-shadow: 0 0 0 2px var(--color-glow-yellow);
-  background: #fffbe6;
-}
+
 
 .button {
   width: 100%;

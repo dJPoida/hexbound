@@ -315,11 +315,7 @@
   border: 1.5px solid #e0ddd2;
 }
 
-.joinByIdContainer > .input {
-  flex: 1 1 auto;
-  min-width: 0;
-  margin: 0;
-}
+
 
 .joinByIdContainer > button {
   height: 48px;

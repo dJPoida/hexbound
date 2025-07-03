@@ -88,18 +88,7 @@
   gap: 0.5rem;
 }
 
-.input {
-  flex-grow: 1;
-  border: 1px solid #ccc;
-  padding: 0 0.8rem;
-  border-radius: var(--border-radius-small);
-  font-family: var(--font-family-body);
-  font-size: 1rem;
-}
-.input:focus {
-  outline: 2px solid var(--color-secondary-blue);
-  border-color: transparent;
-}
+
 
 .noGamesMessage {
   text-align: center;
@@ -148,11 +137,7 @@
   border: 1.5px solid #e0ddd2;
 }
 
-.joinByIdContainer > .input {
-  flex: 1 1 auto;
-  min-width: 0;
-  margin: 0;
-}
+
 
 .joinByIdContainer > button {
   height: 48px;
