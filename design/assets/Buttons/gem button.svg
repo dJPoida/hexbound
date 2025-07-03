@@ -24,9 +24,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      showgrid="true"
-     inkscape:zoom="7.5142857"
-     inkscape:cx="56.825095"
-     inkscape:cy="19.030418"
+     inkscape:zoom="5.3134024"
+     inkscape:cx="47.803645"
+     inkscape:cy="37.076055"
      inkscape:window-width="2560"
      inkscape:window-height="1334"
      inkscape:window-x="2549"
@@ -63,31 +63,31 @@
   <defs
      id="defs1" />
   <path
-     style="display:inline;fill:#f48550;fill-opacity:1;stroke:none;stroke-width:0.115583;paint-order:fill markers stroke"
+     style="display:inline;fill:#f5b83d;fill-opacity:1;stroke:none;stroke-width:0.115583;paint-order:fill markers stroke"
      d="m 6,0 h 88 l 6,6 v 38 l -6,6 H 6.234375 L 0,44 V 6 Z"
      id="background"
      inkscape:label="background"
      sodipodi:nodetypes="ccccccccc" />
   <path
-     style="display:inline;fill:#f7a075;fill-opacity:1;stroke:none;stroke-width:0.125;paint-order:fill markers stroke"
+     style="display:inline;fill:#f8c659;fill-opacity:1;stroke:none;stroke-width:0.125;paint-order:fill markers stroke"
      d="M 4,42 V 8 L 0,6 v 38 z"
      id="edge_left"
      inkscape:label="edge_left"
      sodipodi:nodetypes="ccccc" />
   <path
-     style="display:inline;fill:#d46c3b;fill-opacity:1;stroke:none;stroke-width:0.125;paint-order:fill markers stroke"
+     style="display:inline;fill:#d19a2f;fill-opacity:1;stroke:none;stroke-width:0.125;paint-order:fill markers stroke"
      d="M 92,46 H 8 L 6.234375,50 H 94 Z"
      id="edge_bottom"
      inkscape:label="edge_bottom"
      sodipodi:nodetypes="ccccc" />
   <path
-     style="display:inline;fill:#f7a075;fill-opacity:1;stroke:none;stroke-width:0.125;paint-order:fill markers stroke"
+     style="display:inline;fill:#f8c659;fill-opacity:1;stroke:none;stroke-width:0.125;paint-order:fill markers stroke"
      d="m 96,8 4,-2 v 38 l -4,-2 z"
      id="edge_right"
      inkscape:label="edge_right"
      sodipodi:nodetypes="ccccc" />
   <path
-     style="display:inline;fill:#f7a075;fill-opacity:1;stroke:none;stroke-width:0.125;paint-order:fill markers stroke"
+     style="display:inline;fill:#f8c659;fill-opacity:1;stroke:none;stroke-width:0.125;paint-order:fill markers stroke"
      d="M 8,4 6,0 h 88 l -2,4 z"
      id="edge_top"
      inkscape:label="edge_top"
@@ -124,7 +124,7 @@
      sodipodi:nodetypes="ccccccc" />
   <path
      id="accents"
-     style="display:inline;fill:#f9bba0;fill-opacity:1;stroke:none;stroke-width:0.125;paint-order:fill markers stroke"
+     style="display:inline;fill:#fbd47b;fill-opacity:1;stroke:none;stroke-width:0.125;paint-order:fill markers stroke"
      inkscape:label="accents"
      d="M 6.334961,-0.167969 6,0 5.665039,0.167969 5.720699,0.279297 0.279293,5.720703 0.167965,5.665043 0,6 -0.167969,6.334961 3.625,8.231445 v 33.537109 l -3.792969,1.896485 0.335938,0.669922 0.118164,-0.05957 5.506836,5.299806 -0.12793,0.256835 0.669922,0.335939 1.896484,-3.79297 H 91.76855 l 1.89649,3.79297 0.66992,-0.335939 -0.0557,-0.111328 5.44141,-5.441406 0.11133,0.05566 0.33594,-0.669922 -3.79297,-1.896485 V 8.231445 L 100.16794,6.334961 99.832,5.665039 99.72067,5.720699 94.27926,0.279293 94.33496,0.167965 93.66504,-0.167973 91.76855,3.624996 H 8.231445 Z M 8.155273,4.375 H 91.84472 L 95.625,8.155273 V 41.844727 L 91.84472,45.625 H 8.155273 L 4.375,41.844727 V 8.15625 Z" />
   <path
