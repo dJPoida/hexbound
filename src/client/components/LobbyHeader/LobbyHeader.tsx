@@ -8,9 +8,11 @@ interface LobbyHeaderProps {
     onOpenSettings: () => void;
     onNavigateToStyleGuide: () => void;
     onNavigateToUtils: () => void;
+    onNavigateToLobby: () => void;
+    currentPage: 'lobby' | 'styleguide' | 'utils';
 }
 
-export function LobbyHeader({ currentUserName, onLogout, onOpenSettings, onNavigateToStyleGuide, onNavigateToUtils }: LobbyHeaderProps) {
+export function LobbyHeader({ currentUserName, onLogout, onOpenSettings, onNavigateToStyleGuide, onNavigateToUtils, onNavigateToLobby, currentPage }: LobbyHeaderProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -30,14 +32,24 @@ export function LobbyHeader({ currentUserName, onLogout, onOpenSettings, onNavig
                 </div>
                 {isMenuOpen && (
                     <div className={styles.menuDropdown}>
-                        <button className={styles.menuItem} onClick={() => { onNavigateToStyleGuide(); toggleMenu(); }}>
-                            <i class="hbi hbi-eye"></i>
-                            <span>Style Guide</span>
-                        </button>
-                        <button className={styles.menuItem} onClick={() => { onNavigateToUtils(); toggleMenu(); }}>
-                            <i class="hbi hbi-terminal"></i>
-                            <span>Utils</span>
-                        </button>
+                        {currentPage !== 'lobby' && (
+                            <button className={styles.menuItem} onClick={() => { onNavigateToLobby(); toggleMenu(); }}>
+                                <i class="hbi hbi-home"></i>
+                                <span>Lobby</span>
+                            </button>
+                        )}
+                        {currentPage !== 'styleguide' && (
+                            <button className={styles.menuItem} onClick={() => { onNavigateToStyleGuide(); toggleMenu(); }}>
+                                <i class="hbi hbi-eye"></i>
+                                <span>Style Guide</span>
+                            </button>
+                        )}
+                        {currentPage !== 'utils' && (
+                            <button className={styles.menuItem} onClick={() => { onNavigateToUtils(); toggleMenu(); }}>
+                                <i class="hbi hbi-terminal"></i>
+                                <span>Utils</span>
+                            </button>
+                        )}
                         <button className={styles.menuItem} onClick={() => { onOpenSettings(); toggleMenu(); }}>
                             <i class="hbi hbi-settings"></i>
                             <span>Game Settings</span>

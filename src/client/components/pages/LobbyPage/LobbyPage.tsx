@@ -6,13 +6,10 @@ import { GameListItem } from '../../../../shared/types/game.types';
 import { LobbyLayout } from '../../LobbyLayout/LobbyLayout';
 import { LobbyView } from '../../LobbyView/LobbyView';
 import { GameSettingsDialog } from '../../GameSettingsDialog/GameSettingsDialog';
-import { StyleGuidePage } from '../StyleGuidePage/StyleGuidePage';
-import { UtilsPage } from '../UtilsPage/UtilsPage';
 
 const html = htm.bind(h);
 
 type DialogType = 'gameSettings';
-type LobbyView = 'lobby' | 'styleguide' | 'utils';
 
 interface LobbyPageProps {
   currentUserName: string | null;
@@ -20,6 +17,8 @@ interface LobbyPageProps {
   onLogout: () => void;
   onNavigateToGame: (gameId: string, gameCode: string) => void;
   onCreateNewGame: () => Promise<void>;
+  onNavigateToUtils: () => void;
+  onNavigateToStyleGuide: () => void;
   isLoading: boolean;
   authError: string | null;
 }
@@ -30,11 +29,12 @@ export function LobbyPage({
   onLogout,
   onNavigateToGame,
   onCreateNewGame,
+  onNavigateToUtils,
+  onNavigateToStyleGuide,
   isLoading,
   authError
 }: LobbyPageProps) {
   const [myGames, setMyGames] = useState<GameListItem[]>([]);
-  const [currentView, setCurrentView] = useState<LobbyView>('lobby');
   const [dialogStack, setDialogStack] = useState<DialogType[]>([]);
 
   const pushDialog = (dialog: DialogType) => {
@@ -66,18 +66,6 @@ export function LobbyPage({
     fetchMyGames();
   };
 
-  const navigateToStyleGuide = () => {
-    setCurrentView('styleguide');
-  };
-
-  const navigateToUtils = () => {
-    setCurrentView('utils');
-  };
-
-  const navigateToLobby = () => {
-    setCurrentView('lobby');
-  };
-
   // Fetch games when component mounts
   useEffect(() => {
     fetchMyGames();
@@ -101,37 +89,23 @@ export function LobbyPage({
     }
   };
 
-  // Render the main content based on current view
-  const renderMainContent = () => {
-    switch (currentView) {
-      case 'lobby':
-        return (
-          <LobbyView 
-            onNavigateToGame={onNavigateToGame}
-            onCreateNewGame={handleCreateNewGame}
-            myGames={myGames}
-            currentUserId={currentUserId}
-          />
-        );
-      case 'styleguide':
-        return <StyleGuidePage />;
-      case 'utils':
-        return <UtilsPage />;
-      default:
-        return null;
-    }
-  };
-
   return (
     <LobbyLayout
       currentUserName={currentUserName}
       onLogout={onLogout}
       onOpenSettings={() => pushDialog('gameSettings')}
-      onNavigateToStyleGuide={navigateToStyleGuide}
-      onNavigateToUtils={navigateToUtils}
+      onNavigateToStyleGuide={onNavigateToStyleGuide}
+      onNavigateToUtils={onNavigateToUtils}
+      onNavigateToLobby={() => {}} // No-op since we're already on the lobby page
+      currentPage="lobby"
       dialog={renderDialog()}
     >
-      {renderMainContent()}
+      <LobbyView 
+        onNavigateToGame={onNavigateToGame}
+        onCreateNewGame={handleCreateNewGame}
+        myGames={myGames}
+        currentUserId={currentUserId}
+      />
     </LobbyLayout>
   );
 } 

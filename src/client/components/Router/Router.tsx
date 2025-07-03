@@ -14,8 +14,9 @@ export class Router extends Component<RouterProps> {
   };
 
   handleRouteChange = () => {
-    this.updateBodyClass(getCurrentPath());
-    this.setState({ path: getCurrentPath() });
+    const newPath = getCurrentPath();
+    this.updateBodyClass(newPath);
+    this.setState({ path: newPath });
   };
 
   updateBodyClass(path: string) {
@@ -31,11 +32,13 @@ export class Router extends Component<RouterProps> {
 
   componentDidMount() {
     window.addEventListener('popstate', this.handleRouteChange);
+    window.addEventListener('pushstate', this.handleRouteChange);
     this.updateBodyClass(this.state.path); // Initial load
   }
 
   componentWillUnmount() {
     window.removeEventListener('popstate', this.handleRouteChange);
+    window.removeEventListener('pushstate', this.handleRouteChange);
     // Clean up class on unmount
     const appRoot = document.getElementById('app');
     if (appRoot) {

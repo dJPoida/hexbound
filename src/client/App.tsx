@@ -22,6 +22,10 @@ import { GameContainer } from './components/GameContainer/GameContainer';
 import { GameSettingsDialog } from './components/GameSettingsDialog/GameSettingsDialog';
 import { IncrementCounterDialog } from './components/IncrementCounterDialog/IncrementCounterDialog';
 import { LobbyPage } from './components/pages/LobbyPage/LobbyPage';
+import { Router } from './components/Router/Router';
+import { StyleGuidePage } from './components/pages/StyleGuidePage/StyleGuidePage';
+import { UtilsPage } from './components/pages/UtilsPage/UtilsPage';
+import { LobbyLayout } from './components/LobbyLayout/LobbyLayout';
 
 const NOTIFICATION_PENDING_KEY = 'hexbound-notifications-pending-activation';
 type ConnectionStatus = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
@@ -151,13 +155,15 @@ export function App() {
       setCurrentUserName(session.userName);
       setIsLoggedIn(true);
 
-      // Check URL for game code
+      // Check URL for routing
       const path = window.location.pathname;
       const gameIdMatch = path.match(/^\/game\/([a-zA-Z0-9-]+)/);
       if (gameIdMatch) {
         const gameCode = gameIdMatch[1];
         handleJoinGame(gameCode);
       } else {
+        // For lobby routes (/, /utils, /styleguide), just set to lobby view
+        // The Router component will handle the specific page rendering
         setCurrentView('lobby');
       }
     }
@@ -171,7 +177,11 @@ export function App() {
           handleJoinGame(gameCode);
         }
       } else {
-        navigateToLobby();
+        // For lobby routes (/, /utils, /styleguide), just ensure we're in lobby view
+        // The Router component will handle the specific page rendering based on URL
+        if (currentView === 'game') {
+          navigateToLobby();
+        }
       }
     };
 
@@ -368,6 +378,7 @@ export function App() {
     setCurrentView('game');
     socketService.connect(gameId);
     window.history.pushState({ gameId }, '', `/game/${gameCode}`);
+    window.dispatchEvent(new Event('pushstate'));
   };
 
   const navigateToLobby = () => {
@@ -381,6 +392,12 @@ export function App() {
     setCurrentView('lobby');
     setIsGameLoaded(false);
     window.history.pushState({}, '', '/');
+    window.dispatchEvent(new Event('pushstate'));
+  };
+
+  const navigateToLobbyFromMenu = () => {
+    window.history.pushState({}, '', '/');
+    window.dispatchEvent(new Event('pushstate'));
   };
 
 
@@ -408,6 +425,16 @@ export function App() {
 
   const openSettings = () => setIsSettingsOpen(true);
   const closeSettings = () => setIsSettingsOpen(false);
+
+  const navigateToUtils = () => {
+    window.history.pushState({}, '', '/utils');
+    window.dispatchEvent(new Event('pushstate'));
+  };
+
+  const navigateToStyleGuide = () => {
+    window.history.pushState({}, '', '/styleguide');
+    window.dispatchEvent(new Event('pushstate'));
+  };
 
   const renderLoggedInView = () => {
     const currentDialogType = dialogStack[dialogStack.length - 1];
@@ -445,20 +472,6 @@ export function App() {
         break;
     }
 
-    if (currentView === 'lobby') {
-      return (
-        <LobbyPage
-          currentUserName={currentUserName}
-          currentUserId={currentUserId}
-          onLogout={handleLogout}
-          onNavigateToGame={navigateToGame}
-          onCreateNewGame={handleCreateNewGame}
-          isLoading={isLoading}
-          authError={authError}
-        />
-      );
-    }
-  
     if (currentView === 'game' && gameState) {
       return (
         <GameViewLayout
@@ -476,9 +489,58 @@ export function App() {
       );
     }
 
+    // Define routes for the lobby section
+    const routes = {
+      '/': () => (
+        <LobbyPage
+          currentUserName={currentUserName}
+          currentUserId={currentUserId}
+          onLogout={handleLogout}
+          onNavigateToGame={navigateToGame}
+          onCreateNewGame={handleCreateNewGame}
+          onNavigateToUtils={navigateToUtils}
+          onNavigateToStyleGuide={navigateToStyleGuide}
+          isLoading={isLoading}
+          authError={authError}
+        />
+      ),
+      '/utils': () => (
+        <LobbyLayout
+          currentUserName={currentUserName}
+          onLogout={handleLogout}
+          onOpenSettings={() => pushDialog('gameSettings')}
+          onNavigateToStyleGuide={navigateToStyleGuide}
+          onNavigateToUtils={navigateToUtils}
+          onNavigateToLobby={navigateToLobbyFromMenu}
+          currentPage="utils"
+          dialog={dialogComponent}
+        >
+          <UtilsPage />
+        </LobbyLayout>
+      ),
+      '/styleguide': () => (
+        <LobbyLayout
+          currentUserName={currentUserName}
+          onLogout={handleLogout}
+          onOpenSettings={() => pushDialog('gameSettings')}
+          onNavigateToStyleGuide={navigateToStyleGuide}
+          onNavigateToUtils={navigateToUtils}
+          onNavigateToLobby={navigateToLobbyFromMenu}
+          currentPage="styleguide"
+          dialog={dialogComponent}
+        >
+          <StyleGuidePage />
+        </LobbyLayout>
+      )
+    };
 
-
-    return null; // Should not happen if logic is correct
+    return (
+      <Router 
+        routes={routes}
+        utilityRoutes={['/utils', '/styleguide']}
+        fallback={() => routes['/']()} // Fallback to lobby
+      />
+    );
   };
 
   const viewToRender = () => {
