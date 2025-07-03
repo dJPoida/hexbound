@@ -24,6 +24,37 @@ const ColorSwatch = ({ name, colorName, hex, role, variants }: { name: string; c
   </div>
 );
 
+const iconList = [
+  'menu', 'home', 'save', 'trash', 'settings', 'sliders', 'exit', 'hexagon', 'heart', 'star',
+  'alert-triangle', 'help-circle', 'info', 'error',
+  'arrow-up', 'arrow-up-right', 'arrow-right', 'arrow-down-right', 'arrow-down', 'arrow-down-left', 'arrow-left', 'arrow-up-left',
+  'chevron-up', 'chevron-right', 'chevron-down', 'chevron-left',
+  'chevrons-up', 'chevrons-right', 'chevrons-down', 'chevrons-left',
+  'check', 'cross', 'circle', 'check-circle', 'cross-circle',
+  'square', 'check-square', 'cross-square', 'plus-square', 'minus-square',
+  'search', 'zoom-in', 'zoom-out',
+  'toggle-left', 'toggle-right',
+  'more-vertical', 'more-horizontal',
+  'frown', 'meh', 'smile',
+  'user', 'user-check', 'user-cross', 'user-plus', 'user-minus', 'users',
+  'lock', 'unlock',
+  'loader', 'play',
+  'wifi', 'wifi-off',
+  'life-buoy', 'award',
+  'bell', 'bell-off',
+  'terminal', 'layers', 'map',
+  'dollar-sign', 'edit', 'share', 'link', 'message',
+  'eye', 'eye-off',
+  'clock',
+  'upload', 'download',
+  'shuffle',
+  'maximize', 'minimize',
+  'move',
+  'rotate-ccw', 'rotate-cw',
+  'thumbs-up', 'thumbs-down',
+  'sound-on', 'sound-off'
+] as const;
+
 export const StyleGuide = () => {
   return (
     <div class={styles.container}>
@@ -140,7 +171,24 @@ export const StyleGuide = () => {
 
       <section class={styles.section}>
         <Heading level={2} variant="sectionHeader">Icons</Heading>
-        <Text>This is the Hexbound Icon font. Use it for UI elements.</Text>
+        <Text color="subtle">
+          This is the Hexbound Icon font. Use it for UI elements by adding the class name to any element.
+        </Text>
+        
+        <section class={styles.subSection}>
+          <div class={styles.iconGrid}>
+            {iconList.map(icon => (
+              <div key={icon} class={styles.iconItem}>
+                <div class={styles.iconDisplay}>
+                  <span class={`hbi-${icon}`}></span>
+                </div>
+                <Text variant="caption" color="subtle" class={styles.iconCode}>
+                  hbi-{icon}
+                </Text>
+              </div>
+            ))}
+          </div>
+        </section>
       </section>
     </div>
   );

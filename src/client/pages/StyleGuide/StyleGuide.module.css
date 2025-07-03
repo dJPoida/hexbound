@@ -138,4 +138,31 @@
     font-size: var(--font-size-caption);
     color: var(--color-stone-grey);
     text-transform: uppercase;
+}
+
+/* Icon Grid */
+.iconGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 1rem;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.iconItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.iconDisplay {
+  font-size: 40px;
+  color: var(--color-charcoal);
+}
+
+.iconCode {
+  font-family: monospace;
+  font-size: var(--font-size-caption);
+  text-align: center;
 } 
