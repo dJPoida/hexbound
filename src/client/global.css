@@ -107,13 +107,13 @@ html {
 }
 
 body {
-  min-width: 320px;
+  min-width: 375px; /* iPhone SE minimum - ensures game remains playable */
   font-family: var(--font-family-body);
   color: var(--color-charcoal);
   background-color: var(--color-canvas-white);
   background-image: url('/images/paper-texture.png');
   background-repeat: repeat;
-  /* TODO: Add paper texture background */
+  background-position-x: 50%;
 }
 
 h1,
@@ -145,16 +145,4 @@ a:hover {
   color: var(--color-glow-yellow);
 }
 
-button {
-  border-radius: var(--border-radius-small);
-  border: var(--border-width) solid var(--border-color);
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: var(--font-weight-medium);
-  font-family: inherit;
-  background-color: transparent;
-  cursor: pointer;
-  transition:
-    border-color 0.25s,
-    background-color 0.25s;
-} 
+/* Removed global button styles - all buttons should use component-specific styling */ 

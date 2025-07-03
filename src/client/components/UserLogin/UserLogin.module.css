@@ -1,10 +1,4 @@
-.playerManagementContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: none;
-}
+
 
 .loginForm {
   background: rgba(254, 250, 239, 0.92); /* lighter, parchment-like */
@@ -12,11 +6,24 @@
   box-shadow: 0 8px 32px 0 rgba(60, 50, 30, 0.10), 0 0 0 2px rgba(0,0,0,0.05);
   border: 1.5px solid #d6d2c4;
   padding: 3rem 2.5rem 2.5rem 2.5rem;
-  max-width: 420px;
+  max-width: 90%;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+/* Reduce padding on very narrow screens to prevent overflow */
+@media (max-width: 400px) {
+  .loginForm {
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+  }
+}
+
+@media (max-width: 350px) {
+  .loginForm {
+    padding: 1.5rem 1rem 1rem 1rem;
+  }
 }
 
 .loginTitle {
@@ -34,6 +41,23 @@
   margin-bottom: 2.2rem;
   text-align: center;
   font-weight: var(--font-weight-medium);
+  word-wrap: break-word;
+}
+
+/* Adjust font sizes and spacing on very narrow screens */
+@media (max-width: 400px) {
+  .loginSubtitle {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 350px) {
+  .loginSubtitle {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
 }
 
 .inputGroup {
@@ -42,6 +66,19 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+}
+
+/* Reduce input group spacing on very narrow screens */
+@media (max-width: 400px) {
+  .inputGroup {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 350px) {
+  .inputGroup {
+    margin-bottom: 0.75rem;
+  }
 }
 
 .label {

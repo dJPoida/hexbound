@@ -1,9 +1,9 @@
 .lobbyLayout {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  width: 100vw;
-  background-color: var(--color-background);
+  height: 100%;
+  width: 100%;
+  /* Remove background-color to show the paper texture from body */
 }
 
 .mainContent {
