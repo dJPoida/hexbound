@@ -53,7 +53,7 @@ export class Tile {
     });
     this.debugText.anchor.set(0.5);
     this.debugText.x = HEX_TEXT_OFFSET_X;
-    this.debugText.y = HEX_TEXT_OFFSET_Y + 35 + elevationOffsetY; // Move text toward bottom of cell
+    this.debugText.y = HEX_TEXT_OFFSET_Y + 25 + elevationOffsetY; // Move text toward bottom of cell but not too low
     
     // Add sprites to container in the correct render order
     this.container.addChild(
