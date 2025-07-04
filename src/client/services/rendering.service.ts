@@ -4,6 +4,7 @@ import { MapData } from '../../shared/types/game.types';
 import { HEX_HEIGHT, HEX_WIDTH, MAX_TILES_ON_SCREEN, MIN_TILES_ON_SCREEN } from '../../shared/constants/map.const';
 import { MapRenderer } from '../rendering/MapRenderer';
 import { GameViewportState, gameStateService } from './gameState.service';
+import { settingsService } from './settings.service';
 
 class RenderingService {
   private app: PIXI.Application | null = null;
@@ -14,6 +15,7 @@ class RenderingService {
   private resizeObserver: ResizeObserver | null = null;
   private resizeTimeout: ReturnType<typeof setTimeout> | null = null;
   private gameId: string | null;
+  private settingsUnsubscribe: (() => void) | null = null;
   
   // Event handlers need to be stored so they can be removed in destroy()
   private onDragEnd: (() => void) | null = null;
@@ -49,6 +51,13 @@ class RenderingService {
     this.saveState(this.gameId!);
   };
 
+  private handleSettingsChange = () => {
+    // Re-render the map when settings change to apply visibility changes
+    if (this.viewport && this.mapRenderer) {
+      this.mapRenderer.render(this.viewport);
+    }
+  };
+
   public async initialize(containerElement: HTMLDivElement, mapData: MapData, gameId: string): Promise<void> {
     if (this.app) {
       return this.isInitialized ?? Promise.resolve();
@@ -58,6 +67,9 @@ class RenderingService {
     this.isInitialized = new Promise(resolve => {
       this.initializationResolver = resolve;
     });
+
+    // Subscribe to settings changes to trigger re-renders
+    this.settingsUnsubscribe = settingsService.subscribe(this.handleSettingsChange);
 
     // --- Create Pixi Application ---
     const app = new PIXI.Application();
@@ -200,6 +212,10 @@ class RenderingService {
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
       this.resizeObserver = null;
+    }
+    if (this.settingsUnsubscribe) {
+      this.settingsUnsubscribe();
+      this.settingsUnsubscribe = null;
     }
     if (this.app) {
       this.app.destroy(true, { children: true, texture: true });

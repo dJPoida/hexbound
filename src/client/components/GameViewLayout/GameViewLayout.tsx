@@ -5,6 +5,8 @@ import { ClientGameStatePayload } from '../../../shared/types/socket.types';
 import styles from './GameViewLayout.module.css';
 import { ActionBar } from '../ActionBar/ActionBar';
 import { Button } from '../Button/Button';
+import { settingsService } from '../../services/settings.service';
+import { useState, useEffect } from 'preact/hooks';
 
 type DialogType = 'gameSettings' | 'incrementCounter' | 'debugInfo';
 
@@ -34,6 +36,13 @@ export function GameViewLayout({
   dialog
 }: GameViewLayoutProps) {
   
+  const [settings, setSettings] = useState(settingsService.getSettings());
+
+  useEffect(() => {
+    const unsubscribe = settingsService.subscribe(setSettings);
+    return () => unsubscribe();
+  }, []);
+  
   // Check if any players are placeholders
   const hasPlaceholders = gameState.players.some(p => p.isPlaceholder);
   const canEndTurn = isMyTurn && !hasPlaceholders;
@@ -53,9 +62,11 @@ export function GameViewLayout({
 
   const footerContent = (
     <ActionBar>
-      <Button onClick={() => onPushDialog('debugInfo')} variant="icon" ariaLabel="Show Debug Info">
-        <i class="hbi hbi-terminal"></i>
-      </Button>
+      {settings.showDebugInfo && (
+        <Button onClick={() => onPushDialog('debugInfo')} variant="icon" ariaLabel="Show Debug Info">
+          <i class="hbi hbi-terminal"></i>
+        </Button>
+      )}
       <Button 
         onClick={onEndTurn} 
         variant="primary" 

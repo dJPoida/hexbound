@@ -19,8 +19,8 @@ function getTextureForTerrain(terrain: TerrainType, textures: Record<string, PIX
 export class Tile {
   public container: PIXI.Container;
   private body: PIXI.Sprite;
-  private outline: PIXI.Sprite;
-  private debugText: PIXI.Text;
+  public outline: PIXI.Sprite;
+  public debugText: PIXI.Text;
 
   constructor(tileData: TileData, textures: Record<string, PIXI.Texture>) {
     const { coordinates, elevation } = tileData;
@@ -53,7 +53,7 @@ export class Tile {
     });
     this.debugText.anchor.set(0.5);
     this.debugText.x = HEX_TEXT_OFFSET_X;
-    this.debugText.y = HEX_TEXT_OFFSET_Y + 35 + elevationOffsetY;
+    this.debugText.y = HEX_TEXT_OFFSET_Y + 35 + elevationOffsetY; // Move text toward bottom of cell
     
     // Add sprites to container in the correct render order
     this.container.addChild(

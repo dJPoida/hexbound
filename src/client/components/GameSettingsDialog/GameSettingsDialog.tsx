@@ -63,6 +63,14 @@ export const GameSettingsDialog = ({ onClose }: GameSettingsDialogProps) => {
       }
     }
   };
+
+  const handleShowHexGridChange = (checked: boolean) => {
+    settingsService.updateSettings({ showHexGrid: checked });
+  };
+
+  const handleShowDebugInfoChange = (checked: boolean) => {
+    settingsService.updateSettings({ showDebugInfo: checked });
+  };
   
   const isNotificationToggleDisabled = permission === 'denied' || isSubscribing;
 
@@ -92,6 +100,30 @@ export const GameSettingsDialog = ({ onClose }: GameSettingsDialogProps) => {
            {!isSubscribing && permission === 'granted' && settings.notificationsEnabled && (
             <span>You will be notified when it&apos;s your turn.</span>
           )}
+        </p>
+      </div>
+
+      <div class={styles.settingsSection}>
+        <h3 class={styles.sectionTitle}>Display</h3>
+        <Checkbox
+          label="Show Hex-Grid"
+          checked={settings.showHexGrid}
+          onChange={handleShowHexGridChange}
+        />
+        <p class={styles.settingDescription}>
+          Display the hex grid outline on all tiles.
+        </p>
+      </div>
+
+      <div class={styles.settingsSection}>
+        <h3 class={styles.sectionTitle}>Development</h3>
+        <Checkbox
+          label="Show Debug Info"
+          checked={settings.showDebugInfo}
+          onChange={handleShowDebugInfoChange}
+        />
+        <p class={styles.settingDescription}>
+          Show debug information including tile coordinates and enable debug controls.
         </p>
       </div>
     </Dialog>
