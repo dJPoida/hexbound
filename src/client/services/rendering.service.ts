@@ -5,6 +5,7 @@ import { HEX_HEIGHT, HEX_WIDTH, MAX_TILES_ON_SCREEN, MIN_TILES_ON_SCREEN } from 
 import { MapRenderer } from '../rendering/MapRenderer';
 import { GameViewportState, gameStateService } from './gameState.service';
 import { settingsService } from './settings.service';
+import { ClientGameStatePayload } from '../../shared/types/socket.types';
 
 class RenderingService {
   private app: PIXI.Application | null = null;
@@ -58,12 +59,12 @@ class RenderingService {
     }
   };
 
-  public async initialize(containerElement: HTMLDivElement, mapData: MapData, gameId: string): Promise<void> {
+  public async initialize(containerElement: HTMLDivElement, gameState: ClientGameStatePayload, currentUserId: string): Promise<void> {
     if (this.app) {
       return this.isInitialized ?? Promise.resolve();
     }
 
-    this.gameId = gameId;
+    this.gameId = gameState.gameId;
     this.isInitialized = new Promise(resolve => {
       this.initializationResolver = resolve;
     });
@@ -81,9 +82,9 @@ class RenderingService {
     containerElement.appendChild(app.canvas);
 
     // --- Create Viewport ---
-    const singleMapWidth = mapData.width * HEX_WIDTH * 0.75;
+    const singleMapWidth = gameState.mapData.width * HEX_WIDTH * 0.75;
     const worldWidth = singleMapWidth * 3;
-    const trueWorldHeight = (mapData.height * HEX_HEIGHT) + (HEX_HEIGHT / 2);
+    const trueWorldHeight = (gameState.mapData.height * HEX_HEIGHT) + (HEX_HEIGHT / 2);
     
     // Lie to the viewport about its height to create the bottom clamp effect
     const worldHeightForClamping = trueWorldHeight - (HEX_HEIGHT * 1.5);
@@ -109,7 +110,7 @@ class RenderingService {
       .clampZoom(initialZoomLimits);
 
     // --- Initialize Map Renderer ---
-    const mapRenderer = new MapRenderer(app, mapData);
+    const mapRenderer = new MapRenderer(app, gameState.mapData);
     this.mapRenderer = mapRenderer;
     await mapRenderer.loadAssets();
     viewport.addChild(mapRenderer.stage);
@@ -121,7 +122,16 @@ class RenderingService {
       viewport.setZoom(savedState.zoom, true);
       viewport.moveCenter(savedState.center.x, savedState.center.y);
     } else {
-      viewport.moveCenter(singleMapWidth * 1.5, trueWorldHeight / 2);
+      // Find player's spawn tile and center on it
+      const spawnPosition = this.findPlayerSpawnPosition(gameState, currentUserId);
+      if (spawnPosition) {
+        viewport.moveCenter(spawnPosition.x + singleMapWidth, spawnPosition.y);
+        console.log(`[RenderingService] Centered map on player spawn at (${spawnPosition.x}, ${spawnPosition.y})`);
+      } else {
+        // Fallback to center of map
+        viewport.moveCenter(singleMapWidth * 1.5, trueWorldHeight / 2);
+        console.log('[RenderingService] No spawn found, centered on map center');
+      }
       viewport.setZoom(initialZoomLimits.minScale, true);
     }
     mapRenderer.render(this.viewport);
@@ -233,6 +243,68 @@ class RenderingService {
     const minScale = Math.sqrt(screenArea / (MAX_TILES_ON_SCREEN * tileArea));
     const maxScale = Math.sqrt(screenArea / (MIN_TILES_ON_SCREEN * tileArea));
     return { minScale, maxScale };
+  }
+
+  /**
+   * Find the pixel position of a player's spawn tile
+   */
+  private findPlayerSpawnPosition(gameState: ClientGameStatePayload, currentUserId: string): { x: number; y: number } | null {
+    const spawnTiles = gameState.mapData.tiles.filter(tile => tile.playerSpawn !== undefined);
+    
+    if (spawnTiles.length === 0) {
+      console.warn('[RenderingService] No spawn tiles found in map data');
+      return null;
+    }
+
+    // Find the current player's index in the players array
+    const playerIndex = gameState.players.findIndex(player => player.userId === currentUserId);
+    
+    if (playerIndex === -1) {
+      console.warn(`[RenderingService] Current user ${currentUserId} not found in players list`);
+      return null;
+    }
+
+    // Sort spawns by their spawn number to ensure consistent ordering
+    const sortedSpawns = spawnTiles.sort((a, b) => (a.playerSpawn || 0) - (b.playerSpawn || 0));
+    
+    // Assign spawn based on player index: 
+    // Player 0 (creator) gets spawn 1, Player 1 (joiner) gets spawn 2, etc.
+    const targetSpawnNumber = playerIndex + 1;
+    const spawnTile = sortedSpawns.find(tile => tile.playerSpawn === targetSpawnNumber);
+    
+    if (!spawnTile) {
+      console.warn(`[RenderingService] No spawn ${targetSpawnNumber} found for player index ${playerIndex}`);
+      // Fallback to first available spawn
+      const fallbackSpawn = sortedSpawns[0];
+      if (fallbackSpawn) {
+        const fallbackPosition = this.hexToPixel(fallbackSpawn.coordinates.q, fallbackSpawn.coordinates.r);
+        console.log(`[RenderingService] Using fallback spawn ${fallbackSpawn.playerSpawn} for player ${currentUserId}`);
+        return fallbackPosition;
+      }
+      return null;
+    }
+
+    // Convert hex coordinates to pixel coordinates
+    const { q, r } = spawnTile.coordinates;
+    const pixelPosition = this.hexToPixel(q, r);
+    
+    console.log(`[RenderingService] Player ${currentUserId} (index ${playerIndex}) assigned to P${targetSpawnNumber} spawn at hex (${q}, ${r}) -> pixel (${pixelPosition.x}, ${pixelPosition.y})`);
+    return pixelPosition;
+  }
+
+  /**
+   * Convert hex coordinates to pixel coordinates
+   */
+  private hexToPixel(q: number, r: number): { x: number; y: number } {
+    const x = HEX_WIDTH * 0.75 * q;
+    let y = HEX_HEIGHT * r;
+    
+    // Offset for odd rows (q) to create the honeycomb pattern
+    if (q % 2 !== 0) {
+      y += HEX_HEIGHT / 2;
+    }
+
+    return { x, y };
   }
 }
 

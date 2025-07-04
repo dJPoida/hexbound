@@ -486,6 +486,7 @@ export function App() {
           onPushDialog={pushDialog}
           isMyTurn={gameState.currentPlayerId === currentUserId}
           currentUserName={currentUserName}
+          currentUserId={currentUserId}
           dialog={dialogComponent}
         />
       );

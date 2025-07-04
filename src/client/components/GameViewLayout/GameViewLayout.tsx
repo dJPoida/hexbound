@@ -20,6 +20,7 @@ interface GameViewLayoutProps {
   onPushDialog: (dialog: DialogType) => void;
   isMyTurn: boolean;
   currentUserName: string | null;
+  currentUserId: string | null;
   dialog: h.JSX.Element | null;
 }
 
@@ -33,6 +34,7 @@ export function GameViewLayout({
   onPushDialog,
   isMyTurn,
   currentUserName,
+  currentUserId,
   dialog
 }: GameViewLayoutProps) {
   
@@ -87,8 +89,8 @@ export function GameViewLayout({
       <div class={styles.viewportContainer}>
         <Viewport 
             pixiContainerId="pixi-container" 
-            mapData={gameState.mapData} 
-            gameId={gameState.gameId} 
+            gameState={gameState} 
+            currentPlayerId={currentUserId}
             onReady={onReady} 
         />
       </div>
