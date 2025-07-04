@@ -14,34 +14,20 @@
 }
 
 @font-face {
-  font-family: 'Imperator';
-  src: url('/fonts/Imperator/Imperator.woff2') format('woff2');
-  font-weight: normal;
+  font-family: 'Exo 2';
+  src: url('/fonts/Exo_2/Exo2-VariableFont_wght.woff2') format('woff2-variations'),
+       url('/fonts/Exo_2/Exo2-VariableFont_wght.woff2') format('woff2');
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Imperator Bold';
-  src: url('/fonts/Imperator/Imperator Bold.woff2') format('woff2');
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'ImperatorSmallCaps';
-  src: url('/fonts/Imperator/ImperatorSmallCaps.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'ImperatorBronze';
-  src: url('/fonts/Imperator/ImperatorBronze.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
+  font-family: 'Exo 2';
+  src: url('/fonts/Exo_2/Exo2-Italic-VariableFont_wght.woff2') format('woff2-variations'),
+       url('/fonts/Exo_2/Exo2-Italic-VariableFont_wght.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
   font-display: swap;
 }
 
@@ -114,10 +100,7 @@
 
   /* Font Families */
   --font-brand: 'Hexbound', serif;
-  --font-primary-normal: 'Imperator', serif;
-  --font-primary-bold: 'Imperator Bold', serif;
-  --font-primary-small-caps: 'ImperatorSmallCaps', serif;
-  --font-primary-bronze: 'ImperatorBronze', serif;
+  --font-primary: 'Exo 2', sans-serif;
   --font-button: 'Bubblegum Sans', sans-serif;
 
   /* Font Sizes */
@@ -154,8 +137,8 @@
   --ifm-color-primary-lightest: var(--color-hex-amber-highlight);
   
   --ifm-background-color: var(--color-canvas-white);
-  --ifm-font-family-base: var(--font-primary-normal);
-  --ifm-heading-font-family: var(--font-primary-bold);
+  --ifm-font-family-base: var(--font-primary);
+  --ifm-heading-font-family: var(--font-primary);
   --ifm-font-color-base: var(--color-charcoal);
   
   --ifm-navbar-background-color: var(--color-canvas-white);
@@ -174,7 +157,7 @@
 
 /* Global body styling */
 body {
-  font-family: var(--font-primary-normal);
+  font-family: var(--font-primary);
   background-color: var(--color-canvas-white);
   color: var(--color-charcoal);
   line-height: 1.6;
@@ -182,7 +165,8 @@ body {
 
 /* Headings */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-primary-bold);
+  font-family: var(--font-primary);
+  font-weight: 700;
   color: var(--color-charcoal);
   margin-top: var(--space-lg);
   margin-bottom: var(--space-md);
@@ -219,7 +203,7 @@ h3 {
 }
 
 .navbar__item {
-  font-family: var(--font-primary-normal);
+  font-family: var(--font-primary);
   font-weight: 500;
 }
 
@@ -234,7 +218,7 @@ h3 {
 
 /* Sidebar styling */
 .menu__link {
-  font-family: var(--font-primary-normal);
+  font-family: var(--font-primary);
   border-radius: 6px;
   transition: all 0.2s ease;
 }
@@ -260,7 +244,7 @@ h3 {
 
 /* Content styling */
 .markdown {
-  font-family: var(--font-primary-normal);
+  font-family: var(--font-primary);
   line-height: 1.7;
 }
 
@@ -313,7 +297,7 @@ h3 {
   background-color: var(--color-hex-amber);
   color: var(--color-charcoal);
   padding: var(--space-md);
-  font-family: var(--font-primary-bold);
+  font-family: var(--font-primary);
   font-weight: 600;
   text-align: left;
 }
@@ -360,12 +344,13 @@ h3 {
 }
 
 .footer__title {
-  font-family: var(--font-primary-bold);
+  font-family: var(--font-primary);
+  font-weight: 700;
   color: var(--color-canvas-white);
 }
 
 .footer__item {
-  font-family: var(--font-primary-normal);
+  font-family: var(--font-primary);
 }
 
 .footer__link-item {
@@ -378,7 +363,7 @@ h3 {
 
 /* Breadcrumbs */
 .breadcrumbs {
-  font-family: var(--font-primary-normal);
+  font-family: var(--font-primary);
   font-size: var(--font-size-sm);
   color: var(--color-stone-grey);
 }

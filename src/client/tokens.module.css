@@ -80,17 +80,12 @@
      Font Families
      ========================================================================== */
   --font-brand: 'Hexbound', serif;
-  --font-primary-normal: 'Imperator', serif;
-  --font-primary-bold: 'Imperator Bold', serif;
-  --font-primary-small-caps: 'ImperatorSmallCaps', serif;
-  --font-primary-small-caps-bold: 'ImperatorSmallCaps Bold', serif;
-  --font-primary-bronze: 'ImperatorBronze', serif;
-  --font-primary-bronze-small-caps: 'ImperatorBronzeSmallCaps', serif;
+  --font-primary: 'Exo 2', sans-serif;
   --font-button: 'Bubblegum Sans', sans-serif;
 
   /* Legacy font family aliases */
   --font-family-main: 'Hexbound', sans-serif;
-  --font-family-body: 'Imperator', 'Times New Roman', serif;
+  --font-family-body: 'Exo 2', sans-serif;
   --font-family-display: 'Hexbound', sans-serif;
 
   /* ==========================================================================

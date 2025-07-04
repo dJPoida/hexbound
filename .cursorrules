@@ -189,7 +189,7 @@ When adding a new color family:
    ```
 
 ### Font Token Guidelines
-- Use semantic naming: `--font-primary-normal`, `--font-button`, etc.
+- Use semantic naming: `--font-primary`, `--font-button`, etc.
 - Maintain legacy aliases for compatibility when refactoring
 - Font sizes use rem units with px comments: `--font-size-lg: 1.125rem; /* 18px */`
 
@@ -279,7 +279,7 @@ The `Input` component (`src/client/components/Input/Input.tsx`) provides a compr
 - **Size variants**: Default and large options
 
 **Typography & Layout:**
-- **Font**: Uses `--font-primary-normal` (Imperator) for consistency
+- **Font**: Uses `--font-primary` (Exo 2) for consistency
 - **Vertical alignment**: Asymmetric padding to compensate for font baseline (10px top, 6px bottom for default; 18px top, 14px bottom for large)
 - **Line height**: Reduced to 1.2 for better visual centering
 - **Touch targets**: Minimum 44px height for mobile accessibility

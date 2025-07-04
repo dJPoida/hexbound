@@ -2,11 +2,11 @@
 .input {
   /* Layout */
   width: 100%;
-  padding: 10px var(--space-md) 6px var(--space-md);
+  padding: 0 var(--space-md);
   box-sizing: border-box;
   
   /* Typography */
-  font-family: var(--font-primary-normal);
+  font-family: var(--font-primary);
   font-size: var(--font-size-md);
   line-height: 1.2;
   color: var(--color-charcoal);

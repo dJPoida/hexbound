@@ -10,14 +10,16 @@
    Text Variants
    ========================================================================== */
 .body {
-  font-family: var(--font-primary-normal);
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-normal);
   font-size: var(--font-size-lg);
   line-height: 1.6;
   margin-bottom: var(--space-md);
 }
 
 .caption {
-  font-family: var(--font-primary-normal);
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-normal);
   font-size: var(--font-size-md);
   line-height: 1.4;
   text-transform: uppercase;
@@ -25,9 +27,12 @@
 }
 
 .label {
-  font-family: var(--font-primary-small-caps);
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-normal);
   font-size: var(--font-size-md);
   line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   margin-bottom: var(--space-xs);
 }
 
@@ -35,20 +40,27 @@
    Heading Variants
    ========================================================================== */
 .pageTitle {
-  font-family: var(--font-primary-small-caps-bold);
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-bold);
   font-size: var(--font-size-4xl);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   margin-bottom: var(--space-lg);
 }
 
 .sectionHeader {
-  font-family: var(--font-primary-bold);
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-bold);
   font-size: var(--font-size-3xl);
   margin-bottom: var(--space-md);
 }
 
 .subSectionHeader {
-  font-family: var(--font-primary-small-caps);
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-medium);
   font-size: var(--font-size-2xl);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   margin-bottom: var(--space-sm);
 }
 
@@ -70,5 +82,11 @@
 /* ==========================================================================
    Font Variants (for Text component)
    ========================================================================== */
-.fontNormal { font-family: var(--font-primary-normal); }
-.fontBold { font-family: var(--font-primary-bold); } 
+.fontNormal { 
+  font-family: var(--font-primary); 
+  font-weight: var(--font-weight-normal);
+}
+.fontBold { 
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-bold);
+} 

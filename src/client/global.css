@@ -10,40 +10,21 @@
 }
 
 @font-face {
-  font-family: 'Imperator';
-  src: url('/fonts/Imperator/Imperator.woff2') format('woff2');
-  font-weight: 400;
+  font-family: 'Exo 2';
+  src: url('/fonts/Exo_2/Exo2-VariableFont_wght.woff2') format('woff2-variations'),
+       url('/fonts/Exo_2/Exo2-VariableFont_wght.woff2') format('woff2');
+  font-weight: 100 900;
   font-style: normal;
+  font-display: swap;
 }
+
 @font-face {
-  font-family: 'Imperator Bold';
-  src: url('/fonts/Imperator/Imperator Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'ImperatorSmallCaps';
-  src: url('/fonts/Imperator/ImperatorSmallCaps.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'ImperatorSmallCaps Bold';
-  src: url('/fonts/Imperator/ImperatorSmallCaps Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'ImperatorBronze';
-  src: url('/fonts/Imperator/ImperatorBronze.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'ImperatorBronzeSmallCaps';
-  src: url('/fonts/Imperator/ImperatorBronzeSmallCaps.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
+  font-family: 'Exo 2';
+  src: url('/fonts/Exo_2/Exo2-Italic-VariableFont_wght.woff2') format('woff2-variations'),
+       url('/fonts/Exo_2/Exo2-Italic-VariableFont_wght.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
 }
 
 @font-face {
