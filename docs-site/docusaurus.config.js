@@ -92,11 +92,11 @@ const config = {
               },
               {
                 label: 'Gameplay',
-                to: '/docs/gameplay/Terrain',
+                to: '/docs/Gameplay/Terrain',
               },
               {
                 label: 'Technical',
-                to: '/docs/technical/Map%20Generation',
+                to: '/docs/Technical/Map%20Generation',
               },
             ],
           },
