@@ -20,8 +20,7 @@ export class Tile {
   public container: PIXI.Container;
   private body: PIXI.Sprite;
   private outline: PIXI.Sprite;
-  private elevationText: PIXI.Text;
-  private coordText: PIXI.Text;
+  private debugText: PIXI.Text;
 
   constructor(tileData: TileData, textures: Record<string, PIXI.Texture>) {
     const { coordinates, elevation } = tileData;
@@ -41,29 +40,26 @@ export class Tile {
     this.outline.x = HEX_OFFSET_X;
     this.outline.y = HEX_OFFSET_Y + elevationOffsetY;
     
-    const textStyle: Partial<PIXI.TextStyle> = {
+    const debugTextStyle: Partial<PIXI.TextStyle> = {
       fontFamily: TILE_FONT,
-      fontSize: TILE_FONT_SIZE,
-      fill: '#000000',
+      fontSize: TILE_FONT_SIZE / 2,
+      fill: '#333333',
       align: 'center',
     };
 
-    this.elevationText = new PIXI.Text({ text: elevation.toString(), style: textStyle });
-    this.elevationText.anchor.set(0.5);
-    this.elevationText.x = HEX_TEXT_OFFSET_X;
-    this.elevationText.y = HEX_TEXT_OFFSET_Y + elevationOffsetY;
-    
-    this.coordText = new PIXI.Text({ text: `(${q},${r})`, style: { ...textStyle, fontSize: TILE_FONT_SIZE / 2, fill: '#333333' } });
-    this.coordText.anchor.set(0.5);
-    this.coordText.x = HEX_TEXT_OFFSET_X;
-    this.coordText.y = this.elevationText.y + TILE_FONT_SIZE;
+    this.debugText = new PIXI.Text({ 
+      text: `(${q},${r}) [${elevation}]`, 
+      style: debugTextStyle 
+    });
+    this.debugText.anchor.set(0.5);
+    this.debugText.x = HEX_TEXT_OFFSET_X;
+    this.debugText.y = HEX_TEXT_OFFSET_Y + 35 + elevationOffsetY;
     
     // Add sprites to container in the correct render order
     this.container.addChild(
       this.body,
       this.outline,
-      this.elevationText,
-      this.coordText
+      this.debugText
     );
   }
 } 
