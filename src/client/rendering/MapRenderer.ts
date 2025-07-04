@@ -231,6 +231,10 @@ export class MapRenderer {
           // Set visibility of debug elements based on settings
           tile.outline.visible = settings.showHexGrid;
           tile.debugText.visible = settings.showDebugInfo;
+          // Also control spawn text visibility if it exists
+          if (tile.spawnText) {
+            tile.spawnText.visible = settings.showDebugInfo;
+          }
         } else {
           tile.container.visible = false;
         }

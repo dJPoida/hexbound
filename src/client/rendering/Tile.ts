@@ -21,9 +21,10 @@ export class Tile {
   private body: PIXI.Sprite;
   public outline: PIXI.Sprite;
   public debugText: PIXI.Text;
+  public spawnText: PIXI.Text | null = null;
 
   constructor(tileData: TileData, textures: Record<string, PIXI.Texture>) {
-    const { coordinates, elevation } = tileData;
+    const { coordinates, elevation, playerSpawn } = tileData;
     const { q, r } = coordinates;
 
     this.container = new PIXI.Container();
@@ -54,12 +55,31 @@ export class Tile {
     this.debugText.anchor.set(0.5);
     this.debugText.x = HEX_TEXT_OFFSET_X;
     this.debugText.y = HEX_TEXT_OFFSET_Y + 25 + elevationOffsetY; // Move text toward bottom of cell but not too low
+
+    // Create spawn text if this tile is a player spawn
+    if (playerSpawn !== undefined) {
+      const spawnTextStyle: Partial<PIXI.TextStyle> = {
+        fontFamily: TILE_FONT,
+        fontSize: TILE_FONT_SIZE / 2,
+        fill: '#ff6600', // Orange color to make it stand out
+        align: 'center',
+      };
+
+      this.spawnText = new PIXI.Text({ 
+        text: `P${playerSpawn} Spawn`, 
+        style: spawnTextStyle 
+      });
+      this.spawnText.anchor.set(0.5);
+      this.spawnText.x = HEX_TEXT_OFFSET_X;
+      this.spawnText.y = HEX_TEXT_OFFSET_Y + 10 + elevationOffsetY; // Above the coordinate text
+    }
     
     // Add sprites to container in the correct render order
-    this.container.addChild(
-      this.body,
-      this.outline,
-      this.debugText
-    );
+    this.container.addChild(this.body, this.outline, this.debugText);
+    
+    // Add spawn text if it exists
+    if (this.spawnText) {
+      this.container.addChild(this.spawnText);
+    }
   }
 } 

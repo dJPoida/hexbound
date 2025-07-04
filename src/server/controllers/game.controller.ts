@@ -231,7 +231,7 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
     await gameRepository.save(game);
 
     // 4. Initialize game state in Redis
-    const mapGenerator = new MapGenerator(config.map.defaultWidth, config.map.defaultHeight);
+    const mapGenerator = new MapGenerator(config.map.defaultWidth, config.map.defaultHeight, undefined, undefined, 2);
     const mapData = mapGenerator.generate();
 
     const initialGameState: ServerGameState = {
