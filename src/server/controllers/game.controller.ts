@@ -101,6 +101,7 @@ export const joinGame = async (req: AuthenticatedRequest, res: Response) => {
 
   const gameRepository = AppDataSource.getRepository(Game);
   const userRepository = AppDataSource.getRepository(User);
+  const statusRepository = AppDataSource.getRepository(GameStatus);
 
   try {
     const game = await gameRepository.findOne({ where: { gameCode }, relations: ['players', 'status'] });
@@ -119,31 +120,60 @@ export const joinGame = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(200).json({ message: 'Already joined.', gameId: game.gameId });
     }
 
-    // Add the user to the game's players
+    // Get the current game state from Redis
+    const redisKey = `game:${game.gameId}`;
+    const currentState = await redisClient.json.get(redisKey) as ServerGameState | null;
+    
+    if (!currentState) {
+      return res.status(500).json({ message: 'Game state not found in Redis.' });
+    }
+
+    // Check if there's a placeholder player to replace
+    const placeholderPlayerIndex = currentState.players.findIndex(p => p.isPlaceholder);
+    
+    if (placeholderPlayerIndex === -1) {
+      return res.status(400).json({ message: 'Game is already full.' });
+    }
+
+    // Replace the placeholder player with the real player
+    currentState.players[placeholderPlayerIndex] = {
+      userId: user.userId,
+      userName: user.userName,
+      isPlaceholder: false,
+    };
+
+    // Check if all players are now real (no more placeholders)
+    const hasPlaceholders = currentState.players.some(p => p.isPlaceholder);
+    let gameStatusChanged = false;
+    
+    if (!hasPlaceholders && game.status.statusName === GameStatusValues.WAITING) {
+      // Change game status to active
+      const activeStatus = await statusRepository.findOne({ where: { statusName: GameStatusValues.ACTIVE } });
+      if (activeStatus) {
+        game.status = activeStatus;
+        gameStatusChanged = true;
+      }
+    }
+
+    // Update the database with the new player
     game.players.push(user);
     await gameRepository.save(game);
 
-    // Now, update the game state in Redis
-    const redisKey = `game:${game.gameId}`;
-    const currentState = await redisClient.json.get(redisKey) as ServerGameState | null;
+    // Update the game state in Redis
+    await redisClient.json.set(redisKey, '$', currentState as unknown as RedisJSON);
+    
+    // Broadcast the updated state to all clients in the game
+    const broadcastMessage: SocketMessage<ServerGameState> = {
+      type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE,
+      payload: currentState,
+    };
+    broadcastToGame(game.gameId, JSON.stringify(broadcastMessage));
 
-    if (currentState) {
-      const newPlayer = {
-        userId: user.userId,
-        userName: user.userName,
-      };
-      currentState.players.push(newPlayer);
-      await redisClient.json.set(redisKey, '$', currentState as unknown as RedisJSON);
-      
-      // Finally, broadcast the updated state to all clients in the game
-      const broadcastMessage: SocketMessage<ServerGameState> = {
-        type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE,
-        payload: currentState,
-      };
-      broadcastToGame(game.gameId, JSON.stringify(broadcastMessage));
-    }
+    const responseMessage = gameStatusChanged 
+      ? 'Successfully joined game. Game is now active!' 
+      : 'Successfully joined game.';
 
-    res.status(200).json({ message: 'Successfully joined game.', gameId: game.gameId });
+    res.status(200).json({ message: responseMessage, gameId: game.gameId });
   } catch (error) {
     console.error(`[API /games/${gameCode}/join] Error joining game:`, error);
     res.status(500).json({ message: 'Error joining game', error: (error as Error).message });
@@ -213,6 +243,12 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
         {
           userId: user.userId,
           userName: user.userName,
+          isPlaceholder: false,
+        },
+        {
+          userId: 'placeholder-player-2',
+          userName: 'Waiting for player...',
+          isPlaceholder: true,
         },
       ],
       turnActionLog: [], // To store actions taken in a turn

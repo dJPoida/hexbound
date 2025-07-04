@@ -6,6 +6,7 @@
 export interface Player {
   userId: string;
   userName: string;
+  isPlaceholder: boolean;
 }
 
 export const GameStatusValues = {

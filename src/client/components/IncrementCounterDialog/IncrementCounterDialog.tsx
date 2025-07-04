@@ -8,9 +8,13 @@ interface IncrementCounterDialogProps {
     onIncrement: () => void;
     onClose: () => void;
     onOpenSettings: () => void;
+    hasPlaceholders: boolean;
 }
 
-export function IncrementCounterDialog({ counter, isMyTurn, onIncrement, onClose, onOpenSettings }: IncrementCounterDialogProps) {
+export function IncrementCounterDialog({ counter, isMyTurn, onIncrement, onClose, onOpenSettings, hasPlaceholders }: IncrementCounterDialogProps) {
+    const canIncrement = isMyTurn && !hasPlaceholders;
+    const buttonText = hasPlaceholders ? 'Waiting for Players' : 'Increment';
+    
     return (
         <Dialog title="Increment Counter" onClose={onClose}>
             <div className={styles.content}>
@@ -21,10 +25,10 @@ export function IncrementCounterDialog({ counter, isMyTurn, onIncrement, onClose
                 <Button 
                     onClick={onIncrement} 
                     variant="primary" 
-                    disabled={!isMyTurn} 
+                    disabled={!canIncrement} 
                     fullWidth={true}
                 >
-                    Increment
+                    {buttonText}
                 </Button>
             </div>
             <div className={styles.footer}>

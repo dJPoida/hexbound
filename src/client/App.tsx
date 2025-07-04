@@ -446,6 +446,7 @@ export function App() {
         break;
       case 'incrementCounter':
         if (gameState) {
+          const hasPlaceholders = gameState.players.some(p => p.isPlaceholder);
           dialogComponent = (
             <IncrementCounterDialog
               counter={gameState.gameState.placeholderCounter ?? 0}
@@ -453,6 +454,7 @@ export function App() {
               onIncrement={handleIncrementCounter}
               onClose={popDialog}
               onOpenSettings={() => replaceDialog('gameSettings')}
+              hasPlaceholders={hasPlaceholders}
             />
           );
         }

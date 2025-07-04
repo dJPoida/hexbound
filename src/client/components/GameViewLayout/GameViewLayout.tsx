@@ -34,6 +34,10 @@ export function GameViewLayout({
   dialog
 }: GameViewLayoutProps) {
   
+  // Check if any players are placeholders
+  const hasPlaceholders = gameState.players.some(p => p.isPlaceholder);
+  const canEndTurn = isMyTurn && !hasPlaceholders;
+  
   const headerContent = (
     <GameHeader
       currentUserName={currentUserName}
@@ -52,7 +56,13 @@ export function GameViewLayout({
       <Button onClick={() => onPushDialog('debugInfo')} variant="icon" ariaLabel="Show Debug Info">
         <i class="hbi hbi-terminal"></i>
       </Button>
-      <Button onClick={onEndTurn} variant="primary" disabled={!isMyTurn}>End Turn</Button>
+      <Button 
+        onClick={onEndTurn} 
+        variant="primary" 
+        disabled={!canEndTurn}
+      >
+        {hasPlaceholders ? 'Waiting for Players' : 'End Turn'}
+      </Button>
     </ActionBar>
   );
   

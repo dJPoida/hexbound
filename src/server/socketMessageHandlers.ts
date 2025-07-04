@@ -144,6 +144,15 @@ async function handleEndTurn(ws: AuthenticatedWebSocket, payload: EndTurnPayload
     return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'It is not your turn to end.' } }));
   }
 
+  // Check if any players are placeholders
+  const hasPlaceholders = gameState.players.some(p => p.isPlaceholder);
+  if (hasPlaceholders) {
+    return ws.send(JSON.stringify({ 
+      type: SOCKET_MESSAGE_TYPES.ERROR, 
+      payload: { message: 'Cannot end turn while waiting for all players to join.' } 
+    }));
+  }
+
   const stateAfterActions = getPlayerTurnPreview(gameState);
 
   const currentPlayerIndex = gameState.players.findIndex((p: Player) => p.userId === playerWhoSentMessage);
