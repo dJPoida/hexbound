@@ -62,18 +62,22 @@ export function GameViewLayout({
 
   const footerContent = (
     <ActionBar>
-      {settings.showDebugInfo && (
-        <Button onClick={() => onPushDialog('debugInfo')} variant="icon" ariaLabel="Show Debug Info">
-          <i class="hbi hbi-terminal"></i>
+      <div>
+        {settings.showDebugInfo && (
+          <Button onClick={() => onPushDialog('debugInfo')} variant="icon" ariaLabel="Show Debug Info">
+            <i class="hbi hbi-terminal"></i>
+          </Button>
+        )}
+      </div>
+      <div>
+        <Button 
+          onClick={onEndTurn} 
+          variant="primary" 
+          disabled={!canEndTurn}
+        >
+          {hasPlaceholders ? 'Waiting for Players' : 'End Turn'}
         </Button>
-      )}
-      <Button 
-        onClick={onEndTurn} 
-        variant="primary" 
-        disabled={!canEndTurn}
-      >
-        {hasPlaceholders ? 'Waiting for Players' : 'End Turn'}
-      </Button>
+      </div>
     </ActionBar>
   );
   
