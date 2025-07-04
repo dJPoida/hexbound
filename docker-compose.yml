@@ -39,13 +39,11 @@ services:
 
   docs:
     build:
-      context: ./docs-site
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: docs-site/Dockerfile
     restart: unless-stopped
     ports:
       - "3001:3000"
-    volumes:
-      - ./docs:/app/docs:ro
     environment:
       - NODE_ENV=production
 
