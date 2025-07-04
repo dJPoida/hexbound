@@ -1,118 +1,106 @@
-import { MapData, TileData, TerrainType, AxialCoordinates } from '../../shared/types/game.types';
+import { MapData, TileData } from '../../shared/types/game.types';
+import { MapGenerationConfig, PassExecutionResult } from '../../shared/types/mapGeneration.types';
+import { createMapGenerationConfig } from '../../shared/constants/mapGeneration.const';
+import { MapGenerationContext } from './mapGeneration/GenerationPass';
+import { PassRegistry } from './mapGeneration/PassRegistry';
 
+/**
+ * Map generation results and statistics
+ */
+export interface MapGenerationResult {
+  mapData: MapData;
+  passResults: PassExecutionResult[];
+  totalTilesGenerated: number;
+  executionTimeMs: number;
+}
+
+/**
+ * Enhanced MapGenerator using a pipeline-based approach
+ * Supports configurable generation passes and presets
+ */
 export class MapGenerator {
-  private width: number;
-  private height: number;
-  private tiles: (TileData | null)[][] = [];
+  private config: MapGenerationConfig;
+  private passRegistry: PassRegistry;
 
-  constructor(width: number, height: number) {
-    this.width = width;
-    this.height = height;
+  constructor(width: number, height: number, presetName?: keyof typeof import('../../shared/constants/mapGeneration.const').MAP_GENERATION_PRESETS, seed?: string) {
+    this.config = createMapGenerationConfig(width, height, presetName, seed);
+    this.passRegistry = PassRegistry.getInstance();
   }
 
-  private _initializeGrid(): void {
-    for (let r = 0; r < this.height; r++) {
-      this.tiles[r] = Array(this.width).fill(null);
-    }
-  }
-
-  private _getNeighborElevation(q: number, r: number): number | null {
-    if (r < 0 || r >= this.height || q < 0 || q >= this.width) {
-      return null; // Out of bounds
-    }
-    // Return a default or initial value if the tile hasn't been processed yet
-    return this.tiles[r]?.[q]?.elevation ?? null;
-  }
-
-  private _applyIceCaps(): void {
-    for (let r = 0; r < this.height; r++) {
-      if (r < 2 || r >= this.height - 2) {
-        for (let q = 0; q < this.width; q++) {
-          let baseElevation: number;
-          const west = this._getNeighborElevation(q - 1, r);
-          const north = this._getNeighborElevation(q, r - 1);
-
-          if (west !== null && north !== null) {
-            baseElevation = Math.round((west + north) / 2);
-          } else if (west !== null) {
-            baseElevation = west;
-          } else if (north !== null) {
-            baseElevation = north;
-          } else {
-            baseElevation = Math.floor(Math.random() * 3) + 2; // Ice caps are higher elevation
-          }
-          
-          const elevationChange = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
-          const newElevation = Math.max(2, Math.min(4, baseElevation + elevationChange));
-
-          this.tiles[r][q] = {
-            coordinates: { q, r },
-            elevation: newElevation,
-            terrain: TerrainType.ICECAP,
-          };
-        }
-      }
-    }
-  }
-
-  private _applyOceans(): void {
-    const oceanRows = [2, this.height - 3];
-    for (const r of oceanRows) {
-      for (let q = 0; q < this.width; q++) {
-        this.tiles[r][q] = {
-          coordinates: { q, r },
-          elevation: 0, // Oceans are always at sea level
-          terrain: TerrainType.OCEAN,
-        };
-      }
-    }
-  }
-
-  private _fillGrassland(): void {
-    for (let r = 0; r < this.height; r++) {
-      for (let q = 0; q < this.width; q++) {
-        // If the tile has not been set by a previous pass
-        if (this.tiles[r][q] === null) {
-          let baseElevation: number;
-          const west = this._getNeighborElevation(q - 1, r);
-          const north = this._getNeighborElevation(q, r - 1);
-
-          if (west !== null && north !== null) {
-            baseElevation = Math.round((west + north) / 2);
-          } else if (west !== null) {
-            baseElevation = west;
-          } else if (north !== null) {
-            baseElevation = north;
-          } else {
-            baseElevation = 1; // Default starting elevation for continents
-          }
-          
-          const elevationChange = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
-          const newElevation = Math.max(0, Math.min(4, baseElevation + elevationChange));
-
-          this.tiles[r][q] = {
-            coordinates: { q, r },
-            elevation: newElevation,
-            terrain: TerrainType.GRASSLAND,
-          };
-        }
-      }
-    }
-  }
-
+  /**
+   * Generate a map using the configured pipeline
+   */
   public generate(): MapData {
-    this._initializeGrid();
-    this._applyIceCaps();
-    this._applyOceans();
-    this._fillGrassland();
+    const result = this.generateWithDetails();
+    return result.mapData;
+  }
 
-    // Flatten the 2D grid into a 1D array for the final MapData object
-    const flattenedTiles = this.tiles.flat();
+  /**
+   * Generate a map with detailed execution information
+   */
+  public generateWithDetails(): MapGenerationResult {
+    const startTime = Date.now();
+    
+    // Validate configuration
+    const enabledPasses = this.config.passes.filter(p => p.enabled);
+    const passNames = enabledPasses.map(p => p.name);
+    const validation = this.passRegistry.validatePassConfiguration(passNames);
+    
+    if (!validation.valid) {
+      throw new Error(`Missing generation passes: ${validation.missingPasses.join(', ')}`);
+    }
+
+    // Initialize generation context
+    const context = new MapGenerationContext(this.config.width, this.config.height, this.config);
+    const passResults: PassExecutionResult[] = [];
+
+    // Execute passes in order
+    for (const passConfig of enabledPasses) {
+      const pass = this.passRegistry.getPass(passConfig.name);
+      if (!pass) {
+        throw new Error(`Generation pass '${passConfig.name}' not found in registry`);
+      }
+
+      const result = pass.execute(context, passConfig);
+      passResults.push(result);
+
+      if (!result.success) {
+        throw new Error(`Generation pass '${passConfig.name}' failed: ${result.message}`);
+      }
+    }
+
+    // Convert context tiles to final MapData format
+    const flattenedTiles = context.tiles.flat();
+    const validTiles = flattenedTiles.filter(t => t !== null) as TileData[];
+
+    const mapData: MapData = {
+      width: this.config.width,
+      height: this.config.height,
+      tiles: validTiles,
+    };
+
+    const executionTimeMs = Date.now() - startTime;
+    const totalTilesGenerated = passResults.reduce((sum, result) => sum + result.tilesModified, 0);
 
     return {
-      width: this.width,
-      height: this.height,
-      tiles: flattenedTiles.filter(t => t !== null) as TileData[],
+      mapData,
+      passResults,
+      totalTilesGenerated,
+      executionTimeMs,
     };
+  }
+
+  /**
+   * Get the current generation configuration
+   */
+  public getConfig(): MapGenerationConfig {
+    return { ...this.config };
+  }
+
+  /**
+   * Update the generation configuration
+   */
+  public setConfig(config: Partial<MapGenerationConfig>): void {
+    this.config = { ...this.config, ...config };
   }
 } 
