@@ -34,27 +34,6 @@
   font-style: normal;
 }
 
-@font-face {
-  font-family: 'LTCushion';
-  src: url('/fonts/LTCushion/LTCushion-Light.woff') format('woff');
-  font-weight: 300;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'LTCushion';
-  src: url('/fonts/LTCushion/LTCushion-Medium.woff') format('woff');
-  font-weight: 500;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'LTCushion';
-  src: url('/fonts/LTCushion/LTCushion-Bold.woff') format('woff');
-  font-weight: 700;
-  font-style: normal;
-}
-
 html, body, #app {
   height: 100%;
   width: 100%;
