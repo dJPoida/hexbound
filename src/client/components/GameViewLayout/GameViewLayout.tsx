@@ -5,6 +5,9 @@ import { ClientGameStatePayload } from '../../../shared/types/socket.types';
 import styles from './GameViewLayout.module.css';
 import { ActionBar } from '../ActionBar/ActionBar';
 import { Button } from '../Button/Button';
+import { Icon } from '../Icon/Icon';
+import { settingsService } from '../../services/settings.service';
+import { useState, useEffect } from 'preact/hooks';
 
 type DialogType = 'gameSettings' | 'incrementCounter' | 'debugInfo';
 
@@ -18,6 +21,7 @@ interface GameViewLayoutProps {
   onPushDialog: (dialog: DialogType) => void;
   isMyTurn: boolean;
   currentUserName: string | null;
+  currentUserId: string | null;
   dialog: h.JSX.Element | null;
 }
 
@@ -31,8 +35,20 @@ export function GameViewLayout({
   onPushDialog,
   isMyTurn,
   currentUserName,
+  currentUserId,
   dialog
 }: GameViewLayoutProps) {
+  
+  const [settings, setSettings] = useState(settingsService.getSettings());
+
+  useEffect(() => {
+    const unsubscribe = settingsService.subscribe(setSettings);
+    return () => unsubscribe();
+  }, []);
+  
+  // Check if any players are placeholders
+  const hasPlaceholders = gameState.players.some(p => p.isPlaceholder);
+  const canEndTurn = isMyTurn && !hasPlaceholders;
   
   const headerContent = (
     <GameHeader
@@ -49,10 +65,22 @@ export function GameViewLayout({
 
   const footerContent = (
     <ActionBar>
-      <Button onClick={() => onPushDialog('debugInfo')} variant="icon" ariaLabel="Show Debug Info">
-        <i class="hbi hbi-terminal"></i>
-      </Button>
-      <Button onClick={onEndTurn} variant="primary" disabled={!isMyTurn}>End Turn</Button>
+      <div>
+        {settings.showDebugInfo && (
+          <Button onClick={() => onPushDialog('debugInfo')} variant="icon" ariaLabel="Show Debug Info">
+            <Icon name="terminal" color="light" />
+          </Button>
+        )}
+      </div>
+      <div>
+        <Button 
+          onClick={onEndTurn} 
+          variant="primary" 
+          disabled={!canEndTurn}
+        >
+          {hasPlaceholders ? 'Waiting for Players' : 'End Turn'}
+        </Button>
+      </div>
     </ActionBar>
   );
   
@@ -62,8 +90,8 @@ export function GameViewLayout({
       <div class={styles.viewportContainer}>
         <Viewport 
             pixiContainerId="pixi-container" 
-            mapData={gameState.mapData} 
-            gameId={gameState.gameId} 
+            gameState={gameState} 
+            currentPlayerId={currentUserId}
             onReady={onReady} 
         />
       </div>

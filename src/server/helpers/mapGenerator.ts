@@ -22,9 +22,31 @@ export class MapGenerator {
   private config: MapGenerationConfig;
   private passRegistry: PassRegistry;
 
-  constructor(width: number, height: number, presetName?: keyof typeof import('../../shared/constants/mapGeneration.const').MAP_GENERATION_PRESETS, seed?: string) {
+  constructor(width: number, height: number, presetName?: keyof typeof import('../../shared/constants/mapGeneration.const').MAP_GENERATION_PRESETS, seed?: string, playerCount?: number) {
     this.config = createMapGenerationConfig(width, height, presetName, seed);
+    
+    // If player count is specified, update the spawn allocation pass parameters
+    if (playerCount !== undefined) {
+      this.updateSpawnAllocationPlayerCount(playerCount);
+    }
+    
     this.passRegistry = PassRegistry.getInstance();
+  }
+
+  /**
+   * Update the player count for the spawn allocation pass
+   */
+  private updateSpawnAllocationPlayerCount(playerCount: number): void {
+    const spawnPassIndex = this.config.passes.findIndex(p => p.name === 'SpawnAllocation');
+    if (spawnPassIndex !== -1) {
+      this.config.passes[spawnPassIndex] = {
+        ...this.config.passes[spawnPassIndex],
+        parameters: {
+          ...this.config.passes[spawnPassIndex].parameters,
+          playerCount: playerCount,
+        },
+      };
+    }
   }
 
   /**

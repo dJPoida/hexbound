@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { Button } from '../Button/Button';
+import { Icon } from '../Icon/Icon';
 import { GameSettingsDialog } from '../GameSettingsDialog/GameSettingsDialog';
 import styles from './GameHeader.module.css';
 
@@ -68,18 +69,18 @@ export function GameHeader({ currentUserName, onLogout, currentView, onNavigateT
             {currentView === 'game' ? (
                 <div className={styles.resources}>
                     <div className={styles.resourceItem}>
-                        <i className="hbi-dollar-sign"></i>
+                        <Icon name="dollar-sign" />
                         <span>1,234</span>
                     </div>
                     <div className={styles.resourceItem}>
-                        <i className="hbi-award"></i>
+                        <Icon name="award" />
                         <span>567</span>
                     </div>
                     <div className={styles.resourceItem}>
-                        <i className="hbi-smile"></i>
+                        <Icon name="smile" />
                         <span>{counter ?? 0}</span>
                         <button onClick={onToggleCounterDialog} className={styles.editButton}>
-                            <i className="hbi-edit"></i>
+                            <Icon name="edit" />
                         </button>
                     </div>
                 </div>
@@ -94,22 +95,22 @@ export function GameHeader({ currentUserName, onLogout, currentView, onNavigateT
                         ariaLabel="Open menu" 
                         variant="icon"
                     >
-                        <span class="hbi-menu" aria-hidden="true"></span>
+                        <Icon name="menu" color="light" />
                     </Button>
                     {isMenuOpen && (
                         <div className={styles.menuDropdown}>
                             {currentView === 'game' && (
                                 <>
                                     <button className={styles.menuItem} onClick={() => { onOpenSettings(); closeMenu(); }}>
-                                        <i class="hbi hbi-settings"></i>
+                                        <Icon name="settings" />
                                         <span>Game Settings</span>
                                     </button>
                                     <button className={styles.menuItem} onClick={handleCopyLink}>
-                                        <i class="hbi hbi-link"></i>
+                                        <Icon name="link" />
                                         <span>{copyStatus === 'copied' ? 'Link Copied!' : 'Copy Game Link'}</span>
                                     </button>
                                     <button className={styles.menuItem} onClick={() => { onNavigateToLobby(); closeMenu(); }}>
-                                        <i class="hbi hbi-exit"></i>
+                                        <Icon name="exit" />
                                         <span>Return to Lobby</span>
                                     </button>
                                 </>
@@ -117,11 +118,11 @@ export function GameHeader({ currentUserName, onLogout, currentView, onNavigateT
                             {currentView === 'lobby' && (
                                  <>
                                     <button className={styles.menuItem} onClick={() => { onOpenSettings(); closeMenu(); }}>
-                                        <i class="hbi hbi-settings"></i>
+                                        <Icon name="settings" />
                                         <span>Game Settings</span>
                                     </button>
                                     <button className={styles.menuItem} onClick={() => { onLogout(); closeMenu(); }}>
-                                        <i class="hbi hbi-exit"></i>
+                                        <Icon name="exit" />
                                         <span>Logout</span>
                                     </button>
                                 </>
@@ -129,7 +130,7 @@ export function GameHeader({ currentUserName, onLogout, currentView, onNavigateT
                             {currentView === 'login' && (
                                  <>
                                     <button className={styles.menuItem} onClick={() => { onOpenSettings(); closeMenu(); }}>
-                                        <i class="hbi hbi-settings"></i>
+                                        <Icon name="settings" />
                                         <span>Game Settings</span>
                                     </button>
                                 </>

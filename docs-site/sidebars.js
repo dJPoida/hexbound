@@ -15,24 +15,24 @@
 const sidebars = {
   // Wiki sidebar - organized by the alphabetical prefixes in your files
   tutorialSidebar: [
-    'about', // Single page above the category
+    'About', // Single page above the category
     {
       type: 'category',
       label: 'Gameplay',
       collapsed: false,
       items: [
-        'gameplay/terrain',
-        'gameplay/towns',
-        'gameplay/orders',
-        'gameplay/elevation',
-        'gameplay/fog-of-war',
-        'gameplay/units',
-        'gameplay/unit-movement',
-        'gameplay/combat',
-        'gameplay/resources',
-        'gameplay/town improvements',
-        'gameplay/tech-tree',
-        'gameplay/spitballing-ideas',
+        'Gameplay/Terrain',
+        'Gameplay/Towns',
+        'Gameplay/Orders',
+        'Gameplay/Elevation',
+        'Gameplay/Fog of War',
+        'Gameplay/Units',
+        'Gameplay/Unit Movement',
+        'Gameplay/Combat',
+        'Gameplay/Resources',
+        'Gameplay/Town Improvements',
+        'Gameplay/Tech Tree',
+        'Gameplay/Spitballing Ideas',
       ],
     },
   ],
@@ -44,7 +44,9 @@ const sidebars = {
       label: 'Technical Documentation',
       collapsed: false,
       items: [
-        'technical/map-gen',
+        'Technical/Map Generation',
+        'Technical/AI Prompt Language',
+        'Technical/Hex Grid Perspective Details',
       ],
     },
   ],

@@ -145,3 +145,44 @@ A user can join a game in two ways:
 ### Game State
 
 The authoritative game state is stored in Redis on the server (`ServerGameState`
+
+## Data Types
+
+### Player
+```typescript
+interface Player {
+  userId: string;
+  userName: string;
+  isPlaceholder: boolean; // Indicates if this is a placeholder waiting for a real player
+}
+```
+
+### Game State
+The game state includes all players (both real and placeholder) and their current status.
+
+## Game Creation Flow
+
+When a game is created:
+1. The system automatically creates 2 players: the creator (real) and a placeholder
+2. The placeholder player has `userId: 'placeholder-player-2'` and `userName: 'Waiting for player...'`
+3. The game starts with `status: 'waiting'` until all placeholder players are replaced
+4. The creator can enter the game but cannot end their turn until all players are real
+
+## Game Join Flow
+
+When a player joins via game code:
+1. The system checks for available placeholder players
+2. If a placeholder exists, it gets replaced with the real player's data
+3. If no placeholders exist, the join is rejected (game full)
+4. When all placeholders are replaced, the game status changes to 'active'
+
+## Turn Management
+
+Players cannot end their turn if:
+- It's not their turn (existing rule)
+- Any players in the game are placeholders (new rule)
+
+The UI reflects this by:
+- Showing "Waiting for Players" instead of "End Turn"
+- Disabling action buttons with appropriate feedback
+- Displaying placeholder players in the game state

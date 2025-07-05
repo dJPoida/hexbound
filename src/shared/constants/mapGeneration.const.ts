@@ -7,6 +7,7 @@ export const MAP_GENERATION_PASSES = {
   ICE_CAP: 'IceCap',
   OCEAN_BAND: 'OceanBand', 
   GRASSLAND_FILL: 'GrasslandFill',
+  SPAWN_ALLOCATION: 'SpawnAllocation',
 } as const;
 
 /**
@@ -39,6 +40,14 @@ export const GRASSLAND_FILL_DEFAULT_PARAMS = {
 } as const;
 
 /**
+ * Default parameters for Spawn Allocation pass
+ */
+export const SPAWN_ALLOCATION_DEFAULT_PARAMS = {
+  playerCount: 2,
+  preferredY: 'middle', // Can be 'top', 'middle', 'bottom', or a specific row number
+} as const;
+
+/**
  * Basic world configuration matching current implementation
  */
 export const BASIC_WORLD_PASSES: MapGenerationPassConfig[] = [
@@ -56,6 +65,11 @@ export const BASIC_WORLD_PASSES: MapGenerationPassConfig[] = [
     name: MAP_GENERATION_PASSES.GRASSLAND_FILL,
     enabled: true,
     parameters: GRASSLAND_FILL_DEFAULT_PARAMS,
+  },
+  {
+    name: MAP_GENERATION_PASSES.SPAWN_ALLOCATION,
+    enabled: true,
+    parameters: SPAWN_ALLOCATION_DEFAULT_PARAMS,
   },
 ];
 
@@ -84,6 +98,11 @@ export const OCEAN_WORLD_PASSES: MapGenerationPassConfig[] = [
     name: MAP_GENERATION_PASSES.GRASSLAND_FILL,
     enabled: true,
     parameters: GRASSLAND_FILL_DEFAULT_PARAMS,
+  },
+  {
+    name: MAP_GENERATION_PASSES.SPAWN_ALLOCATION,
+    enabled: true,
+    parameters: SPAWN_ALLOCATION_DEFAULT_PARAMS,
   },
 ];
 

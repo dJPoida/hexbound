@@ -88,15 +88,15 @@ const config = {
             items: [
               {
                 label: 'About',
-                to: '/docs/about',
+                to: '/',
               },
               {
                 label: 'Gameplay',
-                to: '/docs/gameplay/terrain',
+                to: '/docs/Gameplay/Terrain',
               },
               {
                 label: 'Technical',
-                to: '/docs/technical/map-gen',
+                to: '/docs/Technical/Map%20Generation',
               },
             ],
           },

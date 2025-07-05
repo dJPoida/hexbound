@@ -6,6 +6,7 @@
 export interface Player {
   userId: string;
   userName: string;
+  isPlaceholder: boolean;
 }
 
 export const GameStatusValues = {
@@ -49,6 +50,7 @@ export interface TileData {
   coordinates: AxialCoordinates;
   elevation: number;
   terrain: TerrainType;
+  playerSpawn?: number; // Player number (1, 2, etc.) if this tile is a spawn point
 }
 
 export interface MapData {

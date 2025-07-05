@@ -167,6 +167,21 @@
   text-align: center;
 }
 
+/* Icon Size Examples */
+.iconSizeExamples {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 2rem 0;
+  align-items: center;
+}
+
+.iconSizeExamples > * {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 /* Input Examples */
 .inputExamples {
   display: flex;

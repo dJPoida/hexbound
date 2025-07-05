@@ -1,0 +1,60 @@
+/* Base icon styles */
+.icon {
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  line-height: 1;
+  flex-shrink: 0;
+  vertical-align: baseline;
+}
+
+/* Size variants - em-based to scale with text */
+.size-xs {
+  font-size: 0.5em;
+}
+
+.size-sm {
+  font-size: 0.75em;
+}
+
+.size-md {
+  font-size: 1em;
+}
+
+.size-lg {
+  font-size: 2em;
+}
+
+.size-xl {
+  font-size: 3em;
+}
+
+/* Color variants */
+.color-default {
+  color: var(--color-charcoal);
+}
+
+.color-subtle {
+  color: var(--color-stone-grey);
+}
+
+.color-light {
+  color: var(--color-canvas-white);
+}
+
+.color-brand {
+  color: var(--color-hex-amber);
+}
+
+.color-success {
+  color: var(--color-success);
+}
+
+.color-warning {
+  color: var(--color-warning);
+}
+
+.color-danger {
+  color: var(--color-clay-red);
+} 

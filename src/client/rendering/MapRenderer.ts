@@ -3,6 +3,7 @@ import { Viewport as PixiViewport } from 'pixi-viewport';
 import { MapData, TileData } from '../../shared/types/game.types';
 import { ELEVATION_STEP, HEX_HEIGHT, HEX_OFFSET_X, HEX_OFFSET_Y, HEX_TEXT_OFFSET_X, HEX_TEXT_OFFSET_Y, HEX_WIDTH, TILE_FONT, TILE_FONT_SIZE } from '../../shared/constants/map.const';
 import { Tile } from './Tile';
+import { settingsService } from '../services/settings.service';
 
 function getTileKey(q: number, r: number) {
   return `${q},${r}`;
@@ -216,6 +217,9 @@ export class MapRenderer {
     const visibleBounds = viewport.getVisibleBounds();
     visibleBounds.pad(160);
 
+    // Get current settings for visibility control
+    const settings = settingsService.getSettings();
+
     for (const [key, tileInstances] of this.tileCache.entries()) {
       for (const tile of tileInstances) {
         const TILE_WIDTH = HEX_WIDTH + 10;
@@ -224,6 +228,13 @@ export class MapRenderer {
         
         if (visibleBounds.intersects(tileRect)) {
           tile.container.visible = true;
+          // Set visibility of debug elements based on settings
+          tile.outline.visible = settings.showHexGrid;
+          tile.debugText.visible = settings.showDebugInfo;
+          // Also control spawn text visibility if it exists
+          if (tile.spawnText) {
+            tile.spawnText.visible = settings.showDebugInfo;
+          }
         } else {
           tile.container.visible = false;
         }
