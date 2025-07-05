@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { Button } from '../Button/Button';
+import { Icon } from '../Icon/Icon';
 import styles from './LobbyHeader.module.css';
 
 interface LobbyHeaderProps {
@@ -56,34 +57,34 @@ export function LobbyHeader({ currentUserName, onLogout, onOpenSettings, onNavig
                         ariaLabel="Open menu" 
                         variant="icon"
                     >
-                        <span class="hbi-menu" aria-hidden="true"></span>
+                        <Icon name="menu" color="light" />
                     </Button>
                     {isMenuOpen && (
                         <div className={styles.menuDropdown}>
                             {currentPage !== 'lobby' && (
                                 <button className={styles.menuItem} onClick={() => { onNavigateToLobby(); closeMenu(); }}>
-                                    <i class="hbi hbi-home"></i>
+                                    <Icon name="home" />
                                     <span>Lobby</span>
                                 </button>
                             )}
                             {currentPage !== 'styleguide' && (
                                 <button className={styles.menuItem} onClick={() => { onNavigateToStyleGuide(); closeMenu(); }}>
-                                    <i class="hbi hbi-eye"></i>
+                                    <Icon name="eye" />
                                     <span>Style Guide</span>
                                 </button>
                             )}
                             {currentPage !== 'utils' && (
                                 <button className={styles.menuItem} onClick={() => { onNavigateToUtils(); closeMenu(); }}>
-                                    <i class="hbi hbi-terminal"></i>
+                                    <Icon name="terminal" />
                                     <span>Utils</span>
                                 </button>
                             )}
                             <button className={styles.menuItem} onClick={() => { onOpenSettings(); closeMenu(); }}>
-                                <i class="hbi hbi-settings"></i>
+                                <Icon name="settings" />
                                 <span>Game Settings</span>
                             </button>
                             <button className={styles.menuItem} onClick={() => { onLogout(); closeMenu(); }}>
-                                <i class="hbi hbi-exit"></i>
+                                <Icon name="exit" />
                                 <span>Logout</span>
                             </button>
                         </div>

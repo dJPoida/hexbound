@@ -1,8 +1,8 @@
-
 import { useState } from 'preact/hooks';
 import { Button } from '../../Button/Button';
 import { Checkbox } from '../../Checkbox/Checkbox';
 import { Input } from '../../Input/Input';
+import { Icon } from '../../Icon/Icon';
 import { Logo } from '../../Logo/Logo';
 import { Heading } from '../../Typography/Heading';
 import { Text } from '../../Typography/Text';
@@ -169,7 +169,7 @@ export const StyleGuidePage = () => {
             <Button onClick={() => {}} variant="primary" disabled>Disabled</Button>
           </div>
           <div class={styles.buttonRow}>
-            <Button onClick={() => {}} variant="icon" ariaLabel="Menu"><span class="hbi-menu"></span></Button>
+            <Button onClick={() => {}} variant="icon" ariaLabel="Menu"><Icon name="menu" color="light" /></Button>
             <Button onClick={() => {}} variant="link">Link Button</Button>
           </div>
         </section>
@@ -313,18 +313,31 @@ export const StyleGuidePage = () => {
       <section class={styles.section}>
         <Heading level={2} variant="sectionHeader">Icons</Heading>
         <Text color="subtle">
-          This is the Hexbound Icon font. Use it for UI elements by adding the class name to any element.
+          Available icons for UI elements. Icons scale with text using em units for perfect integration.
         </Text>
         
         <section class={styles.subSection}>
+          <Heading level={3} variant="subSectionHeader" color="subtle">Icon Sizes with Text</Heading>
+          <Text color="subtle">Icons scale relative to their text context:</Text>
+          <div class={styles.iconSizeExamples}>
+            <Text>Extra Small <Icon name="heart" size="xs" color="danger" /> (0.5em)</Text>
+            <Text>Small <Icon name="star" size="sm" color="brand" /> (0.75em)</Text>
+            <Text>Medium <Icon name="settings" size="md" color="default" /> (1em - default)</Text>
+            <Text font="bold">Large <Icon name="award" size="lg" color="success" /> (2em)</Text>
+            <Heading level={3} variant="subSectionHeader">Extra Large <Icon name="hexagon" size="xl" color="brand" /> (3em)</Heading>
+          </div>
+        </section>
+
+        <section class={styles.subSection}>
+          <Heading level={3} variant="subSectionHeader" color="subtle">Available Icons</Heading>
           <div class={styles.iconGrid}>
             {iconList.map(icon => (
               <div key={icon} class={styles.iconItem}>
                 <div class={styles.iconDisplay}>
-                  <span class={`hbi-${icon}`}></span>
+                  <Icon name={icon} size="lg" />
                 </div>
                 <Text variant="caption" color="subtle" class={styles.iconCode}>
-                  hbi-{icon}
+                  {icon.charAt(0).toUpperCase() + icon.slice(1).replace(/-/g, ' ')}
                 </Text>
               </div>
             ))}
