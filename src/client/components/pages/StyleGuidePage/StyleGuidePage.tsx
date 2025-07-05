@@ -6,6 +6,7 @@ import { Icon } from '../../Icon/Icon';
 import { Logo } from '../../Logo/Logo';
 import { Heading } from '../../Typography/Heading';
 import { Text } from '../../Typography/Text';
+import { IconSize } from '../../../types/iconSize.type';
 import styles from './StyleGuidePage.module.css';
 
 const ColorSwatch = ({ name, colorName, hex, role, variants }: { name: string; colorName: string; hex: string; role?: string; variants: { dark: string; light: string; highlight: string; }}) => (
@@ -71,6 +72,16 @@ export const StyleGuidePage = () => {
 
   const updateCheckboxState = (key: keyof typeof checkboxStates) => (checked: boolean) => {
     setCheckboxStates((prev: typeof checkboxStates) => ({ ...prev, [key]: checked }));
+  };
+
+  // Icon size constants for examples
+  // Note: IconSize enum enforces strict typing - using string literals like size="lg" will cause TypeScript errors
+  const iconSizes = {
+    xs: IconSize.XS,
+    sm: IconSize.SM,
+    md: IconSize.MD,
+    lg: IconSize.LG,
+    xl: IconSize.XL,
   };
 
   return (
@@ -320,11 +331,11 @@ export const StyleGuidePage = () => {
           <Heading level={3} variant="subSectionHeader" color="subtle">Icon Sizes with Text</Heading>
           <Text color="subtle">Icons scale relative to their text context:</Text>
           <div class={styles.iconSizeExamples}>
-            <Text>Extra Small <Icon name="heart" size="xs" color="danger" /> (0.5em)</Text>
-            <Text>Small <Icon name="star" size="sm" color="brand" /> (0.75em)</Text>
-            <Text>Medium <Icon name="settings" size="md" color="default" /> (1em - default)</Text>
-            <Text font="bold">Large <Icon name="award" size="lg" color="success" /> (2em)</Text>
-            <Heading level={3} variant="subSectionHeader">Extra Large <Icon name="hexagon" size="xl" color="brand" /> (3em)</Heading>
+            <Text>Extra Small <Icon name="heart" size={iconSizes.xs} color="danger" /> (0.5em)</Text>
+            <Text>Small <Icon name="star" size={iconSizes.sm} color="brand" /> (0.75em)</Text>
+            <Text>Medium <Icon name="settings" size={iconSizes.md} color="default" /> (1em - default)</Text>
+            <Text font="bold">Large <Icon name="award" size={iconSizes.lg} color="success" /> (2em)</Text>
+            <Heading level={3} variant="subSectionHeader">Extra Large <Icon name="hexagon" size={iconSizes.xl} color="brand" /> (3em)</Heading>
           </div>
         </section>
 
@@ -334,7 +345,7 @@ export const StyleGuidePage = () => {
             {iconList.map(icon => (
               <div key={icon} class={styles.iconItem}>
                 <div class={styles.iconDisplay}>
-                  <Icon name={icon} size="lg" />
+                  <Icon name={icon} size={iconSizes.lg} />
                 </div>
                 <Text variant="caption" color="subtle" class={styles.iconCode}>
                   {icon.charAt(0).toUpperCase() + icon.slice(1).replace(/-/g, ' ')}
