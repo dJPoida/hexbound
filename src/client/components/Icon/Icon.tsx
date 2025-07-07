@@ -1,9 +1,10 @@
 import { h } from 'preact';
 import styles from './Icon.module.css';
 import { IconSize } from '../../types/iconSize.type';
+import type { IconName } from '../../types/iconName.type';
 
 export interface IconProps {
-  name: string;
+  name: IconName;
   size?: IconSize;
   color?: 'default' | 'subtle' | 'light' | 'brand' | 'success' | 'warning' | 'danger';
   className?: string;

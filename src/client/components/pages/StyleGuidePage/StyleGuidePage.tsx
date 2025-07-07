@@ -3,10 +3,11 @@ import { Button } from '../../Button/Button';
 import { Checkbox } from '../../Checkbox/Checkbox';
 import { Input } from '../../Input/Input';
 import { Icon } from '../../Icon/Icon';
+import { IconSize } from '../../../types/iconSize.type';
+import { ICON_NAMES, type IconName } from '../../../types/iconName.type';
 import { Logo } from '../../Logo/Logo';
 import { Heading } from '../../Typography/Heading';
 import { Text } from '../../Typography/Text';
-import { IconSize } from '../../../types/iconSize.type';
 import styles from './StyleGuidePage.module.css';
 
 const ColorSwatch = ({ name, colorName, hex, role, variants }: { name: string; colorName: string; hex: string; role?: string; variants: { dark: string; light: string; highlight: string; }}) => (
@@ -27,37 +28,6 @@ const ColorSwatch = ({ name, colorName, hex, role, variants }: { name: string; c
     </div>
   </div>
 );
-
-const iconList = [
-  'menu', 'home', 'save', 'trash', 'settings', 'sliders', 'exit', 'hexagon', 'heart', 'star',
-  'alert-triangle', 'help-circle', 'info', 'error',
-  'arrow-up', 'arrow-up-right', 'arrow-right', 'arrow-down-right', 'arrow-down', 'arrow-down-left', 'arrow-left', 'arrow-up-left',
-  'chevron-up', 'chevron-right', 'chevron-down', 'chevron-left',
-  'chevrons-up', 'chevrons-right', 'chevrons-down', 'chevrons-left',
-  'check', 'cross', 'circle', 'check-circle', 'cross-circle',
-  'square', 'check-square', 'cross-square', 'plus-square', 'minus-square',
-  'search', 'zoom-in', 'zoom-out',
-  'toggle-left', 'toggle-right',
-  'more-vertical', 'more-horizontal',
-  'frown', 'meh', 'smile',
-  'user', 'user-check', 'user-cross', 'user-plus', 'user-minus', 'users',
-  'lock', 'unlock',
-  'loader', 'play',
-  'wifi', 'wifi-off',
-  'life-buoy', 'award',
-  'bell', 'bell-off',
-  'terminal', 'layers', 'map',
-  'dollar-sign', 'edit', 'share', 'link', 'message',
-  'eye', 'eye-off',
-  'clock',
-  'upload', 'download',
-  'shuffle',
-  'maximize', 'minimize',
-  'move',
-  'rotate-ccw', 'rotate-cw',
-  'thumbs-up', 'thumbs-down',
-  'sound-on', 'sound-off'
-] as const;
 
 export const StyleGuidePage = () => {
   // State for checkbox examples
@@ -342,7 +312,7 @@ export const StyleGuidePage = () => {
         <section class={styles.subSection}>
           <Heading level={3} variant="subSectionHeader" color="subtle">Available Icons</Heading>
           <div class={styles.iconGrid}>
-            {iconList.map(icon => (
+            {ICON_NAMES.map((icon: IconName) => (
               <div key={icon} class={styles.iconItem}>
                 <div class={styles.iconDisplay}>
                   <Icon name={icon} size={iconSizes.lg} />
