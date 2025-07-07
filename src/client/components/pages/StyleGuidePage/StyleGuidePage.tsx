@@ -5,6 +5,7 @@ import { Input } from '../../Input/Input';
 import { Icon } from '../../Icon/Icon';
 import { IconSize } from '../../../types/iconSize.type';
 import { ICON_NAMES, type IconName } from '../../../types/iconName.type';
+import { StyleColor } from '../../../types/styleColor.type';
 import { Logo } from '../../Logo/Logo';
 import { Heading } from '../../Typography/Heading';
 import { Text } from '../../Typography/Text';
@@ -52,6 +53,18 @@ export const StyleGuidePage = () => {
     md: IconSize.MD,
     lg: IconSize.LG,
     xl: IconSize.XL,
+  };
+
+  // Icon color constants for examples
+  // Note: StyleColor enum enforces strict typing - using string literals like color="brand" will cause TypeScript errors
+  const styleColors = {
+    default: StyleColor.DEFAULT,
+    subtle: StyleColor.SUBTLE,
+    light: StyleColor.LIGHT,
+    brand: StyleColor.BRAND,
+    success: StyleColor.SUCCESS,
+    warning: StyleColor.WARNING,
+    danger: StyleColor.DANGER,
   };
 
   return (
@@ -150,7 +163,7 @@ export const StyleGuidePage = () => {
             <Button onClick={() => {}} variant="primary" disabled>Disabled</Button>
           </div>
           <div class={styles.buttonRow}>
-            <Button onClick={() => {}} variant="icon" ariaLabel="Menu"><Icon name="menu" color="light" /></Button>
+            <Button onClick={() => {}} variant="icon" ariaLabel="Menu"><Icon name="menu" color={StyleColor.LIGHT} /></Button>
             <Button onClick={() => {}} variant="link">Link Button</Button>
           </div>
         </section>
@@ -301,11 +314,11 @@ export const StyleGuidePage = () => {
           <Heading level={3} variant="subSectionHeader" color="subtle">Icon Sizes with Text</Heading>
           <Text color="subtle">Icons scale relative to their text context:</Text>
           <div class={styles.iconSizeExamples}>
-            <Text>Extra Small <Icon name="heart" size={iconSizes.xs} color="danger" /> (0.5em)</Text>
-            <Text>Small <Icon name="star" size={iconSizes.sm} color="brand" /> (0.75em)</Text>
-            <Text>Medium <Icon name="settings" size={iconSizes.md} color="default" /> (1em - default)</Text>
-            <Text font="bold">Large <Icon name="award" size={iconSizes.lg} color="success" /> (2em)</Text>
-            <Heading level={3} variant="subSectionHeader">Extra Large <Icon name="hexagon" size={iconSizes.xl} color="brand" /> (3em)</Heading>
+            <Text>Extra Small <Icon name="heart" size={iconSizes.xs} color={StyleColor.DANGER} /> (0.5em)</Text>
+            <Text>Small <Icon name="star" size={iconSizes.sm} color={StyleColor.BRAND} /> (0.75em)</Text>
+            <Text>Medium <Icon name="settings" size={iconSizes.md} color={StyleColor.DEFAULT} /> (1em - default)</Text>
+            <Text font="bold">Large <Icon name="award" size={iconSizes.lg} color={StyleColor.SUCCESS} /> (2em)</Text>
+            <Heading level={3} variant="subSectionHeader">Extra Large <Icon name="hexagon" size={iconSizes.xl} color={StyleColor.BRAND} /> (3em)</Heading>
           </div>
         </section>
 

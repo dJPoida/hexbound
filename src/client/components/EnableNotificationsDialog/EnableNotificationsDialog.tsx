@@ -4,6 +4,7 @@ import { Dialog } from '../Dialog/Dialog';
 import { Button } from '../Button/Button';
 import { Text } from '../Typography/Text';
 import { Icon } from '../Icon/Icon';
+import { StyleColor } from '../../types/styleColor.type';
 import styles from './EnableNotificationsDialog.module.css';
 import { pushService } from '../../services/push.service';
 import { settingsService } from '../../services/settings.service';
@@ -103,7 +104,7 @@ export const EnableNotificationsDialog = ({ onComplete, permissionState }: Enabl
       {currentPermission === 'denied' && (
         <div class={styles.warningContainer}>
           <Text as="div" class={styles.warningText}>
-            <Icon name="alert-triangle" color="warning" />
+            <Icon name="alert-triangle" color={StyleColor.WARNING} />
             Your browser is currently blocking notifications. To enable them, please click the lock icon in your address bar and change the permission.
           </Text>
         </div>

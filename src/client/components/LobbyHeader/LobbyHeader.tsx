@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { Button } from '../Button/Button';
 import { Icon } from '../Icon/Icon';
+import { StyleColor } from '../../types/styleColor.type';
 import styles from './LobbyHeader.module.css';
 
 interface LobbyHeaderProps {
@@ -57,7 +58,7 @@ export function LobbyHeader({ currentUserName, onLogout, onOpenSettings, onNavig
                         ariaLabel="Open menu" 
                         variant="icon"
                     >
-                        <Icon name="menu" color="light" />
+                        <Icon name="menu" color={StyleColor.LIGHT} />
                     </Button>
                     {isMenuOpen && (
                         <div className={styles.menuDropdown}>

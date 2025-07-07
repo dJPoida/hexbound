@@ -6,6 +6,7 @@ import styles from './GameViewLayout.module.css';
 import { ActionBar } from '../ActionBar/ActionBar';
 import { Button } from '../Button/Button';
 import { Icon } from '../Icon/Icon';
+import { StyleColor } from '../../types/styleColor.type';
 import { settingsService } from '../../services/settings.service';
 import { useState, useEffect } from 'preact/hooks';
 
@@ -68,7 +69,7 @@ export function GameViewLayout({
       <div>
         {settings.showDebugInfo && (
           <Button onClick={() => onPushDialog('debugInfo')} variant="icon" ariaLabel="Show Debug Info">
-            <Icon name="terminal" color="light" />
+            <Icon name="terminal" color={StyleColor.LIGHT} />
           </Button>
         )}
       </div>

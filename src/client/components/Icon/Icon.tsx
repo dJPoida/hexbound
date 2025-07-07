@@ -2,15 +2,16 @@ import { h } from 'preact';
 import styles from './Icon.module.css';
 import { IconSize } from '../../types/iconSize.type';
 import type { IconName } from '../../types/iconName.type';
+import { StyleColor } from '../../types/styleColor.type';
 
 export interface IconProps {
   name: IconName;
   size?: IconSize;
-  color?: 'default' | 'subtle' | 'light' | 'brand' | 'success' | 'warning' | 'danger';
+  color?: StyleColor;
   className?: string;
 }
 
-export const Icon = ({ name, size = IconSize.MD, color = 'default', className }: IconProps) => {
+export const Icon = ({ name, size = IconSize.MD, color = StyleColor.DEFAULT, className }: IconProps) => {
   const iconClasses = [
     'hbi',
     `hbi-${name}`,
