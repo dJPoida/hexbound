@@ -6,8 +6,20 @@
         "Hexbound",
         "PIXI",
         "Polytopia",
+        "pushstate",
         "rediscommander",
+        "styleguide",
         "terraforming",
         "webpush"
+    ],
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "editor.formatOnSave": true,
+    "eslint.validate": [
+        "javascript",
+        "typescript",
+        "javascriptreact",
+        "typescriptreact"
     ]
 }

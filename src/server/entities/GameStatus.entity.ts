@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Column, Entity, OneToMany,PrimaryGeneratedColumn } from "typeorm";
+
 import { Game } from "./Game.entity";
 
 // These values should correspond to the 'statusName' in the 'game_statuses' table

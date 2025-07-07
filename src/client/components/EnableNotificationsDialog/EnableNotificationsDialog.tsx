@@ -1,14 +1,15 @@
 import { h } from 'preact';
-import { useState, useEffect } from 'preact/hooks';
-import { Dialog } from '../Dialog/Dialog';
-import { Button } from '../Button/Button';
-import { Text } from '../Typography/Text';
-import { Icon } from '../Icon/Icon';
-import { StyleColor } from '../../types/styleColor.type';
-import styles from './EnableNotificationsDialog.module.css';
+import { useEffect,useState } from 'preact/hooks';
+
 import { pushService } from '../../services/push.service';
 import { settingsService } from '../../services/settings.service';
+import { StyleColor } from '../../types/styleColor.type';
+import { Button } from '../Button/Button';
+import { Dialog } from '../Dialog/Dialog';
 import type { NotificationPermission } from '../GameSettingsDialog/GameSettingsDialog';
+import { Icon } from '../Icon/Icon';
+import { Text } from '../Typography/Text';
+import styles from './EnableNotificationsDialog.module.css';
 
 interface EnableNotificationsDialogProps {
   onComplete: () => void;

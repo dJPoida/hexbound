@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne, JoinColumn } from "typeorm";
-import { User } from "./User.entity";
+import { Column, Entity, JoinColumn,JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+
 import { GameStatus } from "./GameStatus.entity";
+import { User } from "./User.entity";
 
 @Entity({ name: "games" })
 export class Game {

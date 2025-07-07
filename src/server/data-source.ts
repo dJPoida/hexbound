@@ -1,11 +1,14 @@
 import "reflect-metadata";
+
 import { DataSource, LogLevel } from "typeorm";
-import config from "./config.js";
+
 import { getModuleDir } from "@/shared/helpers/getModuleDir.helper.js";
-import { User } from "./entities/User.entity.js";
+
+import config from "./config.js";
 import { Game } from "./entities/Game.entity.js";
 import { GameStatus } from "./entities/GameStatus.entity.js";
 import { PushSubscription } from "./entities/PushSubscription.entity.js";
+import { User } from "./entities/User.entity.js";
 
 const currentModuleDirname = getModuleDir(
   typeof import.meta?.url === 'string' ? import.meta?.url : undefined,

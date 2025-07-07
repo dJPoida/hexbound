@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
+
 import { getModuleDir } from '../shared/helpers/getModuleDir.helper.js';
 
 const currentModuleDirname = getModuleDir(

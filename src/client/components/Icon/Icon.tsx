@@ -1,8 +1,9 @@
 import { h } from 'preact';
-import styles from './Icon.module.css';
-import { IconSize } from '../../types/iconSize.type';
+
 import type { IconName } from '../../types/iconName.type';
+import { IconSize } from '../../types/iconSize.type';
 import { StyleColor } from '../../types/styleColor.type';
+import styles from './Icon.module.css';
 
 export interface IconProps {
   name: IconName;

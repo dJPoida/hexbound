@@ -1,11 +1,12 @@
 import express from 'express';
-import path from 'path';
 import http from 'http';
+import path from 'path';
 import { ViteDevServer } from 'vite';
 import { createServer as createViteServer } from 'vite';
-import config from './config.js';
-import apiRouter from './apiRouter.js';
+
 import { getModuleDir } from '../shared/helpers/getModuleDir.helper.js';
+import apiRouter from './apiRouter.js';
+import config from './config.js';
 
 const currentModuleDirname = getModuleDir(
   typeof import.meta?.url === 'string' ? import.meta?.url : undefined,

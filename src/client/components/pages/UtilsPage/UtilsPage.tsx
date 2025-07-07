@@ -1,9 +1,10 @@
+import htm from 'htm';
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
-import htm from 'htm';
-import styles from './UtilsPage.module.css';
+
 import { authenticatedFetch } from '../../../services/api.service';
 import { Button } from '../../Button/Button';
+import styles from './UtilsPage.module.css';
 
 const html = htm.bind(h);
 

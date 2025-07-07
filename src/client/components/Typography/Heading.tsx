@@ -1,6 +1,7 @@
-import styles from './Typography.module.css';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { createElement, type ComponentChildren } from 'preact';
+import { type ComponentChildren,createElement } from 'preact';
+
+import styles from './Typography.module.css';
 
 const headingStyles = cva(styles.heading, {
   variants: {

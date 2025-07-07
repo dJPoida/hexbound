@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction,Request, Response } from 'express';
+
 import redisClient from '../redisClient';
 
 // It's a common practice to extend the Express Request interface.

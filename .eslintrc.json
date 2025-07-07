@@ -3,7 +3,8 @@
   "parser": "@typescript-eslint/parser",
   "plugins": [
     "@typescript-eslint",
-    "react"
+    "react",
+    "simple-import-sort"
   ],
   "extends": [
     "eslint:recommended",
@@ -22,7 +23,10 @@
     "react/no-unknown-property": ["error", { "ignore": ["class"] }], // Allow 'class' for HTM, though 'className' is preferred for JSX
     "react/prop-types": "off", // Not needed as much with TypeScript
     "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
-    "no-mixed-spaces-and-tabs": "off"
+    "no-mixed-spaces-and-tabs": "off",
+    // Import organization rules
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error"
   },
   "env": {
     "browser": true,

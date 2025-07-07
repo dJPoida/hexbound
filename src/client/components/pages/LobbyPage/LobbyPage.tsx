@@ -1,11 +1,12 @@
+import htm from 'htm';
 import { h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
-import htm from 'htm';
-import { authenticatedFetch } from '../../../services/api.service';
+
 import { GameListItem } from '../../../../shared/types/game.types';
+import { authenticatedFetch } from '../../../services/api.service';
+import { GameSettingsDialog } from '../../GameSettingsDialog/GameSettingsDialog';
 import { LobbyLayout } from '../../LobbyLayout/LobbyLayout';
 import { LobbyView } from '../../LobbyView/LobbyView';
-import { GameSettingsDialog } from '../../GameSettingsDialog/GameSettingsDialog';
 
 const html = htm.bind(h);
 

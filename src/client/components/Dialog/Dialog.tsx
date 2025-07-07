@@ -1,4 +1,5 @@
-import { h, ComponentChildren } from 'preact';
+import { ComponentChildren,h } from 'preact';
+
 import styles from './Dialog.module.css';
 
 interface DialogProps {

@@ -1,9 +1,11 @@
-import { render, h } from 'preact';
-import htm from 'htm';
-import { registerSW } from 'virtual:pwa-register';
-import { App } from './App';
 import './global.css';
 import './HexboundIcons.css';
+
+import htm from 'htm';
+import { h,render } from 'preact';
+import { registerSW } from 'virtual:pwa-register';
+
+import { App } from './App';
 
 // Register the service worker
 const updateSW = registerSW({

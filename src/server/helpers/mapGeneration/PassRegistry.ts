@@ -1,9 +1,9 @@
+import { MAP_GENERATION_PASSES } from '../../../shared/constants/mapGeneration.const';
 import { GenerationPass } from './GenerationPass';
+import { GrasslandFillPass } from './passes/GrasslandFillPass';
 import { IceCapPass } from './passes/IceCapPass';
 import { OceanBandPass } from './passes/OceanBandPass';
-import { GrasslandFillPass } from './passes/GrasslandFillPass';
 import { SpawnAllocationPass } from './passes/SpawnAllocationPass';
-import { MAP_GENERATION_PASSES } from '../../../shared/constants/mapGeneration.const';
 
 /**
  * Registry for all available map generation passes

@@ -1,3 +1,7 @@
+import { RedisJSON } from '@redis/json/dist/commands';
+
+import { SOCKET_MESSAGE_TYPES } from '../shared/constants/socket.const';
+import { Player } from '../shared/types/game.types';
 import {
   AuthenticatedWebSocket,
   ClientGameStatePayload,
@@ -6,14 +10,11 @@ import {
   SocketMessage,
   TurnAction,
 } from '../shared/types/socket.types';
-import { broadcastToGame, isUserOnline, isUserViewingGame, removeActiveGameView, setActiveGameView, subscribe } from './socketSubscriptionManager';
-import { RedisJSON } from '@redis/json/dist/commands';
-import { Player } from '../shared/types/game.types';
-import { SOCKET_MESSAGE_TYPES } from '../shared/constants/socket.const';
-import { getPlayerTurnPreview } from './helpers/gameState.helper';
-import { pushService } from './services/push.service';
-import redisClient from './redisClient';
 import { toClientState } from './helpers/clientState.helper';
+import { getPlayerTurnPreview } from './helpers/gameState.helper';
+import redisClient from './redisClient';
+import { pushService } from './services/push.service';
+import { broadcastToGame, isUserOnline, isUserViewingGame, removeActiveGameView, setActiveGameView, subscribe } from './socketSubscriptionManager';
 
 // A simple type guard to check if a message is a valid SocketMessage
 function isValidSocketMessage(msg: unknown): msg is SocketMessage<unknown> {

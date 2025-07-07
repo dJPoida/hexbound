@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import express from 'express'; // Required for the .json() middleware
+
 import gameRoutes from './routes/game.routes';
-import userRoutes from './routes/user.routes';
 import miscRoutes from './routes/misc.routes';
+import userRoutes from './routes/user.routes';
 import utilsRoutes from './routes/utils.routes';
 
 const router = Router();

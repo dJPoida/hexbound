@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+
 import { Server } from './Server.js';
 
 process.on('uncaughtException', (err, origin) => {

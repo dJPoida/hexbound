@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
+import { Column, Entity, Index,JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+
 import { User } from './User.entity';
 
 @Entity({ name: 'push_subscriptions' })

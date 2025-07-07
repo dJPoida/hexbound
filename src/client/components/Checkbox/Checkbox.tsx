@@ -1,4 +1,5 @@
 import { JSX } from 'preact/jsx-runtime';
+
 import styles from './Checkbox.module.css';
 
 interface CheckboxProps {

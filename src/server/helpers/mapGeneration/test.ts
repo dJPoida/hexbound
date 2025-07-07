@@ -1,5 +1,5 @@
-import { MapGenerator } from '../mapGenerator';
 import { TerrainType } from '../../../shared/types/game.types';
+import { MapGenerator } from '../mapGenerator';
 
 /**
  * Simple test to verify the refactored map generation system works correctly

@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'preact/hooks';
-import { Button } from '../Button/Button';
-import { Icon } from '../Icon/Icon';
+import { useEffect, useRef,useState } from 'preact/hooks';
+
 import { StyleColor } from '../../types/styleColor.type';
+import { Button } from '../Button/Button';
 import { GameSettingsDialog } from '../GameSettingsDialog/GameSettingsDialog';
+import { Icon } from '../Icon/Icon';
 import styles from './GameHeader.module.css';
 
 interface GameHeaderProps {

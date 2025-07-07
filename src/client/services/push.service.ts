@@ -1,5 +1,5 @@
-import { authenticatedFetch } from './api.service';
 import { API_ROUTES } from '../../shared/constants/api.const';
+import { authenticatedFetch } from './api.service';
 
 const urlBase64ToUint8Array = (base64String: string) => {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);

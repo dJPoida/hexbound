@@ -1,11 +1,11 @@
+import { useEffect } from 'preact/hooks';
+
+import { SOCKET_MESSAGE_TYPES } from '../../../shared/constants/socket.const';
 import { ClientGameStatePayload } from '../../../shared/types/socket.types';
 import { authService } from '../../services/auth.service';
-
+import { socketService } from '../../services/socket.service';
 import { Dialog } from '../Dialog/Dialog';
 import styles from './GameContainer.module.css';
-import { useEffect } from 'preact/hooks';
-import { socketService } from '../../services/socket.service';
-import { SOCKET_MESSAGE_TYPES } from '../../../shared/constants/socket.const';
 
 interface GameContainerProps {
   gameId: string;

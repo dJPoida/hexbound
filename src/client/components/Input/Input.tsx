@@ -1,5 +1,6 @@
 import { ComponentChildren } from 'preact';
 import { JSX } from 'preact/jsx-runtime';
+
 import styles from './Input.module.css';
 
 interface InputProps {

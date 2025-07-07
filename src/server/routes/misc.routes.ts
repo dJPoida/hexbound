@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { getVersion, getPing, testRedis } from '../controllers/misc.controller';
+
+import { getPing, getVersion, testRedis } from '../controllers/misc.controller';
 
 const router = Router();
 

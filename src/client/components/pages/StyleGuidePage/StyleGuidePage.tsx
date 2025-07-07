@@ -1,11 +1,12 @@
 import { useState } from 'preact/hooks';
+
+import { ICON_NAMES, type IconName } from '../../../types/iconName.type';
+import { IconSize } from '../../../types/iconSize.type';
+import { StyleColor } from '../../../types/styleColor.type';
 import { Button } from '../../Button/Button';
 import { Checkbox } from '../../Checkbox/Checkbox';
-import { Input } from '../../Input/Input';
 import { Icon } from '../../Icon/Icon';
-import { IconSize } from '../../../types/iconSize.type';
-import { ICON_NAMES, type IconName } from '../../../types/iconName.type';
-import { StyleColor } from '../../../types/styleColor.type';
+import { Input } from '../../Input/Input';
 import { Logo } from '../../Logo/Logo';
 import { Heading } from '../../Typography/Heading';
 import { Text } from '../../Typography/Text';

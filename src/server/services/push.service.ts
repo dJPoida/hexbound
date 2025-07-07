@@ -1,4 +1,5 @@
 import webpush, { WebPushError } from 'web-push';
+
 import config from '../config';
 import { getDataSource } from '../data-source';
 import { PushSubscription } from '../entities/PushSubscription.entity';

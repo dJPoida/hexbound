@@ -1,9 +1,10 @@
 import * as PIXI from 'pixi.js';
 import { Viewport as PixiViewport } from 'pixi-viewport';
-import { MapData, TileData } from '../../shared/types/game.types';
+
 import { ELEVATION_STEP, HEX_HEIGHT, HEX_OFFSET_X, HEX_OFFSET_Y, HEX_TEXT_OFFSET_X, HEX_TEXT_OFFSET_Y, HEX_WIDTH, TILE_FONT, TILE_FONT_SIZE } from '../../shared/constants/map.const';
-import { Tile } from './Tile';
+import { MapData, TileData } from '../../shared/types/game.types';
 import { settingsService } from '../services/settings.service';
+import { Tile } from './Tile';
 
 function getTileKey(q: number, r: number) {
   return `${q},${r}`;

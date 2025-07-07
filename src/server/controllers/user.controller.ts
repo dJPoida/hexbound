@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import { ILike } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+
 import { AppDataSource } from '../data-source';
-import { User } from '../entities/User.entity';
 import { PushSubscription as PushSubscriptionEntity } from '../entities/PushSubscription.entity';
+import { User } from '../entities/User.entity';
 import redisClient from '../redisClient';
 
 const SESSION_EXPIRATION_SECONDS = 86400; // 24 hours

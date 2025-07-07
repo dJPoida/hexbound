@@ -1,4 +1,5 @@
-import { useRef, useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
+
 import styles from './Button.module.css';
 
 interface ButtonProps {

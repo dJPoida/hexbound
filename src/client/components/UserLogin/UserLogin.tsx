@@ -1,10 +1,11 @@
 import { useEffect } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
+
 import { authService } from '../../services/auth.service';
-import styles from './UserLogin.module.css';
-import { Logo } from '../Logo/Logo';
 import { Button } from '../Button/Button';
 import { Input } from '../Input/Input';
+import { Logo } from '../Logo/Logo';
+import styles from './UserLogin.module.css';
 
 interface UserLoginProps {
   userNameInput: string;

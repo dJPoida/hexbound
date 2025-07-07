@@ -1,5 +1,6 @@
-import styles from './Typography.module.css';
 import { cva, type VariantProps } from 'class-variance-authority';
+
+import styles from './Typography.module.css';
 
 const textStyles = cva(styles.text, {
   variants: {

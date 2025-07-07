@@ -1,7 +1,7 @@
+import { ICE_CAP_DEFAULT_PARAMS,MAP_GENERATION_PASSES } from '../../../../shared/constants/mapGeneration.const';
 import { TerrainType } from '../../../../shared/types/game.types';
-import { PassExecutionResult, MapGenerationPassConfig } from '../../../../shared/types/mapGeneration.types';
+import { MapGenerationPassConfig,PassExecutionResult } from '../../../../shared/types/mapGeneration.types';
 import { GenerationPass, MapGenerationContext } from '../GenerationPass';
-import { MAP_GENERATION_PASSES, ICE_CAP_DEFAULT_PARAMS } from '../../../../shared/constants/mapGeneration.const';
 
 /**
  * Parameters for the Ice Cap generation pass

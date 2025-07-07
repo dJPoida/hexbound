@@ -1,4 +1,5 @@
 import { h } from 'preact';
+
 import { LobbyHeader } from '../LobbyHeader/LobbyHeader';
 import styles from './LobbyLayout.module.css';
 

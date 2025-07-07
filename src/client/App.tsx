@@ -1,34 +1,31 @@
+import './global.css'; // Import global styles
+
+import htm from 'htm';
 import { h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
-import htm from 'htm';
-import './global.css'; // Import global styles
-import styles from './App.module.css'; // Import CSS Modules
-import { UserLogin } from './components/UserLogin/UserLogin';
-import { authService } from './services/auth.service';
-import { authenticatedFetch } from './services/api.service';
-import { socketService } from './services/socket.service';
-import { ClientGameStatePayload, GameTurnEndedPayload } from '../shared/types/socket.types';
-import { GameViewLayout } from './components/GameViewLayout/GameViewLayout';
-import { ActionBar } from './components/ActionBar/ActionBar';
-import { Button } from './components/Button/Button';
-import { Dialog } from './components/Dialog/Dialog';
+
 import { API_ROUTES } from '../shared/constants/api.const';
+import { ClientGameStatePayload, GameTurnEndedPayload } from '../shared/types/socket.types';
+import styles from './App.module.css'; // Import CSS Modules
+import { Dialog } from './components/Dialog/Dialog';
 import { EnableNotificationsDialog } from './components/EnableNotificationsDialog/EnableNotificationsDialog';
-import { settingsService } from './services/settings.service';
-import { pushService } from './services/push.service';
 import type { NotificationPermission } from './components/GameSettingsDialog/GameSettingsDialog';
-import { GameHeader } from './components/Header/GameHeader';
-import { GameContainer } from './components/GameContainer/GameContainer';
 import { GameSettingsDialog } from './components/GameSettingsDialog/GameSettingsDialog';
+import { GameViewLayout } from './components/GameViewLayout/GameViewLayout';
 import { IncrementCounterDialog } from './components/IncrementCounterDialog/IncrementCounterDialog';
+import { LobbyLayout } from './components/LobbyLayout/LobbyLayout';
 import { LobbyPage } from './components/pages/LobbyPage/LobbyPage';
-import { Router } from './components/Router/Router';
 import { StyleGuidePage } from './components/pages/StyleGuidePage/StyleGuidePage';
 import { UtilsPage } from './components/pages/UtilsPage/UtilsPage';
-import { LobbyLayout } from './components/LobbyLayout/LobbyLayout';
+import { Router } from './components/Router/Router';
+import { UserLogin } from './components/UserLogin/UserLogin';
+import { authenticatedFetch } from './services/api.service';
+import { authService } from './services/auth.service';
+import { pushService } from './services/push.service';
+import { settingsService } from './services/settings.service';
+import { socketService } from './services/socket.service';
 
 const NOTIFICATION_PENDING_KEY = 'hexbound-notifications-pending-activation';
-type ConnectionStatus = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 type DialogType = 'gameSettings' | 'incrementCounter' | 'debugInfo';
 
 // Initialize htm with Preact's h function
@@ -54,15 +51,10 @@ export function App() {
 
   // Game State
   const [gameState, setGameState] = useState<ClientGameStatePayload | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('disconnected');
-  const [isDebugInfoOpen, setIsDebugInfoOpen] = useState(false);
-  const [isCounterDialogOpen, setIsCounterDialogOpen] = useState(false);
   const [isGameLoaded, setIsGameLoaded] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // UI State
   const [dialogStack, setDialogStack] = useState<DialogType[]>([]);
-
   const [afterPromptAction, setAfterPromptAction] = useState<() => void>(() => {});
 
   const pushDialog = (dialog: DialogType) => {
@@ -101,8 +93,6 @@ export function App() {
       console.error('Error joining game:', error);
     }
   };
-
-
 
   useEffect(() => {
     // VITE_APP_VERSION is injected by Vite during the build process
@@ -227,24 +217,16 @@ export function App() {
       });
     };
 
-    const handleStatusUpdate = (status: 'connecting' | 'connected' | 'reconnecting' | 'disconnected') => {
-      setConnectionStatus(status);
-    };
-
     socketService.on('game:state_update', handleGameStateUpdate);
     socketService.on('game:counter_update', handleCounterUpdate);
     socketService.on('game:turn_ended', handleTurnEnded);
-    socketService.onStatus(handleStatusUpdate);
 
     return () => {
       socketService.off('game:state_update', handleGameStateUpdate);
       socketService.off('game:counter_update', handleCounterUpdate);
       socketService.off('game:turn_ended', handleTurnEnded);
-      socketService.offStatus(handleStatusUpdate);
     };
   }, [isLoggedIn]);
-
-
 
   const handleUserNameInputChange = (name: string) => {
     setUserNameInput(name);
@@ -400,8 +382,6 @@ export function App() {
     window.dispatchEvent(new Event('pushstate'));
   };
 
-
-
   const handleIncrementCounter = () => {
     if (currentGameId) {
         socketService.sendMessage('game:increment_counter', { gameId: currentGameId });
@@ -414,17 +394,6 @@ export function App() {
           socketService.sendMessage('game:end_turn', { gameId: currentGameId, turnId });
       }
   };
-
-  const handleToggleDebugInfo = () => {
-    setIsDebugInfoOpen(!isDebugInfoOpen);
-  };
-
-  const handleToggleCounterDialog = () => {
-    setIsCounterDialogOpen(!isCounterDialogOpen);
-  };
-
-  const openSettings = () => setIsSettingsOpen(true);
-  const closeSettings = () => setIsSettingsOpen(false);
 
   const navigateToUtils = () => {
     window.history.pushState({}, '', '/utils');

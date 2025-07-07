@@ -1,4 +1,5 @@
 import { createClient, RedisClientOptions } from 'redis';
+
 import config from './config';
 
 const MAX_REDIS_RECONNECT_RETRIES = 10;

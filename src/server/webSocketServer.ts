@@ -1,11 +1,12 @@
-import { WebSocketServer, WebSocket } from 'ws';
 import { Server } from 'http';
 import { parse } from 'url';
-import redisClient from './redisClient';
+import { WebSocket,WebSocketServer } from 'ws';
+
 import { AuthenticatedWebSocket } from '../shared/types/socket.types';
-import { unsubscribeFromAll, handleDisconnect } from './socketSubscriptionManager';
-import { handleSocketMessage } from './socketMessageHandlers';
 import { User } from './entities/User.entity';
+import redisClient from './redisClient';
+import { handleSocketMessage } from './socketMessageHandlers';
+import { handleDisconnect,unsubscribeFromAll } from './socketSubscriptionManager';
 
 // Extend the AuthenticatedWebSocket to include the isAlive flag for heartbeats
 interface HeartbeatWebSocket extends AuthenticatedWebSocket {

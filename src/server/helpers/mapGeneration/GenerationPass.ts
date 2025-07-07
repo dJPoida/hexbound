@@ -1,5 +1,5 @@
-import { TileData, TerrainType, AxialCoordinates } from '../../../shared/types/game.types';
-import { GenerationContext, PassExecutionResult, MapGenerationPassConfig, MapGenerationConfig } from '../../../shared/types/mapGeneration.types';
+import { AxialCoordinates,TerrainType, TileData } from '../../../shared/types/game.types';
+import { GenerationContext, MapGenerationConfig,MapGenerationPassConfig, PassExecutionResult } from '../../../shared/types/mapGeneration.types';
 
 /**
  * Enhanced generation context with helper methods for passes

@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany } from "typeorm";
+import { Column, Entity, ManyToMany,OneToMany, PrimaryGeneratedColumn } from "typeorm";
+
 import { Game } from "./Game.entity";
 import { PushSubscription } from "./PushSubscription.entity";
 

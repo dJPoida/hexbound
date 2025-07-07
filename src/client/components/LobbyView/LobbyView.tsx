@@ -1,11 +1,12 @@
 import { useState } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
+
 import { GameListItem, Player } from '../../../shared/types/game.types';
 import { Button } from '../Button/Button';
 import { Input } from '../Input/Input';
+import { Logo } from '../Logo/Logo';
 import { Text } from '../Typography/Text';
 import styles from './LobbyView.module.css';
-import { Logo } from '../Logo/Logo';
 
 interface LobbyViewProps {
   onNavigateToGame: (gameId: string, gameCode: string) => void;

@@ -1,4 +1,5 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
+
 import { GameStatusValues } from "../entities/GameStatus.entity";
 
 export class RefactorGameStatus1749435312595 implements MigrationInterface {

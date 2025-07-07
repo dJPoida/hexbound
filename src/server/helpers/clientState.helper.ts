@@ -1,4 +1,4 @@
-import { ServerGameState, ClientGameStatePayload } from '../../shared/types/socket.types';
+import { ClientGameStatePayload,ServerGameState } from '../../shared/types/socket.types';
 
 /**
  * Transforms the full server game state into a lighter, client-safe payload.

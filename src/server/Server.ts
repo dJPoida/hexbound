@@ -1,12 +1,13 @@
+import express from 'express';
 import http from 'http';
-import { WebSocketServer } from 'ws';
 import { ViteDevServer } from 'vite';
-import { initializeDataSource, AppDataSource } from './data-source.js';
+import { WebSocketServer } from 'ws';
+
+import config from './config.js';
+import { AppDataSource,initializeDataSource } from './data-source.js';
+import { configureExpressApp } from './expressApp.js';
 import { disconnectRedis } from './redisClient.js';
 import { initializeWebSocketServer } from './webSocketServer.js';
-import { configureExpressApp } from './expressApp.js';
-import config from './config.js';
-import express from 'express';
 
 export class Server {
   private httpServer: http.Server;

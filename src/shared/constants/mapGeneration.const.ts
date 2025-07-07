@@ -1,4 +1,4 @@
-import { MapGenerationConfig, MapGenerationPreset, MapGenerationPassConfig } from '../types/mapGeneration.types';
+import { MapGenerationConfig, MapGenerationPassConfig,MapGenerationPreset } from '../types/mapGeneration.types';
 
 /**
  * Map generation pass names (enum-like constants)

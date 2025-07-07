@@ -1,7 +1,7 @@
-import { TerrainType } from '../../../../shared/types/game.types';
-import { PassExecutionResult, MapGenerationPassConfig } from '../../../../shared/types/mapGeneration.types';
-import { GenerationPass, MapGenerationContext } from '../GenerationPass';
 import { MAP_GENERATION_PASSES, OCEAN_BAND_DEFAULT_PARAMS } from '../../../../shared/constants/mapGeneration.const';
+import { TerrainType } from '../../../../shared/types/game.types';
+import { MapGenerationPassConfig,PassExecutionResult } from '../../../../shared/types/mapGeneration.types';
+import { GenerationPass, MapGenerationContext } from '../GenerationPass';
 
 /**
  * Parameters for the Ocean Band generation pass

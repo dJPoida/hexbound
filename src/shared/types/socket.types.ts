@@ -1,4 +1,5 @@
 import { WebSocket } from 'ws';
+
 import { MapData, Player } from './game.types';
 
 // Extend the WebSocket type to include user information

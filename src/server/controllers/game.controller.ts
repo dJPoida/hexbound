@@ -1,17 +1,18 @@
+import { RedisJSON } from '@redis/json/dist/commands';
 import { Request, Response } from 'express';
+
+import { SOCKET_MESSAGE_TYPES } from '../../shared/constants/socket.const';
+import { ServerGameState, SocketMessage } from '../../shared/types/socket.types';
+import config from '../config';
 import { AppDataSource } from '../data-source';
 import { Game } from '../entities/Game.entity';
+import { GameStatus, GameStatusValues } from '../entities/GameStatus.entity';
 import { User } from '../entities/User.entity';
 import { generateGameCode } from '../helpers/gameCode.helper';
-import redisClient from '../redisClient';
-import { AuthenticatedRequest } from '../middleware/auth.middleware';
-import { GameStatus, GameStatusValues } from '../entities/GameStatus.entity';
-import { ServerGameState, SocketMessage } from '../../shared/types/socket.types';
-import { RedisJSON } from '@redis/json/dist/commands';
-import { broadcastToGame } from '../socketSubscriptionManager';
-import { SOCKET_MESSAGE_TYPES } from '../../shared/constants/socket.const';
 import { MapGenerator } from '../helpers/mapGenerator';
-import config from '../config';
+import { AuthenticatedRequest } from '../middleware/auth.middleware';
+import redisClient from '../redisClient';
+import { broadcastToGame } from '../socketSubscriptionManager';
 
 export const getGameByCode = async (req: Request, res: Response) => {
   const { gameCode } = req.params;

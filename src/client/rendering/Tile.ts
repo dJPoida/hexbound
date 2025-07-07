@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
-import { TileData, TerrainType } from '../../shared/types/game.types';
+
 import { ELEVATION_STEP, HEX_OFFSET_X, HEX_OFFSET_Y, HEX_TEXT_OFFSET_X, HEX_TEXT_OFFSET_Y, HEX_WIDTH, TILE_FONT, TILE_FONT_SIZE } from '../../shared/constants/map.const';
+import { TerrainType,TileData } from '../../shared/types/game.types';
 
 function getTextureForTerrain(terrain: TerrainType, textures: Record<string, PIXI.Texture>): PIXI.Texture {
   switch (terrain) {

@@ -1,6 +1,6 @@
-import { authService } from './auth.service';
-import { SocketMessage, ErrorPayload } from '../../shared/types/socket.types';
 import { SOCKET_MESSAGE_TYPES } from '../../shared/constants/socket.const';
+import { ErrorPayload,SocketMessage } from '../../shared/types/socket.types';
+import { authService } from './auth.service';
 
 type MessageHandler = (payload: unknown) => void;
 type StatusHandler = (status: 'connecting' | 'connected' | 'reconnecting' | 'disconnected') => void;
