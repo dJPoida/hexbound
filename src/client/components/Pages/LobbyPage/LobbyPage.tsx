@@ -4,7 +4,7 @@ import { useEffect, useState } from 'preact/hooks';
 
 import { GameListItem } from '../../../../shared/types/game.types';
 import { authenticatedFetch } from '../../../services/api.service';
-import { GameSettingsDialog } from '../../GameSettingsDialog/GameSettingsDialog';
+import { GameSettingsDialog } from '../../Dialog/GameSettingsDialog/GameSettingsDialog';
 import { LobbyLayout } from '../../LobbyLayout/LobbyLayout';
 import { LobbyView } from '../../LobbyView/LobbyView';
 

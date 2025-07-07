@@ -1,10 +1,10 @@
 import { h } from 'preact';
 import { useEffect,useState } from 'preact/hooks';
 
-import { pushService } from '../../services/push.service';
-import { settingsService } from '../../services/settings.service';
-import { Checkbox } from '../Checkbox/Checkbox';
-import { Dialog } from '../Dialog/Dialog';
+import { pushService } from '../../../services/push.service';
+import { settingsService } from '../../../services/settings.service';
+import { Checkbox } from '../../Checkbox/Checkbox';
+import { Dialog } from '../../Dialog/Dialog';
 import styles from './GameSettingsDialog.module.css';
 
 interface GameSettingsDialogProps {
