@@ -1,11 +1,11 @@
 import { useState } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
 
-import { GameListItem, Player } from '../../../shared/types/game.types';
-import { Logo } from '../ui/Logo/Logo';
-import { Text } from '../ui/Typography/Text';
-import { Button, ButtonVariant } from '../ui/Button';
-import { Input, InputType } from '../ui/Input';
+import { GameListItem, Player } from '../../../../shared/types/game.types';
+import { Button, ButtonVariant } from '../../ui/Button';
+import { Input, InputType } from '../../ui/Input';
+import { Logo } from '../../ui/Logo/Logo';
+import { Text } from '../../ui/Typography/Text';
 import styles from './LobbyView.module.css';
 
 interface LobbyViewProps {
