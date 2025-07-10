@@ -1,9 +1,24 @@
-import { ComponentChildren } from 'preact';
 import { JSX } from 'preact/jsx-runtime';
 
 import styles from './Input.module.css';
 
-interface InputProps {
+// Input-specific enums - exported for use by consumers
+export enum InputType {
+  TEXT = 'text',
+  EMAIL = 'email',
+  PASSWORD = 'password',
+  NUMBER = 'number',
+  SEARCH = 'search',
+  TEL = 'tel',
+  URL = 'url',
+}
+
+export enum InputVariant {
+  DEFAULT = 'default',
+  LARGE = 'large',
+}
+
+export interface InputProps {
   /** The input value (controlled) */
   value?: string;
   /** Default value for uncontrolled inputs */
@@ -11,7 +26,7 @@ interface InputProps {
   /** Placeholder text */
   placeholder?: string;
   /** Input type */
-  type?: 'text' | 'email' | 'password' | 'number' | 'search' | 'tel' | 'url';
+  type?: InputType;
   /** Whether the input is disabled */
   disabled?: boolean;
   /** Whether the input is read-only */
@@ -21,7 +36,7 @@ interface InputProps {
   /** Error state styling */
   hasError?: boolean;
   /** Input variant for different styling */
-  variant?: 'default' | 'large';
+  variant?: InputVariant;
   /** Additional CSS classes */
   className?: string;
   /** Accessible label for screen readers */
@@ -56,12 +71,12 @@ export const Input = ({
   value,
   defaultValue,
   placeholder,
-  type = 'text',
+  type = InputType.TEXT,
   disabled = false,
   readOnly = false,
   required = false,
   hasError = false,
-  variant = 'default',
+  variant = InputVariant.DEFAULT,
   className = '',
   ariaLabel,
   id,

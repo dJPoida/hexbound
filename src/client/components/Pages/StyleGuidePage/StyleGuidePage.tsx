@@ -6,7 +6,7 @@ import { StyleColor } from '../../../types/styleColor.type';
 import { Button, ButtonVariant } from '../../Button/Button';
 import { Checkbox } from '../../Checkbox/Checkbox';
 import { Icon } from '../../Icon/Icon';
-import { Input } from '../../Input/Input';
+import { Input, InputType, InputVariant } from '../../Input/Input';
 import { Logo } from '../../Logo/Logo';
 import { Heading } from '../../Typography/Heading';
 import { Text } from '../../Typography/Text';
@@ -198,7 +198,7 @@ export const StyleGuidePage = () => {
             </div>
             <div class={styles.inputExample}>
               <Text variant="label">Large Variant</Text>
-              <Input variant="large" placeholder="Large input field..." />
+              <Input variant={InputVariant.LARGE} placeholder="Large input field..." />
             </div>
           </div>
         </section>
@@ -208,15 +208,15 @@ export const StyleGuidePage = () => {
           <div class={styles.inputExamples}>
             <div class={styles.inputExample}>
               <Text variant="label">Email</Text>
-              <Input type="email" placeholder="your@email.com" />
+              <Input type={InputType.EMAIL} placeholder="your@email.com" />
             </div>
             <div class={styles.inputExample}>
               <Text variant="label">Password</Text>
-              <Input type="password" placeholder="Password" />
+              <Input type={InputType.PASSWORD} placeholder="Password" />
             </div>
             <div class={styles.inputExample}>
               <Text variant="label">Number</Text>
-              <Input type="number" placeholder="123" />
+              <Input type={InputType.NUMBER} placeholder="123" />
             </div>
           </div>
         </section>

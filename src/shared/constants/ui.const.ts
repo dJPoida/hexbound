@@ -2,16 +2,7 @@
 
 
 
-// Input types for form elements
-export enum InputType {
-  TEXT = 'text',
-  EMAIL = 'email',
-  PASSWORD = 'password',
-  NUMBER = 'number',
-  SEARCH = 'search',
-  TEL = 'tel',
-  URL = 'url',
-}
+
 
 
 
@@ -47,11 +38,7 @@ export enum ComponentSize {
   SMALL = 'small',
 }
 
-// Input variants
-export enum InputVariant {
-  DEFAULT = 'default',
-  LARGE = 'large',
-}
+
 
 // Checkbox types for HTML input elements
 export enum CheckboxType {

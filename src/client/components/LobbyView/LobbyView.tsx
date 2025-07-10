@@ -3,7 +3,7 @@ import { JSX } from 'preact/jsx-runtime';
 
 import { GameListItem, Player } from '../../../shared/types/game.types';
 import { Button, ButtonVariant } from '../Button/Button';
-import { Input } from '../Input/Input';
+import { Input, InputType } from '../Input/Input';
 import { Logo } from '../Logo/Logo';
 import { Text } from '../Typography/Text';
 import styles from './LobbyView.module.css';
@@ -67,7 +67,7 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
             </Button>
         <div className={styles.joinByIdContainer}>
           <Input
-            type="text"
+            type={InputType.TEXT}
             value={gameCode}
             onInput={handleGameCodeChange}
             placeholder="Paste Game Code"

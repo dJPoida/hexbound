@@ -3,7 +3,7 @@ import { JSX } from 'preact/jsx-runtime';
 
 import { authService } from '../../services/auth.service';
 import { Button, ButtonVariant } from '../Button/Button';
-import { Input } from '../Input/Input';
+import { Input, InputType } from '../Input/Input';
 import { Logo } from '../Logo/Logo';
 import styles from './UserLogin.module.css';
 
@@ -49,7 +49,7 @@ export function UserLogin({
         <div className={styles.inputGroup}>
           <label htmlFor={userNameInputId} className={styles.label}>Player Name</label>
           <Input
-            type="text"
+            type={InputType.TEXT}
             id={userNameInputId}
             value={userNameInput}
             onInput={handleInput}
