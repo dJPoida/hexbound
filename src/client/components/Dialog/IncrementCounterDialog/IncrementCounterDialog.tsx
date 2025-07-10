@@ -1,5 +1,5 @@
-import { Button, ButtonVariant } from '../../Button';
 import { Dialog } from '../../Dialog/Dialog';
+import { Button, ButtonVariant } from '../../ui/Button';
 import styles from './IncrementCounterDialog.module.css';
 
 interface IncrementCounterDialogProps {

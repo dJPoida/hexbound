@@ -1,8 +1,8 @@
 import { useEffect, useRef,useState } from 'preact/hooks';
 
 import { StyleColor } from '../../types/styleColor.type';
-import { Button, ButtonVariant } from '../Button';
 import { Icon } from '../Icon/Icon';
+import { Button, ButtonVariant } from '../ui/Button';
 import styles from './LobbyHeader.module.css';
 
 interface LobbyHeaderProps {

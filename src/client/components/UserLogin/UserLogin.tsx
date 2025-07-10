@@ -2,7 +2,7 @@ import { useEffect } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
 
 import { authService } from '../../services/auth.service';
-import { Button, ButtonVariant } from '../Button';
+import { Button, ButtonVariant } from '../ui/Button';
 import { Input, InputType } from '../Input';
 import { Logo } from '../Logo/Logo';
 import styles from './UserLogin.module.css';

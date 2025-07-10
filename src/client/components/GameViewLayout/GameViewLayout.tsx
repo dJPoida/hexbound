@@ -5,9 +5,9 @@ import { ClientGameStatePayload } from '../../../shared/types/socket.types';
 import { settingsService } from '../../services/settings.service';
 import { StyleColor } from '../../types/styleColor.type';
 import { ActionBar } from '../ActionBar/ActionBar';
-import { Button, ButtonVariant } from '../Button';
 import { GameHeader } from '../Header/GameHeader';
 import { Icon } from '../Icon/Icon';
+import { Button, ButtonVariant } from '../ui/Button';
 import { Viewport } from '../Viewport/Viewport';
 import styles from './GameViewLayout.module.css';
 

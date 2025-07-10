@@ -3,7 +3,7 @@ import { h } from 'preact';
 import { useState } from 'preact/hooks';
 
 import { authenticatedFetch } from '../../../services/api.service';
-import { Button, ButtonVariant } from '../../Button';
+import { Button, ButtonVariant } from '../../ui/Button';
 import styles from './UtilsPage.module.css';
 
 const html = htm.bind(h);

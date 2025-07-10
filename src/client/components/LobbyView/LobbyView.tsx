@@ -2,10 +2,10 @@ import { useState } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
 
 import { GameListItem, Player } from '../../../shared/types/game.types';
-import { Button, ButtonVariant } from '../Button';
 import { Input, InputType } from '../Input';
 import { Logo } from '../Logo/Logo';
 import { Text } from '../Typography/Text';
+import { Button, ButtonVariant } from '../ui/Button';
 import styles from './LobbyView.module.css';
 
 interface LobbyViewProps {
@@ -45,7 +45,7 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
                     <span className={styles.gameCode}>{game.gameCode.replace(/-/g, ' ')}</span>
                     <span className={styles.playerCount}>
                       Players: {(Array.isArray(game.players) ? game.players : Object.values(game.players) as Player[])
-                          .map((p: Player) => p.userName)
+                          .map((p) => p.userName)
                           .join(', ')}
                     </span>
                   </div>
