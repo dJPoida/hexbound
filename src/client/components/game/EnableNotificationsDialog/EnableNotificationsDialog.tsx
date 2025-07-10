@@ -1,14 +1,13 @@
-import { h } from 'preact';
 import { useEffect,useState } from 'preact/hooks';
 
 import { pushService } from '../../../services/push.service';
 import { settingsService } from '../../../services/settings.service';
 import { StyleColor } from '../../../types/styleColor.type';
-import { Dialog } from '../../Dialog/Dialog';
-import { Text } from '../../Typography/Text';
+import type { NotificationPermission } from '../../game/GameSettingsDialog/GameSettingsDialog';
+import { Text } from '../../ui/Typography/Text';
 import { Button, ButtonVariant } from '../../ui/Button';
+import { Dialog } from '../../ui/Dialog/Dialog';
 import { Icon } from '../../ui/Icon';
-import type { NotificationPermission } from '../GameSettingsDialog/GameSettingsDialog';
 import styles from './EnableNotificationsDialog.module.css';
 
 interface EnableNotificationsDialogProps {

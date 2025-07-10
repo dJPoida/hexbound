@@ -1,9 +1,9 @@
 import { useState } from 'preact/hooks';
 
 import { StyleColor } from '../../../types/styleColor.type';
-import { Logo } from '../../Logo/Logo';
-import { Heading } from '../../Typography/Heading';
-import { Text } from '../../Typography/Text';
+import { Logo } from '../../ui/Logo/Logo';
+import { Heading } from '../../ui/Typography/Heading';
+import { Text } from '../../ui/Typography/Text';
 import { Button, ButtonVariant } from '../../ui/Button';
 import { Checkbox, CheckboxSize } from '../../ui/Checkbox';
 import { Icon, ICON_NAMES, IconName, IconSize } from '../../ui/Icon';

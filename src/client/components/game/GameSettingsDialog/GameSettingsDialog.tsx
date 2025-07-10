@@ -1,10 +1,9 @@
-import { h } from 'preact';
 import { useEffect,useState } from 'preact/hooks';
 
 import { pushService } from '../../../services/push.service';
 import { settingsService } from '../../../services/settings.service';
-import { Dialog } from '../../Dialog/Dialog';
 import { Checkbox } from '../../ui/Checkbox';
+import { Dialog } from '../../ui/Dialog/Dialog';
 import styles from './GameSettingsDialog.module.css';
 
 interface GameSettingsDialogProps {
@@ -58,7 +57,7 @@ export const GameSettingsDialog = ({ onClose }: GameSettingsDialogProps) => {
         // This will update the UI via the subscription
         settingsService.updateSettings({ notificationsEnabled: false });
       } catch (error) {
-        console.error("Failed to complete push unsubscription process.", error);
+        console.error("Failed to complete push un-subscription process.", error);
       } finally {
         setIsSubscribing(false);
       }
