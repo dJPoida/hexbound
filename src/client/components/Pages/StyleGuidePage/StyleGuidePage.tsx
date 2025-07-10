@@ -1,13 +1,13 @@
 import { useState } from 'preact/hooks';
 
 import { StyleColor } from '../../../types/styleColor.type';
-import { Logo } from '../../ui/Logo/Logo';
-import { Heading } from '../../ui/Typography/Heading';
-import { Text } from '../../ui/Typography/Text';
 import { Button, ButtonVariant } from '../../ui/Button';
 import { Checkbox, CheckboxSize } from '../../ui/Checkbox';
 import { Icon, ICON_NAMES, IconName, IconSize } from '../../ui/Icon';
 import { Input, InputType, InputVariant } from '../../ui/Input';
+import { Logo } from '../../ui/Logo/Logo';
+import { Heading } from '../../ui/Typography/Heading';
+import { Text } from '../../ui/Typography/Text';
 import styles from './StyleGuidePage.module.css';
 
 const ColorSwatch = ({ name, colorName, hex, role, variants }: { name: string; colorName: string; hex: string; role?: string; variants: { dark: string; light: string; highlight: string; }}) => (

@@ -12,13 +12,13 @@ import type { NotificationPermission } from './components/game/GameSettingsDialo
 import { GameSettingsDialog } from './components/game/GameSettingsDialog/GameSettingsDialog';
 import { GameViewLayout } from './components/game/GameViewLayout/GameViewLayout';
 import { IncrementCounterDialog } from './components/game/IncrementCounterDialog/IncrementCounterDialog';
-import { LobbyLayout } from './components/LobbyLayout/LobbyLayout';
+import { LobbyLayout } from './components/lobby/LobbyLayout/LobbyLayout';
 import { LobbyPage } from './components/Pages/LobbyPage/LobbyPage';
 import { StyleGuidePage } from './components/Pages/StyleGuidePage/StyleGuidePage';
 import { UtilsPage } from './components/Pages/UtilsPage/UtilsPage';
 import { Router } from './components/Router/Router';
 import { Dialog } from './components/ui/Dialog/Dialog';
-import { UserLogin } from './components/UserLogin/UserLogin';
+import { UserLogin } from './components/lobby/UserLogin/UserLogin';
 import { authenticatedFetch } from './services/api.service';
 import { authService } from './services/auth.service';
 import { pushService } from './services/push.service';

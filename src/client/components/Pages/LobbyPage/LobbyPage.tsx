@@ -1,14 +1,10 @@
-import htm from 'htm';
-import { h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 
 import { GameListItem } from '../../../../shared/types/game.types';
 import { authenticatedFetch } from '../../../services/api.service';
 import { GameSettingsDialog } from '../../game/GameSettingsDialog/GameSettingsDialog';
-import { LobbyLayout } from '../../LobbyLayout/LobbyLayout';
-import { LobbyView } from '../../LobbyView/LobbyView';
-
-const html = htm.bind(h);
+import { LobbyLayout } from '../../lobby/LobbyLayout/LobbyLayout';
+import { LobbyView } from '../../lobby/LobbyView/LobbyView';
 
 type DialogType = 'gameSettings';
 
@@ -32,8 +28,6 @@ export function LobbyPage({
   onCreateNewGame,
   onNavigateToUtils,
   onNavigateToStyleGuide,
-  isLoading,
-  authError
 }: LobbyPageProps) {
   const [myGames, setMyGames] = useState<GameListItem[]>([]);
   const [dialogStack, setDialogStack] = useState<DialogType[]>([]);
