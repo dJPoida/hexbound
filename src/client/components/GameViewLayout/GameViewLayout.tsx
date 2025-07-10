@@ -5,7 +5,7 @@ import { ClientGameStatePayload } from '../../../shared/types/socket.types';
 import { settingsService } from '../../services/settings.service';
 import { StyleColor } from '../../types/styleColor.type';
 import { ActionBar } from '../ActionBar/ActionBar';
-import { Button, ButtonVariant } from '../Button/Button';
+import { Button, ButtonVariant } from '../Button';
 import { GameHeader } from '../Header/GameHeader';
 import { Icon } from '../Icon/Icon';
 import { Viewport } from '../Viewport/Viewport';

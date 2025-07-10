@@ -2,7 +2,7 @@ import { useState } from 'preact/hooks';
 
 import { StyleColor } from '../../../types/styleColor.type';
 import { Button, ButtonVariant } from '../../Button';
-import { Checkbox } from '../../Checkbox/Checkbox';
+import { Checkbox, CheckboxSize } from '../../Checkbox';
 import { Icon, ICON_NAMES, IconName, IconSize } from '../../Icon';
 import { Input, InputType, InputVariant } from '../../Input';
 import { Logo } from '../../Logo/Logo';
@@ -254,7 +254,7 @@ export const StyleGuidePage = () => {
                 label="Large Unchecked"
                 checked={checkboxStates.large}
                 onChange={updateCheckboxState('large')}
-                size="large"
+                size={CheckboxSize.LARGE}
               />
             </div>
             <div class={styles.checkboxExample}>
@@ -262,7 +262,7 @@ export const StyleGuidePage = () => {
                 label="Large Checked"
                 checked={checkboxStates.largeChecked}
                 onChange={updateCheckboxState('largeChecked')}
-                size="large"
+                size={CheckboxSize.LARGE}
               />
             </div>
           </div>

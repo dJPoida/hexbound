@@ -1,7 +1,7 @@
 import { useEffect, useRef,useState } from 'preact/hooks';
 
 import { StyleColor } from '../../types/styleColor.type';
-import { Button, ButtonVariant } from '../Button/Button';
+import { Button, ButtonVariant } from '../Button';
 import { Icon } from '../Icon/Icon';
 import styles from './LobbyHeader.module.css';
 

@@ -36,11 +36,4 @@ export enum ComponentSize {
   DEFAULT = 'default',
   LARGE = 'large',
   SMALL = 'small',
-}
-
-
-
-// Checkbox types for HTML input elements
-export enum CheckboxType {
-  CHECKBOX = 'checkbox',
 } 

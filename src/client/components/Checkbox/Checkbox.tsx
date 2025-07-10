@@ -2,7 +2,13 @@ import { JSX } from 'preact/jsx-runtime';
 
 import styles from './Checkbox.module.css';
 
-interface CheckboxProps {
+// Checkbox-specific enums - exported for use by consumers
+export enum CheckboxSize {
+  DEFAULT = 'default',
+  LARGE = 'large',
+}
+
+export interface CheckboxProps {
   /** The label text for the checkbox */
   label: string;
   /** Whether the checkbox is checked */
@@ -26,7 +32,7 @@ interface CheckboxProps {
   /** Additional aria-describedby for accessibility */
   ariaDescribedBy?: string;
   /** Size variant */
-  size?: 'default' | 'large';
+  size?: CheckboxSize;
 }
 
 export const Checkbox = ({ 
@@ -41,7 +47,7 @@ export const Checkbox = ({
   required = false,
   ariaLabel,
   ariaDescribedBy,
-  size = 'default'
+  size = CheckboxSize.DEFAULT
 }: CheckboxProps) => {
   const handleToggle = () => {
     if (!disabled) {
