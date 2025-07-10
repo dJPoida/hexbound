@@ -4,7 +4,7 @@ import { useEffect,useState } from 'preact/hooks';
 import { pushService } from '../../../services/push.service';
 import { settingsService } from '../../../services/settings.service';
 import { StyleColor } from '../../../types/styleColor.type';
-import { Button } from '../../Button/Button';
+import { Button, ButtonVariant } from '../../Button/Button';
 import { Dialog } from '../../Dialog/Dialog';
 import { Icon } from '../../Icon/Icon';
 import { Text } from '../../Typography/Text';
@@ -87,10 +87,10 @@ export const EnableNotificationsDialog = ({ onComplete, permissionState }: Enabl
 
   const footer = (
     <div class={styles.footerActions}>
-      <Button onClick={handleSkipClick} variant="secondary">
+      <Button onClick={handleSkipClick} variant={ButtonVariant.SECONDARY}>
         Skip For Now
       </Button>
-      <Button onClick={handleEnableClick} variant="primary" disabled={isEnableButtonDisabled}>
+      <Button onClick={handleEnableClick} variant={ButtonVariant.PRIMARY} disabled={isEnableButtonDisabled}>
         {isLoading ? 'Enabling...' : 'Enable Notifications'}
       </Button>
     </div>

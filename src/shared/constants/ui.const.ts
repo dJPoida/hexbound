@@ -1,15 +1,6 @@
 // UI-related enums and constants shared across the application
 
-// Button variants used throughout the application
-export enum ButtonVariant {
-  PRIMARY = 'primary',
-  SECONDARY = 'secondary',
-  GREEN = 'green',
-  RED = 'red',
-  PURPLE = 'purple',
-  ICON = 'icon',
-  LINK = 'link',
-}
+
 
 // Input types for form elements
 export enum InputType {
@@ -22,12 +13,7 @@ export enum InputType {
   URL = 'url',
 }
 
-// Button types for HTML button elements
-export enum ButtonType {
-  BUTTON = 'button',
-  SUBMIT = 'submit',
-  RESET = 'reset',
-}
+
 
 // Typography variants for Text and Heading components
 export enum TypographyVariant {

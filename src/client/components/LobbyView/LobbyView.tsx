@@ -2,7 +2,7 @@ import { useState } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
 
 import { GameListItem, Player } from '../../../shared/types/game.types';
-import { Button } from '../Button/Button';
+import { Button, ButtonVariant } from '../Button/Button';
 import { Input } from '../Input/Input';
 import { Logo } from '../Logo/Logo';
 import { Text } from '../Typography/Text';
@@ -62,7 +62,7 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
       </div>
 
       <div className={styles.actionsSection}>
-                    <Button onClick={onCreateNewGame} variant="primary" fullWidth={true}>
+                    <Button onClick={onCreateNewGame} variant={ButtonVariant.PRIMARY} fullWidth={true}>
               Create New Game
             </Button>
         <div className={styles.joinByIdContainer}>
@@ -72,7 +72,7 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
             onInput={handleGameCodeChange}
             placeholder="Paste Game Code"
           />
-          <Button onClick={handleJoinByCode} variant="secondary"  fullWidth={true}>
+          <Button onClick={handleJoinByCode} variant={ButtonVariant.SECONDARY} fullWidth={true}>
             Join
           </Button>
         </div>

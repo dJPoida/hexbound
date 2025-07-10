@@ -1,6 +1,7 @@
 This game is a hybrid of Civilization, Polytopia, and Populous. It is an asynchronous web-based strategy game using a hex grid and turn-based war mechanics.
 
 # Game Features
+
 - Web-based, mobile-friendly
 - Asynchronous multiplayer
 - Hexagonal tile grid
@@ -12,19 +13,23 @@ This game is a hybrid of Civilization, Polytopia, and Populous. It is an asynchr
 ## Game Stack and Architecture Decisions
 
 ### Rendering Library
+
 - **Library**: PixiJS
 - **Reasoning**: Kaboom.js is no longer maintained. PixiJS offers an actively supported, high-performance 2D WebGL renderer suitable for rendering hex grids and sprite-based elements in a browser. It provides granular rendering control and integrates well with TypeScript.
 
 ### Language
+
 - **Primary Language**: TypeScript
 - **Reasoning**: Ensures type safety and maintainability. Works seamlessly with modern tooling and the chosen rendering library (PixiJS).
 
 ### UI Layer
+
 - **Approach**: DOM-based overlays (menus, HUD, dialogs)
 - **Optional Library**: htm or Preact if UI complexity grows
 - **Reasoning**: Avoid full-fledged frameworks like React to reduce overhead and improve performance in a game context.
 
 ### Backend Server
+
 - **Framework**: Node.js with Express and Vite Dev Server. TypeORM for database connectivity and management.
 - **Responsibilities**:
   - Serving static frontend assets (built by Vite).
@@ -34,6 +39,7 @@ This game is a hybrid of Civilization, Polytopia, and Populous. It is an asynchr
 - **Reasoning**: A robust and widely-used framework for building web servers and APIs. TypeScript support is excellent.
 
 ### Persistence Layer
+
 - **Game Storage**: Redis
   - **Usage Example**:
     - `game:{gameId}` → Full game state (hash)
@@ -42,6 +48,7 @@ This game is a hybrid of Civilization, Polytopia, and Populous. It is an asynchr
   - **Reasoning**: Data permanence, traditional and queryable. Better for data like user database and reporting.
 
 ### Communication Model
+
 - **Notification Technology**: Service workers polling the API managed by the Node.js/Express server and pushing notifications to the browser/device.
 - **Real-time Updates**: WebSockets for instant game state synchronization across connected clients via the Node.js server.
 - **Administrative functionality**: Basic functions like logging in, security, reporting etc... are managed by the Express API and Controllers
@@ -50,6 +57,7 @@ This game is a hybrid of Civilization, Polytopia, and Populous. It is an asynchr
 ## Local Development Setup & Deployment
 
 ### Containerization & Orchestration
+
 - **Tools**: Docker & Docker Compose
 - **Reasoning**:
   - Provides a consistent development, testing, and production environment.
@@ -58,6 +66,7 @@ This game is a hybrid of Civilization, Polytopia, and Populous. It is an asynchr
   - Manages multi-container setup (app server, Redis) via `docker-compose.yml`.
 
 ### Frontend Development Tooling
+
 - **Tool**: Vite (and Vite Dev Server middleware)
 - **Reasoning**:
   - Fast builds and dependency caching for the frontend.
@@ -65,6 +74,7 @@ This game is a hybrid of Civilization, Polytopia, and Populous. It is an asynchr
   - First-class TypeScript support.
 
 ### Development Workflow
+
 - **Primary Command**: `npm run dev`
   - This command runs the Node.js server which uses Vite to build and serve the front end using HMR
   - The application is typically accessible at `http://localhost:3000`.
@@ -78,6 +88,7 @@ This game is a hybrid of Civilization, Polytopia, and Populous. It is an asynchr
 Environment variables are managed as follows:
 
 # AI Usage
+
 - Refactor and simplify UI components and game logic.
 - Generate boilerplate for new features (e.g., WebSocket handlers, new API endpoints).
 - Write documentation and user onboarding flows.
@@ -90,6 +101,7 @@ Environment variables are managed as follows:
 - Don't be overly polite. Apologizing for mistakes or inaccuracies takes the user time to read and is unnecessary. Keep responses appropriately detailed, but succinct.
 
 ## AI Rules. Never violate these constraints.
+
 - When attempting to use the `__dirname` or `path.dirname` consider the helper function in `./src/shared/helpers/getModuleDir.helper.ts`
 - Always consult the user with a planned action before assuming it is a problem that requires resolution. The user may have a difference of opinion and propose an alternate solution.
 - Always propose updates to this file `.cursorrules` whenever major decisions are made that no longer align with the documentation or if documentation is lacking or missing entirely
@@ -97,6 +109,7 @@ Environment variables are managed as follows:
 - Prefer ENUMS or `as const` key/value types instead of hard-coded strings or values for switching data or configuration values.
 
 ### Design System Compliance Rules
+
 - **CSS Tokens**: ALWAYS reference the "CSS Design Tokens System" section before creating or modifying colors, fonts, or spacing. Use `tokens.module.css` as the single source of truth.
 - **Button Implementation**: ALWAYS reference the "Button Implementation Architecture" section before modifying buttons. Follow the established SVG gem button system and dual-architecture during migration.
 - **Color Usage**: ALWAYS use the 4-tier color system (base/light/dark/highlight) for any new UI elements requiring depth or lighting effects.
@@ -110,22 +123,27 @@ This section outlines the primary data entities used in the application, managed
 
 Represents a player in the game.
 
--   **`userId`**: `string` (Primary Key, UUID) - A unique identifier for the user.
--   **`userName`**: `string` - The user's chosen display name. Limited to 20 characters.
+- **`userId`**: `string` (Primary Key, UUID) - A unique identifier for the user.
+- **`userName`**: `string` - The user's chosen display name. Limited to 20 characters.
 
 # Coding Conventions
+
 - Use functional, composable modules where appropriate.
 - Prefer clear, well-typed TypeScript code with explicit interfaces.
 - Source code exists in `/src` and is separated into `server`, `client` and `shared` domains (shared houses types used across both server and client)
 
 # Constants
+
 The `src/shared/constants/` directory contains files for defining application-wide constants. Using these constants helps prevent bugs from typos and makes the code easier to maintain.
+
 - **`api.const.ts`**: Defines constants for API endpoint paths.
 - **`redis.const.ts`**: Defines key prefixes and helper functions for creating Redis keys.
 - **`socket.const.ts`**: Defines the types for WebSocket messages.
 
 # Backend Structure
+
 The server-side application follows a clear structure for handling API requests.
+
 - **Routes**: Located in `src/server/routes/`, these files define the API endpoints using Express Router. They are responsible for mapping HTTP methods and paths to controller functions. Route paths should use constants defined in `src/shared/constants/api.const.ts`.
 - **Controllers**: Located in `src/server/controllers/`, these files contain the business logic for each API endpoint. They handle the request, interact with services or data models, and send the response.
 
@@ -138,7 +156,9 @@ To create complex and believable worlds, map generation uses a layered, pipeline
 - **Extensibility**: To add a new map feature, a new private method (a "pass") is created and inserted into the `generate()` pipeline at the appropriate stage. This keeps each rule's logic isolated and makes the system easy to expand.
 
 # Frontend Structure
+
 Client-side code is organized to promote modularity and maintainability.
+
 - **Components**: Reusable UI components are located in `src/client/components/`.
   - Each component should reside in its own folder (e.g., `src/client/components/MyComponent/`).
   - The main component file should be named after the folder (e.g., `MyComponent.tsx` for JSX components, or `MyComponent.ts` for `htm`-based components).
@@ -148,6 +168,7 @@ Client-side code is organized to promote modularity and maintainability.
   - These styles are imported into the component file and applied as objects (e.g., `styles.myClass`). This locally scopes class names and avoids global style conflicts.
 
 # Frontend Component Design System
+
 - **Component Philosophy**: Atomic design - build small, single-purpose components that compose into larger organisms
 - **Prop Naming Conventions**: Use `variant` over `type`, `isDisabled` over `disabled`, follow boolean prop patterns with `is/has/can` prefixes
 - **Styling Strategy**: Enhanced CSS Modules with shared design tokens via CSS custom properties for consistency and reusability
@@ -161,22 +182,103 @@ Client-side code is organized to promote modularity and maintainability.
   - **Touch Targets**: Minimum 44px touch targets for mobile interactions
   - **Form Factors**: Optimize for both mobile portrait gameplay and desktop landscape gameplay
 
+## Component Type Co-location Pattern
+
+### Philosophy
+
+Component-specific types, enums, and constants should be co-located with their components rather than placed in shared constant files. This promotes better encapsulation, easier maintenance, and clearer ownership of types.
+
+### When to Co-locate vs. Share
+
+**Co-locate with Component:**
+
+- Enums for component variants (e.g., `ButtonVariant`, `InputType`)
+- Component-specific interfaces and props
+- Constants used exclusively by that component
+- Types that describe the component's behavior or appearance
+
+**Keep in Shared Constants:**
+
+- Cross-cutting application concerns (e.g., `AppView`, `ConnectionStatus`)
+- API routes and WebSocket message types
+- Game logic constants (e.g., map generation, terrain types)
+- Constants used by multiple unrelated services
+
+### Implementation Guidelines
+
+1. **Export Pattern**: Export enums and interfaces directly from the component file
+
+   ```typescript
+   // Component.tsx
+   export enum ComponentVariant {
+     PRIMARY = "primary",
+     SECONDARY = "secondary",
+   }
+
+   export interface ComponentProps {
+     variant?: ComponentVariant;
+     // other props...
+   }
+   ```
+
+2. **Index File**: Create a clean index.ts for components with multiple exports
+
+   ```typescript
+   // Component/index.ts
+   export { Component, ComponentVariant, ComponentType } from "./Component";
+   export type { ComponentProps } from "./Component";
+   ```
+
+3. **Import Pattern**: Import both component and types from the same location
+
+   ```typescript
+   import { Component, ComponentVariant } from "../Component/Component";
+   ```
+
+4. **Migration Strategy**: When refactoring existing shared constants:
+   - Move component-specific enums to their component files
+   - Update all imports across the codebase
+   - Remove unused exports from shared constant files
+   - Maintain backward compatibility during transition
+
+### Examples
+
+- ✅ **Good**: `ButtonVariant` exported from `Button.tsx`
+- ✅ **Good**: `InputType` exported from `Input.tsx`
+- ✅ **Good**: `SOCKET_MESSAGE_TYPES` in shared constants (used by multiple services)
+- ❌ **Bad**: `ButtonVariant` in shared `ui.const.ts` file
+- ❌ **Bad**: Component props interface in separate type file
+
+### Benefits
+
+- **Locality of Concerns**: Types are defined where they're most relevant
+- **Easier Discovery**: No hunting through shared files when working on a component
+- **Better Encapsulation**: Components own their types
+- **Cleaner Imports**: More explicit about dependencies
+- **Easier Refactoring**: Moving/deleting a component takes its types with it
+- **Reduced Shared File Bloat**: Prevents shared constants from becoming unwieldy
+
 ## CSS Design Tokens System
 
 ### Token Source of Truth
+
 - **`src/client/tokens.module.css`** is the ONLY source of truth for design tokens
 - **NEVER** declare color, font, or spacing tokens in `global.css` or component CSS files
 - If a token doesn't exist in `tokens.module.css`, add it there rather than creating local variables
 
 ### Color Token Naming Convention
+
 All colors follow a 4-tier system for depth and lighting effects:
+
 - **Base color**: `--color-{name}` (e.g., `--color-hex-amber`)
 - **Light variant**: `--color-{name}-light` (for highlights, top edges)
-- **Dark variant**: `--color-{name}-dark` (for shadows, bottom edges) 
+- **Dark variant**: `--color-{name}-dark` (for shadows, bottom edges)
 - **Highlight variant**: `--color-{name}-highlight` (for brightest reflections)
 
 ### Adding New Color Tokens
+
 When adding a new color family:
+
 1. Define all 4 variants in `tokens.module.css` under the appropriate section
 2. Use semantic names that describe the color, not its usage
 3. Follow the existing pattern: `#base → #light → #dark → #highlight`
@@ -189,11 +291,13 @@ When adding a new color family:
    ```
 
 ### Font Token Guidelines
+
 - Use semantic naming: `--font-primary`, `--font-button`, etc.
 - Maintain legacy aliases for compatibility when refactoring
 - Font sizes use rem units with px comments: `--font-size-lg: 1.125rem; /* 18px */`
 
 ### Token Usage Rules
+
 - **ALWAYS** use `var(--token-name)` instead of hardcoded values
 - **NEVER** create component-specific color variants - use the 4-tier system
 - **ALWAYS** check `tokens.module.css` first before adding new tokens
@@ -202,14 +306,18 @@ When adding a new color family:
 ## Button Implementation Architecture
 
 ### Current Button System
+
 The application uses a **dual-button architecture** during the transition period:
+
 - **`OldButton`** and **`OldMenuButton`**: Legacy CSS-based buttons (`src/client/components/OldButton/`)
 - **`Button`**: New SVG-based gem buttons (`src/client/components/Button/`)
 
 ### SVG Gem Button Structure
+
 The new `Button` component uses **7 layered SVG elements** for 3D gem lighting effects:
+
 1. **Background**: Base color fill that stretches horizontally
-2. **Left Edge**: Light color, fixed position 
+2. **Left Edge**: Light color, fixed position
 3. **Right Edge**: Light color, dynamic position
 4. **Top Edge**: Light color, stretches horizontally
 5. **Bottom Edge**: Dark color, creates shadow effect
@@ -217,6 +325,7 @@ The new `Button` component uses **7 layered SVG elements** for 3D gem lighting e
 7. **Outline**: Charcoal stroke for grounding and definition
 
 ### Button Color Implementation Rules
+
 - **Background**: Uses base color token (`--color-hex-amber`) with no stroke
 - **Edges (left, right, top)**: Use light color token (`--color-hex-amber-light`)
 - **Bottom edge**: Uses dark color token (`--color-hex-amber-dark`) for shadow
@@ -226,7 +335,9 @@ The new `Button` component uses **7 layered SVG elements** for 3D gem lighting e
 - **Disabled state**: Outline uses `--color-stone-grey` for muted appearance
 
 ### Dynamic Width Scaling System
+
 The gem buttons adapt to both content and container requirements:
+
 - **Content-based sizing**: Uses `min-width` based on text measurement for baseline size
 - **Flex-responsive**: With `fullWidth={true}`, buttons grow to fill flex containers using `flex: 1`
 - **SVG scaling**: Responsive SVG sizing - 100% width for fullWidth, calculated width for content-based
@@ -235,6 +346,7 @@ The gem buttons adapt to both content and container requirements:
 - **Text measurement**: Uses DOM measurement to calculate minimum required button width
 
 ### Button Implementation Guidelines
+
 - **NEVER** modify existing `OldButton` components - they are preserved for stability
 - **ALWAYS** use the established 7-layer SVG structure for new button variants
 - **ALWAYS** follow the 4-tier color system (base/light/dark/highlight) for gem lighting
@@ -243,7 +355,9 @@ The gem buttons adapt to both content and container requirements:
 - **ALWAYS** implement opacity-based rendering to prevent width transition flicker
 
 ### Button Variant Creation
+
 When creating new button variants:
+
 1. Add the variant to the `ButtonProps` interface
 2. Create CSS rules for all 7 SVG elements using the 4-tier color system
 3. Ensure disabled state handling for all elements
@@ -251,12 +365,14 @@ When creating new button variants:
 5. Verify touch/mobile behavior to prevent selection highlighting
 
 ### Migration Strategy
+
 - **Phase 1**: New `Button` component complete and tested (✅ DONE)
 - **Phase 2**: Gradually replace `OldButton` usage in components
 - **Phase 3**: Remove `OldButton` components when all usage is migrated
 - **NEVER** rush the migration - test thoroughly in each component
 
 ### Button Accessibility & UX
+
 - **Touch targets**: Minimum 50px height (current gem buttons meet this)
 - **Text shadows**: Use `2px 2px 1px rgba(0, 0, 0, 0.5)` for readability
 - **Hover effects**: `translateY(-1px)` and `filter: brightness(1.05)`
@@ -266,45 +382,54 @@ When creating new button variants:
 ## Form Components Architecture
 
 ### Form Component Philosophy
+
 All form components follow consistent patterns for medieval/fantasy styling, accessibility, and user experience. Form components include Input, Checkbox, and future components like Select, Radio, and Textarea.
 
 ### Input Component Implementation
+
 The `Input` component (`src/client/components/Input/Input.tsx`) provides a comprehensive text input solution:
 
 **Visual Design:**
+
 - **Parchment-like styling**: Subtle inset shadows and canvas-white background
 - **Focus states**: Amber highlight ring with enhanced background
-- **Error states**: Clay-red coloring for validation feedback  
+- **Error states**: Clay-red coloring for validation feedback
 - **Disabled states**: Muted colors with reduced opacity
 - **Size variants**: Default and large options
 
 **Typography & Layout:**
+
 - **Font**: Uses `--font-primary` (Exo 2) for consistency
 - **Vertical alignment**: Asymmetric padding to compensate for font baseline (10px top, 6px bottom for default; 18px top, 14px bottom for large)
 - **Line height**: Reduced to 1.2 for better visual centering
 - **Touch targets**: Minimum 44px height for mobile accessibility
 
 **Form Integration:**
+
 - **Controlled/Uncontrolled**: Supports both controlled (value prop) and uncontrolled (defaultValue) patterns
 - **Event handling**: Comprehensive event support (onChange, onFocus, onBlur, onInput, onKeyDown, onKeyUp)
 - **Validation**: Built-in support for required, pattern, minLength, maxLength attributes
 - **Accessibility**: Full ARIA support with labels, descriptions, and error states
 
-### Checkbox Component Implementation  
+### Checkbox Component Implementation
+
 The `Checkbox` component (`src/client/components/Checkbox/Checkbox.tsx`) provides toggle selection functionality:
 
 **Visual Design:**
+
 - **Clean styling**: No background or border frames - focused on icon and text
 - **Icon system**: Uses Hexbound icon font (`hbi-square` and `hbi-check-square`)
 - **Interactive effects**: Icon scaling and color changes on hover/focus/checked states
 - **Size variants**: Default and large options with proportional scaling
 
 **Typography & Layout:**
+
 - **Font alignment**: Uses `margin-top: 0.5em` to compensate for Imperator font baseline
 - **Spacing**: Proportional spacing between icon and text (`--space-sm` for default, `--space-md` for large)
 - **Touch targets**: Minimum 44px height with appropriate padding
 
 **Accessibility & Form Integration:**
+
 - **Keyboard navigation**: Space/Enter key support with focus management
 - **ARIA compliance**: Full role="checkbox", aria-checked, and labeling support
 - **Form compatibility**: Hidden native checkbox for proper form submission
@@ -313,23 +438,27 @@ The `Checkbox` component (`src/client/components/Checkbox/Checkbox.tsx`) provide
 ### Form Component Design Guidelines
 
 **Visual Consistency:**
+
 - **ALWAYS** use design tokens from `tokens.module.css` for colors, fonts, and spacing
 - **ALWAYS** follow the 4-tier color system for interactive states (base/light/dark/highlight)
 - **NEVER** use hardcoded color values or spacing - reference existing tokens
 
 **Typography Considerations:**
+
 - **Imperator font baseline**: Form components must compensate for font baseline alignment issues
 - **Text inputs**: Use asymmetric padding (more top than bottom)
 - **Labels/text**: Use positive margin-top in `em` units for proportional scaling
 - **Line height**: Use 1.2 for optimal vertical centering
 
 **Interactive States:**
+
 - **Focus**: Use amber highlight ring (`--color-hex-amber-light`) for consistency
 - **Hover**: Subtle transforms and color changes for feedback
 - **Disabled**: Muted colors with `--color-stone-grey` variants and reduced opacity
 - **Error**: Use clay-red color family for validation feedback
 
 **Accessibility Requirements:**
+
 - **Touch targets**: Minimum 44px hit areas for mobile devices
 - **Keyboard support**: Full keyboard navigation and activation
 - **Screen readers**: Proper ARIA attributes and semantic HTML structure
@@ -337,53 +466,63 @@ The `Checkbox` component (`src/client/components/Checkbox/Checkbox.tsx`) provide
 - **Reduced motion**: Support for `prefers-reduced-motion: reduce` media query
 
 ### Form Component Creation Process
+
 When creating new form components:
 
 1. **Component Structure**: Follow the established pattern with comprehensive TypeScript interfaces
 2. **CSS Architecture**: Use CSS Modules with design token references
-3. **Event Handling**: Use proper JSX.TargetedEvent types for Preact compatibility  
+3. **Event Handling**: Use proper JSX.TargetedEvent types for Preact compatibility
 4. **State Management**: Support both controlled and uncontrolled patterns
 5. **Accessibility**: Include full ARIA support and keyboard navigation
 6. **StyleGuide Integration**: Add examples to demonstrate all states and variants
 7. **Testing**: Verify proper form submission and validation behavior
 
 ### Legacy Form Element Migration
+
 - **Replace all native HTML form elements** with styled components for consistency
 - **Preserve functionality**: Ensure all existing features and validation work unchanged
 - **Clean up CSS**: Remove redundant styles from component CSS files after migration
 - **Update imports**: Add new component imports where needed
 
 # Backend Development & TypeORM
+
 - **`reflect-metadata` Requirement**: For all TypeORM operations, especially migration generation, ensure `import 'reflect-metadata';` is the very first import in the server's entry point (`src/server/main.ts`).
 - **Explicit Column Types**: If TypeORM migration generation fails with a type inference error (e.g., "cannot be guessed"), explicitly define the column type (e.g., `@Column('varchar')`) in the entity definition.
 - **Entity Registration**: When a new TypeORM entity is created, it **must** be added to the `entities` array in the `DataSource` configuration file (`src/server/data-source.ts`).
 - **NPM Script Arguments**: Before running npm scripts that pass arguments to an underlying command (like `typeorm`), verify the correct syntax in `package.json`, particularly the use of `--` to separate arguments.
 
 # Backend Development & Express
+
 - **Middleware-to-Controller Data Passing**: To ensure consistency and avoid bugs, middleware should always pass data to subsequent handlers by attaching it to the `res.locals` object. Controllers should then exclusively read from `res.locals` to retrieve this data. For example, `auth.middleware.ts` sets `res.locals.userId`, and controllers read from that property.
 
 # Asset Management
 
 ## Icon Font Workflow
+
 The project uses a custom icon font for UI elements, generated via IcoMoon. The source files are stored in `/design/assets/hexbound-icons`.
 
 To update the icon font:
+
 1. Replace the contents of `/design/assets/hexbound-icons` with the new files downloaded from IcoMoon.
 2. Run the command `npm run update:icons`.
 
 This script will automatically:
+
 - Copy the `.woff` font file to `/src/client/public/fonts/HexboundIcons/`.
 - Read the new `style.css`, update the font path, and append a cache-busting timestamp.
 - Overwrite `/src/client/HexboundIcons.css` with the updated styles.
 
 # Vite in Middleware Mode
+
 **Reasoning**:
+
 - Fast builds and dependency caching for the frontend.
 - Excellent Hot Module Reloading (HMR) support.
 - First-class TypeScript support.
 - **Configuration**: When running Vite in `middlewareMode` from the Express server (`src/server/main.ts`), server-specific options (e.g., `allowedHosts`, `hmr`) must be configured within the `createViteServer` function call. The `server` block in `vite.config.ts` must be removed to prevent configuration conflicts that can lead to server instability.
 
 ### Development Workflow
+
 - **Primary Command**: `npm run dev`
   - This command runs the Node.js server which uses Vite to build and serve the front end using HMR
   - The application is typically accessible at `http://localhost:3000`.
@@ -397,9 +536,11 @@ This script will automatically:
 Environment variables are managed as follows:
 
 # Node.js Process Management
+
 - **Signal Handling**: Do not use `async` functions directly as listeners for Node.js process signals (e.g., `process.on('SIGINT', async () => ...)`). This can lead to race conditions where the process exits before the async operation completes. Instead, use a synchronous handler that calls an `async` function to perform the cleanup.
 
 # Project Structure
+
 - **`build.cjs`**: A Node.js script that orchestrates the entire build process. It builds the server using esbuild and the client using Vite.
 - **`data/`**: A directory used for storing persistent data, such as the Redis database files during local development. This directory is not checked into version control.
 - **`design/`**: Contains design assets and mockups for the game, like architecture diagrams and asset source files.
@@ -439,10 +580,10 @@ Environment variables are managed as follows:
 - **`package.json`**: Defines project metadata, dependencies, and scripts for npm.
 - **`tsconfig.json`**: The configuration file for the TypeScript compiler, specifying how to compile `.ts` files.
 - **`vite.config.ts`**: The configuration file for Vite, used for the frontend development server and build process.
-- **`README.md`**: The main documentation file for the project, providing an overview and setup instructions. 
-
+- **`README.md`**: The main documentation file for the project, providing an overview and setup instructions.
 
 # Map and Hex tile details for rendering in PixiJS
+
 - Hex tiles are designed to represent basalt columns, aka column jointing.
 - Hex tile orientation for the user makes them flat on the bottom and pointy on the sides.
 - Hex tiles have an aspect ratio of 2:1 with a default size of 120x80px.
@@ -470,6 +611,7 @@ Environment variables are managed as follows:
 To prevent race conditions and bugs related to the component lifecycle (e.g., a `useEffect` cleanup function destroying an object that another part of the effect is still trying to use), all complex, imperative rendering logic (e.g., PIXI.Application, viewport management) should be encapsulated within a singleton service (e.g., `rendering.service.ts`).
 
 React/Preact components (like `Viewport.tsx`) should remain "dumb". Their responsibility is limited to:
+
 - Calling the service's `initialize()` method in a `useEffect` with an empty dependency array (`[]`) to ensure it runs only on mount.
 - Calling the service's `destroy()` method in the cleanup function of that same `useEffect`.
 - Calling the service's data update methods (e.g., `updateMap()`) in a separate `useEffect` that watches for specific prop changes (e.g., `[mapData]`).
@@ -481,11 +623,13 @@ This pattern ensures that the lifecycle of the complex rendering objects is mana
 To manage the complexity of a dynamic, 2.5D hex grid, the rendering engine uses two primary patterns:
 
 ### Tile Entity Pattern
+
 - **Encapsulation**: Each individual hex tile is represented by a `Tile` class instance (`src/client/rendering/Tile.ts`).
 - **Responsibilities**: This class is responsible for creating, positioning, and managing all the `PIXI.Sprite` objects that make up a single tile (the hex top, walls, and text). In the future, it will also manage its own state (e.g., `currentElevation`, `targetElevation`) and handle its own animations (e.g., tweening between elevations).
 - **Benefit**: This pattern simplifies the `MapRenderer`, turning it into a manager that orchestrates `Tile` objects rather than micromanaging thousands of individual sprites.
 
 ### Layered Rendering for Z-Indexing
+
 - **The Problem**: Dynamically updating a tile's elevation can break the visual layering, causing a now-taller tile to incorrectly appear behind the tiles in front of it.
 - **The Solution**: The `MapRenderer` creates a dedicated `PIXI.Container` for each **row** of the map. All `Tile` objects for a given row are added to that row's container.
-- **Benefit**: This fixes the z-indexing issue permanently. The draw order of the rows is established once at initialization (North to South). When a tile is updated, it's only modified *within* its row container, preserving the overall draw order and ensuring correct visual layering without expensive re-sorting of all sprites.
+- **Benefit**: This fixes the z-indexing issue permanently. The draw order of the rows is established once at initialization (North to South). When a tile is updated, it's only modified _within_ its row container, preserving the overall draw order and ensuring correct visual layering without expensive re-sorting of all sprites.

@@ -2,13 +2,30 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 
 import styles from './Button.module.css';
 
-interface ButtonProps {
+// Button-specific enums - exported for use by consumers
+export enum ButtonVariant {
+  PRIMARY = 'primary',
+  SECONDARY = 'secondary',
+  GREEN = 'green',
+  RED = 'red',
+  PURPLE = 'purple',
+  ICON = 'icon',
+  LINK = 'link',
+}
+
+export enum ButtonType {
+  BUTTON = 'button',
+  SUBMIT = 'submit',
+  RESET = 'reset',
+}
+
+export interface ButtonProps {
   onClick: (event: MouseEvent) => void;
   children: preact.ComponentChildren;
-  variant?: 'primary' | 'secondary' | 'green' | 'red' | 'purple' | 'icon' | 'link';
+  variant?: ButtonVariant;
   disabled?: boolean;
   className?: string;
-  type?: 'button' | 'submit' | 'reset';
+  type?: ButtonType;
   minWidth?: number;
   padding?: number;
   fullWidth?: boolean;
@@ -18,10 +35,10 @@ interface ButtonProps {
 export const Button = ({
   onClick,
   children,
-  variant = 'primary',
+  variant = ButtonVariant.PRIMARY,
   disabled = false,
   className = '',
-  type = 'button',
+  type = ButtonType.BUTTON,
   minWidth = 100,
   padding = 25,
   fullWidth = false,
@@ -35,12 +52,12 @@ export const Button = ({
 
   useEffect(() => {
     if (textRef.current) {
-      if (variant === 'icon') {
+      if (variant === ButtonVariant.ICON) {
         // Icon buttons are always square
         setButtonWidth(50);
         setActualWidth(50);
         setIsReady(true);
-      } else if (variant === 'link') {
+      } else if (variant === ButtonVariant.LINK) {
         // Link buttons don't use SVG, just set ready
         setIsReady(true);
       } else {
@@ -100,7 +117,7 @@ export const Button = ({
         '--button-height': `${svgHeight}px`
       }}
     >
-      {variant !== 'link' && (
+      {variant !== ButtonVariant.LINK && (
         <svg 
           viewBox={`0 0 ${renderWidth} ${svgHeight}`} 
           className={styles.buttonSvg}

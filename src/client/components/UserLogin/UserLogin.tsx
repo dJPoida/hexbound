@@ -2,7 +2,7 @@ import { useEffect } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
 
 import { authService } from '../../services/auth.service';
-import { Button } from '../Button/Button';
+import { Button, ButtonVariant } from '../Button/Button';
 import { Input } from '../Input/Input';
 import { Logo } from '../Logo/Logo';
 import styles from './UserLogin.module.css';
@@ -61,7 +61,7 @@ export function UserLogin({
 
         <Button
           onClick={onLogin}
-          variant="primary"
+          variant={ButtonVariant.PRIMARY}
           disabled={isLoading}
           fullWidth={true}
           className={styles.loginButton}

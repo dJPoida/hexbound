@@ -3,7 +3,7 @@ import { useState } from 'preact/hooks';
 import { ICON_NAMES, type IconName } from '../../../types/iconName.type';
 import { IconSize } from '../../../types/iconSize.type';
 import { StyleColor } from '../../../types/styleColor.type';
-import { Button } from '../../Button/Button';
+import { Button, ButtonVariant } from '../../Button/Button';
 import { Checkbox } from '../../Checkbox/Checkbox';
 import { Icon } from '../../Icon/Icon';
 import { Input } from '../../Input/Input';
@@ -154,27 +154,27 @@ export const StyleGuidePage = () => {
         <section class={styles.subSection}>
           <Heading level={3} variant="subSectionHeader" color="subtle">Button Variants</Heading>
           <div class={styles.buttonRow}>
-            <Button onClick={() => {}} variant="primary">Primary</Button>
-            <Button onClick={() => {}} variant="secondary">Secondary</Button>
-            <Button onClick={() => {}} variant="green">Green</Button>
-            <Button onClick={() => {}} variant="red">Red</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.PRIMARY}>Primary</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.SECONDARY}>Secondary</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.GREEN}>Green</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.RED}>Red</Button>
           </div>
           <div class={styles.buttonRow}>
-            <Button onClick={() => {}} variant="purple">Purple</Button>
-            <Button onClick={() => {}} variant="primary" disabled>Disabled</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.PURPLE}>Purple</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.PRIMARY} disabled>Disabled</Button>
           </div>
           <div class={styles.buttonRow}>
-            <Button onClick={() => {}} variant="icon" ariaLabel="Menu"><Icon name="menu" color={StyleColor.LIGHT} /></Button>
-            <Button onClick={() => {}} variant="link">Link Button</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.ICON} ariaLabel="Menu"><Icon name="menu" color={StyleColor.LIGHT} /></Button>
+            <Button onClick={() => {}} variant={ButtonVariant.LINK}>Link Button</Button>
           </div>
         </section>
 
         <section class={styles.subSection}>
           <Heading level={3} variant="subSectionHeader" color="subtle">Dynamic Width Examples</Heading>
           <div class={styles.buttonGrid}>
-            <Button onClick={() => {}} variant="primary">Short</Button>
-            <Button onClick={() => {}} variant="secondary">Medium Length Text</Button>
-            <Button onClick={() => {}} variant="green">Very Long Button Text Example</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.PRIMARY}>Short</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.SECONDARY}>Medium Length Text</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.GREEN}>Very Long Button Text Example</Button>
           </div>
         </section>
       </section>

@@ -1,7 +1,7 @@
 import { useEffect, useRef,useState } from 'preact/hooks';
 
 import { StyleColor } from '../../types/styleColor.type';
-import { Button } from '../Button/Button';
+import { Button, ButtonVariant } from '../Button/Button';
 import { Icon } from '../Icon/Icon';
 import styles from './LobbyHeader.module.css';
 
@@ -57,7 +57,7 @@ export function LobbyHeader({ currentUserName, onLogout, onOpenSettings, onNavig
                     <Button 
                         onClick={toggleMenu} 
                         ariaLabel="Open menu" 
-                        variant="icon"
+                        variant={ButtonVariant.ICON}
                     >
                         <Icon name="menu" color={StyleColor.LIGHT} />
                     </Button>

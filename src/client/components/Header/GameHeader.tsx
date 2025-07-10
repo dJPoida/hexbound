@@ -1,7 +1,7 @@
 import { useEffect, useRef,useState } from 'preact/hooks';
 
 import { StyleColor } from '../../types/styleColor.type';
-import { Button } from '../Button/Button';
+import { Button, ButtonVariant } from '../Button/Button';
 import { GameSettingsDialog } from '../GameSettingsDialog/GameSettingsDialog';
 import { Icon } from '../Icon/Icon';
 import styles from './GameHeader.module.css';
@@ -95,7 +95,7 @@ export function GameHeader({ currentUserName, onLogout, currentView, onNavigateT
                     <Button 
                         onClick={toggleMenu} 
                         ariaLabel="Open menu" 
-                        variant="icon"
+                        variant={ButtonVariant.ICON}
                     >
                         <Icon name="menu" color={StyleColor.LIGHT} />
                     </Button>

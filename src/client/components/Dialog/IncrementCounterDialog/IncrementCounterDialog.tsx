@@ -1,4 +1,4 @@
-import { Button } from '../../Button/Button';
+import { Button, ButtonVariant } from '../../Button/Button';
 import { Dialog } from '../../Dialog/Dialog';
 import styles from './IncrementCounterDialog.module.css';
 
@@ -24,7 +24,7 @@ export function IncrementCounterDialog({ counter, isMyTurn, onIncrement, onClose
                 </div>
                 <Button 
                     onClick={onIncrement} 
-                    variant="primary" 
+                    variant={ButtonVariant.PRIMARY} 
                     disabled={!canIncrement} 
                     fullWidth={true}
                 >
@@ -32,7 +32,7 @@ export function IncrementCounterDialog({ counter, isMyTurn, onIncrement, onClose
                 </Button>
             </div>
             <div className={styles.footer}>
-                <Button onClick={onOpenSettings} variant="link">Game Settings</Button>
+                <Button onClick={onOpenSettings} variant={ButtonVariant.LINK}>Game Settings</Button>
             </div>
         </Dialog>
     );

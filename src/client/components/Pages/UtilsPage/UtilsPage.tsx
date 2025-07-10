@@ -3,7 +3,7 @@ import { h } from 'preact';
 import { useState } from 'preact/hooks';
 
 import { authenticatedFetch } from '../../../services/api.service';
-import { Button } from '../../Button/Button';
+import { Button, ButtonVariant } from '../../Button/Button';
 import styles from './UtilsPage.module.css';
 
 const html = htm.bind(h);
@@ -53,7 +53,7 @@ export function UtilsPage() {
         <${Button} 
           onClick=${handleResetData} 
           disabled=${isLoading}
-          variant="red"
+          variant=${ButtonVariant.RED}
         >
           ${isLoading ? 'Resetting...' : 'Reset All Game Data'}
         </${Button}>

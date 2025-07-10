@@ -5,7 +5,7 @@ import { ClientGameStatePayload } from '../../../shared/types/socket.types';
 import { settingsService } from '../../services/settings.service';
 import { StyleColor } from '../../types/styleColor.type';
 import { ActionBar } from '../ActionBar/ActionBar';
-import { Button } from '../Button/Button';
+import { Button, ButtonVariant } from '../Button/Button';
 import { GameHeader } from '../Header/GameHeader';
 import { Icon } from '../Icon/Icon';
 import { Viewport } from '../Viewport/Viewport';
@@ -69,7 +69,7 @@ export function GameViewLayout({
     <ActionBar>
       <div>
         {settings.showDebugInfo && (
-          <Button onClick={() => onPushDialog('debugInfo')} variant="icon" ariaLabel="Show Debug Info">
+          <Button onClick={() => onPushDialog('debugInfo')} variant={ButtonVariant.ICON} ariaLabel="Show Debug Info">
             <Icon name="terminal" color={StyleColor.LIGHT} />
           </Button>
         )}
@@ -77,7 +77,7 @@ export function GameViewLayout({
       <div>
         <Button 
           onClick={onEndTurn} 
-          variant="primary" 
+          variant={ButtonVariant.PRIMARY} 
           disabled={!canEndTurn}
         >
           {hasPlaceholders ? 'Waiting for Players' : 'End Turn'}
