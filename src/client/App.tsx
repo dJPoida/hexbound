@@ -12,7 +12,7 @@ import { EnableNotificationsDialog } from './components/Dialog/EnableNotificatio
 import type { NotificationPermission } from './components/Dialog/GameSettingsDialog/GameSettingsDialog';
 import { GameSettingsDialog } from './components/Dialog/GameSettingsDialog/GameSettingsDialog';
 import { IncrementCounterDialog } from './components/Dialog/IncrementCounterDialog/IncrementCounterDialog';
-import { GameViewLayout } from './components/GameViewLayout/GameViewLayout';
+import { GameViewLayout } from './components/game/GameViewLayout/GameViewLayout';
 import { LobbyLayout } from './components/LobbyLayout/LobbyLayout';
 import { LobbyPage } from './components/Pages/LobbyPage/LobbyPage';
 import { StyleGuidePage } from './components/Pages/StyleGuidePage/StyleGuidePage';

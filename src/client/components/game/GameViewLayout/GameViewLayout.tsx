@@ -1,14 +1,14 @@
 import { h } from 'preact';
 import { useEffect,useState } from 'preact/hooks';
 
-import { ClientGameStatePayload } from '../../../shared/types/socket.types';
-import { settingsService } from '../../services/settings.service';
-import { StyleColor } from '../../types/styleColor.type';
+import { ClientGameStatePayload } from '../../../../shared/types/socket.types';
+import { settingsService } from '../../../services/settings.service';
+import { StyleColor } from '../../../types/styleColor.type';
+import { Button, ButtonVariant } from '../../ui/Button';
+import { Icon } from '../../ui/Icon/Icon';
+import { Viewport } from '../../Viewport/Viewport';
 import { ActionBar } from '../ActionBar/ActionBar';
-import { GameHeader } from '../Header/GameHeader';
-import { Icon } from '../Icon/Icon';
-import { Button, ButtonVariant } from '../ui/Button';
-import { Viewport } from '../Viewport/Viewport';
+import { GameHeader } from '../GameHeader/GameHeader';
 import styles from './GameViewLayout.module.css';
 
 type DialogType = 'gameSettings' | 'incrementCounter' | 'debugInfo';
