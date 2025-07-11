@@ -20,6 +20,9 @@ export function Viewport({ pixiContainerId, gameState, currentPlayerId, onReady 
     const container = pixiContainerRef.current;
     if (container && gameState && currentPlayerId) {
       const init = async () => {
+        // Always destroy any existing rendering service before initializing new game
+        renderingService.destroy();
+        
         await renderingService.initialize(container, gameState, currentPlayerId);
         // We only call update and fade-in *after* initialization is complete.
         renderingService.updateMap(gameState.mapData);
@@ -29,7 +32,7 @@ export function Viewport({ pixiContainerId, gameState, currentPlayerId, onReady 
       };
       init();
     }
-  }, [gameState, currentPlayerId]); // Updated dependencies
+  }, [gameState?.gameId, currentPlayerId]); // Updated dependencies - track gameId specifically
 
   // This effect handles cleanup when the component unmounts.
   useEffect(() => {

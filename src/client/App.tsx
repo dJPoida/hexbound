@@ -1,534 +1,199 @@
 import './global.css'; // Import global styles
 
-import htm from 'htm';
-import { h } from 'preact';
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect,useState } from 'preact/hooks';
 
-import { API_ROUTES } from '../shared/constants/api.const';
-import { GameListItem } from '../shared/types/game.types';
-import { ClientGameStatePayload, GameTurnEndedPayload } from '../shared/types/socket.types';
 import styles from './App.module.css'; // Import CSS Modules
 import { UnifiedRouter } from './components/framework/UnifiedRouter';
 import { EnableNotificationsDialog } from './components/game/EnableNotificationsDialog/EnableNotificationsDialog';
-import type { NotificationPermission } from './components/game/GameSettingsDialog/GameSettingsDialog';
 import { GameSettingsDialog } from './components/game/GameSettingsDialog/GameSettingsDialog';
 import { IncrementCounterDialog } from './components/game/IncrementCounterDialog/IncrementCounterDialog';
 import { UserLogin } from './components/lobby/UserLogin/UserLogin';
 import { Dialog } from './components/ui/Dialog/Dialog';
-import { authenticatedFetch } from './services/api.service';
-import { authService } from './services/auth.service';
-import { pushService } from './services/push.service';
-import { settingsService } from './services/settings.service';
-import { socketService } from './services/socket.service';
+import { 
+  AuthProvider, 
+  DialogProvider, 
+  type DialogType,
+  GameProvider, 
+  NavigationProvider, 
+  NotificationProvider,
+  useAuth,
+  useDialogs,
+  useGame,
+  useNavigation,
+  useNotifications} from './contexts';
 
-const NOTIFICATION_PENDING_KEY = 'hexbound-notifications-pending-activation';
-type DialogType = 'gameSettings' | 'incrementCounter' | 'debugInfo';
+// App Content Component (wrapped by providers)
+const AppContent = () => {
+  const auth = useAuth();
+  const game = useGame();
+  const dialogs = useDialogs();
+  const navigation = useNavigation();
+  const notifications = useNotifications();
 
-// Initialize htm with Preact's h function
-htm.bind(h);
-
-// Define the main App component
-export function App() {
+  // Version state
   const [version, setVersion] = useState('LOADING...');
-  
-  // User Authentication State
-  const [userNameInput, setUserNameInput] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  const [currentUserName, setCurrentUserName] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [authError, setAuthError] = useState<string | null>(null);
-  const [showNotificationsPrompt, setShowNotificationsPrompt] = useState(false);
-  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
-  
-  // Navigation State (currentView removed - now derived from URL by UnifiedRouter)
-  const [currentGameId, setCurrentGameId] = useState<string | null>(null);
 
-  // Game State
-  const [gameState, setGameState] = useState<ClientGameStatePayload | null>(null);
-  const [isGameLoaded, setIsGameLoaded] = useState(false);
-  const [myGames, setMyGames] = useState<GameListItem[]>([]);
-
-  // UI State
-  const [dialogStack, setDialogStack] = useState<DialogType[]>([]);
-  const [afterPromptAction, setAfterPromptAction] = useState<() => void>(() => {});
-
-  const pushDialog = (dialog: DialogType) => {
-    // Prevent pushing the same dialog if it's already at the top of the stack
-    if (dialogStack[dialogStack.length - 1] === dialog) {
-      return;
-    }
-    setDialogStack([...dialogStack, dialog]);
-  };
-  const popDialog = () => setDialogStack(dialogStack.slice(0, -1));
-  const replaceDialog = (dialog: DialogType) => setDialogStack([...dialogStack.slice(0, -1), dialog]);
-  const clearDialogs = () => setDialogStack([]);
-
-  const fetchMyGames = async () => {
-    try {
-      const response = await authenticatedFetch('/api/games');
-      if (response.ok) {
-        const games = await response.json();
-        setMyGames(games);
-      } else {
-        console.error('Failed to fetch user games');
-      }
-    } catch (error) {
-      console.error('Error fetching user games:', error);
-    }
-  };
-
-  const handleJoinGame = async (gameCode: string) => {
-    try {
-      // First, attempt to join the game.
-      const joinResponse = await authenticatedFetch(`/api/games/${gameCode}/join`, {
-        method: 'POST',
-      });
-
-      if (!joinResponse.ok) {
-        // If join fails (e.g., game not found, server error), handle it.
-        const errorData = await joinResponse.json();
-        console.error('Failed to join game:', errorData.message);
-        navigate('/'); // Or show an error message to the user
-        return;
-      }
-      
-      const joinData = await joinResponse.json();
-      const gameId = joinData.gameId;
-
-      // After a successful join, navigate to the game.
-      navigateToGame(gameId, gameCode);
-
-    } catch (error) {
-      console.error('Error joining game:', error);
-    }
-  };
-
+  // Initialize version
   useEffect(() => {
-    // VITE_APP_VERSION is injected by Vite during the build process
     const appVersionFromEnv = import.meta.env.VITE_APP_VERSION;
     if (appVersionFromEnv) {
       setVersion(appVersionFromEnv);
     } else {
-      // Fallback for dev mode if VITE_APP_VERSION might not be set by `define` (though it should be)
-      // or fetch from the server API as a more robust dev fallback.
       fetch('/api/version')
         .then(res => res.json())
         .then(data => setVersion(data.version || 'N/A (dev)'))
         .catch(() => setVersion('N/A (fetch error)'));
     }
-
-    // Check if we're returning from a permission change
-    const isNotificationPending = sessionStorage.getItem(NOTIFICATION_PENDING_KEY);
-    if (isNotificationPending) {
-      sessionStorage.removeItem(NOTIFICATION_PENDING_KEY); // Clean up immediately
-      if (Notification.permission === 'granted') {
-        console.log('[App] Resuming notification subscription after permission change.');
-        pushService.subscribeUser().then(() => {
-          settingsService.updateSettings({ notificationsEnabled: true });
-        }).catch(err => console.error("Failed to auto-subscribe after permission change:", err));
-      }
-    }
-
-    const syncNotificationPermission = () => {
-      if ('Notification' in window && settingsService.getSettings().notificationsEnabled && Notification.permission === 'denied') {
-        console.log('[Permissions] Notification permission has been revoked by the user. Updating app settings.');
-        settingsService.updateSettings({ notificationsEnabled: false });
-      }
-    };
-
-    // Run on initial load
-    syncNotificationPermission();
-    
-    // Run whenever the tab becomes visible again
-    document.addEventListener('visibilitychange', syncNotificationPermission);
-
-    const lastUserName = authService.getUserName();
-    if(lastUserName) {
-      setUserNameInput(lastUserName);
-    }
-
-    // Check for existing user session on initial page load
-    const session = authService.getSession();
-    if (session) {
-      setCurrentUserId(session.userId);
-      setCurrentUserName(session.userName);
-      setIsLoggedIn(true);
-
-      // Check URL for routing
-      const path = window.location.pathname;
-      const gameIdMatch = path.match(/^\/game\/([a-zA-Z0-9-]+)/);
-      if (gameIdMatch) {
-        const gameCode = gameIdMatch[1];
-        handleJoinGame(gameCode);
-      } else {
-        // For lobby routes (/, /utils, /styleguide), URL determines the view
-        // The UnifiedRouter component will handle the specific page rendering
-      }
-    }
-
-    const handlePopState = () => {
-      const path = window.location.pathname;
-      const gameIdMatch = path.match(/^\/game\/([a-zA-Z0-9-]+)/);
-      if (gameIdMatch) {
-        if(isLoggedIn) {
-          const gameCode = gameIdMatch[1];
-          handleJoinGame(gameCode);
-        }
-      } else {
-        // For lobby routes (/, /utils, /styleguide), ensure we clean up any game state
-        // The UnifiedRouter component will handle the specific page rendering based on URL
-        const path = window.location.pathname;
-        if (!path.startsWith('/game/')) {
-          // Clean up game state if navigating away from game
-          if (currentGameId) {
-            socketService.sendMessage('game:unsubscribe', { gameId: currentGameId });
-            socketService.disconnect();
-            setCurrentGameId(null);
-            setGameState(null);
-            setIsGameLoaded(false);
-          }
-        }
-      }
-    };
-
-    window.addEventListener('popstate', handlePopState);
-
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
-      document.removeEventListener('visibilitychange', syncNotificationPermission);
-    };
   }, []);
 
-  // This effect manages socket listeners based on login state
+  // Handle post-login logic
   useEffect(() => {
-    if (!isLoggedIn) return;
-
-    const handleGameStateUpdate = (payload: ClientGameStatePayload) => {
-      console.log('[App] Received game state update:', payload);
-      setGameState(payload);
-    };
-
-    const handleCounterUpdate = (payload: { value: number }) => {
-      setGameState(prevState => {
-        if (!prevState) return null;
-        return {
-          ...prevState,
-          gameState: {
-            ...prevState.gameState,
-            placeholderCounter: payload.value
-          }
-        };
-      });
-    };
-
-    const handleTurnEnded = (payload: GameTurnEndedPayload) => {
-      console.log('[App] Received game turn ended:', payload);
-      setGameState(prevState => {
-        if (!prevState || prevState.gameId !== payload.gameId) return prevState;
-        return {
-          ...prevState,
-          currentPlayerId: payload.nextPlayerId,
-          turnNumber: payload.turnNumber,
-        };
-      });
-    };
-
-    socketService.on('game:state_update', handleGameStateUpdate);
-    socketService.on('game:counter_update', handleCounterUpdate);
-    socketService.on('game:turn_ended', handleTurnEnded);
-
-    return () => {
-      socketService.off('game:state_update', handleGameStateUpdate);
-      socketService.off('game:counter_update', handleCounterUpdate);
-      socketService.off('game:turn_ended', handleTurnEnded);
-    };
-  }, [isLoggedIn]);
-
-  // This effect manages game list fetching and polling when logged in
-  useEffect(() => {
-    if (!isLoggedIn) return;
-
-    // Fetch games when user logs in
-    fetchMyGames();
-
-    // Set up polling every 60 seconds
-    const pollInterval = setInterval(fetchMyGames, 60000);
-
-    // Clean up polling when user logs out or component unmounts
-    return () => clearInterval(pollInterval);
-  }, [isLoggedIn]);
-
-  const handleUserNameInputChange = (name: string) => {
-    setUserNameInput(name);
-  };
-
-  const handleLogin = async () => {
-    if (!userNameInput.trim()) {
-      setAuthError('Username cannot be empty.');
-      return;
-    }
-    setIsLoading(true);
-    setAuthError(null);
-    try {
-      const response = await fetch(API_ROUTES.LOGIN, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userName: userNameInput.trim() }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        // Use the auth service to save the session
-        authService.saveSession(data.sessionToken, data.userId, data.userName);
-        
-        // It's important to set the state that indicates the user is logged in *before*
-        // we proceed, as other effects may depend on this.
-        setCurrentUserId(data.userId);
-        setCurrentUserName(data.userName);
-        setIsLoggedIn(true);
-        setUserNameInput('');
-        
-        // Now, perform the post-login actions like checking notifications and navigating.
-        await checkNotificationStatusAndProceed(() => {
+    if (auth.isLoggedIn) {
+      const handlePostLogin = async () => {
+        await notifications.checkNotificationStatusAndProceed(() => {
           const path = window.location.pathname;
           const gameIdMatch = path.match(/^\/game\/([a-zA-Z0-9-]+)/);
           if (gameIdMatch) {
             const gameCode = gameIdMatch[1];
-            handleJoinGame(gameCode);
+            navigation.handleJoinGame(gameCode);
           } else {
-            navigate('/');
+            navigation.navigate('/');
           }
         });
-        
-      } else {
-        setAuthError(data.message || 'Authentication failed.');
-      }
-    } catch (error) {
-      setAuthError('An error occurred. Please try again.');
-      console.error('Auth error:', error);
+      };
+      handlePostLogin();
     }
-    setIsLoading(false);
+  }, [auth.isLoggedIn]);
+
+  // Handle enhanced login with notification check
+  const handleEnhancedLogin = async () => {
+    await auth.login();
+    // Post-login logic is handled by the useEffect above
   };
 
-  const checkNotificationStatusAndProceed = async (onComplete: () => void) => {
-    // Check if notifications are supported by the browser
-    if (!('Notification' in window) || !('serviceWorker' in navigator)) {
-      onComplete();
-      return;
-    }
-
-    const permission: NotificationPermission = Notification.permission as NotificationPermission;
-    setNotificationPermission(permission); // Store the permission state
-    const settings = settingsService.getSettings();
-
-    if (permission === 'granted' && !settings.notificationsEnabled) {
-      // Auto-subscribe user since they already gave permission
-      try {
-        await pushService.subscribeUser();
-        settingsService.updateSettings({ notificationsEnabled: true });
-      } catch (error) {
-        console.error("Failed to auto-subscribe user:", error);
-      }
-      onComplete(); // Proceed regardless of subscription success
-    } else if (permission === 'prompt' || permission === 'default' || (permission === 'denied' && !settings.notificationsEnabled)) {
-      // Show the prompt dialog if it hasn't been asked, or if it was denied and our in-app setting is off.
-      if (permission === 'denied') {
-        // Set the flag so we know to check for changes on next load
-        sessionStorage.setItem(NOTIFICATION_PENDING_KEY, 'true');
-      }
-      setAfterPromptAction(() => onComplete);
-      setShowNotificationsPrompt(true);
-    } else {
-      // Permission is 'denied' or already granted and enabled, just proceed
-      onComplete();
-    }
+  // Handle enhanced logout
+  const handleEnhancedLogout = () => {
+    navigation.navigate('/');
+    dialogs.clearDialogs();
+    auth.logout();
   };
 
+  // Handle create new game
   const handleCreateNewGame = async () => {
-    setIsLoading(true); // Reuse isLoading for feedback
-    setAuthError(null);
-    try {
-      const response = await authenticatedFetch('/api/games', {
-        method: 'POST',
-      });
-      const data = await response.json();
-      if (response.ok) {
-        console.log('Game created successfully:', data);
-        // Refresh the game list after creating a new game
-        fetchMyGames();
-        navigateToGame(data.gameId, data.gameCode);
-      } else {
-        setAuthError(data.message || 'Failed to create game.');
-      }
-    } catch (error) {
-      setAuthError('An error occurred while creating the game.');
-      console.error('Create game error:', error);
-    }
-    setIsLoading(false);
-  };
-
-  const handleLogout = () => {
-    navigate('/');
-    clearDialogs();
-    authService.clearAuthToken();
-    setIsLoggedIn(false);
-    setCurrentUserId(null);
-    setCurrentUserName(null);
-  };
-
-  // Unified navigation function to replace all separate navigate functions
-  const navigate = (path: string, gameData?: { gameId: string; gameCode: string }) => {
-    // Run permission sync on any navigation
-    const syncNotificationPermission = () => {
-      if ('Notification' in window && settingsService.getSettings().notificationsEnabled && Notification.permission === 'denied') {
-        console.log('[Permissions] Notification permission has been revoked by the user. Updating app settings.');
-        settingsService.updateSettings({ notificationsEnabled: false });
-      }
-    };
-    syncNotificationPermission();
-    
-    clearDialogs();
-
-    // Handle game navigation
-    if (path.startsWith('/game/') && gameData) {
-      setCurrentGameId(gameData.gameId);
-      socketService.connect(gameData.gameId);
-      window.history.pushState({ gameId: gameData.gameId }, '', path);
-    } else {
-      // Handle non-game navigation (lobby, utils, styleguide)
-      // Clean up game state if leaving a game
-      if (currentGameId) {
-        socketService.sendMessage('game:unsubscribe', { gameId: currentGameId });
-        socketService.disconnect();
-        setCurrentGameId(null);
-        setGameState(null);
-        setIsGameLoaded(false);
-      }
-      window.history.pushState({}, '', path);
-    }
-    
-    window.dispatchEvent(new Event('pushstate'));
-  };
-
-  // Convenience function for game navigation
-  const navigateToGame = (gameId: string, gameCode: string) => {
-    navigate(`/game/${gameCode}`, { gameId, gameCode });
-  };
-
-  const handleIncrementCounter = () => {
-    if (currentGameId) {
-        socketService.sendMessage('game:increment_counter', { gameId: currentGameId });
+    const result = await game.createNewGame();
+    if (result) {
+      navigation.navigateToGame(result.gameId, result.gameCode);
     }
   };
 
-  const handleEndTurn = () => {
-      if (currentGameId && gameState) {
-          const turnId = `${gameState.turnNumber}-${gameState.currentPlayerId}`;
-          socketService.sendMessage('game:end_turn', { gameId: currentGameId, turnId });
-      }
-  };
-
-
-
-  const renderLoggedInView = () => {
-    const currentDialogType = dialogStack[dialogStack.length - 1];
-    let dialogComponent = null;
+  // Render dialog content
+  const renderDialogContent = () => {
+    const currentDialogType = dialogs.getCurrentDialog();
+    if (!currentDialogType) return null;
 
     switch (currentDialogType) {
       case 'gameSettings':
-        dialogComponent = <GameSettingsDialog onClose={popDialog} />;
-        break;
+        return <GameSettingsDialog onClose={dialogs.popDialog} />;
       case 'incrementCounter':
-        if (gameState) {
-          const hasPlaceholders = gameState.players.some(p => p.isPlaceholder);
-          dialogComponent = (
+        if (game.gameState) {
+          const hasPlaceholders = game.gameState.players.some(p => p.isPlaceholder);
+          return (
             <IncrementCounterDialog
-              counter={gameState.gameState.placeholderCounter ?? 0}
-              isMyTurn={gameState.currentPlayerId === currentUserId}
-              onIncrement={handleIncrementCounter}
-              onClose={popDialog}
-              onOpenSettings={() => replaceDialog('gameSettings')}
+              counter={game.gameState.gameState.placeholderCounter ?? 0}
+              isMyTurn={game.gameState.currentPlayerId === auth.currentUserId}
+              onIncrement={game.incrementCounter}
+              onClose={dialogs.popDialog}
+              onOpenSettings={() => dialogs.replaceDialog('gameSettings')}
               hasPlaceholders={hasPlaceholders}
             />
           );
         }
-        break;
+        return null;
       case 'debugInfo':
-        if (gameState) {
-          dialogComponent = (
-            <Dialog title="Debug Game State" onClose={popDialog}>
+        if (game.gameState) {
+          return (
+            <Dialog title="Debug Game State" onClose={dialogs.popDialog}>
               <div className={styles.debugContent}>
                 <pre>
-                  {JSON.stringify(gameState, null, 2)}
+                  {JSON.stringify(game.gameState, null, 2)}
                 </pre>
               </div>
             </Dialog>
           );
         }
-        break;
+        return null;
+      default:
+        return null;
+    }
+  };
+
+  // Render main content
+  const renderMainContent = () => {
+    if (!auth.isLoggedIn) {
+      return (
+        <UserLogin 
+          userNameInput={auth.userNameInput}
+          onUserNameInputChange={auth.setUserNameInput}
+          onLogin={handleEnhancedLogin}
+          isLoading={auth.isLoading}
+          error={auth.authError}
+        />
+      );
+    }
+    
+    if (notifications.showNotificationsPrompt) {
+      return (
+        <EnableNotificationsDialog 
+          permissionState={notifications.notificationPermission}
+          onComplete={notifications.handleNotificationPromptComplete}
+        />
+      );
     }
 
     return (
       <UnifiedRouter
         className={styles.appLayout}
-        currentUserName={currentUserName}
-        currentUserId={currentUserId}
-        myGames={myGames}
-        gameState={gameState}
-        isGameLoaded={isGameLoaded}
-        onNavigate={navigate}
-        onLogout={handleLogout}
-        onOpenSettings={() => pushDialog('gameSettings')}
-        onJoinGame={navigateToGame}
+        currentUserName={auth.currentUserName}
+        currentUserId={auth.currentUserId}
+        myGames={game.myGames}
+        gameState={game.gameState}
+        isGameLoaded={game.isGameLoaded}
+        onNavigate={navigation.navigate}
+        onLogout={handleEnhancedLogout}
+        onOpenSettings={() => dialogs.pushDialog('gameSettings')}
+        onJoinGame={navigation.navigateToGame}
         onCreateNewGame={handleCreateNewGame}
-        onEndTurn={handleEndTurn}
-        onPushDialog={pushDialog}
-        onGameReady={() => setIsGameLoaded(true)}
-        dialog={dialogComponent}
+        onEndTurn={game.endTurn}
+        onPushDialog={dialogs.pushDialog}
+        onGameReady={() => game.setGameLoaded(true)}
+        dialog={renderDialogContent()}
       />
-    );
-  };
-
-  const viewToRender = () => {
-    if (!isLoggedIn) {
-      return (
-        <UserLogin 
-          userNameInput={userNameInput}
-          onUserNameInputChange={handleUserNameInputChange}
-          onLogin={handleLogin}
-          isLoading={isLoading}
-          error={authError}
-        />
-      );
-    }
-    
-    if (showNotificationsPrompt) {
-      return (
-        <EnableNotificationsDialog 
-            permissionState={notificationPermission}
-            onComplete={() => {
-                setShowNotificationsPrompt(false);
-                if (afterPromptAction) {
-                  afterPromptAction();
-                }
-            }}
-        />
-      );
-    }
-
-    return (
-      <>
-        {renderLoggedInView()}
-      </>
     );
   };
 
   return (
     <div className={styles.appContainer}>
-      {viewToRender()}
-      <p className={styles.versionDisplay}>Version: <span id="appVersionDisplay">{version}</span></p>
+      {renderMainContent()}
+      <p className={styles.versionDisplay}>
+        Version: <span id="appVersionDisplay">{version}</span>
+      </p>
     </div>
+  );
+};
+
+// Main App Component with all providers
+export function App() {
+  return (
+    <AuthProvider>
+      <NotificationProvider>
+        <DialogProvider>
+          <GameProvider>
+            <NavigationProvider>
+              <AppContent />
+            </NavigationProvider>
+          </GameProvider>
+        </DialogProvider>
+      </NotificationProvider>
+    </AuthProvider>
   );
 }
