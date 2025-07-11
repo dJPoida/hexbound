@@ -698,6 +698,228 @@ App → UnifiedRouter → [AppHeader + Content]
 - **Consistent header behavior** across all views
 - **Simplified dialog management** with proper overlay system
 
+## Context API Architecture
+
+### Overview
+
+The application uses a **comprehensive Context API architecture** to manage application-wide state, eliminating prop drilling and providing clean separation of concerns. The architecture consists of five specialized providers that handle different domains of the application.
+
+**Provider Architecture:**
+```typescript
+<AuthProvider>           // Foundation - user authentication
+  <NotificationProvider> // Notification permission management  
+    <DialogProvider>     // Dialog stack management
+      <GameProvider>     // Game state, socket events, game list
+        <NavigationProvider>  // Routing and navigation logic
+          <AppContent />
+        </NavigationProvider>
+      </GameProvider>
+    </DialogProvider>
+  </NotificationProvider>
+</AuthProvider>
+```
+
+### Individual Context Providers
+
+#### AuthProvider (`src/client/contexts/AuthProvider.tsx`)
+
+**Responsibilities:**
+- User authentication state (login/logout)
+- Username input management
+- Session persistence via authService
+- Authentication error handling
+- Loading states for auth operations
+
+**Key Features:**
+- Automatic session restoration on app startup
+- Clean error state management
+- Integration with backend authentication API
+- Persistent username storage for UX
+
+**Usage:**
+```typescript
+const { isLoggedIn, currentUserId, login, logout } = useAuth();
+```
+
+#### GameProvider (`src/client/contexts/GameProvider.tsx`)
+
+**Responsibilities:**
+- Game state management (current game, game list)
+- Socket event handling (game updates, turn changes)
+- Game operations (create, join, actions)
+- Game list polling and caching
+
+**Key Features:**
+- Automatic socket event subscription/cleanup
+- Game list polling every 60 seconds
+- Integration with socket service for real-time updates
+- Game action handlers (increment counter, end turn)
+
+**Usage:**
+```typescript
+const { gameState, myGames, createNewGame, joinGame, incrementCounter } = useGame();
+```
+
+#### DialogProvider (`src/client/contexts/DialogProvider.tsx`)
+
+**Responsibilities:**
+- Dialog stack management
+- Dialog type definitions
+- Stack operations (push, pop, replace, clear)
+
+**Key Features:**
+- Stack-based dialog management for nested dialogs
+- Prevention of duplicate dialogs in stack
+- Clean dialog state management
+
+**Usage:**
+```typescript
+const { pushDialog, popDialog, clearDialogs, getCurrentDialog } = useDialogs();
+```
+
+#### NavigationProvider (`src/client/contexts/NavigationProvider.tsx`)
+
+**Responsibilities:**
+- Unified navigation system
+- Game transition handling
+- Socket and rendering service cleanup
+- Browser history management
+
+**Key Features:**
+- Single `navigate()` function for all routing
+- Automatic cleanup when leaving games
+- Integration with socket and rendering services
+- Browser back/forward support
+
+**Usage:**
+```typescript
+const { navigate, navigateToGame, handleJoinGame } = useNavigation();
+```
+
+#### NotificationProvider (`src/client/contexts/NotificationProvider.tsx`)
+
+**Responsibilities:**
+- Push notification permission management
+- Notification prompt workflow
+- Permission state synchronization
+- Service worker integration
+
+**Key Features:**
+- Automatic permission restoration after browser restart
+- Permission change detection
+- Integration with push service for subscriptions
+
+**Usage:**
+```typescript
+const { checkNotificationStatusAndProceed, showNotificationsPrompt } = useNotifications();
+```
+
+### Context Architecture Benefits
+
+**Eliminated Prop Drilling:**
+- **Before**: `App.tsx` passed 15+ props to `UnifiedRouter`
+- **After**: Components access state directly via hooks
+
+**Clean Separation of Concerns:**
+- Each provider handles one specific domain
+- Clear dependency hierarchy between providers
+- Easy to test and maintain individual providers
+
+**Reusable State Access:**
+- Any component can use `useAuth()`, `useGame()`, etc.
+- Consistent state access patterns across the app
+- Type-safe context access with error boundaries
+
+**Simplified Component Logic:**
+- **App.tsx reduced from 534 lines to 183 lines** (65% reduction)
+- Components focus on UI rather than state management
+- Clear data flow and dependency management
+
+### Implementation Guidelines
+
+**Provider Dependencies:**
+- **AuthProvider**: No dependencies (foundation)
+- **NotificationProvider**: No dependencies  
+- **DialogProvider**: No dependencies
+- **GameProvider**: Depends on AuthProvider
+- **NavigationProvider**: Depends on AuthProvider, DialogProvider, GameProvider
+
+**Adding New Providers:**
+1. **Create provider file** in `src/client/contexts/`
+2. **Export provider and hook** from provider file
+3. **Add exports** to `src/client/contexts/index.ts`
+4. **Insert in correct position** in provider hierarchy
+5. **Update dependency chain** if needed
+
+**Context Hook Usage:**
+```typescript
+// Good: Destructure only what you need
+const { isLoggedIn, currentUserId } = useAuth();
+
+// Good: Use in components that need the state
+const MyComponent = () => {
+  const auth = useAuth();
+  return <div>{auth.isLoggedIn ? 'Logged in' : 'Logged out'}</div>;
+};
+
+// Bad: Don't pass context values as props
+const BadComponent = ({ authState }: { authState: AuthContextType }) => { ... };
+```
+
+**Error Handling:**
+- All context hooks throw errors if used outside their provider
+- Provides clear error messages for debugging
+- Prevents silent failures and undefined behavior
+
+### Migration from Legacy Architecture
+
+**What Was Replaced:**
+- ❌ **Massive App.tsx** with 15+ useState calls and complex useEffect chains
+- ❌ **Prop drilling** through multiple component layers
+- ❌ **Duplicated state logic** across components
+- ❌ **Complex cleanup logic** scattered throughout components
+
+**What Was Gained:**
+- ✅ **Clean separation of concerns** with domain-specific providers
+- ✅ **Reusable state hooks** accessible from any component
+- ✅ **Simplified component logic** focused on presentation
+- ✅ **Easier testing** with isolated provider logic
+- ✅ **Better error boundaries** with context validation
+
+### Performance Considerations
+
+**Context Optimization:**
+- Providers only re-render when their specific state changes
+- Components only re-render when they consume changed context values
+- Proper dependency arrays prevent unnecessary re-renders
+
+**State Segmentation:**
+- Each provider manages only its domain
+- Prevents unnecessary re-renders across unrelated components
+- Clear performance isolation between different app concerns
+
+**Memory Management:**
+- Providers handle cleanup of subscriptions and services
+- Navigation provider manages rendering service lifecycle
+- Proper socket connection cleanup prevents memory leaks
+
+### Testing Strategy
+
+**Provider Testing:**
+- Each provider can be tested in isolation
+- Mock dependencies for focused unit tests
+- Test state transitions and side effects separately
+
+**Component Testing:**
+- Components can be tested with mock context providers
+- Easy to test different state scenarios
+- Clear separation between UI and business logic
+
+**Integration Testing:**
+- Full provider stack can be tested together
+- Test complex workflows across multiple providers
+- Verify proper cleanup and state synchronization
+
 # Backend Development & TypeORM
 
 - **`reflect-metadata` Requirement**: For all TypeORM operations, especially migration generation, ensure `import 'reflect-metadata';` is the very first import in the server's entry point (`src/server/main.ts`).
