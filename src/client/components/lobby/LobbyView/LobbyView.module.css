@@ -5,9 +5,16 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  height: 100%;
-  overflow: hidden;
   box-sizing: border-box;
+  padding-bottom: 2rem; /* Add breathing room at bottom on mobile */
+}
+
+/* Desktop: Enable height constraints for lobby container */
+@media (min-width: 1024px) {
+  .lobbyContainer {
+    height: 100%;
+    overflow: hidden;
+  }
 }
 
 /* Mobile responsive adjustments */
@@ -67,9 +74,15 @@
   box-shadow: 0 2px 8px var(--shadow-subtle);
   display: flex;
   flex-direction: column;
-  min-height: 0; /* Important for grid/flex shrinking */
-  overflow: hidden; /* Prevent section from overflowing */
-  flex: 1; /* Allow it to take remaining space on mobile */
+}
+
+/* Desktop: Enable height constraints for games list section */
+@media (min-width: 1024px) {
+  .gameListSection {
+    min-height: 0; /* Important for grid/flex shrinking */
+    overflow: hidden; /* Prevent section from overflowing */
+    flex: 1; /* Allow it to take remaining space */
+  }
 }
 
 .gameList {
@@ -78,9 +91,15 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  flex: 1; /* Take remaining space in gameListSection */
-  overflow-y: auto;
-  min-height: 0; /* Allow flex item to shrink */
+}
+
+/* Desktop: Enable scrolling for games list */
+@media (min-width: 1024px) {
+  .gameList {
+    flex: 1; /* Take remaining space in gameListSection */
+    overflow-y: auto;
+    min-height: 0; /* Allow flex item to shrink */
+  }
 }
 
 
