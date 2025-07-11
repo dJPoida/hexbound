@@ -4,11 +4,11 @@ import { useEffect,useState } from 'preact/hooks';
 import { ClientGameStatePayload } from '../../../../shared/types/socket.types';
 import { settingsService } from '../../../services/settings.service';
 import { StyleColor } from '../../../types/styleColor.type';
+import { AppHeader, AppHeaderView } from '../../ui/AppHeader';
 import { Button, ButtonVariant } from '../../ui/Button';
 import { Icon } from '../../ui/Icon/Icon';
-import { Viewport } from '../Viewport/Viewport';
 import { ActionBar } from '../ActionBar/ActionBar';
-import { GameHeader } from '../GameHeader/GameHeader';
+import { Viewport } from '../Viewport/Viewport';
 import styles from './GameViewLayout.module.css';
 
 type DialogType = 'gameSettings' | 'incrementCounter' | 'debugInfo';
@@ -52,16 +52,36 @@ export function GameViewLayout({
   const hasPlaceholders = gameState.players.some(p => p.isPlaceholder);
   const canEndTurn = isMyTurn && !hasPlaceholders;
   
+  // State for copy link functionality
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied'>('idle');
+  
+  const handleCopyGameLink = () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      setCopyStatus('copied');
+      setTimeout(() => {
+        setCopyStatus('idle');
+      }, 1500);
+    }).catch(err => {
+      console.error('Failed to copy text: ', err);
+    });
+  };
+  
+  const handleNavigateToLobby = () => {
+    onNavigateToLobby();
+  };
+  
   const headerContent = (
-    <GameHeader
+    <AppHeader
       currentUserName={currentUserName}
+      currentView={AppHeaderView.GAME}
       onLogout={onLogout}
-      currentView='game'
-      onNavigateToLobby={onNavigateToLobby}
+      onNavigate={(path) => path === '/' && handleNavigateToLobby()}
+      onOpenSettings={() => onPushDialog('gameSettings')}
       turnNumber={gameState.turnNumber}
       counter={gameState.gameState.placeholderCounter}
       onToggleCounterDialog={() => onPushDialog('incrementCounter')}
-      onOpenSettings={() => onPushDialog('gameSettings')}
+      onCopyGameLink={handleCopyGameLink}
+      copyLinkStatus={copyStatus}
     />
   );
 
