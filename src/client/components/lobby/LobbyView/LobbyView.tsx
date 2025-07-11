@@ -32,7 +32,25 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
 
   return (
     <div className={styles.lobbyContainer}>
-      <Logo />
+      <div className={styles.actionsSection}>
+        <div className={styles.lobbyLogo}>
+          <Logo />
+        </div>
+        <Button onClick={onCreateNewGame} variant={ButtonVariant.PRIMARY} fullWidth={true}>
+          Create New Game
+        </Button>
+        <div className={styles.joinByIdContainer}>
+          <Input
+            type={InputType.TEXT}
+            value={gameCode}
+            onInput={handleGameCodeChange}
+            placeholder="Paste Game Code"
+          />
+          <Button onClick={handleJoinByCode} variant={ButtonVariant.SECONDARY} fullWidth={true}>
+            Join
+          </Button>
+        </div>
+      </div>
 
       <div className={styles.gameListSection}>
         {myGames.length > 0 ? (
@@ -59,23 +77,6 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
             <Text color="subtle">You have no active games</Text>
           </div>
         )}
-      </div>
-
-      <div className={styles.actionsSection}>
-                    <Button onClick={onCreateNewGame} variant={ButtonVariant.PRIMARY} fullWidth={true}>
-              Create New Game
-            </Button>
-        <div className={styles.joinByIdContainer}>
-          <Input
-            type={InputType.TEXT}
-            value={gameCode}
-            onInput={handleGameCodeChange}
-            placeholder="Paste Game Code"
-          />
-          <Button onClick={handleJoinByCode} variant={ButtonVariant.SECONDARY} fullWidth={true}>
-            Join
-          </Button>
-        </div>
       </div>
     </div>
   );

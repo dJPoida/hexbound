@@ -2,18 +2,74 @@
   width: 100%;
   max-width: 500px;
   margin: 0 auto;
-  padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 480px) {
+  .lobbyContainer {
+    max-width: 100%;
+  }
+  
+  .actionsSection {
+    min-width: 0; /* Allow it to shrink on very small screens */
+  }
+}
+
+/* Tablet responsive layout */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .lobbyContainer {
+    max-width: 800px;
+    gap: 1.5rem;
+  }
+}
+
+/* Desktop responsive layout */
+@media (min-width: 1024px) {
+  .lobbyContainer {
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    grid-template-rows: 1fr;
+    gap: 2rem;
+    height: 100%;
+  }
+
+  .actionsSection {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+    width: 100%;
+  }
+
+  .gameListSection {
+    grid-column: 2;
+    grid-row: 1;
+    min-height: 0; /* Allow grid item to shrink */
+    overflow: hidden; /* Prevent overflow of the section itself */
+  }
+
+  .lobbyLogo {
+    margin-bottom: 2rem;
+  }
 }
 
 .gameListSection {
   background-color: var(--color-canvas-white);
   border-radius: var(--border-radius-medium);
-  padding: 0.5rem;
+  padding: 1rem;
   border: 1px solid var(--color-canvas-white-dark);
   box-shadow: 0 2px 8px var(--shadow-subtle);
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Important for grid/flex shrinking */
+  overflow: hidden; /* Prevent section from overflowing */
+  flex: 1; /* Allow it to take remaining space on mobile */
 }
 
 .gameList {
@@ -22,9 +78,12 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  max-height: 40vh;
+  flex: 1; /* Take remaining space in gameListSection */
   overflow-y: auto;
+  min-height: 0; /* Allow flex item to shrink */
 }
+
+
 
 .gameListItem {
   background-color: transparent;
@@ -42,7 +101,7 @@
 }
 
 .gameListItem:hover {
-  background-color: var(--color-background-hover);
+  background-color: var(--color-glow-yellow-highlight);
   box-shadow: 0 4px 12px var(--shadow-soft);
   transform: translateY(-2px);
 }
@@ -74,28 +133,24 @@
   font-size: 0.9rem;
   font-weight: 700;
   text-transform: uppercase;
-  border: 2px solid var(--color-primary-orange);
+  border: 2px solid var(--color-hex-amber);
 }
 
 .actionsSection {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
-
-
-
-
 
 .noGamesMessage {
   text-align: center;
   margin: 2rem 0;
   color: var(--color-stone-grey);
 }
-
-
-
-
 
 .joinByIdContainer {
   display: flex;
@@ -108,11 +163,10 @@
   padding: 0.7rem 0.7rem 0.7rem 1rem;
   box-shadow: var(--shadow-form-element);
   border: 1.5px solid var(--color-canvas-white-dark);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
-
-
-
-
 
 .lobbySection > button + .joinByIdContainer {
   border-top: 1.5px solid var(--color-canvas-white-dark);

@@ -46,16 +46,14 @@ export const Button = ({
 }: ButtonProps) => {
   const textRef = useRef<HTMLSpanElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const [buttonWidth, setButtonWidth] = useState(minWidth);
-  const [actualWidth, setActualWidth] = useState(minWidth);
+  const [svgWidth, setSvgWidth] = useState(minWidth);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     if (textRef.current) {
       if (variant === ButtonVariant.ICON) {
         // Icon buttons are always square
-        setButtonWidth(50);
-        setActualWidth(50);
+        setSvgWidth(50);
         setIsReady(true);
       } else if (variant === ButtonVariant.LINK) {
         // Link buttons don't use SVG, just set ready
@@ -63,34 +61,29 @@ export const Button = ({
       } else {
         const textWidth = textRef.current.getBoundingClientRect().width;
         const calculatedWidth = Math.max(minWidth, textWidth + padding * 2);
-        setButtonWidth(calculatedWidth);
-        setActualWidth(calculatedWidth);
+        setSvgWidth(calculatedWidth);
         setIsReady(true);
       }
     }
   }, [children, minWidth, padding, variant]);
 
-  // For fullWidth buttons, measure actual width when layout changes
+  // For fullWidth buttons, track actual rendered size
   useEffect(() => {
     if (fullWidth && buttonRef.current && isReady) {
-      const measureActualWidth = (entries: ResizeObserverEntry[]) => {
+      const resizeObserver = new ResizeObserver((entries) => {
         const entry = entries[0];
         if (entry) {
-          const actualButtonWidth = entry.contentRect.width;
-          if (actualButtonWidth > buttonWidth) {
-            setActualWidth(actualButtonWidth);
-          }
+          setSvgWidth(entry.contentRect.width);
         }
-      };
+      });
       
-      const resizeObserver = new ResizeObserver(measureActualWidth);
       resizeObserver.observe(buttonRef.current);
       
       return () => {
         resizeObserver.disconnect();
       };
     }
-  }, [fullWidth, isReady, buttonWidth]);
+  }, [fullWidth, isReady]);
 
   const buttonClasses = [
     styles.button,
@@ -102,7 +95,6 @@ export const Button = ({
   ].filter(Boolean).join(' ');
 
   const svgHeight = 50;
-  const renderWidth = fullWidth ? actualWidth : buttonWidth;
 
   return (
     <button 
@@ -113,21 +105,21 @@ export const Button = ({
       type={type}
       aria-label={ariaLabel}
       style={{ 
-        '--button-width': `${renderWidth}px`,
+        '--button-width': `${svgWidth}px`,
         '--button-height': `${svgHeight}px`
       }}
     >
       {variant !== ButtonVariant.LINK && (
         <svg 
-          viewBox={`0 0 ${renderWidth} ${svgHeight}`} 
+          viewBox={`0 0 ${svgWidth} ${svgHeight}`} 
           className={styles.buttonSvg}
-          width={fullWidth ? '100%' : buttonWidth}
+          width={fullWidth ? '100%' : svgWidth}
           height={svgHeight}
           preserveAspectRatio={fullWidth ? 'none' : 'xMidYMid meet'}
         >
           {/* Background fill - stretches with button width */}
           <path 
-            d={`m 6,0 h ${renderWidth - 12} l 6,6 v 38 l -6,6 H 6.234375 L 0,44 V 6 Z`}
+            d={`m 6,0 h ${svgWidth - 12} l 6,6 v 38 l -6,6 H 6.234375 L 0,44 V 6 Z`}
             className={styles.background} 
           />
 
@@ -139,31 +131,31 @@ export const Button = ({
 
           {/* Right edge - dynamic position (from actual artwork) */}
           <path 
-            d={`m ${renderWidth - 4},8 4,-2 v 38 l -4,-2 z`} 
+            d={`m ${svgWidth - 4},8 4,-2 v 38 l -4,-2 z`} 
             className={styles.rightEdge} 
           />
 
           {/* Top edge - stretches with button width (from actual artwork) */}
           <path 
-            d={`M 8,4 6,0 h ${renderWidth - 12} l -2,4 z`} 
+            d={`M 8,4 6,0 h ${svgWidth - 12} l -2,4 z`} 
             className={styles.topEdge} 
           />
 
           {/* Bottom edge - stretches with button width (from actual artwork) */}
           <path 
-            d={`M ${renderWidth - 8},46 H 8 L 6.234375,50 H ${renderWidth - 6} Z`} 
+            d={`M ${svgWidth - 8},46 H 8 L 6.234375,50 H ${svgWidth - 6} Z`} 
             className={styles.bottomEdge} 
           />
 
           {/* Accent layer - reflective effect, stretches like background (from actual artwork) */}
           <path 
-            d={`M 6.334961,-0.167969 6,0 5.665039,0.167969 5.720699,0.279297 0.279293,5.720703 0.167965,5.665043 0,6 -0.167969,6.334961 3.625,8.231445 v 33.537109 l -3.792969,1.896485 0.335938,0.669922 0.118164,-0.05957 5.506836,5.299806 -0.12793,0.256835 0.669922,0.335939 1.896484,-3.79297 H ${renderWidth - 8.23145} l 1.89649,3.79297 0.66992,-0.335939 -0.0557,-0.111328 5.44141,-5.441406 0.11133,0.05566 0.33594,-0.669922 -3.79297,-1.896485 V 8.231445 L ${renderWidth + 0.16794},6.334961 ${renderWidth - 0.168},5.665039 ${renderWidth - 0.27933},5.720699 ${renderWidth - 5.72074},0.279293 ${renderWidth - 5.66504},0.167965 ${renderWidth - 6.33496},-0.167973 ${renderWidth - 8.23145},3.624996 H 8.231445 Z M 8.155273,4.375 H ${renderWidth - 8.15528} L ${renderWidth - 4.375},8.155273 V 41.844727 L ${renderWidth - 8.15528},45.625 H 8.155273 L 4.375,41.844727 V 8.15625 Z`} 
+            d={`M 6.334961,-0.167969 6,0 5.665039,0.167969 5.720699,0.279297 0.279293,5.720703 0.167965,5.665043 0,6 -0.167969,6.334961 3.625,8.231445 v 33.537109 l -3.792969,1.896485 0.335938,0.669922 0.118164,-0.05957 5.506836,5.299806 -0.12793,0.256835 0.669922,0.335939 1.896484,-3.79297 H ${svgWidth - 8.23145} l 1.89649,3.79297 0.66992,-0.335939 -0.0557,-0.111328 5.44141,-5.441406 0.11133,0.05566 0.33594,-0.669922 -3.79297,-1.896485 V 8.231445 L ${svgWidth + 0.16794},6.334961 ${svgWidth - 0.168},5.665039 ${svgWidth - 0.27933},5.720699 ${svgWidth - 5.72074},0.279293 ${svgWidth - 5.66504},0.167965 ${svgWidth - 6.33496},-0.167973 ${svgWidth - 8.23145},3.624996 H 8.231445 Z M 8.155273,4.375 H ${svgWidth - 8.15528} L ${svgWidth - 4.375},8.155273 V 41.844727 L ${svgWidth - 8.15528},45.625 H 8.155273 L 4.375,41.844727 V 8.15625 Z`} 
             className={styles.accents} 
           />
 
           {/* Outline - charcoal stroke for grounding effect */}
           <path 
-            d={`m 6,0 h ${renderWidth - 12} l 6,6 v 38 l -6,6 H 6 L 0,44 V 6 Z`}
+            d={`m 6,0 h ${svgWidth - 12} l 6,6 v 38 l -6,6 H 6 L 0,44 V 6 Z`}
             className={styles.outline} 
           />
         </svg>

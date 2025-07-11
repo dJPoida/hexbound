@@ -145,7 +145,7 @@ export class UnifiedRouter extends Component<UnifiedRouterProps, UnifiedRouterSt
       case 'lobby':
       default:
         return (
-          <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%', position: 'relative' }}>
+          <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', position: 'relative', boxSizing: 'border-box' }}>
             <LobbyView 
               onNavigateToGame={onJoinGame}
               onCreateNewGame={onCreateNewGame}
