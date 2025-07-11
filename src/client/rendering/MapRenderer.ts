@@ -55,6 +55,9 @@ export class MapRenderer {
       y += HEX_HEIGHT / 2;
     }
 
+    // Add 2-tile offset to push all tiles down, creating 2-tile padding at top
+    y -= 1.5 * HEX_HEIGHT;
+
     return { x, y };
   }
 

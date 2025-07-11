@@ -87,14 +87,14 @@ class RenderingService {
     const worldWidth = singleMapWidth * 3;
     const trueWorldHeight = (gameState.mapData.height * HEX_HEIGHT) + (HEX_HEIGHT / 2);
     
-    // Lie to the viewport about its height to create the bottom clamp effect
-    const worldHeightForClamping = trueWorldHeight - (HEX_HEIGHT * 1.5);
+    // Set world height to actual map height minus 3 tiles for padding (2 top, 1 bottom)
+    const worldHeight = trueWorldHeight - (3 * HEX_HEIGHT);
 
     const viewport = new PixiViewport({
       screenWidth: containerElement.clientWidth,
       screenHeight: containerElement.clientHeight,
       worldWidth,
-      worldHeight: worldHeightForClamping,
+      worldHeight,
       events: app.renderer.events,
     } as IViewportOptions);
     this.viewport = viewport;
@@ -130,7 +130,7 @@ class RenderingService {
         console.log(`[RenderingService] Centered map on player spawn at (${spawnPosition.x}, ${spawnPosition.y})`);
       } else {
         // Fallback to center of map
-        viewport.moveCenter(singleMapWidth * 1.5, trueWorldHeight / 2);
+        viewport.moveCenter(singleMapWidth * 1.5, worldHeight / 2);
         console.log('[RenderingService] No spawn found, centered on map center');
       }
       viewport.setZoom(initialZoomLimits.minScale, true);
@@ -304,6 +304,9 @@ class RenderingService {
     if (q % 2 !== 0) {
       y += HEX_HEIGHT / 2;
     }
+
+    // Subtract 1.5-tile offset to pull all tiles up toward the top of the world
+    y -= 1.5 * HEX_HEIGHT;
 
     return { x, y };
   }
