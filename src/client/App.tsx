@@ -8,17 +8,12 @@ import { API_ROUTES } from '../shared/constants/api.const';
 import { GameListItem } from '../shared/types/game.types';
 import { ClientGameStatePayload, GameTurnEndedPayload } from '../shared/types/socket.types';
 import styles from './App.module.css'; // Import CSS Modules
-import { Router } from './components/framework/Router/Router';
+import { UnifiedRouter } from './components/framework/UnifiedRouter';
 import { EnableNotificationsDialog } from './components/game/EnableNotificationsDialog/EnableNotificationsDialog';
 import type { NotificationPermission } from './components/game/GameSettingsDialog/GameSettingsDialog';
 import { GameSettingsDialog } from './components/game/GameSettingsDialog/GameSettingsDialog';
-import { GameViewLayout } from './components/game/GameViewLayout/GameViewLayout';
 import { IncrementCounterDialog } from './components/game/IncrementCounterDialog/IncrementCounterDialog';
-import { LobbyView } from './components/lobby/LobbyView/LobbyView';
 import { UserLogin } from './components/lobby/UserLogin/UserLogin';
-import { StyleGuidePage } from './components/Pages/StyleGuidePage/StyleGuidePage';
-import { UtilsPage } from './components/Pages/UtilsPage/UtilsPage';
-import { AppHeader, AppHeaderView } from './components/ui/AppHeader/AppHeader';
 import { Dialog } from './components/ui/Dialog/Dialog';
 import { authenticatedFetch } from './services/api.service';
 import { authService } from './services/auth.service';
@@ -46,8 +41,7 @@ export function App() {
   const [showNotificationsPrompt, setShowNotificationsPrompt] = useState(false);
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
   
-  // View and Navigation State
-  const [currentView, setCurrentView] = useState<'login' | 'lobby' | 'game'>('login');
+  // Navigation State (currentView removed - now derived from URL by UnifiedRouter)
   const [currentGameId, setCurrentGameId] = useState<string | null>(null);
 
   // Game State
@@ -95,7 +89,7 @@ export function App() {
         // If join fails (e.g., game not found, server error), handle it.
         const errorData = await joinResponse.json();
         console.error('Failed to join game:', errorData.message);
-        navigateToLobby(); // Or show an error message to the user
+        navigate('/'); // Or show an error message to the user
         return;
       }
       
@@ -168,9 +162,8 @@ export function App() {
         const gameCode = gameIdMatch[1];
         handleJoinGame(gameCode);
       } else {
-        // For lobby routes (/, /utils, /styleguide), just set to lobby view
-        // The Router component will handle the specific page rendering
-        setCurrentView('lobby');
+        // For lobby routes (/, /utils, /styleguide), URL determines the view
+        // The UnifiedRouter component will handle the specific page rendering
       }
     }
 
@@ -183,10 +176,18 @@ export function App() {
           handleJoinGame(gameCode);
         }
       } else {
-        // For lobby routes (/, /utils, /styleguide), just ensure we're in lobby view
-        // The Router component will handle the specific page rendering based on URL
-        if (currentView === 'game') {
-          navigateToLobby();
+        // For lobby routes (/, /utils, /styleguide), ensure we clean up any game state
+        // The UnifiedRouter component will handle the specific page rendering based on URL
+        const path = window.location.pathname;
+        if (!path.startsWith('/game/')) {
+          // Clean up game state if navigating away from game
+          if (currentGameId) {
+            socketService.sendMessage('game:unsubscribe', { gameId: currentGameId });
+            socketService.disconnect();
+            setCurrentGameId(null);
+            setGameState(null);
+            setIsGameLoaded(false);
+          }
         }
       }
     };
@@ -297,7 +298,7 @@ export function App() {
             const gameCode = gameIdMatch[1];
             handleJoinGame(gameCode);
           } else {
-            navigateToLobby();
+            navigate('/');
           }
         });
         
@@ -369,7 +370,7 @@ export function App() {
   };
 
   const handleLogout = () => {
-    navigateToLobby();
+    navigate('/');
     clearDialogs();
     authService.clearAuthToken();
     setIsLoggedIn(false);
@@ -377,8 +378,9 @@ export function App() {
     setCurrentUserName(null);
   };
 
-  const navigateToGame = (gameId: string, gameCode: string) => {
-    // Run the sync check upon navigation
+  // Unified navigation function to replace all separate navigate functions
+  const navigate = (path: string, gameData?: { gameId: string; gameCode: string }) => {
+    // Run permission sync on any navigation
     const syncNotificationPermission = () => {
       if ('Notification' in window && settingsService.getSettings().notificationsEnabled && Notification.permission === 'denied') {
         console.log('[Permissions] Notification permission has been revoked by the user. Updating app settings.');
@@ -388,30 +390,31 @@ export function App() {
     syncNotificationPermission();
     
     clearDialogs();
-    setCurrentGameId(gameId);
-    setCurrentView('game');
-    socketService.connect(gameId);
-    window.history.pushState({ gameId }, '', `/game/${gameCode}`);
-    window.dispatchEvent(new Event('pushstate'));
-  };
 
-  const navigateToLobby = () => {
-    if (currentGameId) {
-      socketService.sendMessage('game:unsubscribe', { gameId: currentGameId });
+    // Handle game navigation
+    if (path.startsWith('/game/') && gameData) {
+      setCurrentGameId(gameData.gameId);
+      socketService.connect(gameData.gameId);
+      window.history.pushState({ gameId: gameData.gameId }, '', path);
+    } else {
+      // Handle non-game navigation (lobby, utils, styleguide)
+      // Clean up game state if leaving a game
+      if (currentGameId) {
+        socketService.sendMessage('game:unsubscribe', { gameId: currentGameId });
+        socketService.disconnect();
+        setCurrentGameId(null);
+        setGameState(null);
+        setIsGameLoaded(false);
+      }
+      window.history.pushState({}, '', path);
     }
-    clearDialogs();
-    socketService.disconnect();
-    setCurrentGameId(null);
-    setGameState(null);
-    setCurrentView('lobby');
-    setIsGameLoaded(false);
-    window.history.pushState({}, '', '/');
+    
     window.dispatchEvent(new Event('pushstate'));
   };
 
-  const navigateToLobbyFromMenu = () => {
-    window.history.pushState({}, '', '/');
-    window.dispatchEvent(new Event('pushstate'));
+  // Convenience function for game navigation
+  const navigateToGame = (gameId: string, gameCode: string) => {
+    navigate(`/game/${gameCode}`, { gameId, gameCode });
   };
 
   const handleIncrementCounter = () => {
@@ -427,15 +430,7 @@ export function App() {
       }
   };
 
-  const navigateToUtils = () => {
-    window.history.pushState({}, '', '/utils');
-    window.dispatchEvent(new Event('pushstate'));
-  };
 
-  const navigateToStyleGuide = () => {
-    window.history.pushState({}, '', '/styleguide');
-    window.dispatchEvent(new Event('pushstate'));
-  };
 
   const renderLoggedInView = () => {
     const currentDialogType = dialogStack[dialogStack.length - 1];
@@ -475,116 +470,24 @@ export function App() {
         break;
     }
 
-    // Determine the current header view based on URL and current view
-    const getCurrentHeaderView = (): AppHeaderView => {
-      if (currentView === 'game') {
-        return AppHeaderView.GAME;
-      }
-      
-      const path = window.location.pathname;
-      if (path === '/utils') {
-        return AppHeaderView.UTILS;
-      }
-      if (path === '/styleguide') {
-        return AppHeaderView.STYLEGUIDE;
-      }
-      return AppHeaderView.LOBBY;
-    };
-
-    const headerView = getCurrentHeaderView();
-
-    if (currentView === 'game' && gameState) {
-      return (
-        <div className={styles.appLayout}>
-          <AppHeader
-            currentView={headerView}
-            currentUserName={currentUserName}
-            onLogout={handleLogout}
-            onOpenSettings={() => pushDialog('gameSettings')}
-            onNavigate={(path) => {
-              if (path === '/') {
-                navigateToLobby();
-              } else if (path === '/utils') {
-                navigateToUtils();
-              } else if (path === '/styleguide') {
-                navigateToStyleGuide();
-              }
-            }}
-            turnNumber={gameState.turnNumber}
-            counter={gameState.gameState.placeholderCounter ?? 0}
-            onToggleCounterDialog={() => pushDialog('incrementCounter')}
-          />
-          <div className={styles.appContent}>
-            <GameViewLayout
-              gameState={gameState}
-              isMapReady={isGameLoaded}
-              onReady={() => setIsGameLoaded(true)}
-              onEndTurn={handleEndTurn}
-              onPushDialog={pushDialog}
-              isMyTurn={gameState.currentPlayerId === currentUserId}
-              currentUserName={currentUserName}
-              currentUserId={currentUserId}
-              dialog={dialogComponent}
-            />
-          </div>
-        </div>
-      );
-    }
-
-    // Define routes for the lobby section
-    const routes = {
-      '/': () => (
-        <div className={styles.viewContent}>
-          <LobbyView 
-            onNavigateToGame={navigateToGame}
-            onCreateNewGame={handleCreateNewGame}
-            myGames={myGames}
-            currentUserId={currentUserId}
-          />
-        </div>
-      ),
-      '/utils': () => (
-        <div className={styles.viewContent}>
-          <UtilsPage />
-        </div>
-      ),
-      '/styleguide': () => (
-        <div className={styles.viewContent}>
-          <StyleGuidePage />
-        </div>
-      )
-    };
-
     return (
-      <div className={styles.appLayout}>
-        <AppHeader
-          currentView={headerView}
-          currentUserName={currentUserName}
-          onLogout={handleLogout}
-          onOpenSettings={() => pushDialog('gameSettings')}
-          onNavigate={(path) => {
-            if (path === '/') {
-              navigateToLobbyFromMenu();
-            } else if (path === '/utils') {
-              navigateToUtils();
-            } else if (path === '/styleguide') {
-              navigateToStyleGuide();
-            }
-          }}
-        />
-        <div className={styles.appContent}>
-          <Router 
-            routes={routes}
-            utilityRoutes={['/utils', '/styleguide']}
-            fallback={() => routes['/']()} // Fallback to lobby
-          />
-        </div>
-        {dialogComponent && (
-          <div className={styles.dialogOverlay}>
-            {dialogComponent}
-          </div>
-        )}
-      </div>
+      <UnifiedRouter
+        className={styles.appLayout}
+        currentUserName={currentUserName}
+        currentUserId={currentUserId}
+        myGames={myGames}
+        gameState={gameState}
+        isGameLoaded={isGameLoaded}
+        onNavigate={navigate}
+        onLogout={handleLogout}
+        onOpenSettings={() => pushDialog('gameSettings')}
+        onJoinGame={navigateToGame}
+        onCreateNewGame={handleCreateNewGame}
+        onEndTurn={handleEndTurn}
+        onPushDialog={pushDialog}
+        onGameReady={() => setIsGameLoaded(true)}
+        dialog={dialogComponent}
+      />
     );
   };
 
