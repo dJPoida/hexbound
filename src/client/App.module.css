@@ -23,6 +23,30 @@
   overflow-x: hidden;
 }
 
+.viewContent {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100%;
+  position: relative;
+}
+
+.dialogOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+}
+
 .loggedInContainer {
   width: 100%;
   height: 100%;

@@ -5,6 +5,7 @@ import { h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 
 import { API_ROUTES } from '../shared/constants/api.const';
+import { GameListItem } from '../shared/types/game.types';
 import { ClientGameStatePayload, GameTurnEndedPayload } from '../shared/types/socket.types';
 import styles from './App.module.css'; // Import CSS Modules
 import { Router } from './components/framework/Router/Router';
@@ -13,9 +14,8 @@ import type { NotificationPermission } from './components/game/GameSettingsDialo
 import { GameSettingsDialog } from './components/game/GameSettingsDialog/GameSettingsDialog';
 import { GameViewLayout } from './components/game/GameViewLayout/GameViewLayout';
 import { IncrementCounterDialog } from './components/game/IncrementCounterDialog/IncrementCounterDialog';
-import { LobbyLayout } from './components/lobby/LobbyLayout/LobbyLayout';
+import { LobbyView } from './components/lobby/LobbyView/LobbyView';
 import { UserLogin } from './components/lobby/UserLogin/UserLogin';
-import { LobbyPage } from './components/Pages/LobbyPage/LobbyPage';
 import { StyleGuidePage } from './components/Pages/StyleGuidePage/StyleGuidePage';
 import { UtilsPage } from './components/Pages/UtilsPage/UtilsPage';
 import { AppHeader, AppHeaderView } from './components/ui/AppHeader/AppHeader';
@@ -53,6 +53,7 @@ export function App() {
   // Game State
   const [gameState, setGameState] = useState<ClientGameStatePayload | null>(null);
   const [isGameLoaded, setIsGameLoaded] = useState(false);
+  const [myGames, setMyGames] = useState<GameListItem[]>([]);
 
   // UI State
   const [dialogStack, setDialogStack] = useState<DialogType[]>([]);
@@ -68,6 +69,20 @@ export function App() {
   const popDialog = () => setDialogStack(dialogStack.slice(0, -1));
   const replaceDialog = (dialog: DialogType) => setDialogStack([...dialogStack.slice(0, -1), dialog]);
   const clearDialogs = () => setDialogStack([]);
+
+  const fetchMyGames = async () => {
+    try {
+      const response = await authenticatedFetch('/api/games');
+      if (response.ok) {
+        const games = await response.json();
+        setMyGames(games);
+      } else {
+        console.error('Failed to fetch user games');
+      }
+    } catch (error) {
+      console.error('Error fetching user games:', error);
+    }
+  };
 
   const handleJoinGame = async (gameCode: string) => {
     try {
@@ -229,6 +244,20 @@ export function App() {
     };
   }, [isLoggedIn]);
 
+  // This effect manages game list fetching and polling when logged in
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    // Fetch games when user logs in
+    fetchMyGames();
+
+    // Set up polling every 60 seconds
+    const pollInterval = setInterval(fetchMyGames, 60000);
+
+    // Clean up polling when user logs out or component unmounts
+    return () => clearInterval(pollInterval);
+  }, [isLoggedIn]);
+
   const handleUserNameInputChange = (name: string) => {
     setUserNameInput(name);
   };
@@ -326,6 +355,8 @@ export function App() {
       const data = await response.json();
       if (response.ok) {
         console.log('Game created successfully:', data);
+        // Refresh the game list after creating a new game
+        fetchMyGames();
         navigateToGame(data.gameId, data.gameCode);
       } else {
         setAuthError(data.message || 'Failed to create game.');
@@ -503,32 +534,24 @@ export function App() {
     // Define routes for the lobby section
     const routes = {
       '/': () => (
-        <LobbyPage
-          currentUserName={currentUserName}
-          currentUserId={currentUserId}
-          onLogout={handleLogout}
-          onNavigateToGame={navigateToGame}
-          onCreateNewGame={handleCreateNewGame}
-          onNavigateToUtils={navigateToUtils}
-          onNavigateToStyleGuide={navigateToStyleGuide}
-          isLoading={isLoading}
-          authError={authError}
-          dialog={dialogComponent}
-        />
+        <div className={styles.viewContent}>
+          <LobbyView 
+            onNavigateToGame={navigateToGame}
+            onCreateNewGame={handleCreateNewGame}
+            myGames={myGames}
+            currentUserId={currentUserId}
+          />
+        </div>
       ),
       '/utils': () => (
-        <LobbyLayout
-          dialog={dialogComponent}
-        >
+        <div className={styles.viewContent}>
           <UtilsPage />
-        </LobbyLayout>
+        </div>
       ),
       '/styleguide': () => (
-        <LobbyLayout
-          dialog={dialogComponent}
-        >
+        <div className={styles.viewContent}>
           <StyleGuidePage />
-        </LobbyLayout>
+        </div>
       )
     };
 
@@ -556,6 +579,11 @@ export function App() {
             fallback={() => routes['/']()} // Fallback to lobby
           />
         </div>
+        {dialogComponent && (
+          <div className={styles.dialogOverlay}>
+            {dialogComponent}
+          </div>
+        )}
       </div>
     );
   };
