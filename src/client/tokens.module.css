@@ -109,6 +109,7 @@
   --font-size-2xl: 1.5rem; /* 24px */
   --font-size-3xl: 1.875rem; /* 30px */
   --font-size-4xl: 2.25rem; /* 36px */
+  --font-size-5xl: 2.5rem; /* 40px */
 
   /* Legacy font size aliases */
   --font-size-body: var(--font-size-md);
@@ -128,7 +129,9 @@
      Borders
      ========================================================================== */
   --border-width: 2px;
+  --border-radius-small: 4px;
   --border-radius-medium: 8px;
+  --border-radius-large: 12px;
   --border-color: var(--color-charcoal);
 
   /* ==========================================================================

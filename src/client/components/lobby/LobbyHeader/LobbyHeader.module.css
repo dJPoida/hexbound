@@ -22,7 +22,7 @@
   right: 0;
   background-color: var(--color-canvas-white);
   border: 1px solid var(--color-stone-grey-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius-medium);
   box-shadow: var(--shadow-card-neutral);
   display: flex;
   flex-direction: column;

@@ -56,22 +56,11 @@
   position: relative;
 }
 
-.welcomeMessage {
-  font-size: 1.1em;
-  font-weight: 500;
-  margin: 0;
-  color: var(--color-charcoal);
-}
 
 
 
-.divider {
-  border: none;
-  width: 100%;
-  max-width: 800px;
-  border-top: 1px solid var(--color-stone-grey-light);
-  margin: 2rem 0;
-}
+
+
 
 /* Input Fields Polish */
 
@@ -102,7 +91,7 @@
   right: 0;
   background-color: var(--color-canvas-white);
   border: 1px solid var(--color-stone-grey-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius-medium);
   box-shadow: var(--shadow-card-neutral);
   display: flex;
   flex-direction: column;
@@ -144,15 +133,7 @@
   text-align: left;
 }
 
-.lobbyTitle {
-  font-family: var(--font-family-main);
-  font-size: var(--font-size-heading);
-  font-weight: var(--font-weight-bold);
-  margin-bottom: 1.5rem;
-  text-align: center;
-  color: var(--color-charcoal);
-  letter-spacing: 0.02em;
-}
+
 
 .lobbySection {
   /* Using canvas white (#fefaeF) with transparency */
@@ -214,7 +195,7 @@
   top: 12px;
   bottom: 12px;
   width: 7px;
-  border-radius: 6px;
+  border-radius: var(--border-radius-small);
   background: var(--color-hex-amber);
 }
 .gameListItem:hover {
@@ -239,24 +220,9 @@
   letter-spacing: 0.01em;
 }
 
-.gameMeta {
-  font-family: var(--font-family-body);
-  font-size: 0.95rem;
-  color: var(--color-stone-grey);
-  opacity: 0.85;
-  display: flex;
-  gap: 1.2rem;
-}
 
-.turnCount, .playerCount {
-  font-size: 0.95rem;
-  color: var(--color-stone-grey);
-  background: var(--color-stone-grey-highlight);
-  opacity: 0.3;
-  border-radius: 5px;
-  padding: 0.1rem 0.5rem;
-  margin-right: 0.5rem;
-}
+
+
 
 
 
@@ -287,28 +253,9 @@
 
 
 /* Game Container Specific Styles */
-.gameMetaRow {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--color-canvas-white-dark);
-  color: var(--color-stone-grey);
-}
 
-.gameMetaRow:last-child {
-  border-bottom: none;
-}
 
-.gameMetaRow strong {
-  color: var(--color-charcoal);
-  font-weight: var(--font-weight-bold);
-}
 
-.gameActionContainer {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
 
 .debugContent {
   background-color: var(--color-charcoal-light);

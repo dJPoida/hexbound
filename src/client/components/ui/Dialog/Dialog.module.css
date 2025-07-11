@@ -4,7 +4,7 @@
   z-index: 10;
   background-image: var(--texture-paper);
   background-color: var(--color-canvas-white);
-  border-radius: 12px;
+  border-radius: var(--border-radius-medium);
   box-shadow: var(--shadow-dialog);
   width: 90%;
   max-width: 500px;
@@ -27,7 +27,7 @@
 
 .dialogTitle {
   font-family: var(--font-family-display);
-  font-size: 1.8rem;
+  font-size: var(--font-size-2xl);
   margin: 0;
   color: var(--color-charcoal);
   font-weight: 400;

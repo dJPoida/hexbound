@@ -38,7 +38,7 @@
 
 .loginSubtitle {
   font-family: var(--font-family-body);
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   color: var(--color-stone-grey);
   margin-bottom: 2.2rem;
   text-align: center;
@@ -49,7 +49,7 @@
 /* Adjust font sizes and spacing on very narrow screens */
 @media (max-width: 400px) {
   .loginSubtitle {
-    font-size: 1.1rem;
+    font-size: var(--font-size-lg);
     margin-bottom: 1.5rem;
   }
 }

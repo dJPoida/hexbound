@@ -303,6 +303,100 @@ When adding a new color family:
 - **ALWAYS** check `tokens.module.css` first before adding new tokens
 - Use semantic color mapping: success → moss-green, warning → glow-yellow, etc.
 
+## CSS Maintenance & Quality Standards
+
+### CSS Module Best Practices
+
+**Preventing Unused CSS:**
+
+- **NEVER** leave unused CSS classes in module files
+- **ALWAYS** remove CSS when removing component features
+- **REGULARLY** audit CSS modules for unused classes (quarterly cleanup)
+- **IMMEDIATELY** delete CSS classes when refactoring components
+
+**Preventing Duplicate CSS:**
+
+- **NEVER** define the same class name twice in one CSS module
+- **ALWAYS** check for existing classes before creating new ones
+- **CONSOLIDATE** similar styling patterns into shared design tokens
+- **AVOID** copying CSS between components - use shared tokens instead
+
+**Component Override Prevention:**
+
+- **NEVER** write CSS that targets standardized components (Button, Input, Checkbox, etc.)
+- **NEVER** use generic element selectors (`button`, `input`) that could affect standardized components
+- **ALWAYS** use the component's built-in props and variants instead of CSS overrides
+- **REFACTOR** components to use standardized components rather than custom CSS
+
+### Design Token Migration Rules
+
+**When encountering hardcoded values:**
+
+- **IMMEDIATELY** replace hardcoded colors with design tokens
+- **IMMEDIATELY** replace hardcoded font sizes with design token equivalents
+- **IMMEDIATELY** replace hardcoded spacing with `--space-*` tokens
+- **IMMEDIATELY** replace hardcoded border radius with `--border-radius-*` tokens
+- **ADD** missing tokens to `tokens.module.css` if needed, following established patterns
+
+**Hardcoded Value Prevention:**
+
+- **NEVER** use hex colors, rgba values, or hsl colors directly in CSS
+- **NEVER** use hardcoded rem/px values for font sizes (except in token definitions)
+- **NEVER** use hardcoded rem/px values for spacing (except in token definitions)
+- **NEVER** use hardcoded px values for border radius (except in token definitions)
+- **ALWAYS** use CSS custom properties from the design system
+
+### CSS Code Review Checklist
+
+Before merging any CSS changes, verify:
+
+- [ ] No hardcoded color values (use design tokens)
+- [ ] No hardcoded font sizes (use design tokens)
+- [ ] No hardcoded spacing values (use design tokens)
+- [ ] No hardcoded border radius values (use design tokens)
+- [ ] No CSS overriding standardized components
+- [ ] No unused CSS classes remaining
+- [ ] No duplicate CSS class definitions
+- [ ] All new tokens follow 4-tier naming convention
+- [ ] Component-specific types/enums co-located (not in shared constants)
+
+### CSS Refactoring Guidelines
+
+**When to clean up CSS:**
+
+- **IMMEDIATELY** when removing component features
+- **BEFORE** shipping any major feature
+- **DURING** component migrations to standardized components
+- **QUARTERLY** as part of technical debt reduction
+- **WHENEVER** hardcoded values are discovered
+
+**How to clean up CSS:**
+
+1. **Identify unused classes** using grep/search across codebase
+2. **Replace hardcoded values** with design tokens systematically
+3. **Remove component overrides** by using standardized component props
+4. **Eliminate duplicates** by consolidating similar patterns
+5. **Add missing tokens** to maintain design system completeness
+
+### Legacy CSS Migration Strategy
+
+**When encountering legacy CSS:**
+
+- **ASSESS** if the component should use a standardized component instead
+- **MIGRATE** to standardized components when functionality allows
+- **EXTRACT** reusable patterns into design tokens
+- **DOCUMENT** any remaining custom CSS with clear justification
+- **PLAN** future migration to standardized patterns
+
+**Red Flags requiring immediate attention:**
+
+- CSS classes overriding Button component styling
+- CSS classes overriding Input/Checkbox component styling
+- Hardcoded rgba/hex color values
+- Duplicate class definitions across modules
+- Unused CSS classes (grep shows no usage)
+- Generic element selectors that could affect standardized components
+
 ## Button Implementation Architecture
 
 ### Current Button System
