@@ -578,6 +578,126 @@ When creating new form components:
 - **Clean up CSS**: Remove redundant styles from component CSS files after migration
 - **Update imports**: Add new component imports where needed
 
+## Unified Routing Architecture
+
+### UnifiedRouter System
+
+The application uses a **centralized routing system** via the `UnifiedRouter` component (`src/client/components/framework/UnifiedRouter/UnifiedRouter.tsx`) that handles all navigation and view rendering in one place.
+
+**Architecture Overview:**
+```
+App.tsx → UnifiedRouter → [AppHeader + Content] → Views (Lobby/Game/Utils/StyleGuide)
+```
+
+**Key Benefits:**
+- **Single source of truth** for all routing logic
+- **Unified header management** across all views
+- **Consistent layout patterns** for all routes
+- **Simplified navigation** with one `navigate()` function
+- **URL-driven state** - no separate `currentView` state needed
+
+### UnifiedRouter Implementation
+
+The `UnifiedRouter` component provides:
+
+**Route Detection:**
+- **Game routes**: `/game/:gameCode` - Renders GameViewLayout with game state
+- **Lobby route**: `/` - Renders LobbyView with game list
+- **Utils route**: `/utils` - Renders UtilsPage
+- **StyleGuide route**: `/styleguide` - Renders StyleGuidePage
+
+**Header Management:**
+- **Automatic header selection** based on current route
+- **Context-aware props** - game headers get turn/counter data
+- **Unified navigation** via single `onNavigate` callback
+
+**Content Rendering:**
+- **Route-specific layouts** with consistent padding and centering
+- **Dialog overlay management** for non-game views
+- **Game dialog integration** via GameViewLayout for game views
+
+### Navigation System
+
+**Unified Navigation Function:**
+```typescript
+const navigate = (path: string, gameData?: { gameId: string; gameCode: string }) => {
+  // Handles both game and non-game navigation
+  // Manages socket connections and state cleanup
+  // Updates browser history and triggers re-render
+};
+```
+
+**Navigation Patterns:**
+- **Game navigation**: `navigate('/game/ABC123', { gameId, gameCode })`
+- **Standard navigation**: `navigate('/utils')`, `navigate('/styleguide')`, `navigate('/')`
+- **Automatic cleanup**: Disconnects sockets when leaving games
+- **State management**: Updates game state and IDs appropriately
+
+### Dialog Management Architecture
+
+**Two-tier dialog system:**
+
+1. **Game dialogs**: Handled by GameViewLayout - overlay the game viewport
+2. **App-level dialogs**: Handled by UnifiedRouter - overlay entire app with backdrop
+
+**Dialog Rendering Rules:**
+- **Game view**: Dialogs render within GameViewLayout's `mainContent` area
+- **Other views**: Dialogs render via UnifiedRouter's `dialogOverlay` with full-screen backdrop
+- **Consistent styling**: Both use the same Dialog component for consistent appearance
+
+### Migration from Old Architecture
+
+**Replaced Components:**
+- ❌ **Old Router** - Basic route mapping without state management
+- ❌ **LobbyPage** - Thin wrapper that just fetched games and passed to LobbyView
+- ❌ **LobbyLayout** - Simple layout wrapper with padding
+- ❌ **Separate headers** - GameHeader and LobbyHeader with duplicated logic
+
+**New Unified Structure:**
+- ✅ **UnifiedRouter** - Handles all routing, headers, and layout
+- ✅ **Direct view rendering** - No unnecessary wrapper layers
+- ✅ **App-level data management** - Game fetching and state at App.tsx level
+- ✅ **Single navigation interface** - One function for all route changes
+
+### Implementation Guidelines
+
+**When adding new routes:**
+1. **Add route detection** in `getRouteInfo()` method
+2. **Update header rendering** in `renderHeader()` if needed
+3. **Add content rendering** in `renderContent()` method  
+4. **Follow layout patterns** - use consistent padding and centering
+5. **Test dialog behavior** - ensure dialogs overlay correctly
+
+**Route-specific considerations:**
+- **Game routes**: Must handle socket connections and game state
+- **Utility routes**: Simple content rendering with standard layout
+- **Dialog handling**: Non-game routes use app-level dialog overlay
+
+**Navigation best practices:**
+- **Always use** the unified `navigate()` function
+- **Never manipulate** `window.history` directly outside of `navigate()`
+- **Handle cleanup** - ensure sockets disconnect when leaving games
+- **State consistency** - let URL be the single source of truth for routing
+
+### Legacy Architecture Migration
+
+**Before (Complex):**
+```
+App → [GameHeader + GameViewLayout] | [Router → LobbyPage → LobbyLayout → LobbyView]
+```
+
+**After (Unified):**
+```
+App → UnifiedRouter → [AppHeader + Content]
+```
+
+**Benefits Achieved:**
+- **50% fewer components** in the routing chain
+- **Eliminated state duplication** - no currentView vs URL conflicts  
+- **Single navigation function** instead of 5 separate functions
+- **Consistent header behavior** across all views
+- **Simplified dialog management** with proper overlay system
+
 # Backend Development & TypeORM
 
 - **`reflect-metadata` Requirement**: For all TypeORM operations, especially migration generation, ensure `import 'reflect-metadata';` is the very first import in the server's entry point (`src/server/main.ts`).
