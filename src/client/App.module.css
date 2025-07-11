@@ -63,29 +63,7 @@
   color: var(--color-charcoal);
 }
 
-.logoutButton {
-  background-color: transparent;
-  border: 1px solid var(--color-charcoal-light);
-  color: var(--color-stone-grey-light);
-}
-.logoutButton:hover {
-  background-color: var(--color-charcoal-light);
-  border-color: var(--color-charcoal-highlight);
-}
 
-.linkButton {
-  background: none;
-  border: none;
-  color: var(--color-stone-grey);
-  text-decoration: underline;
-  padding: 0;
-  font-size: 0.9em;
-}
-
-.linkButton:hover {
-  color: var(--color-hex-amber);
-  border-color: transparent;
-}
 
 .divider {
   border: none;
@@ -117,20 +95,6 @@
 
 
 /* Hamburger Menu */
-.hamburgerButton {
-  background: none;
-  border: 1px solid transparent;
-  cursor: pointer;
-  padding: 0.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-}
-
-.hamburgerButton:hover {
-  border-color: var(--color-hex-amber);
-}
 
 .menuDropdown {
   position: absolute;
@@ -294,15 +258,7 @@
   margin-right: 0.5rem;
 }
 
-.joinButton {
-  align-self: center;
-  min-width: 110px;
-  margin-left: auto;
-  font-size: 1.1rem;
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.03em;
-  padding: 0.7rem 0;
-}
+
 
 /* Join By ID container */
 .joinByIdContainer {
@@ -320,13 +276,7 @@
 
 
 
-.joinByIdContainer > button {
-  height: 48px;
-  min-width: 130px;
-  font-size: 1.1rem;
-  border-radius: var(--border-radius-small);
-  margin: 0;
-}
+
 
 /* Divider between Create New Game and join-by-ID row */
 .lobbySection > button + .joinByIdContainer {

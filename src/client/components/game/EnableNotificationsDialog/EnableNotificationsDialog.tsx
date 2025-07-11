@@ -4,10 +4,10 @@ import { pushService } from '../../../services/push.service';
 import { settingsService } from '../../../services/settings.service';
 import { StyleColor } from '../../../types/styleColor.type';
 import type { NotificationPermission } from '../../game/GameSettingsDialog/GameSettingsDialog';
-import { Text } from '../../ui/Typography/Text';
 import { Button, ButtonVariant } from '../../ui/Button';
 import { Dialog } from '../../ui/Dialog/Dialog';
 import { Icon } from '../../ui/Icon';
+import { Text } from '../../ui/Typography/Text';
 import styles from './EnableNotificationsDialog.module.css';
 
 interface EnableNotificationsDialogProps {

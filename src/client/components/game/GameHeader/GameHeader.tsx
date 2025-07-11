@@ -80,9 +80,13 @@ export function GameHeader({ currentUserName, onLogout, currentView, onNavigateT
                     <div className={styles.resourceItem}>
                         <Icon name="smile" />
                         <span>{counter ?? 0}</span>
-                        <button onClick={onToggleCounterDialog} className={styles.editButton}>
+                        <Button 
+                            onClick={onToggleCounterDialog} 
+                            variant={ButtonVariant.ICON}
+                            ariaLabel="Edit counter"
+                        >
                             <Icon name="edit" />
-                        </button>
+                        </Button>
                     </div>
                 </div>
             ) : (

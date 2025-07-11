@@ -1,8 +1,8 @@
 import { h } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 
-import { ClientGameStatePayload } from '../../../shared/types/socket.types';
-import { renderingService } from '../../services/rendering.service';
+import { ClientGameStatePayload } from '../../../../shared/types/socket.types';
+import { renderingService } from '../../../services/rendering.service';
 import styles from './Viewport.module.css';
 
 interface ViewportProps {

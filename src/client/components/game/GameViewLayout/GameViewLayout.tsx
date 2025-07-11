@@ -6,7 +6,7 @@ import { settingsService } from '../../../services/settings.service';
 import { StyleColor } from '../../../types/styleColor.type';
 import { Button, ButtonVariant } from '../../ui/Button';
 import { Icon } from '../../ui/Icon/Icon';
-import { Viewport } from '../../Viewport/Viewport';
+import { Viewport } from '../Viewport/Viewport';
 import { ActionBar } from '../ActionBar/ActionBar';
 import { GameHeader } from '../GameHeader/GameHeader';
 import styles from './GameViewLayout.module.css';

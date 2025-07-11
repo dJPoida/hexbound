@@ -115,15 +115,7 @@
   margin-right: 0.5rem;
 }
 
-.joinButton {
-  align-self: center;
-  min-width: 110px;
-  margin-left: auto;
-  font-size: 1.1rem;
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.03em;
-  padding: 0.7rem 0;
-}
+
 
 .joinByIdContainer {
   display: flex;
@@ -140,13 +132,7 @@
 
 
 
-.joinByIdContainer > button {
-  height: 48px;
-  min-width: 130px;
-  font-size: 1.1rem;
-  border-radius: var(--border-radius-small);
-  margin: 0;
-}
+
 
 .lobbySection > button + .joinByIdContainer {
   border-top: 1.5px solid var(--color-canvas-white-dark);

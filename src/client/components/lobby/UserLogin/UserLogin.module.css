@@ -90,19 +90,8 @@
   margin-bottom: 0.5rem;
 }
 
-
-
-.button {
-  width: 100%;
-  margin-top: 1.2rem;
-}
-
 .loginButton {
   margin-top: 0.5rem;
-}
-
-.loginButton:hover {
-  background-color: var(--color-hex-amber-dark);
 }
 
 .authError {

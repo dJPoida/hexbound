@@ -1,5 +1,6 @@
 import { ComponentChildren,h } from 'preact';
 
+import { Button, ButtonVariant } from '../Button';
 import styles from './Dialog.module.css';
 
 interface DialogProps {
@@ -15,13 +16,13 @@ export function Dialog({ title, children, onClose, footer }: DialogProps) {
       <div className={styles.dialogHeader}>
         <h2 className={styles.dialogTitle}>{title}</h2>
         {onClose && (
-          <button
+          <Button
             onClick={onClose}
-            className={styles.closeButton}
-            aria-label="Close dialog"
+            variant={ButtonVariant.ICON}
+            ariaLabel="Close dialog"
           >
             &times;
-          </button>
+          </Button>
         )}
       </div>
       <div className={styles.dialogContent}>{children}</div>
