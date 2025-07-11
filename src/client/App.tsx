@@ -18,6 +18,7 @@ import { UserLogin } from './components/lobby/UserLogin/UserLogin';
 import { LobbyPage } from './components/Pages/LobbyPage/LobbyPage';
 import { StyleGuidePage } from './components/Pages/StyleGuidePage/StyleGuidePage';
 import { UtilsPage } from './components/Pages/UtilsPage/UtilsPage';
+import { AppHeader, AppHeaderView } from './components/ui/AppHeader/AppHeader';
 import { Dialog } from './components/ui/Dialog/Dialog';
 import { authenticatedFetch } from './services/api.service';
 import { authService } from './services/auth.service';
@@ -443,21 +444,59 @@ export function App() {
         break;
     }
 
+    // Determine the current header view based on URL and current view
+    const getCurrentHeaderView = (): AppHeaderView => {
+      if (currentView === 'game') {
+        return AppHeaderView.GAME;
+      }
+      
+      const path = window.location.pathname;
+      if (path === '/utils') {
+        return AppHeaderView.UTILS;
+      }
+      if (path === '/styleguide') {
+        return AppHeaderView.STYLEGUIDE;
+      }
+      return AppHeaderView.LOBBY;
+    };
+
+    const headerView = getCurrentHeaderView();
+
     if (currentView === 'game' && gameState) {
       return (
-        <GameViewLayout
-          gameState={gameState}
-          isMapReady={isGameLoaded}
-          onReady={() => setIsGameLoaded(true)}
-          onLogout={handleLogout}
-          onNavigateToLobby={navigateToLobby}
-          onEndTurn={handleEndTurn}
-          onPushDialog={pushDialog}
-          isMyTurn={gameState.currentPlayerId === currentUserId}
-          currentUserName={currentUserName}
-          currentUserId={currentUserId}
-          dialog={dialogComponent}
-        />
+        <div className={styles.appLayout}>
+          <AppHeader
+            currentView={headerView}
+            currentUserName={currentUserName}
+            onLogout={handleLogout}
+            onOpenSettings={() => pushDialog('gameSettings')}
+            onNavigate={(path) => {
+              if (path === '/') {
+                navigateToLobby();
+              } else if (path === '/utils') {
+                navigateToUtils();
+              } else if (path === '/styleguide') {
+                navigateToStyleGuide();
+              }
+            }}
+            turnNumber={gameState.turnNumber}
+            counter={gameState.gameState.placeholderCounter ?? 0}
+            onToggleCounterDialog={() => pushDialog('incrementCounter')}
+          />
+          <div className={styles.appContent}>
+            <GameViewLayout
+              gameState={gameState}
+              isMapReady={isGameLoaded}
+              onReady={() => setIsGameLoaded(true)}
+              onEndTurn={handleEndTurn}
+              onPushDialog={pushDialog}
+              isMyTurn={gameState.currentPlayerId === currentUserId}
+              currentUserName={currentUserName}
+              currentUserId={currentUserId}
+              dialog={dialogComponent}
+            />
+          </div>
+        </div>
       );
     }
 
@@ -474,17 +513,11 @@ export function App() {
           onNavigateToStyleGuide={navigateToStyleGuide}
           isLoading={isLoading}
           authError={authError}
+          dialog={dialogComponent}
         />
       ),
       '/utils': () => (
         <LobbyLayout
-          currentUserName={currentUserName}
-          onLogout={handleLogout}
-          onOpenSettings={() => pushDialog('gameSettings')}
-          onNavigateToStyleGuide={navigateToStyleGuide}
-          onNavigateToUtils={navigateToUtils}
-          onNavigateToLobby={navigateToLobbyFromMenu}
-          currentPage="utils"
           dialog={dialogComponent}
         >
           <UtilsPage />
@@ -492,13 +525,6 @@ export function App() {
       ),
       '/styleguide': () => (
         <LobbyLayout
-          currentUserName={currentUserName}
-          onLogout={handleLogout}
-          onOpenSettings={() => pushDialog('gameSettings')}
-          onNavigateToStyleGuide={navigateToStyleGuide}
-          onNavigateToUtils={navigateToUtils}
-          onNavigateToLobby={navigateToLobbyFromMenu}
-          currentPage="styleguide"
           dialog={dialogComponent}
         >
           <StyleGuidePage />
@@ -507,11 +533,30 @@ export function App() {
     };
 
     return (
-      <Router 
-        routes={routes}
-        utilityRoutes={['/utils', '/styleguide']}
-        fallback={() => routes['/']()} // Fallback to lobby
-      />
+      <div className={styles.appLayout}>
+        <AppHeader
+          currentView={headerView}
+          currentUserName={currentUserName}
+          onLogout={handleLogout}
+          onOpenSettings={() => pushDialog('gameSettings')}
+          onNavigate={(path) => {
+            if (path === '/') {
+              navigateToLobbyFromMenu();
+            } else if (path === '/utils') {
+              navigateToUtils();
+            } else if (path === '/styleguide') {
+              navigateToStyleGuide();
+            }
+          }}
+        />
+        <div className={styles.appContent}>
+          <Router 
+            routes={routes}
+            utilityRoutes={['/utils', '/styleguide']}
+            fallback={() => routes['/']()} // Fallback to lobby
+          />
+        </div>
+      </div>
     );
   };
 

@@ -4,7 +4,6 @@ import { useEffect,useState } from 'preact/hooks';
 import { ClientGameStatePayload } from '../../../../shared/types/socket.types';
 import { settingsService } from '../../../services/settings.service';
 import { StyleColor } from '../../../types/styleColor.type';
-import { AppHeader, AppHeaderView } from '../../ui/AppHeader';
 import { Button, ButtonVariant } from '../../ui/Button';
 import { Icon } from '../../ui/Icon/Icon';
 import { ActionBar } from '../ActionBar/ActionBar';
@@ -17,8 +16,6 @@ interface GameViewLayoutProps {
   gameState: ClientGameStatePayload;
   isMapReady: boolean;
   onReady?: () => void;
-  onLogout: () => void;
-  onNavigateToLobby: () => void;
   onEndTurn: () => void;
   onPushDialog: (dialog: DialogType) => void;
   isMyTurn: boolean;
@@ -31,8 +28,6 @@ export function GameViewLayout({
   gameState, 
   isMapReady, 
   onReady, 
-  onLogout, 
-  onNavigateToLobby, 
   onEndTurn,
   onPushDialog,
   isMyTurn,
@@ -66,24 +61,7 @@ export function GameViewLayout({
     });
   };
   
-  const handleNavigateToLobby = () => {
-    onNavigateToLobby();
-  };
-  
-  const headerContent = (
-    <AppHeader
-      currentUserName={currentUserName}
-      currentView={AppHeaderView.GAME}
-      onLogout={onLogout}
-      onNavigate={(path) => path === '/' && handleNavigateToLobby()}
-      onOpenSettings={() => onPushDialog('gameSettings')}
-      turnNumber={gameState.turnNumber}
-      counter={gameState.gameState.placeholderCounter}
-      onToggleCounterDialog={() => onPushDialog('incrementCounter')}
-      onCopyGameLink={handleCopyGameLink}
-      copyLinkStatus={copyStatus}
-    />
-  );
+  // Header is now handled at the App level via AppHeader
 
   const footerContent = (
     <ActionBar>
@@ -117,7 +95,6 @@ export function GameViewLayout({
             onReady={onReady} 
         />
       </div>
-      <header class={styles.header}>{headerContent}</header>
       <main class={styles.mainContent}>
         {dialog}
       </main>

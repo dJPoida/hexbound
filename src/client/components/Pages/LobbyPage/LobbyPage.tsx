@@ -1,12 +1,10 @@
+import { h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 
 import { GameListItem } from '../../../../shared/types/game.types';
 import { authenticatedFetch } from '../../../services/api.service';
-import { GameSettingsDialog } from '../../game/GameSettingsDialog/GameSettingsDialog';
 import { LobbyLayout } from '../../lobby/LobbyLayout/LobbyLayout';
 import { LobbyView } from '../../lobby/LobbyView/LobbyView';
-
-type DialogType = 'gameSettings';
 
 interface LobbyPageProps {
   currentUserName: string | null;
@@ -18,6 +16,7 @@ interface LobbyPageProps {
   onNavigateToStyleGuide: () => void;
   isLoading: boolean;
   authError: string | null;
+  dialog: h.JSX.Element | null;
 }
 
 export function LobbyPage({
@@ -28,18 +27,9 @@ export function LobbyPage({
   onCreateNewGame,
   onNavigateToUtils,
   onNavigateToStyleGuide,
+  dialog,
 }: LobbyPageProps) {
   const [myGames, setMyGames] = useState<GameListItem[]>([]);
-  const [dialogStack, setDialogStack] = useState<DialogType[]>([]);
-
-  const pushDialog = (dialog: DialogType) => {
-    if (dialogStack[dialogStack.length - 1] === dialog) {
-      return;
-    }
-    setDialogStack([...dialogStack, dialog]);
-  };
-
-  const popDialog = () => setDialogStack(dialogStack.slice(0, -1));
 
   const fetchMyGames = async () => {
     try {
@@ -72,28 +62,9 @@ export function LobbyPage({
     return () => clearInterval(pollInterval);
   }, []);
 
-  // Render the current dialog if any
-  const renderDialog = () => {
-    const currentDialogType = dialogStack[dialogStack.length - 1];
-    
-    switch (currentDialogType) {
-      case 'gameSettings':
-        return <GameSettingsDialog onClose={popDialog} />;
-      default:
-        return null;
-    }
-  };
-
   return (
     <LobbyLayout
-      currentUserName={currentUserName}
-      onLogout={onLogout}
-      onOpenSettings={() => pushDialog('gameSettings')}
-      onNavigateToStyleGuide={onNavigateToStyleGuide}
-      onNavigateToUtils={onNavigateToUtils}
-      onNavigateToLobby={() => {}} // No-op since we're already on the lobby page
-      currentPage="lobby"
-      dialog={renderDialog()}
+      dialog={dialog}
     >
       <LobbyView 
         onNavigateToGame={onNavigateToGame}

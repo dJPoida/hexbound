@@ -1,9 +1,8 @@
 .gameLayout {
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: 1fr auto;
   grid-template-columns: 1fr;
   grid-template-areas:
-    'header'
     'main'
     'footer';
   height: 100%;
@@ -22,17 +21,7 @@
   z-index: 0;
 }
 
-.header {
-  grid-area: header;
-  z-index: 2;
-  width: 100%;
-  pointer-events: none; /* Allow clicks to pass through to canvas unless an element inside re-enables them */
-}
 
-/* Enable pointer events for children of the header */
-.header > * {
-  pointer-events: auto;
-}
 
 .mainContent {
   grid-area: main;
