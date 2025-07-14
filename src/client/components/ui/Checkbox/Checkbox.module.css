@@ -59,7 +59,6 @@
   line-height: 1.2;
   cursor: pointer;
   transition: color 0.2s ease;
-  margin-top: 0.5em; /* Compensate for font baseline */
 }
 
 .checked .label {
@@ -80,7 +79,6 @@
 
 .large .label {
   font-size: var(--font-size-lg);
-  margin-top: 0.5em; /* Scales proportionally with font size */
 }
 
 /* Disabled state */

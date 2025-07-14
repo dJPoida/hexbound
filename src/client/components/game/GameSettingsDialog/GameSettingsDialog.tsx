@@ -4,6 +4,8 @@ import { pushService } from '../../../services/push.service';
 import { settingsService } from '../../../services/settings.service';
 import { Checkbox } from '../../ui/Checkbox';
 import { Dialog } from '../../ui/Dialog/Dialog';
+import { Heading } from '../../ui/Typography/Heading';
+import { Text } from '../../ui/Typography/Text';
 import styles from './GameSettingsDialog.module.css';
 
 interface GameSettingsDialogProps {
@@ -77,54 +79,37 @@ export const GameSettingsDialog = ({ onClose }: GameSettingsDialogProps) => {
   return (
     <Dialog title="Game Settings" onClose={onClose}>
       <div class={styles.settingsSection}>
-        <h3 class={styles.sectionTitle}>Notifications</h3>
+        <Heading level={3} variant="subSectionHeader" class={styles.sectionTitle}>Notifications</Heading>
         <Checkbox
           label="Enable Turn Notifications"
           checked={settings.notificationsEnabled}
           onChange={handleNotificationsEnabledChange}
           disabled={isNotificationToggleDisabled}
         />
-        <p class={styles.settingDescription}>
-          {isSubscribing && (
-            <span>Subscribing...</span>
-          )}
-          {!isSubscribing && permission === 'denied' && (
-            <span>Notifications are blocked by your browser. You must enable them in your browser settings to receive turn updates.</span>
-          )}
-          {!isSubscribing && permission === 'default' && (
-            <span>This will ask for permission to show notifications.</span>
-          )}
-          {!isSubscribing && permission === 'granted' && !settings.notificationsEnabled && (
-            <span>Notifications are allowed but currently disabled.</span>
-          )}
-           {!isSubscribing && permission === 'granted' && settings.notificationsEnabled && (
-            <span>You will be notified when it&apos;s your turn.</span>
-          )}
-        </p>
+        {(isSubscribing || permission === 'denied') && (
+          <Text variant="caption" color="subtle" class={styles.settingDescription}>
+            {isSubscribing && "Subscribing..."}
+            {permission === 'denied' && "Notifications blocked. Enable in browser settings."}
+          </Text>
+        )}
       </div>
 
       <div class={styles.settingsSection}>
-        <h3 class={styles.sectionTitle}>Display</h3>
+        <Heading level={3} variant="subSectionHeader" class={styles.sectionTitle}>Display</Heading>
         <Checkbox
           label="Show Hex-Grid"
           checked={settings.showHexGrid}
           onChange={handleShowHexGridChange}
         />
-        <p class={styles.settingDescription}>
-          Display the hex grid outline on all tiles.
-        </p>
       </div>
 
       <div class={styles.settingsSection}>
-        <h3 class={styles.sectionTitle}>Development</h3>
+        <Heading level={3} variant="subSectionHeader" class={styles.sectionTitle}>Development</Heading>
         <Checkbox
           label="Show Debug Info"
           checked={settings.showDebugInfo}
           onChange={handleShowDebugInfoChange}
         />
-        <p class={styles.settingDescription}>
-          Show debug information including tile coordinates and enable debug controls.
-        </p>
       </div>
     </Dialog>
   );

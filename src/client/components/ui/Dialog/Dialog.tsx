@@ -1,6 +1,9 @@
 import { ComponentChildren,h } from 'preact';
 
+import { StyleColor } from '../../../types/styleColor.type';
 import { Button, ButtonVariant } from '../Button';
+import { Icon } from '../Icon';
+import { Heading } from '../Typography/Heading';
 import styles from './Dialog.module.css';
 
 interface DialogProps {
@@ -14,14 +17,14 @@ export function Dialog({ title, children, onClose, footer }: DialogProps) {
   return (
     <div className={styles.dialog}>
       <div className={styles.dialogHeader}>
-        <h2 className={styles.dialogTitle}>{title}</h2>
+        <Heading level={2} variant="sectionHeader" class={styles.dialogTitle}>{title}</Heading>
         {onClose && (
           <Button
             onClick={onClose}
             variant={ButtonVariant.ICON}
             ariaLabel="Close dialog"
           >
-            &times;
+            <Icon name="cross" color={StyleColor.LIGHT} />
           </Button>
         )}
       </div>
