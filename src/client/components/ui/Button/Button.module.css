@@ -236,46 +236,4 @@
 .icon .outline { stroke: var(--color-charcoal); }
 
 
-
-/* Link variant - minimal styling, no gem appearance */
-.link {
-  background: transparent;
-  border: none;
-  color: var(--color-hex-amber);
-  text-decoration: underline;
-  font-weight: normal;
-  text-transform: none;
-  padding: 0.5rem 1rem;
-  min-width: auto;
-  height: auto;
-}
-
-.link .buttonSvg {
-  display: none;
-}
-
-.link .buttonText {
-  text-shadow: none;
-  color: var(--color-hex-amber);
-  font-size: var(--font-size-md);
-  font-weight: var(--font-weight-normal);
-}
-
-.link:hover:not(.disabled) {
-  filter: none;
-  color: var(--color-hex-amber-light);
-}
-
-.link:hover:not(.disabled) .buttonText {
-  color: var(--color-hex-amber-light);
-}
-
-.link:active:not(.disabled) {
-  filter: none;
-  color: var(--color-hex-amber-dark);
-}
-
-.link:active:not(.disabled) .buttonText {
-  color: var(--color-hex-amber-dark);
-  transform: none;
-} 
+ 

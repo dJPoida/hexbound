@@ -151,7 +151,6 @@ export const StyleGuideView = () => {
           </div>
           <div class={styles.buttonRow}>
             <Button onClick={() => {}} variant={ButtonVariant.ICON} ariaLabel="Menu"><Icon name="menu" color={StyleColor.LIGHT} /></Button>
-            <Button onClick={() => {}} variant={ButtonVariant.LINK}>Link Button</Button>
           </div>
         </section>
 

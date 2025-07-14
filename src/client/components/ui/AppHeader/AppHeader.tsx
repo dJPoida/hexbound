@@ -92,7 +92,7 @@ export function AppHeader({
               variant={ButtonVariant.ICON}
               ariaLabel="Edit counter"
             >
-              <Icon name="edit" />
+              <Icon name="edit" color={StyleColor.LIGHT} />
             </Button>
           )}
         </div>

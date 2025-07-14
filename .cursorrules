@@ -587,6 +587,49 @@ When creating new button variants:
 - **Active effects**: `translateY(1px)` and `filter: brightness(0.95)`
 - **Disabled state**: `opacity: 0.7` and `filter: grayscale(0.5)`
 
+### Button Usage Patterns & Examples
+
+**Icon Button Standard Pattern:**
+
+```typescript
+// ✅ Correct - Light icon for contrast against slate-blue background
+<Button variant={ButtonVariant.ICON} ariaLabel="Descriptive label">
+  <Icon name="icon-name" color={StyleColor.LIGHT} />
+</Button>
+
+// ❌ Incorrect - Default color has poor contrast
+<Button variant={ButtonVariant.ICON} ariaLabel="Descriptive label">
+  <Icon name="icon-name" />
+</Button>
+```
+
+**Design Rule:** Icon buttons ALWAYS require `color={StyleColor.LIGHT}` for proper contrast against the slate-blue background.
+
+**Other Button Patterns:**
+
+```typescript
+// Primary action button
+<Button variant={ButtonVariant.PRIMARY} onClick={handleAction}>
+  Action Text
+</Button>
+
+// Full-width button in flex container
+<Button variant={ButtonVariant.PRIMARY} fullWidth={true}>
+  Submit
+</Button>
+
+// Disabled state
+<Button variant={ButtonVariant.SECONDARY} disabled={true}>
+  Disabled Action
+</Button>
+```
+
+**Icon + Button Integration Rules:**
+
+- **ButtonVariant.ICON**: Always use `color={StyleColor.LIGHT}` for proper contrast
+- **Other variants**: Icons should complement button color scheme
+- **Accessibility**: Always provide `ariaLabel` for icon-only buttons
+
 ## Form Components Architecture
 
 ### Form Component Philosophy

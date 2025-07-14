@@ -10,7 +10,6 @@ export enum ButtonVariant {
   RED = 'red',
   PURPLE = 'purple',
   ICON = 'icon',
-  LINK = 'link',
 }
 
 export enum ButtonType {
@@ -54,9 +53,6 @@ export const Button = ({
       if (variant === ButtonVariant.ICON) {
         // Icon buttons are always square
         setSvgWidth(50);
-        setIsReady(true);
-      } else if (variant === ButtonVariant.LINK) {
-        // Link buttons don't use SVG, just set ready
         setIsReady(true);
       } else {
         const textWidth = textRef.current.getBoundingClientRect().width;
@@ -109,7 +105,7 @@ export const Button = ({
         '--button-height': `${svgHeight}px`
       }}
     >
-      {variant !== ButtonVariant.LINK && (
+      {(
         <svg 
           viewBox={`0 0 ${svgWidth} ${svgHeight}`} 
           className={styles.buttonSvg}

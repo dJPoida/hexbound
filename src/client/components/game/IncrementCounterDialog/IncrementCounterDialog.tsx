@@ -32,7 +32,7 @@ export function IncrementCounterDialog({ counter, isMyTurn, onIncrement, onClose
                 </Button>
             </div>
             <div className={styles.footer}>
-                <Button onClick={onOpenSettings} variant={ButtonVariant.LINK}>Game Settings</Button>
+                <Button onClick={onOpenSettings} variant={ButtonVariant.SECONDARY}>Game Settings</Button>
             </div>
         </Dialog>
     );
