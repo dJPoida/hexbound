@@ -191,7 +191,15 @@ async function handleEndTurn(ws: AuthenticatedWebSocket, payload: EndTurnPayload
 
   await redisClient.json.set(gameKey, '$', newGameState as unknown as RedisJSON);
 
-  const updateMessage: SocketMessage<{
+  // Send updated game state to all players
+  const stateUpdateMessage: SocketMessage<ClientGameStatePayload> = {
+    type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE,
+    payload: toClientState(newGameState as ServerGameState),
+  };
+  broadcastToGame(gameId, JSON.stringify(stateUpdateMessage));
+
+  // Send turn ended notification
+  const turnEndedMessage: SocketMessage<{
     gameId: string;
     nextPlayerId: string;
     turnNumber: number;
@@ -203,5 +211,5 @@ async function handleEndTurn(ws: AuthenticatedWebSocket, payload: EndTurnPayload
       turnNumber: newTurnNumber,
     },
   };
-  broadcastToGame(gameId, JSON.stringify(updateMessage));
+  broadcastToGame(gameId, JSON.stringify(turnEndedMessage));
 } 
