@@ -8,7 +8,7 @@ import { Input, InputType, InputVariant } from '../../ui/Input';
 import { Logo } from '../../ui/Logo/Logo';
 import { Heading } from '../../ui/Typography/Heading';
 import { Text } from '../../ui/Typography/Text';
-import styles from './StyleGuidePage.module.css';
+import styles from './StyleGuideView.module.css';
 
 const ColorSwatch = ({ name, colorName, hex, role, variants }: { name: string; colorName: string; hex: string; role?: string; variants: { dark: string; light: string; highlight: string; }}) => (
   <div class={styles.colorSwatch}>
@@ -29,7 +29,7 @@ const ColorSwatch = ({ name, colorName, hex, role, variants }: { name: string; c
   </div>
 );
 
-export const StyleGuidePage = () => {
+export const StyleGuideView = () => {
   // State for checkbox examples
   const [checkboxStates, setCheckboxStates] = useState({
     default: false,

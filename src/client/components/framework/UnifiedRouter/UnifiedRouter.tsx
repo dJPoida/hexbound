@@ -4,10 +4,10 @@ import { Component } from 'preact';
 import { GameListItem } from '../../../../shared/types/game.types';
 import { ClientGameStatePayload } from '../../../../shared/types/socket.types';
 import { GameViewLayout } from '../../game/GameViewLayout/GameViewLayout';
-import { LobbyView } from '../../lobby/LobbyView/LobbyView';
-import { StyleGuidePage } from '../../Pages/StyleGuidePage/StyleGuidePage';
-import { UtilsPage } from '../../Pages/UtilsPage/UtilsPage';
 import { AppHeader, AppHeaderView } from '../../ui/AppHeader/AppHeader';
+import { LobbyView } from '../../views/LobbyView/LobbyView';
+import { StyleGuideView } from '../../views/StyleGuideView/StyleGuideView';
+import { UtilsView } from '../../views/UtilsView/UtilsView';
 
 export interface UnifiedRouterProps {
   // App-level data
@@ -130,15 +130,15 @@ export class UnifiedRouter extends Component<UnifiedRouterProps, UnifiedRouterSt
       
       case 'utils':
         return (
-          <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%', position: 'relative' }}>
-            <UtilsPage />
+          <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', position: 'relative', boxSizing: 'border-box' }}>
+            <UtilsView />
           </div>
         );
       
       case 'styleguide':
         return (
-          <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%', position: 'relative' }}>
-            <StyleGuidePage />
+          <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', position: 'relative', boxSizing: 'border-box' }}>
+            <StyleGuideView />
           </div>
         );
       

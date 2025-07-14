@@ -7,8 +7,8 @@ import { UnifiedRouter } from './components/framework/UnifiedRouter';
 import { EnableNotificationsDialog } from './components/game/EnableNotificationsDialog/EnableNotificationsDialog';
 import { GameSettingsDialog } from './components/game/GameSettingsDialog/GameSettingsDialog';
 import { IncrementCounterDialog } from './components/game/IncrementCounterDialog/IncrementCounterDialog';
-import { UserLogin } from './components/lobby/UserLogin/UserLogin';
 import { Dialog } from './components/ui/Dialog/Dialog';
+import { UserLoginView } from './components/views/UserLoginView/UserLoginView';
 import { 
   AuthProvider, 
   DialogProvider, 
@@ -131,7 +131,7 @@ const AppContent = () => {
   const renderMainContent = () => {
     if (!auth.isLoggedIn) {
       return (
-        <UserLogin 
+        <UserLoginView 
           userNameInput={auth.userNameInput}
           onUserNameInputChange={auth.setUserNameInput}
           onLogin={handleEnhancedLogin}

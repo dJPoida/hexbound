@@ -39,7 +39,7 @@
 /* Desktop responsive layout */
 @media (min-width: 1024px) {
   .lobbyContainer {
-    max-width: 1200px;
+    max-width: 1000px;
     display: grid;
     grid-template-columns: 320px 1fr;
     grid-template-rows: 1fr;

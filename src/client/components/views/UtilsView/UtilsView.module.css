@@ -1,23 +1,45 @@
 .utilsContainer {
-  padding: 2rem;
-  max-width: 800px;
-  margin: 4rem auto;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-sizing: border-box;
+  padding-bottom: 2rem; /* Add breathing room at bottom on mobile */
   font-family: var(--font-family-body);
   color: var(--color-charcoal);
+}
+
+/* Tablet responsive layout */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .utilsContainer {
+    max-width: 800px;
+    gap: 1.5rem;
+  }
+}
+
+/* Desktop responsive layout */
+@media (min-width: 1024px) {
+  .utilsContainer {
+    max-width: 1200px;
+    height: 100%;
+    overflow: hidden;
+  }
 }
 
 .title {
   font-family: var(--font-family-main);
   font-size: var(--font-size-5xl);
   text-align: center;
-  margin-bottom: 0.5rem;
+  margin: 0 0 0.5rem 0;
 }
 
 .subtitle {
   text-align: center;
   font-size: var(--font-size-xl);
   color: var(--color-stone-grey);
-  margin-bottom: 3rem;
+  margin: 0 0 1rem 0;
 }
 
 .card {

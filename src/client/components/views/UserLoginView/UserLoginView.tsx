@@ -5,7 +5,7 @@ import { authService } from '../../../services/auth.service';
 import { Button, ButtonVariant } from '../../ui/Button';
 import { Input, InputType } from '../../ui/Input';
 import { Logo } from '../../ui/Logo/Logo';
-import styles from './UserLogin.module.css';
+import styles from './UserLoginView.module.css';
 
 interface UserLoginProps {
   userNameInput: string;
@@ -15,7 +15,7 @@ interface UserLoginProps {
   error: string | null;
 }
 
-export function UserLogin({
+export function UserLoginView({
   userNameInput,
   onUserNameInputChange,
   onLogin,

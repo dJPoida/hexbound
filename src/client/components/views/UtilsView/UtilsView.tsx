@@ -4,11 +4,11 @@ import { useState } from 'preact/hooks';
 
 import { authenticatedFetch } from '../../../services/api.service';
 import { Button, ButtonVariant } from '../../ui/Button';
-import styles from './UtilsPage.module.css';
+import styles from './UtilsView.module.css';
 
 const html = htm.bind(h);
 
-export function UtilsPage() {
+export function UtilsView() {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
