@@ -58,16 +58,24 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
             {myGames.map(game => {
               const isMyTurn = game.currentPlayerId === currentUserId;
               return (
-                <li key={game.gameId} className={styles.gameListItem} onClick={() => onNavigateToGame(game.gameId, game.gameCode)}>
+                <li key={game.gameId} className={styles.gameListItem}>
                   <div className={styles.gameInfoContainer}>
                     <span className={styles.gameCode}>{game.gameCode.replace(/-/g, ' ')}</span>
                     <span className={styles.playerCount}>
-                      Players: {(Array.isArray(game.players) ? game.players : Object.values(game.players) as Player[])
+                      {(Array.isArray(game.players) ? game.players : Object.values(game.players) as Player[])
                           .map((p) => p.userName)
                           .join(', ')}
                     </span>
                   </div>
-                  {isMyTurn && <div className={styles.turnIndicator}>Your Turn</div>}
+                  {isMyTurn && (
+                    <Button 
+                      onClick={() => onNavigateToGame(game.gameId, game.gameCode)}
+                      variant={ButtonVariant.SECONDARY}
+                      className={styles.turnButton}
+                    >
+                      Your Turn
+                    </Button>
+                  )}
                 </li>
               );
             })}
