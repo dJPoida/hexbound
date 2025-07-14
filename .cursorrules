@@ -82,6 +82,12 @@ This game is a hybrid of Civilization, Polytopia, and Populous. It is an asynchr
 - **Starting Docker Services**: `npm run docker:up` (which executes `docker compose --env-file .env.local -f docker-compose.yml up -d`).
   - This ensures that all Docker containers (typically Redis and Postgres) are started and available.
 - **Stopping Docker Services**: `npm run docker:down`.
+- **Database Operations**:
+  - `npm run typeorm:run` - Run pending migrations
+  - `npm run typeorm:generate -- src/server/migrations/MigrationName` - Generate new migration
+  - `npm run typeorm:create -- src/server/migrations/MigrationName` - Create empty migration
+- **Icon Management**: `npm run update:icons` - Update icon font after IcoMoon changes
+- **Code Quality**: `npm run lint` - Run ESLint with automatic fixes
 
 ### Environment Variable Management
 
@@ -99,6 +105,7 @@ Environment variables are managed as follows:
 - It is possible for the Human to make changes to the code in-between conversations with AI. Don't assume that AI or AI Agent memory of code is 100% correct.
 - Don't attempt to run the dev server to verify the code as part of a conversation. The Human will be in charge of running the dev server.
 - Don't be overly polite. Apologizing for mistakes or inaccuracies takes the user time to read and is unnecessary. Keep responses appropriately detailed, but succinct.
+- Check with the user after each implementation step to verify successful completion before proceeding to the next step.
 
 ## AI Rules. Never violate these constraints.
 
@@ -159,12 +166,16 @@ To create complex and believable worlds, map generation uses a layered, pipeline
 
 Client-side code is organized to promote modularity and maintainability.
 
-- **Components**: Reusable UI components are located in `src/client/components/`.
-  - Each component should reside in its own folder (e.g., `src/client/components/MyComponent/`).
-  - The main component file should be named after the folder (e.g., `MyComponent.tsx` for JSX components, or `MyComponent.ts` for `htm`-based components).
+- **Components**: Components are organized by purpose in `src/client/components/`:
+  - **`views/`**: Page-level components (LobbyView, GameView, StyleGuideView, UtilsView, UserLoginView)
+  - **`game/`**: Game-specific components and dialogs (GameViewLayout, ActionBar, GameSettingsDialog, etc.)
+  - **`ui/`**: Reusable UI components with design system integration (Button, Input, Icon, etc.)
+  - **`framework/`**: Core application infrastructure (UnifiedRouter, etc.)
+  - Each component should reside in its own folder (e.g., `src/client/components/ui/Button/`).
+  - The main component file should be named after the folder (e.g., `Button.tsx` for JSX components).
   - All related files, such as styles or sub-components, should be co-located in the same folder.
 - **Styling**: Component-specific styles are managed using CSS Modules.
-  - Style files should have a `.module.css` extension (e.g., `MyComponent.module.css`).
+  - Style files should have a `.module.css` extension (e.g., `Button.module.css`).
   - These styles are imported into the component file and applied as objects (e.g., `styles.myClass`). This locally scopes class names and avoids global style conflicts.
 
 # Frontend Component Design System
@@ -175,11 +186,12 @@ Client-side code is organized to promote modularity and maintainability.
 - **Performance Priority**: Focus performance optimization on PixiJS rendering; DOM component overhead is secondary concern
 - **Design Aesthetic**: Medieval/fantasy theme only - no multiple theme support needed
 - **Accessibility**: No accessibility requirements for this game context
-- **Responsive Design**: Game-focused responsive approach rather than traditional website breakpoints:
-  - **Primary Contexts**: Mobile vs Desktop (touch vs mouse interaction)
-  - **Orientation Handling**: Portrait vs Landscape considerations for mobile devices
-  - **UI Scaling**: Proportional scaling based on screen size rather than content reflow
+- **Responsive Design**: Game-focused responsive approach with established breakpoints:
+  - **Breakpoints**: Mobile (<768px), Tablet (768-1023px), Desktop (1024px+)
+  - **Layout Strategy**: Mobile-first with vertical stacking, desktop uses CSS Grid for side-by-side layouts
+  - **Container Constraints**: Max-width 500px (mobile), 800px (tablet), 1200px (desktop)
   - **Touch Targets**: Minimum 44px touch targets for mobile interactions
+  - **Viewport Management**: Height-based layouts using `height: 100%` for proper viewport utilization
   - **Form Factors**: Optimize for both mobile portrait gameplay and desktop landscape gameplay
 
 ## Component Type Co-location Pattern
@@ -397,6 +409,107 @@ Before merging any CSS changes, verify:
 - Unused CSS classes (grep shows no usage)
 - Generic element selectors that could affect standardized components
 
+## View Component Architecture
+
+### View Organization Pattern
+
+All page-level components are organized in the `src/client/components/views/` directory following consistent naming and structural patterns:
+
+- **`LobbyView/`**: Main lobby page with game list and user actions
+- **`GameView/`**: Game playing interface (handled by GameViewLayout)
+- **`StyleGuideView/`**: Component documentation and design system showcase
+- **`UtilsView/`**: Developer utilities and debugging tools
+- **`UserLoginView/`**: User authentication and login interface
+
+### View Component Guidelines
+
+**Naming Convention:**
+
+- All view components must end with "View" suffix
+- Component function names match the directory name
+- File structure: `ViewName/ViewName.tsx`, `ViewName/ViewName.module.css`
+
+**Layout Patterns:**
+
+- **Responsive Design**: Views implement mobile-first responsive layouts
+- **Container Constraints**: Max-width constraints (500px mobile, 800px tablet, 1200px desktop)
+- **Height Management**: Views use `height: 100%` for proper viewport utilization
+- **Spacing**: Use design tokens for consistent spacing (`--space-*`)
+
+**Content Organization:**
+
+- **Header Integration**: Views work seamlessly with AppHeader component
+- **Dialog Management**: Views support both app-level and game-level dialogs
+- **Navigation**: Views integrate with UnifiedRouter navigation system
+- **State Management**: Views consume state via Context API hooks
+
+### View Implementation Standards
+
+**Component Structure:**
+
+```typescript
+// ViewName.tsx
+export function ViewName() {
+  // Context hooks for state management
+  const context = useContext();
+
+  // Component logic
+
+  return <div className={styles.container}>{/* View content */}</div>;
+}
+```
+
+**CSS Module Standards:**
+
+```css
+/* ViewName.module.css */
+.container {
+  /* Use design tokens */
+  padding: var(--space-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 767px) {
+  .container {
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .container {
+    max-width: 800px;
+  }
+}
+```
+
+**State Management:**
+
+- **Context Integration**: Use appropriate context hooks (`useAuth`, `useGame`, etc.)
+- **Event Handling**: Pass callbacks via props or context
+- **Loading States**: Handle loading and error states appropriately
+- **Data Fetching**: Delegate to services or context providers
+
+### View Migration Guidelines
+
+**When creating new views:**
+
+1. **Create directory** in `src/client/components/views/`
+2. **Follow naming convention** with "View" suffix
+3. **Implement responsive layout** using established breakpoints
+4. **Use design tokens** for styling consistency
+5. **Integrate with UnifiedRouter** for navigation
+6. **Test on mobile and desktop** to ensure proper responsive behavior
+
+**When refactoring existing views:**
+
+1. **Maintain consistent structure** with other view components
+2. **Update imports** in UnifiedRouter and other consumers
+3. **Preserve functionality** while improving code organization
+4. **Update CSS** to use design tokens instead of hardcoded values
+5. **Test navigation** to ensure proper routing behavior
+
 ## Button Implementation Architecture
 
 ### Current Button System
@@ -434,10 +547,11 @@ The gem buttons adapt to both content and container requirements:
 
 - **Content-based sizing**: Uses `min-width` based on text measurement for baseline size
 - **Flex-responsive**: With `fullWidth={true}`, buttons grow to fill flex containers using `flex: 1`
-- **SVG scaling**: Responsive SVG sizing - 100% width for fullWidth, calculated width for content-based
+- **SVG scaling**: SVG width is always `100%` and scales to match container constraints
+- **CSS constraints**: FullWidth buttons use `max-width: 100%`, `min-width: 0`, `overflow: hidden` for proper container behavior
 - **ViewBox coordination**: `preserveAspectRatio='none'` allows fullWidth buttons to stretch properly
 - **Opacity rendering**: Buttons start invisible until width is calculated to prevent visual jumping
-- **Text measurement**: Uses DOM measurement to calculate minimum required button width
+- **ResizeObserver**: Updates SVG path dimensions to match actual rendered button size
 
 ### Button Implementation Guidelines
 
@@ -585,11 +699,13 @@ When creating new form components:
 The application uses a **centralized routing system** via the `UnifiedRouter` component (`src/client/components/framework/UnifiedRouter/UnifiedRouter.tsx`) that handles all navigation and view rendering in one place.
 
 **Architecture Overview:**
+
 ```
 App.tsx → UnifiedRouter → [AppHeader + Content] → Views (Lobby/Game/Utils/StyleGuide)
 ```
 
 **Key Benefits:**
+
 - **Single source of truth** for all routing logic
 - **Unified header management** across all views
 - **Consistent layout patterns** for all routes
@@ -601,17 +717,20 @@ App.tsx → UnifiedRouter → [AppHeader + Content] → Views (Lobby/Game/Utils/
 The `UnifiedRouter` component provides:
 
 **Route Detection:**
+
 - **Game routes**: `/game/:gameCode` - Renders GameViewLayout with game state
 - **Lobby route**: `/` - Renders LobbyView with game list
 - **Utils route**: `/utils` - Renders UtilsPage
 - **StyleGuide route**: `/styleguide` - Renders StyleGuidePage
 
 **Header Management:**
+
 - **Automatic header selection** based on current route
 - **Context-aware props** - game headers get turn/counter data
 - **Unified navigation** via single `onNavigate` callback
 
 **Content Rendering:**
+
 - **Route-specific layouts** with consistent padding and centering
 - **Dialog overlay management** for non-game views
 - **Game dialog integration** via GameViewLayout for game views
@@ -619,8 +738,12 @@ The `UnifiedRouter` component provides:
 ### Navigation System
 
 **Unified Navigation Function:**
+
 ```typescript
-const navigate = (path: string, gameData?: { gameId: string; gameCode: string }) => {
+const navigate = (
+  path: string,
+  gameData?: { gameId: string; gameCode: string }
+) => {
   // Handles both game and non-game navigation
   // Manages socket connections and state cleanup
   // Updates browser history and triggers re-render
@@ -628,6 +751,7 @@ const navigate = (path: string, gameData?: { gameId: string; gameCode: string })
 ```
 
 **Navigation Patterns:**
+
 - **Game navigation**: `navigate('/game/ABC123', { gameId, gameCode })`
 - **Standard navigation**: `navigate('/utils')`, `navigate('/styleguide')`, `navigate('/')`
 - **Automatic cleanup**: Disconnects sockets when leaving games
@@ -641,6 +765,7 @@ const navigate = (path: string, gameData?: { gameId: string; gameCode: string })
 2. **App-level dialogs**: Handled by UnifiedRouter - overlay entire app with backdrop
 
 **Dialog Rendering Rules:**
+
 - **Game view**: Dialogs render within GameViewLayout's `mainContent` area
 - **Other views**: Dialogs render via UnifiedRouter's `dialogOverlay` with full-screen backdrop
 - **Consistent styling**: Both use the same Dialog component for consistent appearance
@@ -648,12 +773,14 @@ const navigate = (path: string, gameData?: { gameId: string; gameCode: string })
 ### Migration from Old Architecture
 
 **Replaced Components:**
+
 - ❌ **Old Router** - Basic route mapping without state management
 - ❌ **LobbyPage** - Thin wrapper that just fetched games and passed to LobbyView
 - ❌ **LobbyLayout** - Simple layout wrapper with padding
 - ❌ **Separate headers** - GameHeader and LobbyHeader with duplicated logic
 
 **New Unified Structure:**
+
 - ✅ **UnifiedRouter** - Handles all routing, headers, and layout
 - ✅ **Direct view rendering** - No unnecessary wrapper layers
 - ✅ **App-level data management** - Game fetching and state at App.tsx level
@@ -662,18 +789,21 @@ const navigate = (path: string, gameData?: { gameId: string; gameCode: string })
 ### Implementation Guidelines
 
 **When adding new routes:**
+
 1. **Add route detection** in `getRouteInfo()` method
 2. **Update header rendering** in `renderHeader()` if needed
-3. **Add content rendering** in `renderContent()` method  
+3. **Add content rendering** in `renderContent()` method
 4. **Follow layout patterns** - use consistent padding and centering
 5. **Test dialog behavior** - ensure dialogs overlay correctly
 
 **Route-specific considerations:**
+
 - **Game routes**: Must handle socket connections and game state
 - **Utility routes**: Simple content rendering with standard layout
 - **Dialog handling**: Non-game routes use app-level dialog overlay
 
 **Navigation best practices:**
+
 - **Always use** the unified `navigate()` function
 - **Never manipulate** `window.history` directly outside of `navigate()`
 - **Handle cleanup** - ensure sockets disconnect when leaving games
@@ -682,18 +812,21 @@ const navigate = (path: string, gameData?: { gameId: string; gameCode: string })
 ### Legacy Architecture Migration
 
 **Before (Complex):**
+
 ```
 App → [GameHeader + GameViewLayout] | [Router → LobbyPage → LobbyLayout → LobbyView]
 ```
 
 **After (Unified):**
+
 ```
 App → UnifiedRouter → [AppHeader + Content]
 ```
 
 **Benefits Achieved:**
+
 - **50% fewer components** in the routing chain
-- **Eliminated state duplication** - no currentView vs URL conflicts  
+- **Eliminated state duplication** - no currentView vs URL conflicts
 - **Single navigation function** instead of 5 separate functions
 - **Consistent header behavior** across all views
 - **Simplified dialog management** with proper overlay system
@@ -705,12 +838,23 @@ App → UnifiedRouter → [AppHeader + Content]
 The application uses a **comprehensive Context API architecture** to manage application-wide state, eliminating prop drilling and providing clean separation of concerns. The architecture consists of five specialized providers that handle different domains of the application.
 
 **Provider Architecture:**
+
 ```typescript
-<AuthProvider>           // Foundation - user authentication
-  <NotificationProvider> // Notification permission management  
-    <DialogProvider>     // Dialog stack management
-      <GameProvider>     // Game state, socket events, game list
-        <NavigationProvider>  // Routing and navigation logic
+<AuthProvider>
+  {" "}
+  // Foundation - user authentication
+  <NotificationProvider>
+    {" "}
+    // Notification permission management
+    <DialogProvider>
+      {" "}
+      // Dialog stack management
+      <GameProvider>
+        {" "}
+        // Game state, socket events, game list
+        <NavigationProvider>
+          {" "}
+          // Routing and navigation logic
           <AppContent />
         </NavigationProvider>
       </GameProvider>
@@ -724,6 +868,7 @@ The application uses a **comprehensive Context API architecture** to manage appl
 #### AuthProvider (`src/client/contexts/AuthProvider.tsx`)
 
 **Responsibilities:**
+
 - User authentication state (login/logout)
 - Username input management
 - Session persistence via authService
@@ -731,12 +876,14 @@ The application uses a **comprehensive Context API architecture** to manage appl
 - Loading states for auth operations
 
 **Key Features:**
+
 - Automatic session restoration on app startup
 - Clean error state management
 - Integration with backend authentication API
 - Persistent username storage for UX
 
 **Usage:**
+
 ```typescript
 const { isLoggedIn, currentUserId, login, logout } = useAuth();
 ```
@@ -744,35 +891,42 @@ const { isLoggedIn, currentUserId, login, logout } = useAuth();
 #### GameProvider (`src/client/contexts/GameProvider.tsx`)
 
 **Responsibilities:**
+
 - Game state management (current game, game list)
 - Socket event handling (game updates, turn changes)
 - Game operations (create, join, actions)
 - Game list polling and caching
 
 **Key Features:**
+
 - Automatic socket event subscription/cleanup
 - Game list polling every 60 seconds
 - Integration with socket service for real-time updates
 - Game action handlers (increment counter, end turn)
 
 **Usage:**
+
 ```typescript
-const { gameState, myGames, createNewGame, joinGame, incrementCounter } = useGame();
+const { gameState, myGames, createNewGame, joinGame, incrementCounter } =
+  useGame();
 ```
 
 #### DialogProvider (`src/client/contexts/DialogProvider.tsx`)
 
 **Responsibilities:**
+
 - Dialog stack management
 - Dialog type definitions
 - Stack operations (push, pop, replace, clear)
 
 **Key Features:**
+
 - Stack-based dialog management for nested dialogs
 - Prevention of duplicate dialogs in stack
 - Clean dialog state management
 
 **Usage:**
+
 ```typescript
 const { pushDialog, popDialog, clearDialogs, getCurrentDialog } = useDialogs();
 ```
@@ -780,18 +934,21 @@ const { pushDialog, popDialog, clearDialogs, getCurrentDialog } = useDialogs();
 #### NavigationProvider (`src/client/contexts/NavigationProvider.tsx`)
 
 **Responsibilities:**
+
 - Unified navigation system
 - Game transition handling
 - Socket and rendering service cleanup
 - Browser history management
 
 **Key Features:**
+
 - Single `navigate()` function for all routing
 - Automatic cleanup when leaving games
 - Integration with socket and rendering services
 - Browser back/forward support
 
 **Usage:**
+
 ```typescript
 const { navigate, navigateToGame, handleJoinGame } = useNavigation();
 ```
@@ -799,38 +956,46 @@ const { navigate, navigateToGame, handleJoinGame } = useNavigation();
 #### NotificationProvider (`src/client/contexts/NotificationProvider.tsx`)
 
 **Responsibilities:**
+
 - Push notification permission management
 - Notification prompt workflow
 - Permission state synchronization
 - Service worker integration
 
 **Key Features:**
+
 - Automatic permission restoration after browser restart
 - Permission change detection
 - Integration with push service for subscriptions
 
 **Usage:**
+
 ```typescript
-const { checkNotificationStatusAndProceed, showNotificationsPrompt } = useNotifications();
+const { checkNotificationStatusAndProceed, showNotificationsPrompt } =
+  useNotifications();
 ```
 
 ### Context Architecture Benefits
 
 **Eliminated Prop Drilling:**
+
 - **Before**: `App.tsx` passed 15+ props to `UnifiedRouter`
 - **After**: Components access state directly via hooks
 
 **Clean Separation of Concerns:**
+
 - Each provider handles one specific domain
 - Clear dependency hierarchy between providers
 - Easy to test and maintain individual providers
 
 **Reusable State Access:**
+
 - Any component can use `useAuth()`, `useGame()`, etc.
 - Consistent state access patterns across the app
 - Type-safe context access with error boundaries
 
 **Simplified Component Logic:**
+
 - **App.tsx reduced from 534 lines to 183 lines** (65% reduction)
 - Components focus on UI rather than state management
 - Clear data flow and dependency management
@@ -838,13 +1003,15 @@ const { checkNotificationStatusAndProceed, showNotificationsPrompt } = useNotifi
 ### Implementation Guidelines
 
 **Provider Dependencies:**
+
 - **AuthProvider**: No dependencies (foundation)
-- **NotificationProvider**: No dependencies  
+- **NotificationProvider**: No dependencies
 - **DialogProvider**: No dependencies
 - **GameProvider**: Depends on AuthProvider
 - **NavigationProvider**: Depends on AuthProvider, DialogProvider, GameProvider
 
 **Adding New Providers:**
+
 1. **Create provider file** in `src/client/contexts/`
 2. **Export provider and hook** from provider file
 3. **Add exports** to `src/client/contexts/index.ts`
@@ -852,6 +1019,7 @@ const { checkNotificationStatusAndProceed, showNotificationsPrompt } = useNotifi
 5. **Update dependency chain** if needed
 
 **Context Hook Usage:**
+
 ```typescript
 // Good: Destructure only what you need
 const { isLoggedIn, currentUserId } = useAuth();
@@ -867,6 +1035,7 @@ const BadComponent = ({ authState }: { authState: AuthContextType }) => { ... };
 ```
 
 **Error Handling:**
+
 - All context hooks throw errors if used outside their provider
 - Provides clear error messages for debugging
 - Prevents silent failures and undefined behavior
@@ -874,12 +1043,14 @@ const BadComponent = ({ authState }: { authState: AuthContextType }) => { ... };
 ### Migration from Legacy Architecture
 
 **What Was Replaced:**
+
 - ❌ **Massive App.tsx** with 15+ useState calls and complex useEffect chains
 - ❌ **Prop drilling** through multiple component layers
 - ❌ **Duplicated state logic** across components
 - ❌ **Complex cleanup logic** scattered throughout components
 
 **What Was Gained:**
+
 - ✅ **Clean separation of concerns** with domain-specific providers
 - ✅ **Reusable state hooks** accessible from any component
 - ✅ **Simplified component logic** focused on presentation
@@ -889,16 +1060,19 @@ const BadComponent = ({ authState }: { authState: AuthContextType }) => { ... };
 ### Performance Considerations
 
 **Context Optimization:**
+
 - Providers only re-render when their specific state changes
 - Components only re-render when they consume changed context values
 - Proper dependency arrays prevent unnecessary re-renders
 
 **State Segmentation:**
+
 - Each provider manages only its domain
 - Prevents unnecessary re-renders across unrelated components
 - Clear performance isolation between different app concerns
 
 **Memory Management:**
+
 - Providers handle cleanup of subscriptions and services
 - Navigation provider manages rendering service lifecycle
 - Proper socket connection cleanup prevents memory leaks
@@ -906,16 +1080,19 @@ const BadComponent = ({ authState }: { authState: AuthContextType }) => { ... };
 ### Testing Strategy
 
 **Provider Testing:**
+
 - Each provider can be tested in isolation
 - Mock dependencies for focused unit tests
 - Test state transitions and side effects separately
 
 **Component Testing:**
+
 - Components can be tested with mock context providers
 - Easy to test different state scenarios
 - Clear separation between UI and business logic
 
 **Integration Testing:**
+
 - Full provider stack can be tested together
 - Test complex workflows across multiple providers
 - Verify proper cleanup and state synchronization
@@ -984,7 +1161,14 @@ Environment variables are managed as follows:
 - **`node_modules/`**: Contains all the project's dependencies managed by npm. This directory is not checked into version control.
 - **`src/`**: The main source code directory for the application.
   - **`client/`**: Contains all the client-side code.
-    - **`components/`**: Reusable UI components (using Preact and htm).
+    - **`components/`**: Organized by purpose:
+      - **`views/`**: Page-level components (LobbyView, GameView, StyleGuideView, UtilsView, UserLoginView)
+      - **`game/`**: Game-specific components and dialogs (GameViewLayout, ActionBar, GameSettingsDialog, etc.)
+      - **`ui/`**: Reusable UI components with design system integration (Button, Input, Icon, etc.)
+      - **`framework/`**: Core application infrastructure (UnifiedRouter, etc.)
+    - **`contexts/`**: React Context providers for state management (AuthProvider, GameProvider, DialogProvider, etc.)
+    - **`services/`**: API and utility services (auth.service, socket.service, rendering.service, etc.)
+    - **`rendering/`**: PixiJS rendering engine (MapRenderer, Tile)
     - **`public/`**: Static assets that are directly served, such as images or fonts.
     - **`types/`**: Contains types used exclusively by the client. Files in this folder are suffixed with `.type.ts` or `.interface.ts`
     - **`helpers/`**: Contains helper functions that are used exclusively by the client. Files in this folder are suffixed with `.helper.ts`
@@ -992,6 +1176,7 @@ Environment variables are managed as follows:
     - **`main.ts`**: The entry point for the client-side application. It initializes the PixiJS application and renders the UI.
     - **`App.module.css`**: CSS modules for styling the main application component.
     - **`global.css`**: Global styles applied to the entire application.
+    - **`tokens.module.css`**: Design system tokens (colors, fonts, spacing) as CSS custom properties.
     - **`index.html`**: The main HTML file that serves as the entry point for the web application.
   - **`server/`**: Contains all the server-side code.
     - **`entities/`**: Contains TypeORM entity definitions that map to database tables.
