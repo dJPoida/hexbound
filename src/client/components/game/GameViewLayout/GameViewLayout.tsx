@@ -47,19 +47,7 @@ export function GameViewLayout({
   const hasPlaceholders = gameState.players.some(p => p.isPlaceholder);
   const canEndTurn = isMyTurn && !hasPlaceholders;
   
-  // State for copy link functionality
-  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied'>('idle');
-  
-  const handleCopyGameLink = () => {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      setCopyStatus('copied');
-      setTimeout(() => {
-        setCopyStatus('idle');
-      }, 1500);
-    }).catch(err => {
-      console.error('Failed to copy text: ', err);
-    });
-  };
+
   
   // Header is now handled at the App level via AppHeader
 

@@ -103,7 +103,6 @@ const AppContent = () => {
               isMyTurn={game.gameState.currentPlayerId === auth.currentUserId}
               onIncrement={game.incrementCounter}
               onClose={dialogs.popDialog}
-              onOpenSettings={() => dialogs.replaceDialog('gameSettings')}
               hasPlaceholders={hasPlaceholders}
             />
           );

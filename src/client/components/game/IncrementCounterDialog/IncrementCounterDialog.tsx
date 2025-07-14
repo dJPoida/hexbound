@@ -1,5 +1,6 @@
 import { Button, ButtonVariant } from '../../ui/Button';
 import { Dialog } from '../../ui/Dialog/Dialog';
+import { Text } from '../../ui/Typography/Text';
 import styles from './IncrementCounterDialog.module.css';
 
 interface IncrementCounterDialogProps {
@@ -7,20 +8,18 @@ interface IncrementCounterDialogProps {
     isMyTurn: boolean;
     onIncrement: () => void;
     onClose: () => void;
-    onOpenSettings: () => void;
     hasPlaceholders: boolean;
 }
 
-export function IncrementCounterDialog({ counter, isMyTurn, onIncrement, onClose, onOpenSettings, hasPlaceholders }: IncrementCounterDialogProps) {
+export function IncrementCounterDialog({ counter, isMyTurn, onIncrement, onClose, hasPlaceholders }: IncrementCounterDialogProps) {
     const canIncrement = isMyTurn && !hasPlaceholders;
-    const buttonText = hasPlaceholders ? 'Waiting for Players' : 'Increment';
     
     return (
         <Dialog title="Increment Counter" onClose={onClose}>
             <div className={styles.content}>
                 <div className={styles.row}>
-                    <span>Counter:</span> 
-                    <strong>{counter}</strong>
+                    <Text as="span">Counter:</Text> 
+                    <Text as="span" font="bold">{counter}</Text>
                 </div>
                 <Button 
                     onClick={onIncrement} 
@@ -28,11 +27,8 @@ export function IncrementCounterDialog({ counter, isMyTurn, onIncrement, onClose
                     disabled={!canIncrement} 
                     fullWidth={true}
                 >
-                    {buttonText}
+                    Increment
                 </Button>
-            </div>
-            <div className={styles.footer}>
-                <Button onClick={onOpenSettings} variant={ButtonVariant.SECONDARY}>Game Settings</Button>
             </div>
         </Dialog>
     );

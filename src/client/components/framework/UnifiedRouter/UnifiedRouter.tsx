@@ -34,11 +34,13 @@ export interface UnifiedRouterProps {
 
 interface UnifiedRouterState {
   currentPath: string;
+  copyLinkStatus: 'idle' | 'copied';
 }
 
 export class UnifiedRouter extends Component<UnifiedRouterProps, UnifiedRouterState> {
   state: UnifiedRouterState = {
     currentPath: window.location.pathname,
+    copyLinkStatus: 'idle',
   };
 
   handleRouteChange = () => {
@@ -55,6 +57,17 @@ export class UnifiedRouter extends Component<UnifiedRouterProps, UnifiedRouterSt
     window.removeEventListener('popstate', this.handleRouteChange);
     window.removeEventListener('pushstate', this.handleRouteChange);
   }
+
+  handleCopyGameLink = () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      this.setState({ copyLinkStatus: 'copied' });
+      setTimeout(() => {
+        this.setState({ copyLinkStatus: 'idle' });
+      }, 1500);
+    }).catch(err => {
+      console.error('Failed to copy text: ', err);
+    });
+  };
 
   // Determine current route type and context
   getRouteInfo() {
@@ -91,6 +104,8 @@ export class UnifiedRouter extends Component<UnifiedRouterProps, UnifiedRouterSt
         turnNumber={routeInfo.type === 'game' ? gameState?.turnNumber : undefined}
         counter={routeInfo.type === 'game' ? gameState?.gameState.placeholderCounter ?? 0 : undefined}
         onToggleCounterDialog={routeInfo.type === 'game' ? () => onPushDialog('incrementCounter') : undefined}
+        onCopyGameLink={routeInfo.type === 'game' ? this.handleCopyGameLink : undefined}
+        copyLinkStatus={routeInfo.type === 'game' ? this.state.copyLinkStatus : undefined}
       />
     );
   }
