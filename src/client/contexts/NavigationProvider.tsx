@@ -31,7 +31,7 @@ interface NavigationProviderProps {
 
 export const NavigationProvider = ({ children }: NavigationProviderProps) => {
   const { isLoggedIn } = useAuth();
-  const { joinGame, setCurrentGameId, setGameLoaded, currentGameId } = useGame();
+  const { joinGame, setCurrentGameId, setGameLoaded, currentGameId, fetchMyGames } = useGame();
   const { clearDialogs } = useDialogs();
 
   // Handle join game logic
@@ -71,6 +71,10 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
         renderingService.destroy(); // Clean up rendering service
         setCurrentGameId(null);
         setGameLoaded(false);
+        // Refresh game list when returning to lobby to show latest player state
+        if (path === '/') {
+          fetchMyGames();
+        }
       }
       window.history.pushState({}, '', path);
     }
@@ -103,6 +107,10 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
             renderingService.destroy(); // Clean up rendering service
             setCurrentGameId(null);
             setGameLoaded(false);
+            // Refresh game list when returning to lobby to show latest player state
+            if (path === '/') {
+              fetchMyGames();
+            }
           }
         }
       }
