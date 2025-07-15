@@ -4,10 +4,10 @@ import { useEffect,useState } from 'preact/hooks';
 
 import styles from './App.module.css'; // Import CSS Modules
 import { UnifiedRouter } from './components/framework/UnifiedRouter';
+import { DevToolsDialog } from './components/game/DevToolsDialog';
 import { EnableNotificationsDialog } from './components/game/EnableNotificationsDialog/EnableNotificationsDialog';
 import { GameSettingsDialog } from './components/game/GameSettingsDialog/GameSettingsDialog';
 import { IncrementCounterDialog } from './components/game/IncrementCounterDialog/IncrementCounterDialog';
-import { Dialog } from './components/ui/Dialog/Dialog';
 import { UserLoginView } from './components/views/UserLoginView/UserLoginView';
 import { 
   AuthProvider, 
@@ -111,13 +111,10 @@ const AppContent = () => {
       case 'debugInfo':
         if (game.gameState) {
           return (
-            <Dialog title="Debug Game State" onClose={dialogs.popDialog}>
-              <div className={styles.debugContent}>
-                <pre>
-                  {JSON.stringify(game.gameState, null, 2)}
-                </pre>
-              </div>
-            </Dialog>
+            <DevToolsDialog
+              gameState={game.gameState}
+              onClose={dialogs.popDialog}
+            />
           );
         }
         return null;

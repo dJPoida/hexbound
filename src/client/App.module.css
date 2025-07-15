@@ -26,19 +26,3 @@
   opacity: 0.7;
 }
 
-.debugContent {
-  background-color: var(--color-charcoal-light);
-  color: var(--color-canvas-white);
-  border: 1px solid var(--color-charcoal-light);
-  padding: var(--space-md);
-  max-height: 50vh;
-  overflow-y: auto;
-  text-align: left;
-  border-radius: var(--border-radius-medium);
-}
-
-.debugContent pre {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  margin: 0;
-}
