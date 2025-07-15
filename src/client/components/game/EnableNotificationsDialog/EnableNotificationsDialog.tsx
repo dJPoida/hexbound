@@ -86,10 +86,10 @@ export const EnableNotificationsDialog = ({ onComplete, permissionState }: Enabl
 
   const footer = (
     <div class={styles.footerActions}>
-      <Button onClick={handleSkipClick} variant={ButtonVariant.SECONDARY}>
+      <Button onClick={handleSkipClick} variant={ButtonVariant.STANDARD} color={StyleColor.DEFAULT}>
         Skip For Now
       </Button>
-      <Button onClick={handleEnableClick} variant={ButtonVariant.PRIMARY} disabled={isEnableButtonDisabled}>
+      <Button onClick={handleEnableClick} variant={ButtonVariant.STANDARD} color={StyleColor.AMBER} disabled={isEnableButtonDisabled}>
         {isLoading ? 'Enabling...' : 'Enable Notifications'}
       </Button>
     </div>
@@ -104,7 +104,7 @@ export const EnableNotificationsDialog = ({ onComplete, permissionState }: Enabl
       {currentPermission === 'denied' && (
         <div class={styles.warningContainer}>
           <Text as="div" class={styles.warningText}>
-            <Icon name="alert-triangle" color={StyleColor.WARNING} />
+            <Icon name="alert-triangle" color={StyleColor.PURPLE} />
             Your browser is currently blocking notifications. To enable them, please click the lock icon in your address bar and change the permission.
           </Text>
         </div>

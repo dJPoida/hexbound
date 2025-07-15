@@ -91,9 +91,10 @@ export function AppHeader({
             <Button 
               onClick={onToggleCounterDialog} 
               variant={ButtonVariant.ICON}
+              color={StyleColor.DEFAULT}
               ariaLabel="Edit counter"
             >
-              <Icon name="edit" color={StyleColor.LIGHT} />
+              <Icon name="edit" color={StyleColor.WHITE} />
             </Button>
           )}
         </div>
@@ -195,8 +196,9 @@ export function AppHeader({
             onClick={toggleMenu} 
             ariaLabel="Open menu" 
             variant={ButtonVariant.ICON}
+            color={StyleColor.DEFAULT}
           >
-            <Icon name="menu" color={StyleColor.LIGHT} />
+            <Icon name="menu" color={StyleColor.WHITE} />
           </Button>
           {isMenuOpen && (
             <div className={styles.menuDropdown}>

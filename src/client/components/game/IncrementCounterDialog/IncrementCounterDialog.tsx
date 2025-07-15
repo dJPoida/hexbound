@@ -1,4 +1,4 @@
-import { Button, ButtonVariant } from '../../ui/Button';
+import { Button, ButtonVariant, StyleColor } from '../../ui/Button';
 import { Dialog } from '../../ui/Dialog/Dialog';
 import { Text } from '../../ui/Typography/Text';
 import styles from './IncrementCounterDialog.module.css';
@@ -23,7 +23,8 @@ export function IncrementCounterDialog({ counter, isMyTurn, onIncrement, onClose
                 </div>
                 <Button 
                     onClick={onIncrement} 
-                    variant={ButtonVariant.PRIMARY} 
+                    variant={ButtonVariant.STANDARD} 
+                    color={StyleColor.AMBER}
                     disabled={!canIncrement} 
                     fullWidth={true}
                 >

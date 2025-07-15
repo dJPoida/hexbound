@@ -130,28 +130,39 @@ export const StyleGuideView = () => {
         </Text>
         
         <section class={styles.subSection}>
-          <Heading level={3} variant="subSectionHeader" color="subtle">Button Variants</Heading>
+          <Heading level={3} variant="subSectionHeader" color="subtle">Button Colors</Heading>
+          <Text color="subtle">
+            Actual color system: Amber (hex-amber), Default (slate-blue), Green (moss-green), 
+            Red (clay-red), Purple (deep-purple), Grey (stone-grey), White (canvas-white), 
+            Blue (pastel-sky), Yellow (glow-yellow).
+          </Text>
           <div class={styles.buttonRow}>
-            <Button onClick={() => {}} variant={ButtonVariant.PRIMARY}>Primary</Button>
-            <Button onClick={() => {}} variant={ButtonVariant.SECONDARY}>Secondary</Button>
-            <Button onClick={() => {}} variant={ButtonVariant.GREEN}>Green</Button>
-            <Button onClick={() => {}} variant={ButtonVariant.RED}>Red</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.AMBER}>Amber</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.DEFAULT}>Default</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.GREEN}>Green</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.RED}>Red</Button>
           </div>
           <div class={styles.buttonRow}>
-            <Button onClick={() => {}} variant={ButtonVariant.PURPLE}>Purple</Button>
-            <Button onClick={() => {}} variant={ButtonVariant.PRIMARY} disabled>Disabled</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.PURPLE}>Purple</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.GREY}>Grey</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.WHITE}>White</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.BLUE}>Blue</Button>
           </div>
           <div class={styles.buttonRow}>
-            <Button onClick={() => {}} variant={ButtonVariant.ICON} ariaLabel="Menu"><Icon name="menu" color={StyleColor.LIGHT} /></Button>
+            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.YELLOW}>Yellow</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.AMBER} disabled>Disabled</Button>
+          </div>
+          <div class={styles.buttonRow}>
+            <Button onClick={() => {}} variant={ButtonVariant.ICON} color={StyleColor.DEFAULT} ariaLabel="Menu"><Icon name="menu" color={StyleColor.WHITE} /></Button>
           </div>
         </section>
 
         <section class={styles.subSection}>
           <Heading level={3} variant="subSectionHeader" color="subtle">Dynamic Width Examples</Heading>
           <div class={styles.buttonGrid}>
-            <Button onClick={() => {}} variant={ButtonVariant.PRIMARY}>Short</Button>
-            <Button onClick={() => {}} variant={ButtonVariant.SECONDARY}>Medium Length Text</Button>
-            <Button onClick={() => {}} variant={ButtonVariant.GREEN}>Very Long Button Text Example</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.AMBER}>Short</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.DEFAULT}>Medium Length Text</Button>
+            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.GREEN}>Very Long Button Text Example</Button>
           </div>
         </section>
       </section>
@@ -292,11 +303,11 @@ export const StyleGuideView = () => {
           <Heading level={3} variant="subSectionHeader" color="subtle">Icon Sizes with Text</Heading>
           <Text color="subtle">Icons scale relative to their text context:</Text>
           <div class={styles.iconSizeExamples}>
-            <Text>Extra Small <Icon name="heart" size={iconSizes.xs} color={StyleColor.DANGER} /> (0.5em)</Text>
-            <Text>Small <Icon name="star" size={iconSizes.sm} color={StyleColor.BRAND} /> (0.75em)</Text>
+            <Text>Extra Small <Icon name="heart" size={iconSizes.xs} color={StyleColor.RED} /> (0.5em)</Text>
+            <Text>Small <Icon name="star" size={iconSizes.sm} color={StyleColor.AMBER} /> (0.75em)</Text>
             <Text>Medium <Icon name="settings" size={iconSizes.md} color={StyleColor.DEFAULT} /> (1em - default)</Text>
-            <Text font="bold">Large <Icon name="award" size={iconSizes.lg} color={StyleColor.SUCCESS} /> (2em)</Text>
-            <Heading level={3} variant="subSectionHeader">Extra Large <Icon name="hexagon" size={iconSizes.xl} color={StyleColor.BRAND} /> (3em)</Heading>
+            <Text font="bold">Large <Icon name="award" size={iconSizes.lg} color={StyleColor.GREEN} /> (2em)</Text>
+            <Heading level={3} variant="subSectionHeader">Extra Large <Icon name="hexagon" size={iconSizes.xl} color={StyleColor.AMBER} /> (3em)</Heading>
           </div>
         </section>
 

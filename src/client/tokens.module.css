@@ -67,14 +67,51 @@
   --color-background: var(--color-canvas-white);
   --color-parchment-light: var(--color-canvas-white-light);
   
-  /* Status Colors */
-  --color-success: var(--color-moss-green);
-  --color-success-dark: var(--color-moss-green-dark);
-  --color-success-light: var(--color-moss-green-light);
-  
-  --color-warning: var(--color-glow-yellow);
-  --color-warning-dark: var(--color-glow-yellow-dark);
-  --color-warning-light: var(--color-glow-yellow-light);
+  /* StyleColor Mappings - Actual Color Names */
+  --color-default: var(--color-slate-blue);
+  --color-default-dark: var(--color-slate-blue-dark);
+  --color-default-light: var(--color-slate-blue-light);
+  --color-default-highlight: var(--color-slate-blue-highlight);
+
+  --color-amber: var(--color-hex-amber);
+  --color-amber-dark: var(--color-hex-amber-dark);
+  --color-amber-light: var(--color-hex-amber-light);
+  --color-amber-highlight: var(--color-hex-amber-highlight);
+
+  --color-blue: var(--color-pastel-sky);
+  --color-blue-dark: var(--color-pastel-sky-dark);
+  --color-blue-light: var(--color-pastel-sky-light);
+  --color-blue-highlight: var(--color-pastel-sky-highlight);
+
+  --color-green: var(--color-moss-green);
+  --color-green-dark: var(--color-moss-green-dark);
+  --color-green-light: var(--color-moss-green-light);
+  --color-green-highlight: var(--color-moss-green-highlight);
+
+  --color-red: var(--color-clay-red);
+  --color-red-dark: var(--color-clay-red-dark);
+  --color-red-light: var(--color-clay-red-light);
+  --color-red-highlight: var(--color-clay-red-highlight);
+
+  --color-purple: var(--color-deep-purple);
+  --color-purple-dark: var(--color-deep-purple-dark);
+  --color-purple-light: var(--color-deep-purple-light);
+  --color-purple-highlight: var(--color-deep-purple-highlight);
+
+  --color-grey: var(--color-stone-grey);
+  --color-grey-dark: var(--color-stone-grey-dark);
+  --color-grey-light: var(--color-stone-grey-light);
+  --color-grey-highlight: var(--color-stone-grey-highlight);
+
+  --color-white: var(--color-canvas-white);
+  --color-white-dark: var(--color-canvas-white-dark);
+  --color-white-light: var(--color-canvas-white-light);
+  --color-white-highlight: var(--color-canvas-white-highlight);
+
+  --color-yellow: var(--color-glow-yellow);
+  --color-yellow-dark: var(--color-glow-yellow-dark);
+  --color-yellow-light: var(--color-glow-yellow-light);
+  --color-yellow-highlight: var(--color-glow-yellow-highlight);
 
   /* ==========================================================================
      Font Families

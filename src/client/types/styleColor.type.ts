@@ -1,9 +1,11 @@
 export enum StyleColor {
   DEFAULT = 'default',
-  SUBTLE = 'subtle',
-  LIGHT = 'light',
-  BRAND = 'brand',
-  SUCCESS = 'success',
-  WARNING = 'warning',
-  DANGER = 'danger'
+  AMBER = 'amber',
+  BLUE = 'blue',
+  GREEN = 'green',
+  RED = 'red',
+  PURPLE = 'purple',
+  GREY = 'grey',
+  WHITE = 'white',
+  YELLOW = 'yellow'
 } 

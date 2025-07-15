@@ -111,44 +111,72 @@
   stroke-opacity: 1;
 }
 
-/* Variant Color Definitions */
-.primary {
-  --variant-base: var(--color-hex-amber);
-  --variant-light: var(--color-hex-amber-light);
-  --variant-dark: var(--color-hex-amber-dark);
-  --variant-highlight: var(--color-hex-amber-highlight);
+/* Variant Definitions (Function/Layout) */
+.standard {
+  /* Standard gem button - uses default sizing */
 }
 
-.primary .background { fill: var(--variant-base); }
-.primary .leftEdge,
-.primary .rightEdge,
-.primary .topEdge { fill: var(--variant-light); }
-.primary .bottomEdge { fill: var(--variant-dark); }
-.primary .accents { fill: var(--variant-highlight); }
-.primary .buttonText { color: var(--color-canvas-white); }
-.primary .outline { stroke: var(--color-charcoal); }
-
-.secondary {
-  --variant-base: var(--color-slate-blue);
-  --variant-light: var(--color-slate-blue-light);
-  --variant-dark: var(--color-slate-blue-dark);
-  --variant-highlight: var(--color-slate-blue-highlight);
+.icon {
+  /* Icon button - square, fixed width */
+  min-width: 50px;
+  width: 50px !important;
+  padding: 0;
 }
 
-.secondary .background { fill: var(--variant-base); }
-.secondary .leftEdge,
-.secondary .rightEdge,
-.secondary .topEdge { fill: var(--variant-light); }
-.secondary .bottomEdge { fill: var(--variant-dark); }
-.secondary .accents { fill: var(--variant-highlight); }
-.secondary .buttonText { color: var(--color-canvas-white); }
-.secondary .outline { stroke: var(--color-charcoal); }
+/* Color Definitions (Appearance) - Using Actual Color Names */
+.default {
+  --variant-base: var(--color-default);
+  --variant-light: var(--color-default-light);
+  --variant-dark: var(--color-default-dark);
+  --variant-highlight: var(--color-default-highlight);
+}
+
+.default .background { fill: var(--variant-base); }
+.default .leftEdge,
+.default .rightEdge,
+.default .topEdge { fill: var(--variant-light); }
+.default .bottomEdge { fill: var(--variant-dark); }
+.default .accents { fill: var(--variant-highlight); }
+.default .buttonText { color: var(--color-canvas-white); }
+.default .outline { stroke: var(--color-charcoal); }
+
+.amber {
+  --variant-base: var(--color-amber);
+  --variant-light: var(--color-amber-light);
+  --variant-dark: var(--color-amber-dark);
+  --variant-highlight: var(--color-amber-highlight);
+}
+
+.amber .background { fill: var(--variant-base); }
+.amber .leftEdge,
+.amber .rightEdge,
+.amber .topEdge { fill: var(--variant-light); }
+.amber .bottomEdge { fill: var(--variant-dark); }
+.amber .accents { fill: var(--variant-highlight); }
+.amber .buttonText { color: var(--color-canvas-white); }
+.amber .outline { stroke: var(--color-charcoal); }
+
+.blue {
+  --variant-base: var(--color-blue);
+  --variant-light: var(--color-blue-light);
+  --variant-dark: var(--color-blue-dark);
+  --variant-highlight: var(--color-blue-highlight);
+}
+
+.blue .background { fill: var(--variant-base); }
+.blue .leftEdge,
+.blue .rightEdge,
+.blue .topEdge { fill: var(--variant-light); }
+.blue .bottomEdge { fill: var(--variant-dark); }
+.blue .accents { fill: var(--variant-highlight); }
+.blue .buttonText { color: var(--color-canvas-white); }
+.blue .outline { stroke: var(--color-charcoal); }
 
 .green {
-  --variant-base: var(--color-moss-green);
-  --variant-light: var(--color-moss-green-light);
-  --variant-dark: var(--color-moss-green-dark);
-  --variant-highlight: var(--color-moss-green-highlight);
+  --variant-base: var(--color-green);
+  --variant-light: var(--color-green-light);
+  --variant-dark: var(--color-green-dark);
+  --variant-highlight: var(--color-green-highlight);
 }
 
 .green .background { fill: var(--variant-base); }
@@ -161,10 +189,10 @@
 .green .outline { stroke: var(--color-charcoal); }
 
 .red {
-  --variant-base: var(--color-clay-red);
-  --variant-light: var(--color-clay-red-light);
-  --variant-dark: var(--color-clay-red-dark);
-  --variant-highlight: var(--color-clay-red-highlight);
+  --variant-base: var(--color-red);
+  --variant-light: var(--color-red-light);
+  --variant-dark: var(--color-red-dark);
+  --variant-highlight: var(--color-red-highlight);
 }
 
 .red .background { fill: var(--variant-base); }
@@ -177,10 +205,10 @@
 .red .outline { stroke: var(--color-charcoal); }
 
 .purple {
-  --variant-base: var(--color-deep-purple);
-  --variant-light: var(--color-deep-purple-light);
-  --variant-dark: var(--color-deep-purple-dark);
-  --variant-highlight: var(--color-deep-purple-highlight);
+  --variant-base: var(--color-purple);
+  --variant-light: var(--color-purple-light);
+  --variant-dark: var(--color-purple-dark);
+  --variant-highlight: var(--color-purple-highlight);
 }
 
 .purple .background { fill: var(--variant-base); }
@@ -191,6 +219,54 @@
 .purple .accents { fill: var(--variant-highlight); }
 .purple .buttonText { color: var(--color-canvas-white); }
 .purple .outline { stroke: var(--color-charcoal); }
+
+.grey {
+  --variant-base: var(--color-grey);
+  --variant-light: var(--color-grey-light);
+  --variant-dark: var(--color-grey-dark);
+  --variant-highlight: var(--color-grey-highlight);
+}
+
+.grey .background { fill: var(--variant-base); }
+.grey .leftEdge,
+.grey .rightEdge,
+.grey .topEdge { fill: var(--variant-light); }
+.grey .bottomEdge { fill: var(--variant-dark); }
+.grey .accents { fill: var(--variant-highlight); }
+.grey .buttonText { color: var(--color-canvas-white); }
+.grey .outline { stroke: var(--color-charcoal); }
+
+.white {
+  --variant-base: var(--color-white);
+  --variant-light: var(--color-white-light);
+  --variant-dark: var(--color-white-dark);
+  --variant-highlight: var(--color-white-highlight);
+}
+
+.white .background { fill: var(--variant-base); }
+.white .leftEdge,
+.white .rightEdge,
+.white .topEdge { fill: var(--variant-light); }
+.white .bottomEdge { fill: var(--variant-dark); }
+.white .accents { fill: var(--variant-highlight); }
+.white .buttonText { color: var(--color-charcoal); }
+.white .outline { stroke: var(--color-charcoal); }
+
+.yellow {
+  --variant-base: var(--color-yellow);
+  --variant-light: var(--color-yellow-light);
+  --variant-dark: var(--color-yellow-dark);
+  --variant-highlight: var(--color-yellow-highlight);
+}
+
+.yellow .background { fill: var(--variant-base); }
+.yellow .leftEdge,
+.yellow .rightEdge,
+.yellow .topEdge { fill: var(--variant-light); }
+.yellow .bottomEdge { fill: var(--variant-dark); }
+.yellow .accents { fill: var(--variant-highlight); }
+.yellow .buttonText { color: var(--color-charcoal); }
+.yellow .outline { stroke: var(--color-charcoal); }
 
 /* Disabled state overrides */
 .button.disabled .background,
@@ -215,25 +291,7 @@
   overflow: hidden;
 }
 
-/* Icon variant - similar to secondary but square */
-.icon {
-  min-width: 50px;
-  width: 50px !important;
-  padding: 0;
-  --variant-base: var(--color-slate-blue);
-  --variant-light: var(--color-slate-blue-light);
-  --variant-dark: var(--color-slate-blue-dark);
-  --variant-highlight: var(--color-slate-blue-highlight);
-}
 
-.icon .background { fill: var(--variant-base); }
-.icon .leftEdge,
-.icon .rightEdge,
-.icon .topEdge { fill: var(--variant-light); }
-.icon .bottomEdge { fill: var(--variant-dark); }
-.icon .accents { fill: var(--variant-highlight); }
-.icon .buttonText { color: var(--color-canvas-white); }
-.icon .outline { stroke: var(--color-charcoal); }
 
 
  

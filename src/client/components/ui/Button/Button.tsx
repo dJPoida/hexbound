@@ -1,14 +1,11 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 
+import { StyleColor } from '../../../types/styleColor.type';
 import styles from './Button.module.css';
 
 // Button-specific enums - exported for use by consumers
 export enum ButtonVariant {
-  PRIMARY = 'primary',
-  SECONDARY = 'secondary',
-  GREEN = 'green',
-  RED = 'red',
-  PURPLE = 'purple',
+  STANDARD = 'standard',
   ICON = 'icon',
 }
 
@@ -22,6 +19,7 @@ export interface ButtonProps {
   onClick: (event: MouseEvent) => void;
   children: preact.ComponentChildren;
   variant?: ButtonVariant;
+  color?: StyleColor;
   disabled?: boolean;
   className?: string;
   type?: ButtonType;
@@ -34,7 +32,8 @@ export interface ButtonProps {
 export const Button = ({
   onClick,
   children,
-  variant = ButtonVariant.PRIMARY,
+  variant = ButtonVariant.STANDARD,
+  color = StyleColor.AMBER,
   disabled = false,
   className = '',
   type = ButtonType.BUTTON,
@@ -84,6 +83,7 @@ export const Button = ({
   const buttonClasses = [
     styles.button,
     styles[variant],
+    styles[color],
     disabled ? styles.disabled : '',
     !isReady ? styles.measuring : '',
     fullWidth ? styles.fullWidth : '',

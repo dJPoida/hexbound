@@ -22,9 +22,10 @@ export function Dialog({ title, children, onClose, footer }: DialogProps) {
           <Button
             onClick={onClose}
             variant={ButtonVariant.ICON}
+            color={StyleColor.DEFAULT}
             ariaLabel="Close dialog"
           >
-            <Icon name="cross" color={StyleColor.LIGHT} />
+            <Icon name="cross" color={StyleColor.WHITE} />
           </Button>
         )}
       </div>

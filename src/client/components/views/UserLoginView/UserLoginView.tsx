@@ -2,7 +2,7 @@ import { useEffect } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
 
 import { authService } from '../../../services/auth.service';
-import { Button, ButtonVariant } from '../../ui/Button';
+import { Button, ButtonVariant, StyleColor } from '../../ui/Button';
 import { Input, InputType } from '../../ui/Input';
 import { Logo } from '../../ui/Logo/Logo';
 import { Text } from '../../ui/Typography/Text';
@@ -64,7 +64,8 @@ export function UserLoginView({
 
         <Button
           onClick={onLogin}
-          variant={ButtonVariant.PRIMARY}
+          variant={ButtonVariant.STANDARD}
+          color={StyleColor.AMBER}
           disabled={isLoading}
           fullWidth={true}
           className={styles.loginButton}

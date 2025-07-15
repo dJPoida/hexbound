@@ -589,45 +589,53 @@ When creating new button variants:
 
 ### Button Usage Patterns & Examples
 
-**Icon Button Standard Pattern:**
+**Semantic Color System Architecture:**
+
+The Button component uses a two-prop system separating function from appearance:
+
+- **`variant`**: Function/layout (STANDARD, ICON)
+- **`color`**: Semantic appearance (BRAND, DEFAULT, SUCCESS, DANGER, WARNING, SUBTLE, LIGHT)
+
+**Color Mappings:**
+
+- `DEFAULT` → slate-blue (secondary actions)
+- `AMBER` → hex-amber (primary branding)
+- `BLUE` → pastel-sky (blue elements)
+- `GREEN` → moss-green (positive actions)
+- `RED` → clay-red (destructive actions)
+- `PURPLE` → deep-purple (warning actions)
+- `GREY` → stone-grey (subtle actions)
+- `WHITE` → canvas-white (light backgrounds)
+- `YELLOW` → glow-yellow (highlight actions)
+
+**Button Patterns:**
 
 ```typescript
-// ✅ Correct - Light icon for contrast against slate-blue background
-<Button variant={ButtonVariant.ICON} ariaLabel="Descriptive label">
-  <Icon name="icon-name" color={StyleColor.LIGHT} />
+// Standard gem button with amber color
+<Button variant={ButtonVariant.STANDARD} color={StyleColor.AMBER}>
+  Primary Action
 </Button>
 
-// ❌ Incorrect - Default color has poor contrast
-<Button variant={ButtonVariant.ICON} ariaLabel="Descriptive label">
-  <Icon name="icon-name" />
+// Icon button with default color
+<Button variant={ButtonVariant.ICON} color={StyleColor.DEFAULT} ariaLabel="Menu">
+  <Icon name="menu" color={StyleColor.WHITE} />
 </Button>
-```
 
-**Design Rule:** Icon buttons ALWAYS require `color={StyleColor.LIGHT}` for proper contrast against the slate-blue background.
-
-**Other Button Patterns:**
-
-```typescript
-// Primary action button
-<Button variant={ButtonVariant.PRIMARY} onClick={handleAction}>
-  Action Text
+// Destructive action
+<Button variant={ButtonVariant.STANDARD} color={StyleColor.RED}>
+  Delete Item
 </Button>
 
 // Full-width button in flex container
-<Button variant={ButtonVariant.PRIMARY} fullWidth={true}>
+<Button variant={ButtonVariant.STANDARD} color={StyleColor.AMBER} fullWidth={true}>
   Submit
-</Button>
-
-// Disabled state
-<Button variant={ButtonVariant.SECONDARY} disabled={true}>
-  Disabled Action
 </Button>
 ```
 
 **Icon + Button Integration Rules:**
 
-- **ButtonVariant.ICON**: Always use `color={StyleColor.LIGHT}` for proper contrast
-- **Other variants**: Icons should complement button color scheme
+- **ButtonVariant.ICON**: Always use `color={StyleColor.WHITE}` for icon content to ensure proper contrast
+- **All buttons**: Must specify both `variant` and `color` props
 - **Accessibility**: Always provide `ariaLabel` for icon-only buttons
 
 ## Form Components Architecture

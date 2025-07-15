@@ -55,15 +55,16 @@ export function GameViewLayout({
     <ActionBar>
       <div>
         {settings.showDebugInfo && (
-          <Button onClick={() => onPushDialog('debugInfo')} variant={ButtonVariant.ICON} ariaLabel="Show Debug Info">
-            <Icon name="terminal" color={StyleColor.LIGHT} />
-          </Button>
+                  <Button onClick={() => onPushDialog('debugInfo')} variant={ButtonVariant.ICON} ariaLabel="Show Debug Info">
+          <Icon name="terminal" color={StyleColor.WHITE} />
+        </Button>
         )}
       </div>
       <div>
         <Button 
           onClick={onEndTurn} 
-          variant={ButtonVariant.PRIMARY} 
+          variant={ButtonVariant.STANDARD} 
+          color={StyleColor.AMBER}
           disabled={!canEndTurn}
         >
           {hasPlaceholders ? 'Waiting for Players' : 'End Turn'}
