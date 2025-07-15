@@ -6,16 +6,25 @@ import { Icon } from '../Icon';
 import { Heading } from '../Typography/Heading';
 import styles from './Dialog.module.css';
 
+export enum DialogSize {
+  STANDARD = 'standard',
+  LARGE = 'large',
+  FULLSCREEN = 'fullscreen'
+}
+
 interface DialogProps {
   title: string;
   children: ComponentChildren;
   onClose?: () => void;
   footer?: ComponentChildren;
+  size?: DialogSize;
 }
 
-export function Dialog({ title, children, onClose, footer }: DialogProps) {
+export function Dialog({ title, children, onClose, footer, size = DialogSize.STANDARD }: DialogProps) {
+  const sizeClass = size === DialogSize.STANDARD ? styles.dialog : `${styles.dialog} ${styles[size]}`;
+  
   return (
-    <div className={styles.dialog}>
+    <div className={sizeClass}>
       <div className={styles.dialogHeader}>
         <Heading level={2} variant="sectionHeader" class={styles.dialogTitle}>{title}</Heading>
         {onClose && (

@@ -6,7 +6,7 @@ import { ClientGameStatePayload } from '../../../../shared/types/socket.types';
 import { socketService } from '../../../services/socket.service';
 import { StyleColor } from '../../../types/styleColor.type';
 import { Button, ButtonVariant } from '../../ui/Button';
-import { Dialog } from '../../ui/Dialog/Dialog';
+import { Dialog, DialogSize } from '../../ui/Dialog';
 import { Heading } from '../../ui/Typography/Heading';
 import { Text } from '../../ui/Typography/Text';
 import styles from './DevToolsDialog.module.css';
@@ -108,63 +108,67 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
         const gameStateJson = JSON.stringify(gameState, null, 2);
         return (
           <div className={styles.tabContent}>
-            <div className={styles.statsGrid}>
-              <div className={styles.statSection}>
-                <Heading level={4} variant="subSectionHeader">Game Overview</Heading>
-                <div className={styles.statItem}>
-                  <strong>Game ID:</strong> {gameState.gameId}
-                </div>
-                <div className={styles.statItem}>
-                  <strong>Game Code:</strong> {gameState.gameCode}
-                </div>
-                <div className={styles.statItem}>
-                  <strong>Turn Number:</strong> {gameState.turnNumber}
-                </div>
-                <div className={styles.statItem}>
-                  <strong>Current Player:</strong> {gameState.currentPlayerId}
-                </div>
-                <div className={styles.statItem}>
-                  <strong>Placeholder Counter:</strong> {gameState.gameState.placeholderCounter}
-                </div>
-              </div>
-
-              <div className={styles.statSection}>
-                <Heading level={4} variant="subSectionHeader">Players ({gameState.players.length})</Heading>
-                {gameState.players.map((player, index) => (
-                  <div key={player.userId} className={styles.statItem}>
-                    <strong>Player {index + 1}:</strong> {player.userName} ({player.userId.substring(0, 8)}...)
-                    {player.isPlaceholder && <span style={{ color: 'var(--color-glow-yellow)' }}> [Placeholder]</span>}
+            <div className={styles.gameStateLayout}>
+              <div className={styles.gameStateStats}>
+                <div className={styles.statSection}>
+                  <Heading level={4} variant="subSectionHeader">Game Overview</Heading>
+                  <div className={styles.statItem}>
+                    <strong>Game ID:</strong> {gameState.gameId}
                   </div>
-                ))}
-              </div>
+                  <div className={styles.statItem}>
+                    <strong>Game Code:</strong> {gameState.gameCode}
+                  </div>
+                  <div className={styles.statItem}>
+                    <strong>Turn Number:</strong> {gameState.turnNumber}
+                  </div>
+                  <div className={styles.statItem}>
+                    <strong>Current Player:</strong> {gameState.currentPlayerId}
+                  </div>
+                  <div className={styles.statItem}>
+                    <strong>Placeholder Counter:</strong> {gameState.gameState.placeholderCounter}
+                  </div>
+                </div>
 
-              <div className={styles.statSection}>
-                <Heading level={4} variant="subSectionHeader">Map Data</Heading>
-                <div className={styles.statItem}>
-                  <strong>Dimensions:</strong> {gameState.mapData.width} × {gameState.mapData.height}
+                <div className={styles.statSection}>
+                  <Heading level={4} variant="subSectionHeader">Players ({gameState.players.length})</Heading>
+                  {gameState.players.map((player, index) => (
+                    <div key={player.userId} className={styles.statItem}>
+                      <strong>Player {index + 1}:</strong> {player.userName} ({player.userId.substring(0, 8)}...)
+                      {player.isPlaceholder && <span style={{ color: 'var(--color-glow-yellow)' }}> [Placeholder]</span>}
+                    </div>
+                  ))}
                 </div>
-                <div className={styles.statItem}>
-                  <strong>Total Tiles:</strong> {gameState.mapData.tiles.length}
+
+                <div className={styles.statSection}>
+                  <Heading level={4} variant="subSectionHeader">Map Data</Heading>
+                  <div className={styles.statItem}>
+                    <strong>Dimensions:</strong> {gameState.mapData.width} × {gameState.mapData.height}
+                  </div>
+                  <div className={styles.statItem}>
+                    <strong>Total Tiles:</strong> {gameState.mapData.tiles.length}
+                  </div>
+                  <div className={styles.statItem}>
+                    <strong>Data Size:</strong> {Math.round(gameStateJson.length / 1024)} KB
+                  </div>
+                  <Button
+                    variant={ButtonVariant.STANDARD}
+                    color={StyleColor.BLUE}
+                    onClick={() => {
+                      navigator.clipboard.writeText(gameStateJson);
+                    }}
+                  >
+                    Copy Full JSON
+                  </Button>
                 </div>
-                <div className={styles.statItem}>
-                  <strong>Data Size:</strong> {Math.round(gameStateJson.length / 1024)} KB
-                </div>
-                <Button
-                  variant={ButtonVariant.STANDARD}
-                  color={StyleColor.BLUE}
-                  onClick={() => {
-                    navigator.clipboard.writeText(gameStateJson);
-                  }}
-                >
-                  Copy Full JSON
-                </Button>
               </div>
-            </div>
-            
-            <div className={styles.statSection}>
-              <Heading level={4} variant="subSectionHeader">Complete Game State (JSON)</Heading>
-              <div className={styles.debugContent}>
-                <pre>{gameStateJson}</pre>
+              
+              <div className={styles.gameStateJson}>
+                <div className={styles.statSection}>
+                  <Heading level={4} variant="subSectionHeader">Complete Game State (JSON)</Heading>
+                  <div className={styles.debugContent}>
+                    <pre>{gameStateJson}</pre>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -296,7 +300,7 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
    };
 
   return (
-    <Dialog title="Dev Tools" onClose={onClose}>
+    <Dialog title="Dev Tools" onClose={onClose} size={DialogSize.FULLSCREEN}>
       <div className={styles.devToolsContainer}>
         <div className={styles.tabBar}>
           <Button

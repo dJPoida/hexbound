@@ -356,6 +356,7 @@ When adding a new color family:
 - **NEVER** use hardcoded rem/px values for font sizes (except in token definitions)
 - **NEVER** use hardcoded rem/px values for spacing (except in token definitions)
 - **NEVER** use hardcoded px values for border radius (except in token definitions)
+- **NEVER** use `!important` in CSS - fix specificity issues through proper component architecture
 - **ALWAYS** use CSS custom properties from the design system
 
 ### CSS Code Review Checklist
@@ -366,6 +367,7 @@ Before merging any CSS changes, verify:
 - [ ] No hardcoded font sizes (use design tokens)
 - [ ] No hardcoded spacing values (use design tokens)
 - [ ] No hardcoded border radius values (use design tokens)
+- [ ] No `!important` declarations (fix through proper component architecture)
 - [ ] No CSS overriding standardized components
 - [ ] No unused CSS classes remaining
 - [ ] No duplicate CSS class definitions

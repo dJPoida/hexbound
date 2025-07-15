@@ -17,6 +17,52 @@
   /* No position, z-index, or full-screen dimensions needed */
 }
 
+.large {
+  width: 95vw;
+  max-width: 1200px;
+  height: 80vh;
+  max-height: 80vh;
+  min-width: 800px;
+  min-height: 600px;
+}
+
+.fullscreen {
+  width: 95vw;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  min-width: 1000px;
+  min-height: 500px;
+}
+
+@media (max-width: 1199px) {
+  .fullscreen {
+    width: 95vw;
+    max-width: none;
+    min-width: 800px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .large,
+  .fullscreen {
+    width: 95vw;
+    max-width: none;
+    min-width: 600px;
+  }
+}
+
+@media (max-width: 767px) {
+  .large,
+  .fullscreen {
+    width: 95vw;
+    max-width: none;
+    min-width: 320px;
+    max-height: none;
+    min-height: 500px;
+  }
+}
+
 .dialogHeader {
   display: flex;
   justify-content: space-between;
