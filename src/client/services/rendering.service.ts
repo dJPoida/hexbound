@@ -195,6 +195,8 @@ class RenderingService {
   }
 
   public async updateMap(newMapData: MapData): Promise<void> {
+    console.log(`[RenderingService] updateMap called with ${newMapData.width}x${newMapData.height} map, ${newMapData.tiles.length} tiles`);
+    
     if (!this.isInitialized) {
       // This can happen if updateMap is called before initialize (e.g., due to React lifecycle).
       // We wait for the initialization to complete before proceeding.
@@ -211,6 +213,8 @@ class RenderingService {
       console.warn('[RenderingService] Cannot update map, renderer not initialized.');
       return;
     }
+    
+    console.log('[RenderingService] Calling mapRenderer.updateMap()');
     this.mapRenderer.updateMap(newMapData);
   }
 
@@ -236,6 +240,8 @@ class RenderingService {
       this.isInitialized = null;
       console.log('[RenderingService] Destroyed.');
     }
+    
+    console.log('[RenderingService] Destroy complete.');
   }
   
   private calculateZoomLimits(width: number, height: number): { minScale: number; maxScale: number } {
@@ -312,4 +318,9 @@ class RenderingService {
   }
 }
 
-export const renderingService = new RenderingService(); 
+export const renderingService = new RenderingService();
+
+// Make it globally accessible for debugging
+if (typeof window !== 'undefined') {
+  (window as unknown as { renderingService: RenderingService }).renderingService = renderingService;
+} 

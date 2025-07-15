@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { Viewport as PixiViewport } from 'pixi-viewport';
 
-import { ELEVATION_STEP, HEX_HEIGHT, HEX_OFFSET_X, HEX_OFFSET_Y, HEX_TEXT_OFFSET_X, HEX_TEXT_OFFSET_Y, HEX_WIDTH, TILE_FONT, TILE_FONT_SIZE } from '../../shared/constants/map.const';
+import { HEX_HEIGHT, HEX_WIDTH } from '../../shared/constants/map.const';
 import { MapData, TileData } from '../../shared/types/game.types';
 import { settingsService } from '../services/settings.service';
 import { Tile } from './Tile';
@@ -59,53 +59,6 @@ export class MapRenderer {
     y -= 1.5 * HEX_HEIGHT;
 
     return { x, y };
-  }
-
-  private _createTile(elevation: number, q: number, r: number): PIXI.Container {
-    const tileContainer = new PIXI.Container();
-    const elevationOffsetY = -(elevation * ELEVATION_STEP);
-
-    // 1. Render Top Hex
-    const topHex = new PIXI.Sprite(this.textures.hex);
-    topHex.anchor.set(0);
-    topHex.x = HEX_OFFSET_X;
-    topHex.y = HEX_OFFSET_Y + elevationOffsetY;
-    tileContainer.addChild(topHex);
-    
-    // 2. Render the Elevation Text
-    const textStyle = new PIXI.TextStyle({
-      fontFamily: TILE_FONT,
-      fontSize: TILE_FONT_SIZE,
-      fill: '#000000',
-      align: 'center',
-    });
-    const elevationText = new PIXI.Text({
-      text: elevation.toString(),
-      style: textStyle,
-    });
-    elevationText.anchor.set(0.5);
-    elevationText.x = HEX_TEXT_OFFSET_X;
-    elevationText.y = HEX_TEXT_OFFSET_Y + elevationOffsetY;
-    tileContainer.addChild(elevationText);
-
-    // 3. Render the Coordinates Text
-    const coordStyle = new PIXI.TextStyle({
-      fontFamily: TILE_FONT,
-      fontSize: TILE_FONT_SIZE / 2,
-      fill: '#333333',
-      align: 'center',
-    });
-    const coordText = new PIXI.Text({
-      text: `(${q},${r})`,
-      style: coordStyle,
-    });
-    coordText.anchor.set(0.5);
-    coordText.x = HEX_TEXT_OFFSET_X;
-    coordText.y = elevationText.y + TILE_FONT_SIZE;
-    tileContainer.addChild(coordText);
-
-       
-    return tileContainer;
   }
   
   public initializeMap(): void {
@@ -174,7 +127,6 @@ export class MapRenderer {
       const oldTileData = this.tileDataMap.get(key);
 
       if (oldTileData && oldTileData.elevation !== newTileData.elevation) {
-        console.log(`Tile ${key} changed elevation from ${oldTileData.elevation} to ${newTileData.elevation}`);
         updatedCount++;
         
         const tileInstances = this.tileCache.get(key);

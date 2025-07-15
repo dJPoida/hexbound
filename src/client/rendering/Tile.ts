@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 
-import { ELEVATION_STEP, HEX_OFFSET_X, HEX_OFFSET_Y, HEX_TEXT_OFFSET_X, HEX_TEXT_OFFSET_Y, HEX_WIDTH, TILE_FONT, TILE_FONT_SIZE } from '../../shared/constants/map.const';
+import { ELEVATION_STEP, HEX_OFFSET_X, HEX_OFFSET_Y, HEX_TEXT_OFFSET_X, HEX_TEXT_OFFSET_Y, TILE_FONT, TILE_FONT_SIZE } from '../../shared/constants/map.const';
 import { TerrainType,TileData } from '../../shared/types/game.types';
 
 function getTextureForTerrain(terrain: TerrainType, textures: Record<string, PIXI.Texture>): PIXI.Texture {
@@ -81,6 +81,30 @@ export class Tile {
     // Add spawn text if it exists
     if (this.spawnText) {
       this.container.addChild(this.spawnText);
+    }
+  }
+
+  /**
+   * Properly clean up all PIXI resources
+   */
+  public destroy(): void {
+    // Destroy all child sprites and text objects
+    if (this.body) {
+      this.body.destroy({ children: true });
+    }
+    if (this.outline) {
+      this.outline.destroy({ children: true });
+    }
+    if (this.debugText) {
+      this.debugText.destroy({ children: true });
+    }
+    if (this.spawnText) {
+      this.spawnText.destroy({ children: true });
+    }
+    
+    // Destroy the container itself
+    if (this.container) {
+      this.container.destroy({ children: true });
     }
   }
 } 

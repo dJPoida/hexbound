@@ -15,7 +15,7 @@ interface ViewportProps {
 export function Viewport({ pixiContainerId, gameState, currentPlayerId, onReady }: ViewportProps) {
   const pixiContainerRef = useRef<HTMLDivElement>(null);
 
-  // This effect handles initialization and subsequent updates.
+  // This effect handles initialization when game changes.
   useEffect(() => {
     const container = pixiContainerRef.current;
     if (container && gameState && currentPlayerId) {
@@ -33,6 +33,14 @@ export function Viewport({ pixiContainerId, gameState, currentPlayerId, onReady 
       init();
     }
   }, [gameState?.gameId, currentPlayerId]); // Updated dependencies - track gameId specifically
+
+  // This effect handles map data updates for the same game.
+  useEffect(() => {
+    if (gameState?.mapData) {
+      console.log(`[Viewport] Map data updated, calling renderingService.updateMap() for ${gameState.mapData.width}x${gameState.mapData.height} map`);
+      renderingService.updateMap(gameState.mapData);
+    }
+  }, [gameState?.mapData]); // Track mapData changes specifically
 
   // This effect handles cleanup when the component unmounts.
   useEffect(() => {

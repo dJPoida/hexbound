@@ -63,6 +63,7 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
   const [scrollPositions, setScrollPositions] = useState<Partial<Record<DevToolsTab, number>>>(savedState.scrollPositions);
   const tabContentRef = useRef<HTMLDivElement>(null);
   const [isRegeneratingMap, setIsRegeneratingMap] = useState(false);
+  const [lastMapUpdate, setLastMapUpdate] = useState<Date>(new Date());
 
   // Save state when tab changes
   const handleTabChange = (newTab: DevToolsTab) => {
@@ -196,6 +197,14 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
     }
   };
 
+  // Log when map data changes (for debugging regeneration)
+  useEffect(() => {
+    if (gameState.mapData) {
+      console.log(`[DevTools] Map data updated: ${gameState.mapData.width}x${gameState.mapData.height}, ${gameState.mapData.tiles.length} tiles`);
+      setLastMapUpdate(new Date());
+    }
+  }, [gameState.mapData]);
+
   const renderTabContent = () => {
     switch (activeTab) {
       case DevToolsTab.GAME_STATE: {
@@ -286,6 +295,9 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
                   <strong>Player Spawns:</strong> {mapStats.spawnCount}
                 </div>
                 <div className={styles.statItem}>
+                  <strong>Last Updated:</strong> {lastMapUpdate.toLocaleTimeString()}
+                </div>
+                <div className={styles.statItem}>
                   <strong>Elevation Range:</strong> {mapStats.elevationRange.min} to {mapStats.elevationRange.max}
                 </div>
               </div>
@@ -318,6 +330,11 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
                 >
                   {isRegeneratingMap ? 'Regenerating...' : 'Regenerate Map'}
                 </Button>
+                {isRegeneratingMap && (
+                  <Text variant="caption" color="subtle">
+                    Generating new map with random seed...
+                  </Text>
+                )}
                 {gameState.turnNumber !== 1 && (
                   <Text variant="caption" color="subtle">
                     Map regeneration is only available on turn 1

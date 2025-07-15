@@ -45,9 +45,23 @@ export const regenerateMap = async (req: AuthenticatedRequest, res: Response) =>
       return res.status(400).json({ message: 'Map regeneration is only allowed on turn 1.' });
     }
 
-    // Generate a new map
-    const mapGenerator = new MapGenerator(config.map.defaultWidth, config.map.defaultHeight, undefined, undefined, game.players.length);
+    // Generate a new map with a random seed for variation
+    const randomSeed = Math.random().toString(36).substring(2, 15);
+    console.log(`[DEBUG] Regenerating map for game ${gameId} with seed: ${randomSeed}`);
+    
+    // Use OCEAN_WORLD preset for more dramatic changes
+    const mapGenerator = new MapGenerator(config.map.defaultWidth, config.map.defaultHeight, 'OCEAN_WORLD', randomSeed, game.players.length);
     const newMapData = mapGenerator.generate();
+    
+    console.log(`[DEBUG] New map generated: ${newMapData.width}x${newMapData.height}, ${newMapData.tiles.length} tiles`);
+    
+    // Log some statistics about the new map
+    const terrainCounts = newMapData.tiles.reduce((acc, tile) => {
+      acc[tile.terrain] = (acc[tile.terrain] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    console.log(`[DEBUG] New map terrain distribution:`, terrainCounts);
 
     // Update the game state with the new map
     const updatedGameState: ServerGameState = {
