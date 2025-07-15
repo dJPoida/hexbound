@@ -46,25 +46,6 @@ const AppContent = () => {
     }
   }, []);
 
-  // Handle post-login logic
-  useEffect(() => {
-    if (auth.isLoggedIn) {
-      const handlePostLogin = async () => {
-        await notifications.checkNotificationStatusAndProceed(() => {
-          const path = window.location.pathname;
-          const gameIdMatch = path.match(/^\/game\/([a-zA-Z0-9-]+)/);
-          if (gameIdMatch) {
-            const gameCode = gameIdMatch[1];
-            navigation.handleJoinGame(gameCode);
-          } else {
-            navigation.navigate('/');
-          }
-        });
-      };
-      handlePostLogin();
-    }
-  }, [auth.isLoggedIn]);
-
   // Handle enhanced login with notification check
   const handleEnhancedLogin = async () => {
     await auth.login();

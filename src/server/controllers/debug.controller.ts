@@ -2,10 +2,12 @@ import { RedisJSON } from '@redis/json/dist/commands';
 import { Response } from 'express';
 
 import { SOCKET_MESSAGE_TYPES } from '../../shared/constants/socket.const';
-import { ServerGameState, SocketMessage } from '../../shared/types/socket.types';
+import { MapUpdatePayload,ServerGameState, SocketMessage } from '../../shared/types/socket.types';
 import config from '../config';
 import { AppDataSource } from '../data-source';
 import { Game } from '../entities/Game.entity';
+import { calculateMapChecksum } from '../helpers/calculateMapChecksum.helper';
+import { toClientState } from '../helpers/clientState.helper';
 import { MapGenerator } from '../helpers/mapGenerator';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
 import redisClient from '../redisClient';
@@ -72,13 +74,26 @@ export const regenerateMap = async (req: AuthenticatedRequest, res: Response) =>
     // Save the updated game state to Redis
     await redisClient.json.set(gameStateKey, '.', updatedGameState as RedisJSON);
 
-    // Broadcast the updated game state to all clients
-    const gameStateMessage: SocketMessage<ServerGameState> = {
+    // Send updated game state (without map data) to all clients
+    const clientState = toClientState(updatedGameState);
+    const gameStateMessage: SocketMessage<typeof clientState> = {
       type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE,
-      payload: updatedGameState
+      payload: clientState
     };
-
     broadcastToGame(gameId, JSON.stringify(gameStateMessage));
+
+    // Send map update separately
+    const checksum = calculateMapChecksum(newMapData);
+    const mapUpdateMessage: SocketMessage<MapUpdatePayload> = {
+      type: SOCKET_MESSAGE_TYPES.GAME_MAP_UPDATE,
+      payload: {
+        gameId,
+        mapData: newMapData,
+        checksum,
+      },
+    };
+    broadcastToGame(gameId, JSON.stringify(mapUpdateMessage));
+    console.log(`[DEBUG] Sent map update to game ${gameId} with checksum ${checksum}`);
 
     console.log(`[DEBUG] Map regenerated for game ${gameId}`);
     res.json({ message: 'Map regenerated successfully.' });

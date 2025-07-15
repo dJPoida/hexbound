@@ -1,15 +1,17 @@
 import { RedisJSON } from '@redis/json/dist/commands';
 
 import { SOCKET_MESSAGE_TYPES } from '../shared/constants/socket.const';
-import { Player } from '../shared/types/game.types';
+import { MapData, Player } from '../shared/types/game.types';
 import {
   AuthenticatedWebSocket,
   ClientGameStatePayload,
   EndTurnPayload,
+  MapUpdatePayload,
   ServerGameState,
   SocketMessage,
   TurnAction,
 } from '../shared/types/socket.types';
+import { calculateMapChecksum } from './helpers/calculateMapChecksum.helper';
 import { toClientState } from './helpers/clientState.helper';
 import { getPlayerTurnPreview } from './helpers/gameState.helper';
 import redisClient from './redisClient';
@@ -102,8 +104,22 @@ async function handleClientReady(ws: AuthenticatedWebSocket, payload: GameIdPayl
     return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: `Game state not found for game ${gameId}.` } }));
   }
 
+  // Send game state (without map data)
   const stateToSend = toClientState(gameState);
   ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE, payload: stateToSend }));
+
+  // Send map data separately to this specific client
+  const checksum = calculateMapChecksum(gameState.mapData);
+  const mapUpdateMessage: SocketMessage<MapUpdatePayload> = {
+    type: SOCKET_MESSAGE_TYPES.GAME_MAP_UPDATE,
+    payload: {
+      gameId,
+      mapData: gameState.mapData,
+      checksum,
+    },
+  };
+  ws.send(JSON.stringify(mapUpdateMessage));
+  console.log(`[ClientReady] Sent map update to client ${userId} for game ${gameId} with checksum ${checksum}`);
 }
 
 async function handleIncrementCounter(ws: AuthenticatedWebSocket, payload: GameIdPayload) {
@@ -212,4 +228,21 @@ async function handleEndTurn(ws: AuthenticatedWebSocket, payload: EndTurnPayload
     },
   };
   broadcastToGame(gameId, JSON.stringify(turnEndedMessage));
+}
+
+/**
+ * Sends a map update to all players in a game
+ */
+function sendMapUpdate(gameId: string, mapData: MapData) {
+  const checksum = calculateMapChecksum(mapData);
+  const mapUpdateMessage: SocketMessage<MapUpdatePayload> = {
+    type: SOCKET_MESSAGE_TYPES.GAME_MAP_UPDATE,
+    payload: {
+      gameId,
+      mapData,
+      checksum,
+    },
+  };
+  broadcastToGame(gameId, JSON.stringify(mapUpdateMessage));
+  console.log(`[MapUpdate] Sent map update to game ${gameId} with checksum ${checksum}`);
 } 

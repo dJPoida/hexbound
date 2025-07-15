@@ -60,7 +60,10 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
     // Handle game navigation
     if (path.startsWith('/game/') && gameData) {
       setCurrentGameId(gameData.gameId);
-      socketService.connect(gameData.gameId);
+      // Only connect if we're not already connected to this game
+      if (!socketService.isConnectedToGame(gameData.gameId)) {
+        socketService.connect(gameData.gameId);
+      }
       window.history.pushState({ gameId: gameData.gameId }, '', path);
     } else {
       // Handle non-game navigation (lobby, utils, styleguide)

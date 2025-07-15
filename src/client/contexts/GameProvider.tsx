@@ -175,7 +175,8 @@ export const GameProvider = ({ children }: GameProviderProps) => {
 
     const handleMapUpdate = (payload: MapUpdatePayload) => {
       console.log('[GameProvider] Received map update:', payload);
-      if (payload.gameId === currentGameId) {
+      // Accept map data if it matches current game or if no current game is set (initial connection)
+      if (!currentGameId || payload.gameId === currentGameId) {
         updateMapData(payload.mapData, payload.checksum);
       }
     };
@@ -191,7 +192,7 @@ export const GameProvider = ({ children }: GameProviderProps) => {
       socketService.off('game:counter_update', handleCounterUpdate);
       socketService.off('game:turn_ended', handleTurnEnded);
     };
-  }, [isLoggedIn]);
+  }, [isLoggedIn, currentGameId]);
 
   // Game list polling
   useEffect(() => {

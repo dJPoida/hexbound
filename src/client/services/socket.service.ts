@@ -22,6 +22,12 @@ class SocketService {
   }
 
   public connect(gameId: string) {
+    // Prevent duplicate connections to the same game
+    if (this.lastGameId === gameId && this.socket && this.socket.readyState === WebSocket.OPEN) {
+      console.log(`[SocketService] Already connected to game ${gameId}, skipping duplicate connection`);
+      return;
+    }
+
     this.lastGameId = gameId;
     this.isManuallyClosed = false;
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
@@ -145,6 +151,10 @@ class SocketService {
     if (index > -1) {
       this.statusHandlers.splice(index, 1);
     }
+  }
+
+  public isConnectedToGame(gameId: string): boolean {
+    return this.lastGameId !== null && this.lastGameId === gameId && this.socket !== null && this.socket.readyState === WebSocket.OPEN;
   }
 
   public disconnect() {
