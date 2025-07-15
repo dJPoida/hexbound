@@ -2,6 +2,7 @@ import { h } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 
 import { ClientGameStatePayload } from '../../../../shared/types/socket.types';
+import { useGame } from '../../../contexts/GameProvider';
 import { renderingService } from '../../../services/rendering.service';
 import styles from './Viewport.module.css';
 
@@ -14,33 +15,34 @@ interface ViewportProps {
 
 export function Viewport({ pixiContainerId, gameState, currentPlayerId, onReady }: ViewportProps) {
   const pixiContainerRef = useRef<HTMLDivElement>(null);
+  const { mapData, mapChecksum } = useGame();
 
   // This effect handles initialization when game changes.
   useEffect(() => {
     const container = pixiContainerRef.current;
-    if (container && gameState && currentPlayerId) {
+    if (container && gameState && currentPlayerId && mapData) {
       const init = async () => {
         // Always destroy any existing rendering service before initializing new game
         renderingService.destroy();
         
-        await renderingService.initialize(container, gameState, currentPlayerId);
+        await renderingService.initialize(container, gameState, mapData, currentPlayerId);
         // We only call update and fade-in *after* initialization is complete.
-        renderingService.updateMap(gameState.mapData);
+        renderingService.updateMap(mapData);
         if (onReady) {
           onReady();
         }
       };
       init();
     }
-  }, [gameState?.gameId, currentPlayerId]); // Updated dependencies - track gameId specifically
+  }, [gameState?.gameId, currentPlayerId, mapChecksum]); // Updated dependencies - track gameId and mapChecksum
 
   // This effect handles map data updates for the same game.
   useEffect(() => {
-    if (gameState?.mapData) {
-      console.log(`[Viewport] Map data updated, calling renderingService.updateMap() for ${gameState.mapData.width}x${gameState.mapData.height} map`);
-      renderingService.updateMap(gameState.mapData);
+    if (mapData) {
+      console.log(`[Viewport] Map data updated, calling renderingService.updateMap() for ${mapData.width}x${mapData.height} map`);
+      renderingService.updateMap(mapData);
     }
-  }, [gameState?.mapData]); // Track mapData changes specifically
+  }, [mapChecksum]); // Track mapChecksum changes for efficiency
 
   // This effect handles cleanup when the component unmounts.
   useEffect(() => {

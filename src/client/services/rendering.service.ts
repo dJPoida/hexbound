@@ -60,7 +60,7 @@ class RenderingService {
     }
   };
 
-  public async initialize(containerElement: HTMLDivElement, gameState: ClientGameStatePayload, currentUserId: string): Promise<void> {
+  public async initialize(containerElement: HTMLDivElement, gameState: ClientGameStatePayload, mapData: MapData, currentUserId: string): Promise<void> {
     if (this.app) {
       return this.isInitialized ?? Promise.resolve();
     }
@@ -83,9 +83,9 @@ class RenderingService {
     containerElement.appendChild(app.canvas);
 
     // --- Create Viewport ---
-    const singleMapWidth = gameState.mapData.width * HEX_WIDTH * 0.75;
+    const singleMapWidth = mapData.width * HEX_WIDTH * 0.75;
     const worldWidth = singleMapWidth * 3;
-    const trueWorldHeight = (gameState.mapData.height * HEX_HEIGHT) + (HEX_HEIGHT / 2);
+    const trueWorldHeight = (mapData.height * HEX_HEIGHT) + (HEX_HEIGHT / 2);
     
     // Set world height to actual map height minus 3 tiles for padding (2 top, 1 bottom)
     const worldHeight = trueWorldHeight - (3 * HEX_HEIGHT);
@@ -111,7 +111,7 @@ class RenderingService {
       .clampZoom(initialZoomLimits);
 
     // --- Initialize Map Renderer ---
-    const mapRenderer = new MapRenderer(app, gameState.mapData);
+    const mapRenderer = new MapRenderer(app, mapData);
     this.mapRenderer = mapRenderer;
     await mapRenderer.loadAssets();
     viewport.addChild(mapRenderer.stage);
@@ -124,7 +124,7 @@ class RenderingService {
       viewport.moveCenter(savedState.center.x, savedState.center.y);
     } else {
       // Find player's spawn tile and center on it
-      const spawnPosition = this.findPlayerSpawnPosition(gameState, currentUserId);
+      const spawnPosition = this.findPlayerSpawnPosition(gameState, mapData, currentUserId);
       if (spawnPosition) {
         viewport.moveCenter(spawnPosition.x + singleMapWidth, spawnPosition.y);
         console.log(`[RenderingService] Centered map on player spawn at (${spawnPosition.x}, ${spawnPosition.y})`);
@@ -255,8 +255,8 @@ class RenderingService {
   /**
    * Find the pixel position of a player's spawn tile
    */
-  private findPlayerSpawnPosition(gameState: ClientGameStatePayload, currentUserId: string): { x: number; y: number } | null {
-    const spawnTiles = gameState.mapData.tiles.filter(tile => tile.playerSpawn !== undefined);
+  private findPlayerSpawnPosition(gameState: ClientGameStatePayload, mapData: MapData, currentUserId: string): { x: number; y: number } | null {
+    const spawnTiles = mapData.tiles.filter(tile => tile.playerSpawn !== undefined);
     
     if (spawnTiles.length === 0) {
       console.warn('[RenderingService] No spawn tiles found in map data');

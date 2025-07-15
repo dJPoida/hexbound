@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { API_ROUTES } from '../../../../shared/constants/api.const';
 import { TerrainType } from '../../../../shared/types/game.types';
 import { ClientGameStatePayload } from '../../../../shared/types/socket.types';
+import { useGame } from '../../../contexts/GameProvider';
 import { authenticatedFetch } from '../../../services/api.service';
-import { socketService } from '../../../services/socket.service';
 import { StyleColor } from '../../../types/styleColor.type';
 import { Button, ButtonVariant } from '../../ui/Button';
 import { Dialog, DialogSize } from '../../ui/Dialog';
@@ -58,6 +58,7 @@ const loadDevToolsState = (): DevToolsState => {
 
 export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
   const savedState = loadDevToolsState();
+  const { mapData, mapChecksum } = useGame();
   const [activeTab, setActiveTab] = useState<DevToolsTab>(savedState.activeTab);
   const [fps, setFps] = useState<number>(0);
   const [scrollPositions, setScrollPositions] = useState<Partial<Record<DevToolsTab, number>>>(savedState.scrollPositions);
@@ -93,12 +94,12 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
     }
   }, [activeTab]);
 
-  // Re-enable regenerate button when game state updates
+  // Re-enable regenerate button when map data updates
   useEffect(() => {
     if (isRegeneratingMap) {
       setIsRegeneratingMap(false);
     }
-  }, [gameState.mapData]);
+  }, [mapChecksum]);
 
   // FPS monitoring
   useEffect(() => {
@@ -132,7 +133,17 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
 
   // Calculate map statistics
   const calculateMapStats = () => {
-    const { mapData } = gameState;
+    if (!mapData) {
+      return {
+        totalTiles: 0,
+        terrainCounts: {} as Record<TerrainType, number>,
+        terrainPercentages: {} as Record<TerrainType, number>,
+        elevationCounts: {} as Record<number, number>,
+        spawnCount: 0,
+        elevationRange: { min: 0, max: 0 }
+      };
+    }
+
     const terrainCounts = {} as Record<TerrainType, number>;
     const elevationCounts = {} as Record<number, number>;
     let spawnCount = 0;
@@ -199,11 +210,11 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
 
   // Log when map data changes (for debugging regeneration)
   useEffect(() => {
-    if (gameState.mapData) {
-      console.log(`[DevTools] Map data updated: ${gameState.mapData.width}x${gameState.mapData.height}, ${gameState.mapData.tiles.length} tiles`);
+    if (mapData) {
+      console.log(`[DevTools] Map data updated: ${mapData.width}x${mapData.height}, ${mapData.tiles.length} tiles`);
       setLastMapUpdate(new Date());
     }
-  }, [gameState.mapData]);
+  }, [mapChecksum]);
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -245,10 +256,10 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
                 <div className={styles.statSection}>
                   <Heading level={4} variant="subSectionHeader">Map Data</Heading>
                   <div className={styles.statItem}>
-                    <strong>Dimensions:</strong> {gameState.mapData.width} × {gameState.mapData.height}
+                    <strong>Dimensions:</strong> {mapData ? `${mapData.width} × ${mapData.height}` : 'Not loaded'}
                   </div>
                   <div className={styles.statItem}>
-                    <strong>Total Tiles:</strong> {gameState.mapData.tiles.length}
+                    <strong>Total Tiles:</strong> {mapData ? mapData.tiles.length : 0}
                   </div>
                   <div className={styles.statItem}>
                     <strong>Data Size:</strong> {Math.round(gameStateJson.length / 1024)} KB
@@ -286,7 +297,7 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
               <div className={styles.statSection}>
                 <Heading level={4} variant="subSectionHeader">Map Overview</Heading>
                 <div className={styles.statItem}>
-                  <strong>Dimensions:</strong> {gameState.mapData.width} × {gameState.mapData.height}
+                  <strong>Dimensions:</strong> {mapData ? `${mapData.width} × ${mapData.height}` : 'Not loaded'}
                 </div>
                 <div className={styles.statItem}>
                   <strong>Total Tiles:</strong> {mapStats.totalTiles}
@@ -357,7 +368,7 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
                  <strong>Visible Tiles:</strong> Dynamic (based on viewport)
                </div>
                <div className={styles.statItem}>
-                 <strong>Total Sprites:</strong> {gameState.mapData.tiles.length * 3} (3 copies per tile)
+                 <strong>Total Sprites:</strong> {mapData ? mapData.tiles.length * 3 : 0} (3 copies per tile)
                </div>
                <div className={styles.statItem}>
                  <strong>Browser:</strong> {navigator.userAgent.split(' ')[0]}
