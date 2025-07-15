@@ -12,7 +12,6 @@ import { UserLoginView } from './components/views/UserLoginView/UserLoginView';
 import { 
   AuthProvider, 
   DialogProvider, 
-  type DialogType,
   GameProvider, 
   NavigationProvider, 
   NotificationProvider,

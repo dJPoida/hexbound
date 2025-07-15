@@ -16,7 +16,7 @@ import { toClientState } from './helpers/clientState.helper';
 import { getPlayerTurnPreview } from './helpers/gameState.helper';
 import redisClient from './redisClient';
 import { pushService } from './services/push.service';
-import { broadcastToGame, isUserOnline, isUserViewingGame, removeActiveGameView, setActiveGameView, subscribe } from './socketSubscriptionManager';
+import { broadcastToGame, isUserViewingGame, removeActiveGameView, setActiveGameView, subscribe } from './socketSubscriptionManager';
 
 // A simple type guard to check if a message is a valid SocketMessage
 function isValidSocketMessage(msg: unknown): msg is SocketMessage<unknown> {
@@ -228,21 +228,4 @@ async function handleEndTurn(ws: AuthenticatedWebSocket, payload: EndTurnPayload
     },
   };
   broadcastToGame(gameId, JSON.stringify(turnEndedMessage));
-}
-
-/**
- * Sends a map update to all players in a game
- */
-function sendMapUpdate(gameId: string, mapData: MapData) {
-  const checksum = calculateMapChecksum(mapData);
-  const mapUpdateMessage: SocketMessage<MapUpdatePayload> = {
-    type: SOCKET_MESSAGE_TYPES.GAME_MAP_UPDATE,
-    payload: {
-      gameId,
-      mapData,
-      checksum,
-    },
-  };
-  broadcastToGame(gameId, JSON.stringify(mapUpdateMessage));
-  console.log(`[MapUpdate] Sent map update to game ${gameId} with checksum ${checksum}`);
 } 

@@ -57,16 +57,4 @@ export interface MapData {
   width: number;
   height: number;
   tiles: TileData[];
-}
-
-// --- Client Game State ---
-
-export type GameState = {
-  gameId: string;
-  gameCode: string;
-  players: Player[];
-  status: GameStatus;
-  map: MapData;
-  // Note: This will be expanded with more state properties like currentTurn,
-  // currentPlayerId, etc. as we build out features.
-}; 
+} 

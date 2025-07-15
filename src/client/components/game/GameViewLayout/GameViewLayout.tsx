@@ -20,7 +20,6 @@ interface GameViewLayoutProps {
   onEndTurn: () => void;
   onPushDialog: (dialog: DialogType) => void;
   isMyTurn: boolean;
-  currentUserName: string | null;
   currentUserId: string | null;
   dialog: h.JSX.Element | null;
 }
@@ -32,7 +31,6 @@ export function GameViewLayout({
   onEndTurn,
   onPushDialog,
   isMyTurn,
-  currentUserName,
   currentUserId,
   dialog
 }: GameViewLayoutProps) {

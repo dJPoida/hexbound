@@ -1,11 +1,11 @@
 import * as PIXI from 'pixi.js';
-import { IViewportOptions,Viewport as PixiViewport } from 'pixi-viewport';
+import { IViewportOptions, Viewport as PixiViewport } from 'pixi-viewport';
 
 import { HEX_HEIGHT, HEX_WIDTH, MAX_TILES_ON_SCREEN, MIN_TILES_ON_SCREEN } from '../../shared/constants/map.const';
 import { MapData } from '../../shared/types/game.types';
 import { ClientGameStatePayload } from '../../shared/types/socket.types';
 import { MapRenderer } from '../rendering/MapRenderer';
-import { gameStateService,GameViewportState } from './gameState.service';
+import { gameStateService, GameViewportState } from './gameState.service';
 import { settingsService } from './settings.service';
 
 class RenderingService {
@@ -286,10 +286,20 @@ class RenderingService {
     // Clean up PixiJS application last
     if (this.app) {
       try {
-        // Use the correct destroy parameters for PixiJS v8
+        // Unload all assets first to prevent texture warnings
+        const textureKeys = ['tile_grassland', 'tile_ocean', 'tile_icecap', 'hex_outline', 'hex_selected'];
+        for (const key of textureKeys) {
+          try {
+            PIXI.Assets.unload(key);
+          } catch (error) {
+            // Ignore errors if texture wasn't loaded
+            console.debug(`[RenderingService] Could not unload texture ${key}:`, error);
+          }
+        }
+        
+        // Use the correct destroy parameters for PixiJS v8 (without texture: true)
         this.app.destroy(true, { 
-          children: true, 
-          texture: true
+          children: true
         });
         console.log('[RenderingService] PixiJS application destroyed successfully');
       } catch (error) {
