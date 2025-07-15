@@ -1,6 +1,7 @@
 export const SOCKET_MESSAGE_TYPES = {
   // Server-to-Client
   GAME_STATE_UPDATE: 'game:state_update',
+  GAME_MAP_UPDATE: 'game:map_update',
   GAME_COUNTER_UPDATE: 'game:counter_update',
   GAME_TURN_ENDED: 'game:turn_ended',
   GAME_PLAYER_JOINED: 'game:player_joined',

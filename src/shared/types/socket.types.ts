@@ -62,17 +62,23 @@ export interface ServerGameState {
 }
 
 // The game state payload that is sent to the client.
-// It omits server-only fields like the turn action log.
+// It omits server-only fields like the turn action log and map data.
 export interface ClientGameStatePayload {
   gameId: string;
   gameCode: string;
   turnNumber: number;
   currentPlayerId: string;
   players: Player[];
-  mapData: MapData;
   gameState: {
     placeholderCounter: number;
   };
+}
+
+// Map update payload sent separately from game state
+export interface MapUpdatePayload {
+  gameId: string;
+  mapData: MapData;
+  checksum: string;
 }
 
 // A smaller, more frequent update
