@@ -55,7 +55,7 @@ export function GameViewLayout({
     <ActionBar>
       <div>
         {settings.showDebugInfo && (
-                  <Button onClick={() => onPushDialog('debugInfo')} variant={ButtonVariant.ICON} ariaLabel="Show Debug Info">
+                  <Button onClick={() => onPushDialog('debugInfo')} variant={ButtonVariant.ICON} color={StyleColor.DEFAULT} ariaLabel="Show Debug Info">
           <Icon name="terminal" color={StyleColor.WHITE} />
         </Button>
         )}

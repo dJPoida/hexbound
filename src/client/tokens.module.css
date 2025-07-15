@@ -187,7 +187,7 @@
   --shadow-strong: rgba(0, 0, 0, 0.2);
   
   /* Text Shadows */
-  --text-shadow-dark: rgba(0, 0, 0, 0.5);
+  --text-shadow-dark: rgba(0, 0, 0, 0.25);
   --text-shadow-light: rgba(255, 255, 255, 0.2);
   
   /* Common Shadow Combinations */
