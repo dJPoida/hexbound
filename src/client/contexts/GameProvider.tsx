@@ -1,8 +1,8 @@
 import { ComponentChildren, createContext } from 'preact';
 import { useContext, useEffect, useState } from 'preact/hooks';
 
-import { GameListItem } from '../../shared/types/game.types';
-import { ClientGameStatePayload, GameTurnEndedPayload } from '../../shared/types/socket.types';
+import { GameListItem, MapData } from '../../shared/types/game.types';
+import { ClientGameStatePayload, GameTurnEndedPayload, MapUpdatePayload } from '../../shared/types/socket.types';
 import { authenticatedFetch } from '../services/api.service';
 import { socketService } from '../services/socket.service';
 import { useAuth } from './AuthProvider';
@@ -12,6 +12,8 @@ interface GameContextType {
   myGames: GameListItem[];
   currentGameId: string | null;
   gameState: ClientGameStatePayload | null;
+  mapData: MapData | null;
+  mapChecksum: string | null;
   isGameLoaded: boolean;
 
   // Actions
@@ -20,6 +22,7 @@ interface GameContextType {
   joinGame: (gameCode: string) => Promise<{ gameId: string; gameCode: string } | null>;
   setCurrentGameId: (gameId: string | null) => void;
   setGameLoaded: (loaded: boolean) => void;
+  updateMapData: (mapData: MapData | null, checksum: string | null) => void;
   incrementCounter: () => void;
   endTurn: () => void;
 }
@@ -43,6 +46,8 @@ export const GameProvider = ({ children }: GameProviderProps) => {
   const [myGames, setMyGames] = useState<GameListItem[]>([]);
   const [currentGameId, setCurrentGameId] = useState<string | null>(null);
   const [gameState, setGameState] = useState<ClientGameStatePayload | null>(null);
+  const [mapData, setMapData] = useState<MapData | null>(null);
+  const [mapChecksum, setMapChecksum] = useState<string | null>(null);
   const [isGameLoaded, setIsGameLoaded] = useState(false);
 
   // Fetch user's games
@@ -121,6 +126,19 @@ export const GameProvider = ({ children }: GameProviderProps) => {
     setIsGameLoaded(loaded);
   };
 
+  const updateCurrentGameId = (gameId: string | null) => {
+    setCurrentGameId(gameId);
+    // Clear map data when leaving a game
+    if (!gameId) {
+      updateMapData(null, null);
+    }
+  };
+
+  const updateMapData = (newMapData: MapData | null, newChecksum: string | null) => {
+    setMapData(newMapData);
+    setMapChecksum(newChecksum);
+  };
+
   // Socket event handlers
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -155,12 +173,21 @@ export const GameProvider = ({ children }: GameProviderProps) => {
       });
     };
 
+    const handleMapUpdate = (payload: MapUpdatePayload) => {
+      console.log('[GameProvider] Received map update:', payload);
+      if (payload.gameId === currentGameId) {
+        updateMapData(payload.mapData, payload.checksum);
+      }
+    };
+
     socketService.on('game:state_update', handleGameStateUpdate);
+    socketService.on('game:map_update', handleMapUpdate);
     socketService.on('game:counter_update', handleCounterUpdate);
     socketService.on('game:turn_ended', handleTurnEnded);
 
     return () => {
       socketService.off('game:state_update', handleGameStateUpdate);
+      socketService.off('game:map_update', handleMapUpdate);
       socketService.off('game:counter_update', handleCounterUpdate);
       socketService.off('game:turn_ended', handleTurnEnded);
     };
@@ -184,12 +211,15 @@ export const GameProvider = ({ children }: GameProviderProps) => {
     myGames,
     currentGameId,
     gameState,
+    mapData,
+    mapChecksum,
     isGameLoaded,
     fetchMyGames,
     createNewGame,
     joinGame,
-    setCurrentGameId,
+    setCurrentGameId: updateCurrentGameId,
     setGameLoaded,
+    updateMapData,
     incrementCounter,
     endTurn,
   };
