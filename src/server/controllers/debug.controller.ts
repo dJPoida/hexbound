@@ -1,0 +1,75 @@
+import { RedisJSON } from '@redis/json/dist/commands';
+import { Response } from 'express';
+
+import { SOCKET_MESSAGE_TYPES } from '../../shared/constants/socket.const';
+import { ServerGameState, SocketMessage } from '../../shared/types/socket.types';
+import config from '../config';
+import { AppDataSource } from '../data-source';
+import { Game } from '../entities/Game.entity';
+import { MapGenerator } from '../helpers/mapGenerator';
+import { AuthenticatedRequest } from '../middleware/auth.middleware';
+import redisClient from '../redisClient';
+import { broadcastToGame } from '../socketSubscriptionManager';
+
+export const regenerateMap = async (req: AuthenticatedRequest, res: Response) => {
+  const { gameId } = req.body;
+
+  if (!gameId) {
+    return res.status(400).json({ message: 'Game ID is required.' });
+  }
+
+  try {
+    // Get the game from the database
+    const gameRepository = AppDataSource.getRepository(Game);
+    const game = await gameRepository
+      .createQueryBuilder("game")
+      .leftJoinAndSelect("game.status", "status")
+      .leftJoinAndSelect("game.players", "player")
+      .where("game.gameId = :gameId", { gameId })
+      .getOne();
+
+    if (!game) {
+      return res.status(404).json({ message: 'Game not found.' });
+    }
+
+    // Get the current game state from Redis
+    const gameStateKey = `game:${gameId}`;
+    const gameState = await redisClient.json.get(gameStateKey) as ServerGameState;
+
+    if (!gameState) {
+      return res.status(404).json({ message: 'Game state not found.' });
+    }
+
+    // Check if it's turn 1
+    if (gameState.turnNumber !== 1) {
+      return res.status(400).json({ message: 'Map regeneration is only allowed on turn 1.' });
+    }
+
+    // Generate a new map
+    const mapGenerator = new MapGenerator(config.map.defaultWidth, config.map.defaultHeight, undefined, undefined, game.players.length);
+    const newMapData = mapGenerator.generate();
+
+    // Update the game state with the new map
+    const updatedGameState: ServerGameState = {
+      ...gameState,
+      mapData: newMapData
+    };
+
+    // Save the updated game state to Redis
+    await redisClient.json.set(gameStateKey, '.', updatedGameState as RedisJSON);
+
+    // Broadcast the updated game state to all clients
+    const gameStateMessage: SocketMessage<ServerGameState> = {
+      type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE,
+      payload: updatedGameState
+    };
+
+    broadcastToGame(gameId, JSON.stringify(gameStateMessage));
+
+    console.log(`[DEBUG] Map regenerated for game ${gameId}`);
+    res.json({ message: 'Map regenerated successfully.' });
+  } catch (error) {
+    console.error('[DEBUG] Error regenerating map:', error);
+    res.status(500).json({ message: 'Internal server error.' });
+  }
+}; 

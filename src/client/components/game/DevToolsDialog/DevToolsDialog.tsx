@@ -1,8 +1,10 @@
 import { h } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 
+import { API_ROUTES } from '../../../../shared/constants/api.const';
 import { TerrainType } from '../../../../shared/types/game.types';
 import { ClientGameStatePayload } from '../../../../shared/types/socket.types';
+import { authenticatedFetch } from '../../../services/api.service';
 import { socketService } from '../../../services/socket.service';
 import { StyleColor } from '../../../types/styleColor.type';
 import { Button, ButtonVariant } from '../../ui/Button';
@@ -60,6 +62,7 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
   const [fps, setFps] = useState<number>(0);
   const [scrollPositions, setScrollPositions] = useState<Partial<Record<DevToolsTab, number>>>(savedState.scrollPositions);
   const tabContentRef = useRef<HTMLDivElement>(null);
+  const [isRegeneratingMap, setIsRegeneratingMap] = useState(false);
 
   // Save state when tab changes
   const handleTabChange = (newTab: DevToolsTab) => {
@@ -88,6 +91,13 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
       tabContentRef.current.scrollTop = scrollPositions[activeTab]!;
     }
   }, [activeTab]);
+
+  // Re-enable regenerate button when game state updates
+  useEffect(() => {
+    if (isRegeneratingMap) {
+      setIsRegeneratingMap(false);
+    }
+  }, [gameState.mapData]);
 
   // FPS monitoring
   useEffect(() => {
@@ -162,6 +172,28 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
   const getConnectionStatus = () => {
     // For now, we'll show a placeholder until we can enhance the socket service
     return { text: 'Connected', color: 'var(--color-moss-green)' };
+  };
+
+  const handleRegenerateMap = async () => {
+    if (gameState.turnNumber !== 1 || isRegeneratingMap) return;
+
+    setIsRegeneratingMap(true);
+    try {
+      const response = await authenticatedFetch(API_ROUTES.DEBUG_REGENERATE_MAP, {
+        method: 'POST',
+        body: JSON.stringify({ gameId: gameState.gameId }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to regenerate map: ${response.statusText}`);
+      }
+
+      console.log('[DevTools] Map regeneration initiated');
+      // Note: Button remains disabled until game state update is received
+    } catch (error) {
+      console.error('[DevTools] Map regeneration failed:', error);
+      setIsRegeneratingMap(false); // Re-enable button on error
+    }
   };
 
   const renderTabContent = () => {
@@ -267,7 +299,7 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
                 ))}
               </div>
 
-              <div className={styles.statSection}>
+                            <div className={styles.statSection}>
                 <Heading level={4} variant="subSectionHeader">Elevation Distribution</Heading>
                 {Object.entries(mapStats.elevationCounts).map(([elevation, count]) => (
                   <div key={elevation} className={styles.statItem}>
@@ -275,9 +307,26 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
                   </div>
                 ))}
               </div>
-                         </div>
-           </div>
-         );
+
+              <div className={styles.statSection}>
+                <Heading level={4} variant="subSectionHeader">Map Generation</Heading>
+                <Button
+                  variant={ButtonVariant.STANDARD}
+                  color={StyleColor.BLUE}
+                  onClick={handleRegenerateMap}
+                  disabled={gameState.turnNumber !== 1 || isRegeneratingMap}
+                >
+                  {isRegeneratingMap ? 'Regenerating...' : 'Regenerate Map'}
+                </Button>
+                {gameState.turnNumber !== 1 && (
+                  <Text variant="caption" color="subtle">
+                    Map regeneration is only available on turn 1
+                  </Text>
+                )}
+              </div>
+            </div>
+          </div>
+        );
        }
               case DevToolsTab.PERFORMANCE:
          return (
