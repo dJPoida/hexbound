@@ -5,6 +5,7 @@ import { authService } from '../../../services/auth.service';
 import { Button, ButtonVariant } from '../../ui/Button';
 import { Input, InputType } from '../../ui/Input';
 import { Logo } from '../../ui/Logo/Logo';
+import { Text } from '../../ui/Typography/Text';
 import styles from './UserLoginView.module.css';
 
 interface UserLoginProps {
@@ -44,10 +45,12 @@ export function UserLoginView({
     <div className={styles.loginForm}>
       <form onSubmit={handleSubmit}>
         <Logo />
-        <p className={styles.loginSubtitle}>Enter your name to begin your journey.</p>
+        <Text variant="body" color="subtle" class={styles.loginSubtitle}>Enter your name to begin your journey.</Text>
         
         <div className={styles.inputGroup}>
-          <label htmlFor={userNameInputId} className={styles.label}>Player Name</label>
+          <label htmlFor={userNameInputId} className={styles.label}>
+            <Text variant="label" as="span">Player Name</Text>
+          </label>
           <Input
             type={InputType.TEXT}
             id={userNameInputId}
@@ -69,8 +72,8 @@ export function UserLoginView({
           {isLoading ? 'Logging in...' : 'Play'}
         </Button>
 
-        {error && <p className={styles.authError}>{error}</p>}
-        {isLoading && <div className={styles.loadingIndicator}>Verifying...</div>}
+        {error && <Text variant="caption" color="danger" class={styles.authError}>{error}</Text>}
+        {isLoading && <Text variant="caption" color="subtle" class={styles.loadingIndicator}>Verifying...</Text>}
       </form>
     </div>
   );

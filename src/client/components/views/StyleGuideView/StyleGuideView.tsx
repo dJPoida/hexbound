@@ -116,19 +116,11 @@ export const StyleGuideView = () => {
           <div class={styles.typographySample}>
             <Text>This is default body text.</Text>
             <Text font="bold">This is bold body text.</Text>
+            <Text variant="inline">This is inline text (no margin, for UI elements).</Text>
             <Text variant="label">This is a label.</Text>
             <Text variant="caption" color="subtle">This is a caption (or subtext).</Text>
           </div>
         </section>
-
-        <section class={styles.subSection}>
-          <Heading level={3} variant="subSectionHeader" color="subtle">Future Components (TODO)</Heading>
-          <Text color="subtle">
-            Placeholders for components we may need later.
-          </Text>
-          {/* TODO: Implement Quote and other typography components */}
-        </section>
-
       </section>
 
       <section class={styles.section}>

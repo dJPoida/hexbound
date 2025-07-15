@@ -8,6 +8,7 @@ import { AppHeader, AppHeaderView } from '../../ui/AppHeader/AppHeader';
 import { LobbyView } from '../../views/LobbyView/LobbyView';
 import { StyleGuideView } from '../../views/StyleGuideView/StyleGuideView';
 import { UtilsView } from '../../views/UtilsView/UtilsView';
+import styles from './UnifiedRouter.module.css';
 
 export interface UnifiedRouterProps {
   // App-level data
@@ -145,14 +146,14 @@ export class UnifiedRouter extends Component<UnifiedRouterProps, UnifiedRouterSt
       
       case 'utils':
         return (
-          <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', position: 'relative', boxSizing: 'border-box' }}>
+          <div className={styles.contentContainer}>
             <UtilsView />
           </div>
         );
       
       case 'styleguide':
         return (
-          <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', position: 'relative', boxSizing: 'border-box' }}>
+          <div className={styles.contentContainer}>
             <StyleGuideView />
           </div>
         );
@@ -160,7 +161,7 @@ export class UnifiedRouter extends Component<UnifiedRouterProps, UnifiedRouterSt
       case 'lobby':
       default:
         return (
-          <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', position: 'relative', boxSizing: 'border-box' }}>
+          <div className={styles.contentContainer}>
             <LobbyView 
               onNavigateToGame={onJoinGame}
               onCreateNewGame={onCreateNewGame}
@@ -179,24 +180,11 @@ export class UnifiedRouter extends Component<UnifiedRouterProps, UnifiedRouterSt
     return (
       <div className={className}>
         {this.renderHeader(routeInfo)}
-        <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+        <div className={styles.gameViewContainer}>
           {this.renderContent(routeInfo)}
         </div>
         {routeInfo.type !== 'game' && dialog && (
-          <div style={{ 
-            position: 'fixed', 
-            top: 0, 
-            left: 0, 
-            right: 0, 
-            bottom: 0, 
-            zIndex: 20, 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center', 
-            padding: '1rem', 
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            pointerEvents: 'auto'
-          }}>
+          <div className={styles.dialogOverlay}>
             {dialog}
           </div>
         )}

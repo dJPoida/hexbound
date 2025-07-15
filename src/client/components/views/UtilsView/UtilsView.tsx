@@ -4,6 +4,8 @@ import { useState } from 'preact/hooks';
 
 import { authenticatedFetch } from '../../../services/api.service';
 import { Button, ButtonVariant } from '../../ui/Button';
+import { Heading } from '../../ui/Typography/Heading';
+import { Text } from '../../ui/Typography/Text';
 import styles from './UtilsView.module.css';
 
 const html = htm.bind(h);
@@ -42,14 +44,14 @@ export function UtilsView() {
 
   return html`
     <div class=${styles.utilsContainer}>
-      <h1 class=${styles.title}>Developer Utilities</h1>
-      <p class=${styles.subtitle}>Use these tools to manage the development environment.</p>
+      <${Heading} level=${1} variant="pageTitle">Developer Utilities</${Heading}>
+      <${Text} variant="body">Use these tools to manage the development environment.</${Text}>
       
       <div class=${styles.card}>
-        <h2 class=${styles.cardTitle}>Game Data Management</h2>
-        <p class=${styles.cardDescription}>
+        <${Heading} level=${2} variant="sectionHeader">Game Data Management</${Heading}>
+        <${Text} variant="body">
           This will permanently delete all games, player associations, and game states from both the Postgres database and the Redis cache.
-        </p>
+        </${Text}>
         <${Button} 
           onClick=${handleResetData} 
           disabled=${isLoading}
@@ -58,8 +60,8 @@ export function UtilsView() {
           ${isLoading ? 'Resetting...' : 'Reset All Game Data'}
         </${Button}>
 
-        ${message && html`<p class=${styles.successMessage}>${message}</p>`}
-        ${error && html`<p class=${styles.errorMessage}>${error}</p>`}
+        ${message && html`<${Text} color="success">${message}</${Text}>`}
+        ${error && html`<${Text} color="danger">${error}</${Text}>`}
       </div>
     </div>
   `;

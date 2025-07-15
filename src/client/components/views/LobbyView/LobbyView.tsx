@@ -60,12 +60,14 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
               return (
                 <li key={game.gameId} className={styles.gameListItem}>
                   <div className={styles.gameInfoContainer}>
-                    <span className={styles.gameCode}>{game.gameCode.replace(/-/g, ' ')}</span>
-                    <span className={styles.playerCount}>
+                    <Text variant="label" font="bold" as="span" class={styles.gameCode}>
+                      {game.gameCode.replace(/-/g, ' ')}
+                    </Text>
+                    <Text variant="caption" color="subtle" as="span" class={styles.playerCount}>
                       {(Array.isArray(game.players) ? game.players : Object.values(game.players) as Player[])
                           .map((p) => p.userName)
                           .join(', ')}
-                    </span>
+                    </Text>
                   </div>
                   {isMyTurn && (
                     <Button 

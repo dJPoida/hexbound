@@ -8,10 +8,13 @@ const textStyles = cva(styles.text, {
       body: styles.body,
       caption: styles.caption,
       label: styles.label,
+      inline: styles.inline,
     },
     color: {
       default: styles.defaultColor,
       subtle: styles.subtleColor,
+      success: styles.successColor,
+      danger: styles.dangerColor,
     },
     font: {
       normal: styles.fontNormal,

@@ -36,6 +36,14 @@
   margin-bottom: var(--space-xs);
 }
 
+.inline {
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-normal);
+  font-size: var(--font-size-lg);
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
 /* ==========================================================================
    Heading Variants
    ========================================================================== */
@@ -77,6 +85,14 @@
 
 .brandColor {
   color: var(--color-hex-amber);
+}
+
+.successColor {
+  color: var(--color-moss-green);
+}
+
+.dangerColor {
+  color: var(--color-clay-red);
 }
 
 /* ==========================================================================

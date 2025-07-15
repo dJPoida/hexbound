@@ -1,0 +1,32 @@
+/* src/client/components/framework/UnifiedRouter/UnifiedRouter.module.css */
+
+.contentContainer {
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.gameViewContainer {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.dialogOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-md);
+  background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+} 

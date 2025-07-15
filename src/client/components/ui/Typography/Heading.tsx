@@ -14,6 +14,8 @@ const headingStyles = cva(styles.heading, {
       default: styles.defaultColor,
       subtle: styles.subtleColor,
       brand: styles.brandColor,
+      success: styles.successColor,
+      danger: styles.dangerColor,
     },
   },
   defaultVariants: {

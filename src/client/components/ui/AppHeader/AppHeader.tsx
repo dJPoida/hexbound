@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { StyleColor } from '../../../types/styleColor.type';
 import { Button, ButtonVariant } from '../Button';
 import { Icon } from '../Icon/Icon';
+import { Text } from '../Typography/Text';
 import styles from './AppHeader.module.css';
 
 export enum AppHeaderView {
@@ -77,15 +78,15 @@ export function AppHeader({
       <div className={styles.resources}>
         <div className={styles.resourceItem}>
           <Icon name="dollar-sign" />
-          <span>1,234</span>
+          <Text variant="label" font="bold" as="span">1,234</Text>
         </div>
         <div className={styles.resourceItem}>
           <Icon name="award" />
-          <span>567</span>
+          <Text variant="label" font="bold" as="span">567</Text>
         </div>
         <div className={styles.resourceItem}>
           <Icon name="smile" />
-          <span>{counter ?? 0}</span>
+          <Text variant="label" font="bold" as="span">{counter ?? 0}</Text>
           {onToggleCounterDialog && (
             <Button 
               onClick={onToggleCounterDialog} 
@@ -105,7 +106,7 @@ export function AppHeader({
       ? `${currentUserName} (Turn: ${turnNumber})`
       : currentUserName;
     
-    return <span className={styles.userInfo}>{userText}</span>;
+    return <Text variant="inline" as="span" class={styles.userInfo}>{userText}</Text>;
   };
 
   const renderMenuItems = () => {
@@ -116,7 +117,7 @@ export function AppHeader({
       items.push(
         <button key="settings" className={styles.menuItem} onClick={() => { onOpenSettings(); closeMenu(); }}>
           <Icon name="settings" />
-          <span>Game Settings</span>
+          <Text variant="inline" as="span">Game Settings</Text>
         </button>
       );
 
@@ -124,7 +125,7 @@ export function AppHeader({
         items.push(
           <button key="copy-link" className={styles.menuItem} onClick={() => { onCopyGameLink(); closeMenu(); }}>
             <Icon name="link" />
-            <span>{copyLinkStatus === 'copied' ? 'Link Copied!' : 'Copy Game Link'}</span>
+            <Text variant="inline" as="span">{copyLinkStatus === 'copied' ? 'Link Copied!' : 'Copy Game Link'}</Text>
           </button>
         );
       }
@@ -132,7 +133,7 @@ export function AppHeader({
       items.push(
         <button key="lobby" className={styles.menuItem} onClick={() => { onNavigate('/'); closeMenu(); }}>
           <Icon name="exit" />
-          <span>Return to Lobby</span>
+          <Text variant="inline" as="span">Return to Lobby</Text>
         </button>
       );
     } else {
@@ -141,7 +142,7 @@ export function AppHeader({
         items.push(
           <button key="lobby" className={styles.menuItem} onClick={() => { onNavigate('/'); closeMenu(); }}>
             <Icon name="home" />
-            <span>Lobby</span>
+            <Text variant="inline" as="span">Lobby</Text>
           </button>
         );
       }
@@ -150,7 +151,7 @@ export function AppHeader({
         items.push(
           <button key="styleguide" className={styles.menuItem} onClick={() => { onNavigate('/styleguide'); closeMenu(); }}>
             <Icon name="eye" />
-            <span>Style Guide</span>
+            <Text variant="inline" as="span">Style Guide</Text>
           </button>
         );
       }
@@ -159,7 +160,7 @@ export function AppHeader({
         items.push(
           <button key="utils" className={styles.menuItem} onClick={() => { onNavigate('/utils'); closeMenu(); }}>
             <Icon name="terminal" />
-            <span>Utils</span>
+            <Text variant="inline" as="span">Utils</Text>
           </button>
         );
       }
@@ -167,15 +168,15 @@ export function AppHeader({
       items.push(
         <button key="settings" className={styles.menuItem} onClick={() => { onOpenSettings(); closeMenu(); }}>
           <Icon name="settings" />
-          <span>Game Settings</span>
+          <Text variant="inline" as="span">Game Settings</Text>
         </button>
       );
 
       items.push(
-        <button key="logout" className={styles.menuItem} onClick={() => { onLogout(); closeMenu(); }}>
-          <Icon name="exit" />
-          <span>Logout</span>
-        </button>
+              <button key="logout" className={styles.menuItem} onClick={() => { onLogout(); closeMenu(); }}>
+        <Icon name="exit" />
+        <Text variant="inline" as="span">Logout</Text>
+      </button>
       );
     }
 
