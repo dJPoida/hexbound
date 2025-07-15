@@ -40,7 +40,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-  overflow: hidden;
+  overflow-y: auto;
   min-width: 0; /* Allow flexbox to shrink */
   min-height: 0; /* Allow flexbox to shrink */
 }
@@ -186,14 +186,30 @@
   .gameStateLayout {
     flex-direction: column;
     gap: var(--space-md);
+    height: auto;
   }
   
   .gameStateStats {
     flex: 0 0 auto;
-    max-height: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    overflow-y: visible;
   }
   
   .gameStateJson {
-    flex: 1;
+    flex: 0 0 auto;
+  }
+  
+  .gameStateJson .statSection {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .gameStateJson .debugContent {
+    flex: 0 0 auto;
+    height: 80vh;
+    min-height: 80vh;
   }
 } 

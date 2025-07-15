@@ -150,6 +150,12 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
                   <div className={styles.statItem}>
                     <strong>Data Size:</strong> {Math.round(gameStateJson.length / 1024)} KB
                   </div>
+                </div>
+              </div>
+              
+              <div className={styles.gameStateJson}>
+                <div className={styles.statSection}>
+                  <Heading level={4} variant="subSectionHeader">Complete Game State (JSON)</Heading>
                   <Button
                     variant={ButtonVariant.STANDARD}
                     color={StyleColor.BLUE}
@@ -159,12 +165,7 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
                   >
                     Copy Full JSON
                   </Button>
-                </div>
-              </div>
-              
-              <div className={styles.gameStateJson}>
-                <div className={styles.statSection}>
-                  <Heading level={4} variant="subSectionHeader">Complete Game State (JSON)</Heading>
+
                   <div className={styles.debugContent}>
                     <pre>{gameStateJson}</pre>
                   </div>
