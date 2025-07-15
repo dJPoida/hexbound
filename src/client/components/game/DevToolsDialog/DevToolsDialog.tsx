@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 
 import { TerrainType } from '../../../../shared/types/game.types';
 import { ClientGameStatePayload } from '../../../../shared/types/socket.types';
@@ -23,9 +23,71 @@ interface DevToolsDialogProps {
   onClose: () => void;
 }
 
+const DEV_TOOLS_STORAGE_KEY = 'devTools_state';
+
+interface DevToolsState {
+  activeTab: DevToolsTab;
+  scrollPositions: Partial<Record<DevToolsTab, number>>;
+}
+
+const saveDevToolsState = (state: DevToolsState) => {
+  try {
+    localStorage.setItem(DEV_TOOLS_STORAGE_KEY, JSON.stringify(state));
+  } catch (error) {
+    console.warn('Failed to save dev tools state to localStorage:', error);
+  }
+};
+
+const loadDevToolsState = (): DevToolsState => {
+  try {
+    const saved = localStorage.getItem(DEV_TOOLS_STORAGE_KEY);
+    if (saved) {
+      return JSON.parse(saved);
+    }
+  } catch (error) {
+    console.warn('Failed to load dev tools state from localStorage:', error);
+  }
+  
+  return {
+    activeTab: DevToolsTab.GAME_STATE,
+    scrollPositions: {}
+  };
+};
+
 export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
-  const [activeTab, setActiveTab] = useState<DevToolsTab>(DevToolsTab.GAME_STATE);
+  const savedState = loadDevToolsState();
+  const [activeTab, setActiveTab] = useState<DevToolsTab>(savedState.activeTab);
   const [fps, setFps] = useState<number>(0);
+  const [scrollPositions, setScrollPositions] = useState<Partial<Record<DevToolsTab, number>>>(savedState.scrollPositions);
+  const tabContentRef = useRef<HTMLDivElement>(null);
+
+  // Save state when tab changes
+  const handleTabChange = (newTab: DevToolsTab) => {
+    // Save current scroll position before changing tabs
+    if (tabContentRef.current) {
+      setScrollPositions(prev => ({
+        ...prev,
+        [activeTab]: tabContentRef.current!.scrollTop
+      }));
+    }
+    
+    setActiveTab(newTab);
+  };
+
+  // Save state to localStorage when state changes
+  useEffect(() => {
+    saveDevToolsState({
+      activeTab,
+      scrollPositions
+    });
+  }, [activeTab, scrollPositions]);
+
+  // Restore scroll position when tab changes
+  useEffect(() => {
+    if (tabContentRef.current && scrollPositions[activeTab] !== undefined) {
+      tabContentRef.current.scrollTop = scrollPositions[activeTab]!;
+    }
+  }, [activeTab]);
 
   // FPS monitoring
   useEffect(() => {
@@ -107,7 +169,7 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
       case DevToolsTab.GAME_STATE: {
         const gameStateJson = JSON.stringify(gameState, null, 2);
         return (
-          <div className={styles.tabContent}>
+          <div className={styles.tabContent} ref={tabContentRef}>
             <div className={styles.gameStateLayout}>
               <div className={styles.gameStateStats}>
                 <div className={styles.statSection}>
@@ -178,7 +240,7 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
       case DevToolsTab.MAP: {
         const mapStats = calculateMapStats();
         return (
-          <div className={styles.tabContent}>
+          <div className={styles.tabContent} ref={tabContentRef}>
             <div className={styles.statsGrid}>
               <div className={styles.statSection}>
                 <Heading level={4} variant="subSectionHeader">Map Overview</Heading>
@@ -219,7 +281,7 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
        }
               case DevToolsTab.PERFORMANCE:
          return (
-           <div className={styles.tabContent}>
+           <div className={styles.tabContent} ref={tabContentRef}>
              <div className={styles.statSection}>
                <Heading level={4} variant="subSectionHeader">Rendering Performance</Heading>
                <div className={styles.statItem}>
@@ -243,7 +305,7 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
                     case DevToolsTab.NETWORK: {
          const connectionStatus = getConnectionStatus();
          return (
-           <div className={styles.tabContent}>
+           <div className={styles.tabContent} ref={tabContentRef}>
              <div className={styles.statsGrid}>
                <div className={styles.statSection}>
                  <Heading level={4} variant="subSectionHeader">WebSocket Connection</Heading>
@@ -307,28 +369,28 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
           <Button
             variant={ButtonVariant.STANDARD}
             color={activeTab === DevToolsTab.GAME_STATE ? StyleColor.AMBER : StyleColor.DEFAULT}
-            onClick={() => setActiveTab(DevToolsTab.GAME_STATE)}
+            onClick={() => handleTabChange(DevToolsTab.GAME_STATE)}
           >
             Game State
           </Button>
           <Button
             variant={ButtonVariant.STANDARD}
             color={activeTab === DevToolsTab.MAP ? StyleColor.AMBER : StyleColor.DEFAULT}
-            onClick={() => setActiveTab(DevToolsTab.MAP)}
+            onClick={() => handleTabChange(DevToolsTab.MAP)}
           >
             Map
           </Button>
           <Button
             variant={ButtonVariant.STANDARD}
             color={activeTab === DevToolsTab.PERFORMANCE ? StyleColor.AMBER : StyleColor.DEFAULT}
-            onClick={() => setActiveTab(DevToolsTab.PERFORMANCE)}
+            onClick={() => handleTabChange(DevToolsTab.PERFORMANCE)}
           >
             Performance
           </Button>
           <Button
             variant={ButtonVariant.STANDARD}
             color={activeTab === DevToolsTab.NETWORK ? StyleColor.AMBER : StyleColor.DEFAULT}
-            onClick={() => setActiveTab(DevToolsTab.NETWORK)}
+            onClick={() => handleTabChange(DevToolsTab.NETWORK)}
           >
             Network
           </Button>

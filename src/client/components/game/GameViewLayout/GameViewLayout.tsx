@@ -2,6 +2,7 @@ import { h } from 'preact';
 import { useEffect,useState } from 'preact/hooks';
 
 import { ClientGameStatePayload } from '../../../../shared/types/socket.types';
+import { useDialogs } from '../../../contexts/DialogProvider';
 import { settingsService } from '../../../services/settings.service';
 import { StyleColor } from '../../../types/styleColor.type';
 import { Button, ButtonVariant } from '../../ui/Button';
@@ -37,11 +38,20 @@ export function GameViewLayout({
 }: GameViewLayoutProps) {
   
   const [settings, setSettings] = useState(settingsService.getSettings());
+  const dialogs = useDialogs();
 
   useEffect(() => {
     const unsubscribe = settingsService.subscribe(setSettings);
     return () => unsubscribe();
   }, []);
+
+  const toggleDebugDialog = () => {
+    if (dialogs.getCurrentDialog() === 'debugInfo') {
+      dialogs.popDialog();
+    } else {
+      onPushDialog('debugInfo');
+    }
+  };
   
   // Check if any players are placeholders
   const hasPlaceholders = gameState.players.some(p => p.isPlaceholder);
@@ -55,9 +65,9 @@ export function GameViewLayout({
     <ActionBar>
       <div>
         {settings.showDebugInfo && (
-                  <Button onClick={() => onPushDialog('debugInfo')} variant={ButtonVariant.ICON} color={StyleColor.DEFAULT} ariaLabel="Show Debug Info">
-          <Icon name="terminal" color={StyleColor.WHITE} />
-        </Button>
+          <Button onClick={toggleDebugDialog} variant={ButtonVariant.ICON} color={StyleColor.DEFAULT} ariaLabel="Toggle Debug Info">
+            <Icon name="terminal" color={StyleColor.WHITE} />
+          </Button>
         )}
       </div>
       <div>
