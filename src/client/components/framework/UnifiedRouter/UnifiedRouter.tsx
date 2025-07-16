@@ -140,6 +140,7 @@ export class UnifiedRouter extends Component<UnifiedRouterProps, UnifiedRouterSt
       onPushDialog,
       onGameReady,
       dialog,
+      onNavigate,
     } = this.props;
 
     switch (routeInfo.type) {
@@ -153,6 +154,7 @@ export class UnifiedRouter extends Component<UnifiedRouterProps, UnifiedRouterSt
             onReady={onGameReady}
             onEndTurn={onEndTurn}
             onPushDialog={onPushDialog}
+            onNavigate={onNavigate}
             isMyTurn={gameState.currentPlayerId === currentUserId}
             currentUserId={currentUserId}
             dialog={dialog}

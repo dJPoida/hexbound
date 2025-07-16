@@ -68,3 +68,15 @@
 .footer > * {
   pointer-events: auto;
 }
+
+.leftActions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.rightActions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}

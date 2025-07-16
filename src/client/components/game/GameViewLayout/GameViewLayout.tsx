@@ -18,6 +18,7 @@ interface GameViewLayoutProps {
   onReady?: () => void;
   onEndTurn: () => void;
   onPushDialog: (dialog: DialogType) => void;
+  onNavigate: (path: string) => void;
   isMyTurn: boolean;
   currentUserId: string | null;
   dialog: h.JSX.Element | null;
@@ -29,6 +30,7 @@ export function GameViewLayout({
   onReady,
   onEndTurn,
   onPushDialog,
+  onNavigate,
   isMyTurn,
   currentUserId,
   dialog,
@@ -57,7 +59,13 @@ export function GameViewLayout({
 
   const footerContent = (
     <ActionBar>
-      <div>
+      <div className={styles.leftActions}>
+        <Button
+          onClick={() => onNavigate('/')}
+          color={StyleColor.DEFAULT}
+          icon='arrow-left'
+          ariaLabel='Return to Lobby'
+        />
         {settings.showDebugInfo && (
           <Button
             onClick={toggleDebugDialog}
@@ -67,7 +75,7 @@ export function GameViewLayout({
           />
         )}
       </div>
-      <div>
+      <div className={styles.rightActions}>
         <Button onClick={onEndTurn} color={StyleColor.AMBER} disabled={!canEndTurn}>
           {hasPlaceholders ? 'Waiting for Players' : 'End Turn'}
         </Button>
