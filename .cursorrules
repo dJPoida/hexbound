@@ -572,8 +572,9 @@ When adding icons to buttons:
 1. Use the `icon` prop with a valid `IconName` from the Icon component
 2. Use `iconPosition={IconPosition.RIGHT}` for trailing icons (e.g., "Next →")
 3. Provide `ariaLabel` for icon-only buttons for accessibility
-4. Icons automatically use `StyleColor.WHITE` for proper contrast
-5. Icon-only buttons are automatically detected when `icon` is provided without `children`
+4. Icons automatically match the button text color for proper contrast: white for most buttons, grey for white/yellow buttons
+5. Icons in buttons receive the same text shadow as the button text for visual consistency and readability
+6. Icon-only buttons are automatically detected when `icon` is provided without `children`
 
 ### Migration Strategy
 
@@ -643,12 +644,22 @@ The Button component now uses a unified approach with optional icon integration:
 <Button color={StyleColor.AMBER} fullWidth={true}>
   Submit
 </Button>
-```
+
+// White button with grey icon (matches text color)
+<Button color={StyleColor.WHITE} icon="settings">
+  Settings
+</Button>
+
+// Yellow button with grey icon (matches text color)
+<Button color={StyleColor.YELLOW} icon="star" iconPosition={IconPosition.RIGHT}>
+  Favorite
+</Button>
 
 **Icon + Button Integration Rules:**
 
 - **Icon-only buttons**: Provide `ariaLabel` for accessibility
-- **Icon color**: Icons automatically use `StyleColor.WHITE` for proper contrast
+- **Icon color**: Icons automatically match the button text color for proper contrast: white for most buttons, grey for white/yellow buttons
+- **Icon text shadow**: Icons receive the same text shadow as button text for visual consistency
 - **Icon positioning**: Use `iconPosition={IconPosition.RIGHT}` for trailing icons
 - **Backward compatibility**: All existing buttons continue to work without changes
 
@@ -766,8 +777,10 @@ The application uses a **centralized routing system** via the `UnifiedRouter` co
 **Architecture Overview:**
 
 ```
+
 App.tsx → UnifiedRouter → [AppHeader + Content] → Views (Lobby/Game/Utils/StyleGuide)
-```
+
+````
 
 **Key Benefits:**
 
@@ -813,7 +826,7 @@ const navigate = (
   // Manages socket connections and state cleanup
   // Updates browser history and triggers re-render
 };
-```
+````
 
 **Navigation Patterns:**
 

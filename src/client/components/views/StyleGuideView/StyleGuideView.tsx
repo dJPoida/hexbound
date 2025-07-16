@@ -161,6 +161,8 @@ export const StyleGuideView = () => {
           <Heading level={3} variant="subSectionHeader" color="subtle">Icon Integration (New)</Heading>
           <Text color="subtle">
             Buttons can now include icons with configurable positioning using the icon and iconPosition props.
+            Icons automatically match the button text color for proper contrast: white for most buttons, grey for white/yellow buttons.
+            Icons also receive the same text shadow as button text for visual consistency.
           </Text>
           <div class={styles.buttonRow}>
             <Button onClick={() => {}} color={StyleColor.AMBER} icon="save">Save Game</Button>
@@ -179,6 +181,10 @@ export const StyleGuideView = () => {
             <Button onClick={() => {}} color={StyleColor.AMBER} icon="home" ariaLabel="Home" />
             <Button onClick={() => {}} color={StyleColor.GREEN} icon="check" ariaLabel="Confirm" />
             <Button onClick={() => {}} color={StyleColor.RED} icon="trash" ariaLabel="Delete" />
+          </div>
+          <div class={styles.buttonRow}>
+            <Button onClick={() => {}} color={StyleColor.WHITE} icon="settings">Settings (Grey Icon)</Button>
+            <Button onClick={() => {}} color={StyleColor.YELLOW} icon="star" iconPosition={IconPosition.RIGHT}>Favorite (Grey Icon)</Button>
           </div>
         </section>
 
