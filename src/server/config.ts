@@ -13,6 +13,7 @@ const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   port: process.env.PORT || '3000', // Express server port, ensure it matches if changed
   viteDevPort: process.env.VITE_DEV_PORT || '3000', // Vite dev server port from before
+  viteDevHost: process.env.VITE_DEV_SERVER_HOST || 'localhost', // Vite dev server host
   redis: {
     url: process.env.REDIS_URL, // Preferred if you have a full URL
     host: process.env.REDIS_HOST || 'localhost',

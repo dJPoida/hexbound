@@ -1,9 +1,8 @@
 import { Server } from 'http';
 import { parse } from 'url';
-import { WebSocket, WebSocketServer } from 'ws';
+import { WebSocketServer } from 'ws';
 
 import { AuthenticatedWebSocket } from '../shared/types/socket';
-import { User } from './entities/User.entity';
 import redisClient from './redisClient';
 import { handleSocketMessage } from './socketMessageHandlers';
 import { handleDisconnect, unsubscribeFromAll } from './socketSubscriptionManager';
@@ -20,9 +19,11 @@ export function initializeWebSocketServer(server: Server) {
     const { pathname } = parse(request.url || '', true);
 
     // We only want to handle our application's WebSocket requests on the '/ws' path.
-    // By returning early for any other path, we allow other 'upgrade' listeners
-    // (like the one Vite uses for HMR) to process the request.
+    // Vite HMR uses '/__vite_hmr' path and should be handled by Vite's own upgrade handler.
     if (pathname !== '/ws') {
+      console.log(
+        `[WebSocket] Ignoring upgrade request for path: ${pathname} (handled by other listeners)`
+      );
       return;
     }
 

@@ -39,7 +39,7 @@ export async function configureExpressApp(
     return {};
   } else {
     try {
-      console.log('Development mode: configuring Vite middleware.');
+      console.log('Development mode: configuring Vite middleware with HMR support.');
       const viteRoot = path.resolve(currentModuleDirname, '../client');
       const vite = await createViteServer({
         root: viteRoot,
@@ -47,8 +47,10 @@ export async function configureExpressApp(
         server: {
           middlewareMode: true,
           hmr: {
-            server: httpServer, // Pass the http server instance here
+            server: httpServer, // Use the same server
+            path: '/__vite_hmr', // Use a specific path for HMR
           },
+          allowedHosts: ['dev.hexbound.game-host.org', 'localhost'],
         },
         appType: 'spa',
       });
@@ -56,6 +58,9 @@ export async function configureExpressApp(
       // Use vite's connect instance as middleware.
       // This will handle HMR and serve client-side assets.
       app.use(vite.middlewares);
+      console.log(
+        'Vite middleware configured successfully. HMR should be active for client files.'
+      );
       return { vite };
     } catch (e) {
       console.error('[Vite] Error during middleware configuration:', e);

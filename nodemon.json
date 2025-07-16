@@ -1,0 +1,10 @@
+{
+  "watch": ["src/server", "src/shared"],
+  "ignore": ["src/client/**/*", "dist/**/*", "node_modules/**/*", "*.log"],
+  "ext": "ts,json",
+  "exec": "cross-env NODE_ENV=development tsx src/server/main.ts",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "delay": "1000"
+}

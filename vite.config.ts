@@ -1,3 +1,4 @@
+import preact from '@preact/preset-vite';
 import { defineConfig, type UserConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
@@ -5,6 +6,7 @@ export default defineConfig((): UserConfig => {
   return {
     root: 'src/client', // Set the root to your client source files
     plugins: [
+      preact(),
       VitePWA({
         srcDir: '.', // Relative to the root
         filename: 'sw.ts', // The service worker file
@@ -38,12 +40,8 @@ export default defineConfig((): UserConfig => {
         },
       }),
     ],
-    server: {
-      allowedHosts: [
-        'dev.hexbound.game-host.org',
-        'localhost',
-      ],
-    },
+    // Server configuration is handled in expressApp.ts for middleware mode
+    // HMR configuration uses environment variables from config
     appType: 'spa', // Explicitly set for SPA behavior
     build: {
       outDir: '../../dist/client', // Output directory for client build
@@ -52,7 +50,7 @@ export default defineConfig((): UserConfig => {
     define: {
       // Expose the app version from package.json to the client-side code
       // npm automatically sets process.env.npm_package_version when running scripts
-      'import.meta.env.VITE_APP_VERSION': JSON.stringify(process.env.npm_package_version)
+      'import.meta.env.VITE_APP_VERSION': JSON.stringify(process.env.npm_package_version),
     },
   };
-}); 
+});

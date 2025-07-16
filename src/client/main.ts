@@ -7,6 +7,11 @@ import { registerSW } from 'virtual:pwa-register';
 
 import { App } from './App';
 
+// HMR support
+if (import.meta.hot) {
+  import.meta.hot.accept();
+}
+
 // Register the service worker
 const updateSW = registerSW({
   onNeedRefresh() {
