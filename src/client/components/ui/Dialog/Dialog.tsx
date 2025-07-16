@@ -1,8 +1,7 @@
 import { ComponentChildren,h } from 'preact';
 
 import { StyleColor } from '../../../types/ui';
-import { Button, ButtonVariant } from '../Button';
-import { Icon } from '../Icon';
+import { Button } from '../Button';
 import { Heading } from '../Typography/Heading';
 import styles from './Dialog.module.css';
 
@@ -30,12 +29,10 @@ export function Dialog({ title, children, onClose, footer, size = DialogSize.STA
         {onClose && (
           <Button
             onClick={onClose}
-            variant={ButtonVariant.ICON}
             color={StyleColor.RED}
+            icon="cross"
             ariaLabel="Close dialog"
-          >
-            <Icon name="cross" color={StyleColor.WHITE} />
-          </Button>
+          />
         )}
       </div>
       <div className={styles.dialogContent}>{children}</div>

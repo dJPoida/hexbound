@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 
 import { StyleColor } from '../../../types/ui';
-import { Button, ButtonVariant } from '../Button';
+import { Button } from '../Button';
 import { Icon } from '../Icon/Icon';
 import { Text } from '../Typography/Text';
 import styles from './AppHeader.module.css';
@@ -90,12 +90,10 @@ export function AppHeader({
           {onToggleCounterDialog && (
             <Button 
               onClick={onToggleCounterDialog} 
-              variant={ButtonVariant.ICON}
               color={StyleColor.WHITE}
+              icon="edit"
               ariaLabel="Edit counter"
-            >
-              <Icon name="edit" color={StyleColor.WHITE} />
-            </Button>
+            />
           )}
         </div>
       </div>
@@ -195,11 +193,9 @@ export function AppHeader({
           <Button 
             onClick={toggleMenu} 
             ariaLabel="Open menu" 
-            variant={ButtonVariant.ICON}
             color={StyleColor.WHITE}
-          >
-            <Icon name="menu" color={StyleColor.WHITE} />
-          </Button>
+            icon="menu"
+          />
           {isMenuOpen && (
             <div className={styles.menuDropdown}>
               {renderMenuItems()}

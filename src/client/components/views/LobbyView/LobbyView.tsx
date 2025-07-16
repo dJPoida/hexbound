@@ -2,7 +2,7 @@ import { useState } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
 
 import { GameListItem, Player } from '../../../../shared/types/core';
-import { Button, ButtonVariant, StyleColor } from '../../ui/Button';
+import { Button, StyleColor } from '../../ui/Button';
 import { Input, InputType } from '../../ui/Input';
 import { Logo } from '../../ui/Logo/Logo';
 import { Text } from '../../ui/Typography/Text';
@@ -36,7 +36,7 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
         <div className={styles.lobbyLogo}>
           <Logo />
         </div>
-        <Button onClick={onCreateNewGame} variant={ButtonVariant.STANDARD} color={StyleColor.AMBER} fullWidth={true}>
+        <Button onClick={onCreateNewGame} color={StyleColor.AMBER} fullWidth={true}>
           Create New Game
         </Button>
         <div className={styles.joinByIdContainer}>
@@ -46,7 +46,7 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
             onInput={handleGameCodeChange}
             placeholder="Paste Game Code"
           />
-          <Button onClick={handleJoinByCode} variant={ButtonVariant.STANDARD} color={StyleColor.DEFAULT} fullWidth={true}>
+          <Button onClick={handleJoinByCode} color={StyleColor.DEFAULT} fullWidth={true}>
             Join
           </Button>
         </div>
@@ -71,7 +71,6 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
                   </div>
                   <Button 
                     onClick={() => onNavigateToGame(game.gameId, game.gameCode)}
-                    variant={ButtonVariant.STANDARD}
                     color={isMyTurn ? StyleColor.GREEN : StyleColor.DEFAULT}
                     className={styles.turnButton}
                   >

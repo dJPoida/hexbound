@@ -54,6 +54,27 @@
   user-select: none;
 }
 
+.buttonIcon {
+  position: relative;
+  z-index: 1;
+  user-select: none;
+  flex-shrink: 0;
+  filter: drop-shadow(2px 2px 1px var(--text-shadow-dark));
+}
+
+/* Icon positioning for buttons with both text and icon */
+.button:not(.icon) .buttonIcon {
+  margin: 0 4px;
+}
+
+.button:not(.icon) .buttonIcon:first-child {
+  margin-left: 0;
+}
+
+.button:not(.icon) .buttonIcon:last-child {
+  margin-right: 0;
+}
+
 /* Button States */
 .button:hover:not(.disabled) {
   filter: brightness(1.1);
@@ -91,6 +112,10 @@
 .button.disabled .buttonText {
   color: var(--color-stone-grey-light);
   text-shadow: 0 1px 0px var(--text-shadow-light);
+}
+
+.button.disabled .buttonIcon {
+  filter: drop-shadow(0 1px 0px var(--text-shadow-light));
 }
 
 /* Base SVG Element Styles */

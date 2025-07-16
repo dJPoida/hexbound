@@ -7,7 +7,7 @@ import { ClientGameStatePayload } from '../../../../shared/types/socket';
 import { useGame } from '../../../contexts/GameProvider';
 import { authenticatedFetch } from '../../../services/api.service';
 import { StyleColor } from '../../../types/ui';
-import { Button, ButtonVariant } from '../../ui/Button';
+import { Button } from '../../ui/Button';
 import { Dialog, DialogSize } from '../../ui/Dialog';
 import { Heading } from '../../ui/Typography/Heading';
 import { Text } from '../../ui/Typography/Text';
@@ -444,21 +444,18 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
             Game State
           </Button>
           <Button
-            variant={ButtonVariant.STANDARD}
             color={activeTab === DevToolsTab.MAP ? StyleColor.BLUE : StyleColor.DEFAULT}
             onClick={() => handleTabChange(DevToolsTab.MAP)}
           >
             Map
           </Button>
           <Button
-            variant={ButtonVariant.STANDARD}
             color={activeTab === DevToolsTab.PERFORMANCE ? StyleColor.BLUE : StyleColor.DEFAULT}
             onClick={() => handleTabChange(DevToolsTab.PERFORMANCE)}
           >
             Performance
           </Button>
           <Button
-            variant={ButtonVariant.STANDARD}
             color={activeTab === DevToolsTab.NETWORK ? StyleColor.BLUE : StyleColor.DEFAULT}
             onClick={() => handleTabChange(DevToolsTab.NETWORK)}
           >

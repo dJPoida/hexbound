@@ -4,7 +4,7 @@ import { pushService } from '../../../services/push.service';
 import { settingsService } from '../../../services/settings.service';
 import { StyleColor } from '../../../types/ui';
 import type { NotificationPermission } from '../../game/GameSettingsDialog/GameSettingsDialog';
-import { Button, ButtonVariant } from '../../ui/Button';
+import { Button } from '../../ui/Button';
 import { Dialog } from '../../ui/Dialog/Dialog';
 import { Icon } from '../../ui/Icon';
 import { Text } from '../../ui/Typography/Text';
@@ -86,10 +86,10 @@ export const EnableNotificationsDialog = ({ onComplete, permissionState }: Enabl
 
   const footer = (
     <div class={styles.footerActions}>
-      <Button onClick={handleSkipClick} variant={ButtonVariant.STANDARD} color={StyleColor.DEFAULT}>
+      <Button onClick={handleSkipClick} color={StyleColor.DEFAULT}>
         Skip For Now
       </Button>
-      <Button onClick={handleEnableClick} variant={ButtonVariant.STANDARD} color={StyleColor.AMBER} disabled={isEnableButtonDisabled}>
+      <Button onClick={handleEnableClick} color={StyleColor.AMBER} disabled={isEnableButtonDisabled}>
         {isLoading ? 'Enabling...' : 'Enable Notifications'}
       </Button>
     </div>

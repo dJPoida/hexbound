@@ -30,31 +30,39 @@
   font-size: 3em;
 }
 
-/* Color variants */
+/* Color variants - aligned with StyleColor enum */
 .color-default {
   color: var(--color-charcoal);
 }
 
-.color-subtle {
-  color: var(--color-stone-grey);
-}
-
-.color-light {
-  color: var(--color-canvas-white);
-}
-
-.color-brand {
+.color-amber {
   color: var(--color-hex-amber);
 }
 
-.color-success {
-  color: var(--color-success);
+.color-blue {
+  color: var(--color-pastel-sky);
 }
 
-.color-warning {
-  color: var(--color-warning);
+.color-green {
+  color: var(--color-moss-green);
 }
 
-.color-danger {
+.color-red {
   color: var(--color-clay-red);
+}
+
+.color-purple {
+  color: var(--color-deep-purple);
+}
+
+.color-grey {
+  color: var(--color-stone-grey);
+}
+
+.color-white {
+  color: var(--color-canvas-white);
+}
+
+.color-yellow {
+  color: var(--color-glow-yellow);
 } 

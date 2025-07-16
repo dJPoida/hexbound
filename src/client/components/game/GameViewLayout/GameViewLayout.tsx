@@ -5,8 +5,7 @@ import { ClientGameStatePayload } from '../../../../shared/types/socket';
 import { useDialogs } from '../../../contexts/DialogProvider';
 import { settingsService } from '../../../services/settings.service';
 import { StyleColor } from '../../../types/ui';
-import { Button, ButtonVariant } from '../../ui/Button';
-import { Icon } from '../../ui/Icon/Icon';
+import { Button } from '../../ui/Button';
 import { ActionBar } from '../ActionBar/ActionBar';
 import { Viewport } from '../Viewport/Viewport';
 import styles from './GameViewLayout.module.css';
@@ -63,15 +62,12 @@ export function GameViewLayout({
     <ActionBar>
       <div>
         {settings.showDebugInfo && (
-          <Button onClick={toggleDebugDialog} variant={ButtonVariant.ICON} color={StyleColor.DEFAULT} ariaLabel="Toggle Debug Info">
-            <Icon name="terminal" color={StyleColor.WHITE} />
-          </Button>
+          <Button onClick={toggleDebugDialog} color={StyleColor.DEFAULT} icon="terminal" ariaLabel="Toggle Debug Info" />
         )}
       </div>
       <div>
         <Button 
           onClick={onEndTurn} 
-          variant={ButtonVariant.STANDARD} 
           color={StyleColor.AMBER}
           disabled={!canEndTurn}
         >

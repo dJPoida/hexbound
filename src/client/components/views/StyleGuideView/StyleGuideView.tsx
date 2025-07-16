@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 
 import { StyleColor } from '../../../types/ui';
-import { Button, ButtonVariant } from '../../ui/Button';
+import { Button, IconPosition } from '../../ui/Button';
 import { Checkbox, CheckboxSize } from '../../ui/Checkbox';
 import { Icon, ICON_NAMES, IconName, IconSize } from '../../ui/Icon';
 import { Input, InputType, InputVariant } from '../../ui/Input';
@@ -137,32 +137,57 @@ export const StyleGuideView = () => {
             Blue (pastel-sky), Yellow (glow-yellow).
           </Text>
           <div class={styles.buttonRow}>
-            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.AMBER}>Amber</Button>
-            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.DEFAULT}>Default</Button>
-            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.GREEN}>Green</Button>
-            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.RED}>Red</Button>
+            <Button onClick={() => {}} color={StyleColor.AMBER}>Amber</Button>
+            <Button onClick={() => {}} color={StyleColor.DEFAULT}>Default</Button>
+            <Button onClick={() => {}} color={StyleColor.GREEN}>Green</Button>
+            <Button onClick={() => {}} color={StyleColor.RED}>Red</Button>
           </div>
           <div class={styles.buttonRow}>
-            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.PURPLE}>Purple</Button>
-            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.GREY}>Grey</Button>
-            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.WHITE}>White</Button>
-            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.BLUE}>Blue</Button>
+            <Button onClick={() => {}} color={StyleColor.PURPLE}>Purple</Button>
+            <Button onClick={() => {}} color={StyleColor.GREY}>Grey</Button>
+            <Button onClick={() => {}} color={StyleColor.WHITE}>White</Button>
+            <Button onClick={() => {}} color={StyleColor.BLUE}>Blue</Button>
           </div>
           <div class={styles.buttonRow}>
-            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.YELLOW}>Yellow</Button>
-            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.AMBER} disabled>Disabled</Button>
+            <Button onClick={() => {}} color={StyleColor.YELLOW}>Yellow</Button>
+            <Button onClick={() => {}} color={StyleColor.AMBER} disabled>Disabled</Button>
           </div>
           <div class={styles.buttonRow}>
-            <Button onClick={() => {}} variant={ButtonVariant.ICON} color={StyleColor.DEFAULT} ariaLabel="Menu"><Icon name="menu" color={StyleColor.WHITE} /></Button>
+            <Button onClick={() => {}} color={StyleColor.DEFAULT} icon="menu" ariaLabel="Menu" />
+          </div>
+        </section>
+
+        <section class={styles.subSection}>
+          <Heading level={3} variant="subSectionHeader" color="subtle">Icon Integration (New)</Heading>
+          <Text color="subtle">
+            Buttons can now include icons with configurable positioning using the icon and iconPosition props.
+          </Text>
+          <div class={styles.buttonRow}>
+            <Button onClick={() => {}} color={StyleColor.AMBER} icon="save">Save Game</Button>
+            <Button onClick={() => {}} color={StyleColor.GREEN} icon="check" iconPosition={IconPosition.RIGHT}>Confirm</Button>
+            <Button onClick={() => {}} color={StyleColor.RED} icon="trash">Delete</Button>
+            <Button onClick={() => {}} color={StyleColor.BLUE} icon="settings">Settings</Button>
+          </div>
+          <div class={styles.buttonRow}>
+            <Button onClick={() => {}} color={StyleColor.DEFAULT} icon="arrow-left">Back</Button>
+            <Button onClick={() => {}} color={StyleColor.DEFAULT} icon="arrow-right" iconPosition={IconPosition.RIGHT}>Next</Button>
+            <Button onClick={() => {}} color={StyleColor.PURPLE} icon="star">Favorite</Button>
+            <Button onClick={() => {}} color={StyleColor.YELLOW} icon="heart">Like</Button>
+          </div>
+          <div class={styles.buttonRow}>
+            <Button onClick={() => {}} color={StyleColor.DEFAULT} icon="menu" ariaLabel="Menu" />
+            <Button onClick={() => {}} color={StyleColor.AMBER} icon="home" ariaLabel="Home" />
+            <Button onClick={() => {}} color={StyleColor.GREEN} icon="check" ariaLabel="Confirm" />
+            <Button onClick={() => {}} color={StyleColor.RED} icon="trash" ariaLabel="Delete" />
           </div>
         </section>
 
         <section class={styles.subSection}>
           <Heading level={3} variant="subSectionHeader" color="subtle">Dynamic Width Examples</Heading>
           <div class={styles.buttonGrid}>
-            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.AMBER}>Short</Button>
-            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.DEFAULT}>Medium Length Text</Button>
-            <Button onClick={() => {}} variant={ButtonVariant.STANDARD} color={StyleColor.GREEN}>Very Long Button Text Example</Button>
+            <Button onClick={() => {}} color={StyleColor.AMBER}>Short</Button>
+            <Button onClick={() => {}} color={StyleColor.DEFAULT}>Medium Length Text</Button>
+            <Button onClick={() => {}} color={StyleColor.GREEN}>Very Long Button Text Example</Button>
           </div>
         </section>
       </section>

@@ -3,7 +3,7 @@ import { h } from 'preact';
 import { useState } from 'preact/hooks';
 
 import { authenticatedFetch } from '../../../services/api.service';
-import { Button, ButtonVariant, StyleColor } from '../../ui/Button';
+import { Button, StyleColor } from '../../ui/Button';
 import { Heading } from '../../ui/Typography/Heading';
 import { Text } from '../../ui/Typography/Text';
 import styles from './UtilsView.module.css';
@@ -55,7 +55,6 @@ export function UtilsView() {
         <${Button} 
           onClick=${handleResetData} 
           disabled=${isLoading}
-          variant=${ButtonVariant.STANDARD}
           color=${StyleColor.RED}
         >
           ${isLoading ? 'Resetting...' : 'Reset All Game Data'}

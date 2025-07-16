@@ -516,10 +516,10 @@ export function ViewName() {
 
 ### Current Button System
 
-The application uses a **dual-button architecture** during the transition period:
+The application uses a **unified button architecture**:
 
-- **`OldButton`** and **`OldMenuButton`**: Legacy CSS-based buttons (`src/client/components/OldButton/`)
-- **`Button`**: New SVG-based gem buttons (`src/client/components/Button/`)
+- **`OldButton`** and **`OldMenuButton`**: Legacy CSS-based buttons (`src/client/components/OldButton/`) - preserved for stability
+- **`Button`**: New SVG-based gem buttons with icon integration (`src/client/components/ui/Button/`)
 
 ### SVG Gem Button Structure
 
@@ -563,22 +563,24 @@ The gem buttons adapt to both content and container requirements:
 - **ALWAYS** include touch prevention CSS: `user-select: none`, `-webkit-tap-highlight-color: transparent`
 - **ALWAYS** use `line-height: 1` for proper text vertical alignment
 - **ALWAYS** implement opacity-based rendering to prevent width transition flicker
+- **ALWAYS** use the new icon integration system instead of manual Icon components
 
-### Button Variant Creation
+### Icon Integration Guidelines
 
-When creating new button variants:
+When adding icons to buttons:
 
-1. Add the variant to the `ButtonProps` interface
-2. Create CSS rules for all 7 SVG elements using the 4-tier color system
-3. Ensure disabled state handling for all elements
-4. Test with various text lengths to verify proper scaling
-5. Verify touch/mobile behavior to prevent selection highlighting
+1. Use the `icon` prop with a valid `IconName` from the Icon component
+2. Use `iconPosition={IconPosition.RIGHT}` for trailing icons (e.g., "Next →")
+3. Provide `ariaLabel` for icon-only buttons for accessibility
+4. Icons automatically use `StyleColor.WHITE` for proper contrast
+5. Icon-only buttons are automatically detected when `icon` is provided without `children`
 
 ### Migration Strategy
 
-- **Phase 1**: New `Button` component complete and tested (✅ DONE)
-- **Phase 2**: Gradually replace `OldButton` usage in components
-- **Phase 3**: Remove `OldButton` components when all usage is migrated
+- **Phase 1**: New `Button` component with icon integration complete (✅ DONE)
+- **Phase 2**: Migrated all existing `ButtonVariant.ICON` usage to new icon system (✅ DONE)
+- **Phase 3**: Removed `ButtonVariant` concept entirely (✅ DONE)
+- **Phase 4**: Gradually replace `OldButton` usage in components (ongoing)
 - **NEVER** rush the migration - test thoroughly in each component
 
 ### Button Accessibility & UX
@@ -591,12 +593,13 @@ When creating new button variants:
 
 ### Button Usage Patterns & Examples
 
-**Semantic Color System Architecture:**
+**Icon Integration Architecture:**
 
-The Button component uses a two-prop system separating function from appearance:
+The Button component now uses a unified approach with optional icon integration:
 
-- **`variant`**: Function/layout (STANDARD, ICON)
-- **`color`**: Semantic appearance (BRAND, DEFAULT, SUCCESS, DANGER, WARNING, SUBTLE, LIGHT)
+- **`icon`**: Optional icon name from the Icon component
+- **`iconPosition`**: Icon placement (LEFT, RIGHT) - defaults to LEFT
+- **`color`**: Semantic appearance (AMBER, DEFAULT, GREEN, RED, etc.)
 
 **Color Mappings:**
 
@@ -614,31 +617,40 @@ The Button component uses a two-prop system separating function from appearance:
 
 ```typescript
 // Standard gem button with amber color
-<Button variant={ButtonVariant.STANDARD} color={StyleColor.AMBER}>
+<Button color={StyleColor.AMBER}>
   Primary Action
 </Button>
 
-// Icon button with default color
-<Button variant={ButtonVariant.ICON} color={StyleColor.DEFAULT} ariaLabel="Menu">
-  <Icon name="menu" color={StyleColor.WHITE} />
+// Button with left icon (default)
+<Button color={StyleColor.AMBER} icon="save">
+  Save Game
 </Button>
 
+// Button with right icon
+<Button color={StyleColor.GREEN} icon="check" iconPosition={IconPosition.RIGHT}>
+  Confirm
+</Button>
+
+// Icon-only button
+<Button color={StyleColor.DEFAULT} icon="menu" ariaLabel="Menu" />
+
 // Destructive action
-<Button variant={ButtonVariant.STANDARD} color={StyleColor.RED}>
+<Button color={StyleColor.RED} icon="trash">
   Delete Item
 </Button>
 
 // Full-width button in flex container
-<Button variant={ButtonVariant.STANDARD} color={StyleColor.AMBER} fullWidth={true}>
+<Button color={StyleColor.AMBER} fullWidth={true}>
   Submit
 </Button>
 ```
 
 **Icon + Button Integration Rules:**
 
-- **ButtonVariant.ICON**: Always use `color={StyleColor.WHITE}` for icon content to ensure proper contrast
-- **All buttons**: Must specify both `variant` and `color` props
-- **Accessibility**: Always provide `ariaLabel` for icon-only buttons
+- **Icon-only buttons**: Provide `ariaLabel` for accessibility
+- **Icon color**: Icons automatically use `StyleColor.WHITE` for proper contrast
+- **Icon positioning**: Use `iconPosition={IconPosition.RIGHT}` for trailing icons
+- **Backward compatibility**: All existing buttons continue to work without changes
 
 ## Form Components Architecture
 
