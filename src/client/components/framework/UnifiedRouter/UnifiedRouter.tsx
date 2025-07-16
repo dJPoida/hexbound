@@ -4,7 +4,7 @@ import { Component } from 'preact';
 import { GameListItem } from '../../../../shared/types/core';
 import { ClientGameStatePayload } from '../../../../shared/types/socket';
 import { GameViewLayout } from '../../game/GameViewLayout/GameViewLayout';
-import { AppHeader, AppHeaderView } from '../../ui/AppHeader/AppHeader';
+import { AppHeader, AppHeaderView } from '../../ui/AppHeader';
 import { LobbyView } from '../../views/LobbyView/LobbyView';
 import { StyleGuideView } from '../../views/StyleGuideView/StyleGuideView';
 import { UtilsView } from '../../views/UtilsView/UtilsView';
