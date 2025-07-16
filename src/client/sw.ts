@@ -63,6 +63,14 @@ self.addEventListener('push', (event: PushEvent) => {
       type: 'window',
     });
 
+    // Send refresh message to all active clients
+    allClients.forEach(client => {
+      if (client.visibilityState === 'visible') {
+        console.log('[SW] Sending refresh games message to active client');
+        client.postMessage({ type: 'REFRESH_GAMES' });
+      }
+    });
+
     // If the notification is for a specific game, only suppress it if that game's
     // URL is currently visible. This prevents silencing a "your turn" notification
     // just because the user has the lobby open.

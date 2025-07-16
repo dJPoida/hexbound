@@ -27,6 +27,7 @@ export interface UnifiedRouterProps {
   onEndTurn: () => void;
   onPushDialog: (dialog: 'gameSettings' | 'incrementCounter' | 'debugInfo') => void;
   onGameReady: () => void;
+  setLobbyVisible: (visible: boolean) => void;
 
   // Dialog & UI
   dialog: h.JSX.Element | null;
@@ -47,11 +48,19 @@ export class UnifiedRouter extends Component<UnifiedRouterProps, UnifiedRouterSt
   handleRouteChange = () => {
     const newPath = window.location.pathname;
     this.setState({ currentPath: newPath });
+
+    // Update lobby visibility based on route
+    const isLobbyRoute = newPath === '/' || newPath === '/lobby';
+    this.props.setLobbyVisible(isLobbyRoute);
   };
 
   componentDidMount() {
     window.addEventListener('popstate', this.handleRouteChange);
     window.addEventListener('pushstate', this.handleRouteChange);
+
+    // Set initial lobby visibility
+    const isLobbyRoute = this.state.currentPath === '/' || this.state.currentPath === '/lobby';
+    this.props.setLobbyVisible(isLobbyRoute);
   }
 
   componentWillUnmount() {

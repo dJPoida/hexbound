@@ -150,6 +150,7 @@ const AppContent = () => {
         onEndTurn={game.endTurn}
         onPushDialog={dialogs.pushDialog}
         onGameReady={() => game.setGameLoaded(true)}
+        setLobbyVisible={game.setLobbyVisible}
         dialog={renderDialogContent()}
       />
     );

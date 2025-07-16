@@ -30,6 +30,7 @@ interface GameContextType {
   updateMapData: (mapData: MapData | null, checksum: string | null) => void;
   incrementCounter: () => void;
   endTurn: () => void;
+  setLobbyVisible: (visible: boolean) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -54,6 +55,7 @@ export const GameProvider = ({ children }: GameProviderProps) => {
   const [mapData, setMapData] = useState<MapData | null>(null);
   const [mapChecksum, setMapChecksum] = useState<string | null>(null);
   const [isGameLoaded, setIsGameLoaded] = useState(false);
+  const [isLobbyVisible, setIsLobbyVisible] = useState(false);
 
   // Fetch user's games
   const fetchMyGames = async () => {
@@ -144,6 +146,10 @@ export const GameProvider = ({ children }: GameProviderProps) => {
     setMapChecksum(newChecksum);
   };
 
+  const setLobbyVisible = (visible: boolean) => {
+    setIsLobbyVisible(visible);
+  };
+
   // Socket event handlers
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -199,19 +205,76 @@ export const GameProvider = ({ children }: GameProviderProps) => {
     };
   }, [isLoggedIn, currentGameId]);
 
-  // Game list polling
+  // Game list polling - only when user is logged in AND viewing the lobby
+  useEffect(() => {
+    if (!isLoggedIn || !isLobbyVisible) return;
+
+    // Fetch games when user enters lobby
+    fetchMyGames();
+
+    // Set up polling every 60 seconds only while in lobby
+    const pollInterval = setInterval(fetchMyGames, 60000);
+
+    // Clean up polling when user leaves lobby or logs out
+    return () => clearInterval(pollInterval);
+  }, [isLoggedIn, isLobbyVisible]);
+
+  // Listen for service worker messages to refresh games
   useEffect(() => {
     if (!isLoggedIn) return;
 
-    // Fetch games when user logs in
-    fetchMyGames();
+    const handleServiceWorkerMessage = (event: MessageEvent) => {
+      if (event.data && event.data.type === 'REFRESH_GAMES') {
+        console.log('[GameProvider] Received REFRESH_GAMES message from service worker');
+        fetchMyGames();
+      }
+    };
 
-    // Set up polling every 60 seconds
-    const pollInterval = setInterval(fetchMyGames, 60000);
+    const setupServiceWorkerListener = async () => {
+      if ('serviceWorker' in navigator) {
+        try {
+          // Wait for service worker to be ready
+          await navigator.serviceWorker.ready;
+          navigator.serviceWorker.addEventListener('message', handleServiceWorkerMessage);
+        } catch (error) {
+          console.warn('[GameProvider] Service worker not available:', error);
+        }
+      }
+    };
 
-    // Clean up polling when user logs out or component unmounts
-    return () => clearInterval(pollInterval);
+    setupServiceWorkerListener();
+
+    return () => {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.removeEventListener('message', handleServiceWorkerMessage);
+      }
+    };
   }, [isLoggedIn]);
+
+  // Refresh games when user returns to the app (if in lobby)
+  useEffect(() => {
+    if (!isLoggedIn || !isLobbyVisible) return;
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        console.log('[GameProvider] App became visible, refreshing games');
+        fetchMyGames();
+      }
+    };
+
+    const handleWindowFocus = () => {
+      console.log('[GameProvider] Window focused, refreshing games');
+      fetchMyGames();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleWindowFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleWindowFocus);
+    };
+  }, [isLoggedIn, isLobbyVisible]);
 
   const gameValue: GameContextType = {
     myGames,
@@ -228,6 +291,7 @@ export const GameProvider = ({ children }: GameProviderProps) => {
     updateMapData,
     incrementCounter,
     endTurn,
+    setLobbyVisible,
   };
 
   return <GameContext.Provider value={gameValue}>{children}</GameContext.Provider>;
