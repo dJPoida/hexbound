@@ -196,7 +196,7 @@ export function AppHeader({
             onClick={toggleMenu} 
             ariaLabel="Open menu" 
             variant={ButtonVariant.ICON}
-            color={StyleColor.AMBER}
+            color={StyleColor.WHITE}
           >
             <Icon name="menu" color={StyleColor.WHITE} />
           </Button>

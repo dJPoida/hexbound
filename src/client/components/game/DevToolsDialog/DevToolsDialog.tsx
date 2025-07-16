@@ -223,63 +223,53 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
         
         return (
           <div className={styles.tabContent} ref={tabContentRef}>
-            <div className={styles.gameStateLayout}>
-              <div className={styles.gameStateStats}>
-                <div className={styles.statSection}>
-                  <Heading level={4} variant="subSectionHeader">Game Overview</Heading>
-                  <div className={styles.statItem}>
-                    <strong>Game ID:</strong> {gameState.gameId}
-                  </div>
-                  <div className={styles.statItem}>
-                    <strong>Game Code:</strong> {gameState.gameCode}
-                  </div>
-                  <div className={styles.statItem}>
-                    <strong>Turn Number:</strong> {gameState.turnNumber}
-                  </div>
-                  <div className={styles.statItem}>
-                    <strong>Current Player:</strong> {gameState.currentPlayerId}
-                  </div>
-                  <div className={styles.statItem}>
-                    <strong>Placeholder Counter:</strong> {gameState.gameState.placeholderCounter}
-                  </div>
+            <div className={styles.statsGrid}>
+              <div className={styles.statSection}>
+                <Heading level={4} variant="subSectionHeader">Game Overview</Heading>
+                <div className={styles.statItem}>
+                  <strong>Game ID:</strong> {gameState.gameId}
                 </div>
-
-                <div className={styles.statSection}>
-                  <Heading level={4} variant="subSectionHeader">Players ({gameState.players.length})</Heading>
-                  {gameState.players.map((player, index) => (
-                    <div key={player.userId} className={styles.statItem}>
-                      <strong>Player {index + 1}:</strong> {player.userName} ({player.userId.substring(0, 8)}...)
-                      {player.isPlaceholder && <span style={{ color: 'var(--color-glow-yellow)' }}> [Placeholder]</span>}
-                    </div>
-                  ))}
+                <div className={styles.statItem}>
+                  <strong>Game Code:</strong> {gameState.gameCode}
                 </div>
-
-                <div className={styles.statSection}>
-                  <Heading level={4} variant="subSectionHeader">Map Data</Heading>
-                  <div className={styles.statItem}>
-                    <strong>Dimensions:</strong> {mapData ? `${mapData.width} × ${mapData.height}` : 'Not loaded'}
-                  </div>
-                  <div className={styles.statItem}>
-                    <strong>Total Tiles:</strong> {mapData ? mapData.tiles.length : 0}
-                  </div>
-                  <div className={styles.statItem}>
-                    <strong>Data Size:</strong> {Math.round(gameStateJson.length / 1024)} KB
-                  </div>
+                <div className={styles.statItem}>
+                  <strong>Turn Number:</strong> {gameState.turnNumber}
                 </div>
+                <div className={styles.statItem}>
+                  <strong>Current Player:</strong> {gameState.currentPlayerId}
+                </div>
+                <div className={styles.statItem}>
+                  <strong>Placeholder Counter:</strong> {gameState.gameState.placeholderCounter}
+                </div>
+                <Button
+                  onClick={() => {
+                    navigator.clipboard.writeText(gameStateJson);
+                  }}
+                >
+                  Copy Game State Data
+                </Button>
               </div>
-              
-              <div className={styles.gameStateJson}>
-                <div className={styles.statSection}>
-                  <Heading level={4} variant="subSectionHeader">Complete Game State (JSON)</Heading>
-                  <Button
-                    variant={ButtonVariant.STANDARD}
-                    color={StyleColor.BLUE}
-                    onClick={() => {
-                      navigator.clipboard.writeText(gameStateJson);
-                    }}
-                  >
-                    Copy Full JSON
-                  </Button>
+
+              <div className={styles.statSection}>
+                <Heading level={4} variant="subSectionHeader">Players ({gameState.players.length})</Heading>
+                {gameState.players.map((player, index) => (
+                  <div key={player.userId} className={styles.statItem}>
+                    <strong>Player {index + 1}:</strong> {player.userName} ({player.userId.substring(0, 8)}...)
+                    {player.isPlaceholder && <span style={{ color: 'var(--color-glow-yellow)' }}> [Placeholder]</span>}
+                  </div>
+                ))}
+              </div>
+
+              <div className={styles.statSection}>
+                <Heading level={4} variant="subSectionHeader">Map Data</Heading>
+                <div className={styles.statItem}>
+                  <strong>Dimensions:</strong> {mapData ? `${mapData.width} × ${mapData.height}` : 'Not loaded'}
+                </div>
+                <div className={styles.statItem}>
+                  <strong>Total Tiles:</strong> {mapData ? mapData.tiles.length : 0}
+                </div>
+                <div className={styles.statItem}>
+                  <strong>Data Size:</strong> {Math.round(gameStateJson.length / 1024)} KB
                 </div>
               </div>
             </div>
@@ -329,10 +319,8 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
               </div>
 
               <div className={styles.statSection}>
-                <Heading level={4} variant="subSectionHeader">Map Generation</Heading>
+                <Heading level={4} variant="subSectionHeader">Map Tools</Heading>
                 <Button
-                  variant={ButtonVariant.STANDARD}
-                  color={StyleColor.BLUE}
                   onClick={handleRegenerateMap}
                   disabled={gameState.turnNumber !== 1 || isRegeneratingMap}
                 >
@@ -348,24 +336,14 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
                     Map regeneration is only available on turn 1
                   </Text>
                 )}
-              </div>
-
-              <div className={styles.statSection}>
-                <Heading level={4} variant="subSectionHeader">Map Data (JSON)</Heading>
-                {mapData ? (
+                {mapData && (
                   <Button
-                    variant={ButtonVariant.STANDARD}
-                    color={StyleColor.BLUE}
                     onClick={() => {
                       navigator.clipboard.writeText(JSON.stringify(mapData, null, 2));
                     }}
                   >
-                    Copy Map JSON
+                    Copy Map Data
                   </Button>
-                ) : (
-                  <Text variant="caption" color="subtle">
-                    Map data not loaded yet.
-                  </Text>
                 )}
               </div>
             </div>
@@ -460,29 +438,28 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
       <div className={styles.devToolsContainer}>
         <div className={styles.tabBar}>
           <Button
-            variant={ButtonVariant.STANDARD}
-            color={activeTab === DevToolsTab.GAME_STATE ? StyleColor.AMBER : StyleColor.DEFAULT}
+            color={activeTab === DevToolsTab.GAME_STATE ? StyleColor.BLUE : StyleColor.DEFAULT}
             onClick={() => handleTabChange(DevToolsTab.GAME_STATE)}
           >
             Game State
           </Button>
           <Button
             variant={ButtonVariant.STANDARD}
-            color={activeTab === DevToolsTab.MAP ? StyleColor.AMBER : StyleColor.DEFAULT}
+            color={activeTab === DevToolsTab.MAP ? StyleColor.BLUE : StyleColor.DEFAULT}
             onClick={() => handleTabChange(DevToolsTab.MAP)}
           >
             Map
           </Button>
           <Button
             variant={ButtonVariant.STANDARD}
-            color={activeTab === DevToolsTab.PERFORMANCE ? StyleColor.AMBER : StyleColor.DEFAULT}
+            color={activeTab === DevToolsTab.PERFORMANCE ? StyleColor.BLUE : StyleColor.DEFAULT}
             onClick={() => handleTabChange(DevToolsTab.PERFORMANCE)}
           >
             Performance
           </Button>
           <Button
             variant={ButtonVariant.STANDARD}
-            color={activeTab === DevToolsTab.NETWORK ? StyleColor.AMBER : StyleColor.DEFAULT}
+            color={activeTab === DevToolsTab.NETWORK ? StyleColor.BLUE : StyleColor.DEFAULT}
             onClick={() => handleTabChange(DevToolsTab.NETWORK)}
           >
             Network

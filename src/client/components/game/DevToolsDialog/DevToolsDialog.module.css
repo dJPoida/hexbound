@@ -151,31 +151,6 @@
 }
 
 /* Game State specific layout for better desktop utilization */
-.gameStateLayout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-lg);
-  width: 100%;
-  height: 100%;
-}
-
-.gameStateStats {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-  overflow-y: auto;
-}
-
-.gameStateJson {
-  min-width: 0;
-}
-
-.gameStateJson .statSection {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
 .buttonGroup {
   display: flex;
   gap: var(--space-sm);
@@ -186,38 +161,5 @@
   .buttonGroup {
     flex-direction: column;
     gap: var(--space-xs);
-  }
-}
-
-.gameStateJson .debugContent {
-  flex: 1;
-  min-height: 0;
-}
-
-/* Medium screens: Stack vertically but keep some horizontal space */
-@media (max-width: 1200px) {
-  .gameStateLayout {
-    grid-template-columns: 1fr;
-    gap: var(--space-md);
-    height: auto;
-  }
-  
-  .gameStateStats {
-    overflow-y: visible;
-  }
-  
-  .gameStateJson .statSection {
-    height: auto;
-  }
-}
-
-/* Small screens: Full vertical stack */
-@media (max-width: 767px) {
-  .gameStateLayout {
-    gap: var(--space-sm);
-  }
-  
-  .gameStateStats {
-    gap: var(--space-md);
   }
 } 

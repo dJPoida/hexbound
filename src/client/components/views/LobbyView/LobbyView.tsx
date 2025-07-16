@@ -69,16 +69,14 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
                           .join(', ')}
                     </Text>
                   </div>
-                  {isMyTurn && (
-                    <Button 
-                      onClick={() => onNavigateToGame(game.gameId, game.gameCode)}
-                      variant={ButtonVariant.STANDARD}
-                      color={StyleColor.DEFAULT}
-                      className={styles.turnButton}
-                    >
-                      Your Turn
-                    </Button>
-                  )}
+                  <Button 
+                    onClick={() => onNavigateToGame(game.gameId, game.gameCode)}
+                    variant={ButtonVariant.STANDARD}
+                    color={isMyTurn ? StyleColor.GREEN : StyleColor.DEFAULT}
+                    className={styles.turnButton}
+                  >
+                    {isMyTurn ? 'Your Turn' : 'Waiting...'}
+                  </Button>
                 </li>
               );
             })}

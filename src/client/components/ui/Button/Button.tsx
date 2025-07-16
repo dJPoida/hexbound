@@ -33,7 +33,7 @@ export const Button = ({
   onClick,
   children,
   variant = ButtonVariant.STANDARD,
-  color = StyleColor.AMBER,
+  color = StyleColor.DEFAULT,
   disabled = false,
   className = '',
   type = ButtonType.BUTTON,
