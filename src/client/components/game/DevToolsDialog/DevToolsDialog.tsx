@@ -220,6 +220,7 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
     switch (activeTab) {
       case DevToolsTab.GAME_STATE: {
         const gameStateJson = JSON.stringify(gameState, null, 2);
+        
         return (
           <div className={styles.tabContent} ref={tabContentRef}>
             <div className={styles.gameStateLayout}>
@@ -279,10 +280,6 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
                   >
                     Copy Full JSON
                   </Button>
-
-                  <div className={styles.debugContent}>
-                    <pre>{gameStateJson}</pre>
-                  </div>
                 </div>
               </div>
             </div>
@@ -349,6 +346,25 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
                 {gameState.turnNumber !== 1 && (
                   <Text variant="caption" color="subtle">
                     Map regeneration is only available on turn 1
+                  </Text>
+                )}
+              </div>
+
+              <div className={styles.statSection}>
+                <Heading level={4} variant="subSectionHeader">Map Data (JSON)</Heading>
+                {mapData ? (
+                  <Button
+                    variant={ButtonVariant.STANDARD}
+                    color={StyleColor.BLUE}
+                    onClick={() => {
+                      navigator.clipboard.writeText(JSON.stringify(mapData, null, 2));
+                    }}
+                  >
+                    Copy Map JSON
+                  </Button>
+                ) : (
+                  <Text variant="caption" color="subtle">
+                    Map data not loaded yet.
                   </Text>
                 )}
               </div>
