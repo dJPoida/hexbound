@@ -7,6 +7,6 @@ import { ClientGameStatePayload,ServerGameState } from '../../shared/types/socke
  * @returns A client-safe game state payload.
  */
 export function toClientState(serverState: ServerGameState): ClientGameStatePayload {
-  const { turnActionLog, ...clientState } = serverState;
+  const { turnActionLog, mapData, ...clientState } = serverState;
   return clientState;
 } 
