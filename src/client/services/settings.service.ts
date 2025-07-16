@@ -2,6 +2,7 @@ interface GameSettings {
   notificationsEnabled: boolean;
   showHexGrid: boolean;
   showDebugInfo: boolean;
+  showDevTools: boolean;
   // Add other settings here in the future
 }
 
@@ -9,8 +10,9 @@ const SETTINGS_KEY = 'hexbound-settings';
 
 const defaultSettings: GameSettings = {
   notificationsEnabled: false,
-  showHexGrid: false,
+  showHexGrid: true,
   showDebugInfo: false,
+  showDevTools: false,
 };
 
 // Simple pub-sub implementation

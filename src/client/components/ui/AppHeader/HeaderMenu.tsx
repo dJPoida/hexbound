@@ -58,24 +58,42 @@ export function HeaderMenu({
   const renderMenuItems = () => {
     const items = [];
 
-    // Game-specific menu items
-    if (currentView === AppHeaderView.GAME) {
+    if (currentView !== AppHeaderView.LOBBY) {
       items.push(
         <button
-          key='settings'
+          key='lobby'
           className={styles.menuItem}
           onClick={() => {
-            onOpenSettings();
+            onNavigate('/');
             closeMenu();
           }}
         >
-          <Icon name='settings' />
+          <Icon name='home' />
           <Text variant='inline' as='span'>
-            Game Settings
+            Lobby
           </Text>
         </button>
       );
+    }
 
+    items.push(
+      <button
+        key='settings'
+        className={styles.menuItem}
+        onClick={() => {
+          onOpenSettings();
+          closeMenu();
+        }}
+      >
+        <Icon name='settings' />
+        <Text variant='inline' as='span'>
+          Game Settings
+        </Text>
+      </button>
+    );
+
+    // Game-specific menu items
+    if (currentView === AppHeaderView.GAME) {
       if (onCopyGameLink) {
         items.push(
           <button
@@ -93,42 +111,7 @@ export function HeaderMenu({
           </button>
         );
       }
-
-      items.push(
-        <button
-          key='lobby'
-          className={styles.menuItem}
-          onClick={() => {
-            onNavigate('/');
-            closeMenu();
-          }}
-        >
-          <Icon name='exit' />
-          <Text variant='inline' as='span'>
-            Return to Lobby
-          </Text>
-        </button>
-      );
     } else {
-      // Lobby/Utils/StyleGuide navigation
-      if (currentView !== AppHeaderView.LOBBY) {
-        items.push(
-          <button
-            key='lobby'
-            className={styles.menuItem}
-            onClick={() => {
-              onNavigate('/');
-              closeMenu();
-            }}
-          >
-            <Icon name='home' />
-            <Text variant='inline' as='span'>
-              Lobby
-            </Text>
-          </button>
-        );
-      }
-
       if (currentView !== AppHeaderView.STYLEGUIDE) {
         items.push(
           <button
@@ -164,22 +147,6 @@ export function HeaderMenu({
           </button>
         );
       }
-
-      items.push(
-        <button
-          key='settings'
-          className={styles.menuItem}
-          onClick={() => {
-            onOpenSettings();
-            closeMenu();
-          }}
-        >
-          <Icon name='settings' />
-          <Text variant='inline' as='span'>
-            Game Settings
-          </Text>
-        </button>
-      );
 
       items.push(
         <button

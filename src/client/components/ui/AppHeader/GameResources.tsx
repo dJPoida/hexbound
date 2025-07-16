@@ -19,7 +19,7 @@ export function GameResources({ counter, onToggleCounterDialog }: GameResourcesP
         </Text>
       </div>
       <div className={styles.resourceItem}>
-        <Icon name='award' />
+        <Icon name='star' />
         <Text variant='label' font='bold' as='span'>
           567
         </Text>
@@ -29,13 +29,17 @@ export function GameResources({ counter, onToggleCounterDialog }: GameResourcesP
         <Text variant='label' font='bold' as='span'>
           {counter ?? 0}
         </Text>
+        {/* Temporary button to edit the counter */}
         {onToggleCounterDialog && (
-          <Button
-            onClick={onToggleCounterDialog}
-            color={StyleColor.WHITE}
-            icon='edit'
-            ariaLabel='Edit counter'
-          />
+          <>
+            <span>&nbsp;</span>
+            <Button
+              onClick={onToggleCounterDialog}
+              color={StyleColor.WHITE}
+              icon='edit'
+              ariaLabel='Edit counter'
+            />
+          </>
         )}
       </div>
     </div>

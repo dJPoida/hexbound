@@ -74,6 +74,10 @@ export const GameSettingsDialog = ({ onClose }: GameSettingsDialogProps) => {
     settingsService.updateSettings({ showDebugInfo: checked });
   };
 
+  const handleShowDevToolsChange = (checked: boolean) => {
+    settingsService.updateSettings({ showDevTools: checked });
+  };
+
   const isNotificationToggleDisabled = permission === 'denied' || isSubscribing;
 
   return (
@@ -115,6 +119,11 @@ export const GameSettingsDialog = ({ onClose }: GameSettingsDialogProps) => {
           label='Show Debug Info'
           checked={settings.showDebugInfo}
           onChange={handleShowDebugInfoChange}
+        />
+        <Checkbox
+          label='Show Dev Tools'
+          checked={settings.showDevTools}
+          onChange={handleShowDevToolsChange}
         />
       </div>
     </Dialog>

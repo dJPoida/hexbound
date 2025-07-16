@@ -18,7 +18,7 @@
 .resourceItem {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
   font-size: var(--font-size-xl);
   color: var(--color-charcoal);
   font-weight: 500;
@@ -26,6 +26,10 @@
 
 .resourceItem i {
   font-size: var(--font-size-2xl);
+}
+
+.resourceItem span {
+  margin: 0;
 }
 
 .headerActions {

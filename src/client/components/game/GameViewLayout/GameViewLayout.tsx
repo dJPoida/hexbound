@@ -60,13 +60,7 @@ export function GameViewLayout({
   const footerContent = (
     <ActionBar>
       <div className={styles.leftActions}>
-        <Button
-          onClick={() => onNavigate('/')}
-          color={StyleColor.DEFAULT}
-          icon='arrow-left'
-          ariaLabel='Return to Lobby'
-        />
-        {settings.showDebugInfo && (
+        {settings.showDevTools && (
           <Button
             onClick={toggleDebugDialog}
             color={StyleColor.DEFAULT}
@@ -76,6 +70,12 @@ export function GameViewLayout({
         )}
       </div>
       <div className={styles.rightActions}>
+        <Button
+          onClick={() => onNavigate('/')}
+          color={StyleColor.DEFAULT}
+          icon='home'
+          ariaLabel='Return to Lobby'
+        />
         <Button onClick={onEndTurn} color={StyleColor.AMBER} disabled={!canEndTurn}>
           {hasPlaceholders ? 'Waiting for Players' : 'End Turn'}
         </Button>

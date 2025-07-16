@@ -19,12 +19,10 @@ export interface AppHeaderProps {
 }
 
 export function AppHeader({
-  currentUserName,
   currentView,
   onLogout,
   onNavigate,
   onOpenSettings,
-  turnNumber,
   counter,
   onToggleCounterDialog,
   onCopyGameLink,
