@@ -68,22 +68,25 @@ const AppContent = () => {
 
   // Render dialog content
   const renderDialogContent = () => {
-    const currentDialogType = dialogs.getCurrentDialog();
-    if (!currentDialogType) return null;
-
-    switch (currentDialogType) {
+    const currentDialog = dialogs.getCurrentDialog();
+    
+    switch (currentDialog) {
       case 'gameSettings':
-        return <GameSettingsDialog onClose={dialogs.popDialog} />;
+        return (
+          <GameSettingsDialog 
+            onClose={() => dialogs.popDialog()}
+          />
+        );
       case 'incrementCounter':
         if (game.gameState) {
           const hasPlaceholders = game.gameState.players.some(p => p.isPlaceholder);
           return (
-            <IncrementCounterDialog
+            <IncrementCounterDialog 
               counter={game.gameState.gameState.placeholderCounter ?? 0}
               isMyTurn={game.gameState.currentPlayerId === auth.currentUserId}
-              onIncrement={game.incrementCounter}
-              onClose={dialogs.popDialog}
               hasPlaceholders={hasPlaceholders}
+              onClose={() => dialogs.popDialog()}
+              onIncrement={game.incrementCounter}
             />
           );
         }
@@ -91,9 +94,9 @@ const AppContent = () => {
       case 'debugInfo':
         if (game.gameState) {
           return (
-            <DevToolsDialog
+            <DevToolsDialog 
               gameState={game.gameState}
-              onClose={dialogs.popDialog}
+              onClose={() => dialogs.popDialog()}
             />
           );
         }
@@ -102,6 +105,19 @@ const AppContent = () => {
         return null;
     }
   };
+
+  // Don't render anything until authentication state is determined
+  if (auth.isInitializing) {
+    return (
+      <div className={styles.appContainer}>
+        <div className={styles.loadingContainer}>
+          <p className={styles.versionDisplay}>
+            Version: <span id="appVersionDisplay">{version}</span>
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   // Render main content
   const renderMainContent = () => {

@@ -11,6 +11,7 @@ interface AuthContextType {
   currentUserId: string | null;
   currentUserName: string | null;
   isLoading: boolean;
+  isInitializing: boolean;
   authError: string | null;
 
   // Actions
@@ -40,6 +41,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [currentUserName, setCurrentUserName] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
 
   // Initialize auth state on provider mount
@@ -56,6 +58,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setCurrentUserName(session.userName);
       setIsLoggedIn(true);
     }
+    
+    // Mark initialization as complete
+    setIsInitializing(false);
   }, []);
 
   const login = async () => {
@@ -116,6 +121,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     currentUserId,
     currentUserName,
     isLoading,
+    isInitializing,
     authError,
     setUserNameInput,
     login,
