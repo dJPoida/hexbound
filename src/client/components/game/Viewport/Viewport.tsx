@@ -27,17 +27,17 @@ export function Viewport({ pixiContainerId, gameState, currentPlayerId, onReady 
     if (!isLoggedIn) return;
     const container = pixiContainerRef.current;
     if (container && gameState && currentPlayerId) {
-      // Call onReady when game state is loaded, regardless of map data
-      if (onReady) {
-        onReady();
-      }
-
       // Only initialize rendering service when both game state and map data are available
       if (mapData) {
         const init = async () => {
           // Always destroy any existing rendering service before initializing new game
           renderingService.destroy();
           await renderingService.initialize(container, gameState, mapData, currentPlayerId);
+          
+          // Call onReady only after rendering service has finished initializing
+          if (onReady) {
+            onReady();
+          }
         };
         init();
       }
