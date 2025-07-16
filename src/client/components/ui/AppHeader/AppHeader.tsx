@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 
-import { StyleColor } from '../../../types/styleColor.type';
+import { StyleColor } from '../../../types/ui';
 import { Button, ButtonVariant } from '../Button';
 import { Icon } from '../Icon/Icon';
 import { Text } from '../Typography/Text';

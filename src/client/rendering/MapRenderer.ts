@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import { Viewport as PixiViewport } from 'pixi-viewport';
 
 import { HEX_HEIGHT, HEX_WIDTH } from '../../shared/constants/map.const';
-import { MapData, TileData } from '../../shared/types/game.types';
+import { MapData, TileData } from '../../shared/types/map';
 import { settingsService } from '../services/settings.service';
 import { Tile } from './Tile';
 

@@ -1,8 +1,8 @@
 import { h } from 'preact';
 import { Component } from 'preact';
 
-import { GameListItem } from '../../../../shared/types/game.types';
-import { ClientGameStatePayload } from '../../../../shared/types/socket.types';
+import { GameListItem } from '../../../../shared/types/core';
+import { ClientGameStatePayload } from '../../../../shared/types/socket';
 import { GameViewLayout } from '../../game/GameViewLayout/GameViewLayout';
 import { AppHeader, AppHeaderView } from '../../ui/AppHeader/AppHeader';
 import { LobbyView } from '../../views/LobbyView/LobbyView';

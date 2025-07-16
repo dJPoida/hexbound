@@ -1,10 +1,10 @@
 import { h } from 'preact';
 import { useEffect,useState } from 'preact/hooks';
 
-import { ClientGameStatePayload } from '../../../../shared/types/socket.types';
+import { ClientGameStatePayload } from '../../../../shared/types/socket';
 import { useDialogs } from '../../../contexts/DialogProvider';
 import { settingsService } from '../../../services/settings.service';
-import { StyleColor } from '../../../types/styleColor.type';
+import { StyleColor } from '../../../types/ui';
 import { Button, ButtonVariant } from '../../ui/Button';
 import { Icon } from '../../ui/Icon/Icon';
 import { ActionBar } from '../ActionBar/ActionBar';

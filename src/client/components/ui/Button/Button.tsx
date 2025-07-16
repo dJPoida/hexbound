@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 
-import { StyleColor } from '../../../types/styleColor.type';
+import { StyleColor } from '../../../types/ui';
 import styles from './Button.module.css';
 
 // Button-specific enums - exported for use by consumers

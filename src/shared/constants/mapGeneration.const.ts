@@ -1,4 +1,4 @@
-import { MapGenerationConfig, MapGenerationPassConfig,MapGenerationPreset } from '../types/mapGeneration.types';
+import { MapGenerationConfig, MapGenerationPassConfig,MapGenerationPreset } from '../types/mapGeneration';
 
 /**
  * Map generation pass names (enum-like constants)
@@ -80,17 +80,13 @@ export const OCEAN_WORLD_PASSES: MapGenerationPassConfig[] = [
   {
     name: MAP_GENERATION_PASSES.ICE_CAP,
     enabled: true,
-    parameters: {
-      ...ICE_CAP_DEFAULT_PARAMS,
-      topRows: 1,
-      bottomRows: 1,
-    },
+    parameters: ICE_CAP_DEFAULT_PARAMS,
   },
   {
     name: MAP_GENERATION_PASSES.OCEAN_BAND,
     enabled: true,
     parameters: {
-      rows: [1, 2, 3, 4, 'height-5', 'height-4', 'height-3', 'height-2'],
+      rows: [2, 3, 4, 'height-5', 'height-4', 'height-3'],
       elevation: 0,
     },
   },

@@ -1,15 +1,7 @@
 import { NextFunction,Request, Response } from 'express';
 
 import redisClient from '../redisClient';
-
-// It's a common practice to extend the Express Request interface.
-// This is declaration merging, which is a standard TypeScript feature.
-// See: https://www.digitalocean.com/community/tutorials/how-to-add-custom-fields-to-the-request-object-in-express-with-typescript
-export interface AuthenticatedRequest extends Request {
-  user?: {
-    userId: string;
-  };
-}
+import { AuthenticatedRequest } from '../types/middleware';
 
 export const authMiddleware = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;

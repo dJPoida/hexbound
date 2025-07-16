@@ -1,4 +1,4 @@
-import { ServerGameState } from '../../shared/types/socket.types';
+import { ServerGameState } from '../../shared/types/socket';
 
 /**
  * Applies the actions from the turnActionLog to a given game state to create a "preview" state

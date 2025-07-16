@@ -2,7 +2,7 @@ import { Server } from 'http';
 import { parse } from 'url';
 import { WebSocket,WebSocketServer } from 'ws';
 
-import { AuthenticatedWebSocket } from '../shared/types/socket.types';
+import { AuthenticatedWebSocket } from '../shared/types/socket';
 import { User } from './entities/User.entity';
 import redisClient from './redisClient';
 import { handleSocketMessage } from './socketMessageHandlers';

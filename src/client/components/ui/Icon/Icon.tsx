@@ -1,6 +1,6 @@
 import { h } from 'preact';
 
-import { StyleColor } from '../../../types/styleColor.type';
+import { StyleColor } from '../../../types/ui';
 import styles from './Icon.module.css';
 
 // Icon-specific types and constants - exported for use by consumers

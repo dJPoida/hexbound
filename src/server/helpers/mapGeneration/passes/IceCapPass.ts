@@ -1,6 +1,6 @@
 import { ICE_CAP_DEFAULT_PARAMS,MAP_GENERATION_PASSES } from '../../../../shared/constants/mapGeneration.const';
-import { TerrainType } from '../../../../shared/types/game.types';
-import { MapGenerationPassConfig,PassExecutionResult } from '../../../../shared/types/mapGeneration.types';
+import { TerrainType } from '../../../../shared/types/map';
+import { MapGenerationPassConfig,PassExecutionResult } from '../../../../shared/types/mapGeneration';
 import { GenerationPass, MapGenerationContext } from '../GenerationPass';
 
 /**

@@ -2,10 +2,11 @@ import * as PIXI from 'pixi.js';
 import { IViewportOptions, Viewport as PixiViewport } from 'pixi-viewport';
 
 import { HEX_HEIGHT, HEX_WIDTH, MAX_TILES_ON_SCREEN, MIN_TILES_ON_SCREEN } from '../../shared/constants/map.const';
-import { MapData } from '../../shared/types/game.types';
-import { ClientGameStatePayload } from '../../shared/types/socket.types';
+import { MapData } from '../../shared/types/map';
+import { ClientGameStatePayload } from '../../shared/types/socket';
 import { MapRenderer } from '../rendering/MapRenderer';
-import { gameStateService, GameViewportState } from './gameState.service';
+import { GameViewportState } from '../types/services';
+import { gameStateService } from './gameState.service';
 import { settingsService } from './settings.service';
 
 class RenderingService {

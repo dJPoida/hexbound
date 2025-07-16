@@ -1,4 +1,4 @@
-import { MapData } from '../../shared/types/game.types';
+import { MapData } from '../../shared/types/map';
 
 /**
  * Calculates a checksum for map data to detect changes

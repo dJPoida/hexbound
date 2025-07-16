@@ -1,7 +1,7 @@
 import { h } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 
-import { ClientGameStatePayload } from '../../../../shared/types/socket.types';
+import { ClientGameStatePayload } from '../../../../shared/types/socket';
 import { useAuth } from '../../../contexts/AuthProvider';
 import { useGame } from '../../../contexts/GameProvider';
 import { renderingService } from '../../../services/rendering.service';

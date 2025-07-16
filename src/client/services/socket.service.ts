@@ -1,5 +1,5 @@
 import { SOCKET_MESSAGE_TYPES } from '../../shared/constants/socket.const';
-import { ErrorPayload,SocketMessage } from '../../shared/types/socket.types';
+import { ErrorPayload,SocketMessage } from '../../shared/types/socket';
 import { authService } from './auth.service';
 
 type MessageHandler = (payload: unknown) => void;

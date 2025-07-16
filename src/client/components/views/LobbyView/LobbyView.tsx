@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 import { JSX } from 'preact/jsx-runtime';
 
-import { GameListItem, Player } from '../../../../shared/types/game.types';
+import { GameListItem, Player } from '../../../../shared/types/core';
 import { Button, ButtonVariant, StyleColor } from '../../ui/Button';
 import { Input, InputType } from '../../ui/Input';
 import { Logo } from '../../ui/Logo/Logo';

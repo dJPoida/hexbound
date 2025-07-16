@@ -1,6 +1,6 @@
 import { MAP_GENERATION_PASSES, SPAWN_ALLOCATION_DEFAULT_PARAMS } from '../../../../shared/constants/mapGeneration.const';
-import { TerrainType, TileData } from '../../../../shared/types/game.types';
-import { MapGenerationPassConfig,PassExecutionResult } from '../../../../shared/types/mapGeneration.types';
+import { TerrainType, TileData } from '../../../../shared/types/map';
+import { MapGenerationPassConfig,PassExecutionResult } from '../../../../shared/types/mapGeneration';
 import { GenerationPass, MapGenerationContext } from '../GenerationPass';
 
 /**

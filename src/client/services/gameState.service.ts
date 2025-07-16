@@ -1,11 +1,8 @@
 import { Point } from 'pixi.js';
 
-const LOCAL_STORAGE_KEY_PREFIX = 'hexbound-game-state-';
+import { GameViewportState } from '../types/services';
 
-export interface GameViewportState {
-  zoom: number;
-  center: { x: number; y: number };
-}
+const LOCAL_STORAGE_KEY_PREFIX = 'hexbound-game-state-';
 
 class GameStateService {
   private getStorageKey(gameId: string): string {

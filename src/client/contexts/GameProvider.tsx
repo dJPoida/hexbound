@@ -1,8 +1,9 @@
 import { ComponentChildren, createContext } from 'preact';
 import { useContext, useEffect, useState } from 'preact/hooks';
 
-import { GameListItem, MapData } from '../../shared/types/game.types';
-import { ClientGameStatePayload, GameTurnEndedPayload, MapUpdatePayload } from '../../shared/types/socket.types';
+import { GameListItem } from '../../shared/types/core';
+import { MapData } from '../../shared/types/map';
+import { ClientGameStatePayload, GameTurnEndedPayload, MapUpdatePayload } from '../../shared/types/socket';
 import { authenticatedFetch } from '../services/api.service';
 import { socketService } from '../services/socket.service';
 import { useAuth } from './AuthProvider';

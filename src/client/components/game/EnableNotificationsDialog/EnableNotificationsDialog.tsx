@@ -2,7 +2,7 @@ import { useEffect,useState } from 'preact/hooks';
 
 import { pushService } from '../../../services/push.service';
 import { settingsService } from '../../../services/settings.service';
-import { StyleColor } from '../../../types/styleColor.type';
+import { StyleColor } from '../../../types/ui';
 import type { NotificationPermission } from '../../game/GameSettingsDialog/GameSettingsDialog';
 import { Button, ButtonVariant } from '../../ui/Button';
 import { Dialog } from '../../ui/Dialog/Dialog';

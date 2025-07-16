@@ -1,6 +1,6 @@
 import { ComponentChildren,h } from 'preact';
 
-import { StyleColor } from '../../../types/styleColor.type';
+import { StyleColor } from '../../../types/ui';
 import { Button, ButtonVariant } from '../Button';
 import { Icon } from '../Icon';
 import { Heading } from '../Typography/Heading';

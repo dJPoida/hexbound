@@ -1,7 +1,8 @@
 import { RedisJSON } from '@redis/json/dist/commands';
 
 import { SOCKET_MESSAGE_TYPES } from '../shared/constants/socket.const';
-import { MapData, Player } from '../shared/types/game.types';
+import { Player } from '../shared/types/core';
+import { MapData } from '../shared/types/map';
 import {
   AuthenticatedWebSocket,
   ClientGameStatePayload,
@@ -10,7 +11,7 @@ import {
   ServerGameState,
   SocketMessage,
   TurnAction,
-} from '../shared/types/socket.types';
+} from '../shared/types/socket';
 import { calculateMapChecksum } from './helpers/calculateMapChecksum.helper';
 import { toClientState } from './helpers/clientState.helper';
 import { getPlayerTurnPreview } from './helpers/gameState.helper';

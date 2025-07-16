@@ -2,7 +2,7 @@ import { RedisJSON } from '@redis/json/dist/commands';
 import { Request, Response } from 'express';
 
 import { SOCKET_MESSAGE_TYPES } from '../../shared/constants/socket.const';
-import { ServerGameState, SocketMessage } from '../../shared/types/socket.types';
+import { ServerGameState, SocketMessage } from '../../shared/types/socket';
 import config from '../config';
 import { AppDataSource } from '../data-source';
 import { Game } from '../entities/Game.entity';
@@ -10,9 +10,9 @@ import { GameStatus, GameStatusValues } from '../entities/GameStatus.entity';
 import { User } from '../entities/User.entity';
 import { generateGameCode } from '../helpers/gameCode.helper';
 import { MapGenerator } from '../helpers/mapGenerator';
-import { AuthenticatedRequest } from '../middleware/auth.middleware';
 import redisClient from '../redisClient';
 import { broadcastToGame } from '../socketSubscriptionManager';
+import { AuthenticatedRequest } from '../types/middleware';
 
 export const getGameByCode = async (req: Request, res: Response) => {
   const { gameCode } = req.params;

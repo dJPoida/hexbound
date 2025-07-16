@@ -1,6 +1,6 @@
 import { createMapGenerationConfig } from '../../shared/constants/mapGeneration.const';
-import { MapData, TileData } from '../../shared/types/game.types';
-import { MapGenerationConfig, PassExecutionResult } from '../../shared/types/mapGeneration.types';
+import { MapData, TileData } from '../../shared/types/map';
+import { MapGenerationConfig, PassExecutionResult } from '../../shared/types/mapGeneration';
 import { MapGenerationContext } from './mapGeneration/GenerationPass';
 import { PassRegistry } from './mapGeneration/PassRegistry';
 

@@ -1,3 +1,5 @@
+// UI color system for components
+
 export enum StyleColor {
   DEFAULT = 'default',
   AMBER = 'amber',

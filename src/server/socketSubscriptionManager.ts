@@ -1,6 +1,5 @@
-import { Player } from '../shared/types/game.types';
-import { ServerGameState } from '../shared/types/socket.types';
-import { AuthenticatedWebSocket } from '../shared/types/socket.types';
+import { Player } from '../shared/types/core';
+import { AuthenticatedWebSocket,ServerGameState } from '../shared/types/socket';
 import { AppDataSource } from './data-source';
 import { Game } from './entities/Game.entity';
 import { User } from './entities/User.entity';

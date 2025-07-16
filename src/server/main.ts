@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { Server } from './Server.js';
+import { Server } from './server.js';
 
 process.on('uncaughtException', (err, origin) => {
   console.error(`[Server] Uncaught Exception. Origin: ${origin}`, err);

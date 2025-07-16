@@ -2,11 +2,11 @@ import { h } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 
 import { API_ROUTES } from '../../../../shared/constants/api.const';
-import { TerrainType } from '../../../../shared/types/game.types';
-import { ClientGameStatePayload } from '../../../../shared/types/socket.types';
+import { TerrainType } from '../../../../shared/types/map';
+import { ClientGameStatePayload } from '../../../../shared/types/socket';
 import { useGame } from '../../../contexts/GameProvider';
 import { authenticatedFetch } from '../../../services/api.service';
-import { StyleColor } from '../../../types/styleColor.type';
+import { StyleColor } from '../../../types/ui';
 import { Button, ButtonVariant } from '../../ui/Button';
 import { Dialog, DialogSize } from '../../ui/Dialog';
 import { Heading } from '../../ui/Typography/Heading';

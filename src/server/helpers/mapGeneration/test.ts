@@ -1,4 +1,4 @@
-import { TerrainType } from '../../../shared/types/game.types';
+import { TerrainType } from '../../../shared/types/map';
 import { MapGenerator } from '../mapGenerator';
 
 /**
