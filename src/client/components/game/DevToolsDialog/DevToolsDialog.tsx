@@ -17,7 +17,7 @@ export enum DevToolsTab {
   GAME_STATE = 'gameState',
   MAP = 'map',
   PERFORMANCE = 'performance',
-  NETWORK = 'network'
+  NETWORK = 'network',
 }
 
 interface DevToolsDialogProps {
@@ -49,10 +49,10 @@ const loadDevToolsState = (): DevToolsState => {
   } catch (error) {
     console.warn('Failed to load dev tools state from localStorage:', error);
   }
-  
+
   return {
     activeTab: DevToolsTab.GAME_STATE,
-    scrollPositions: {}
+    scrollPositions: {},
   };
 };
 
@@ -61,7 +61,9 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
   const { mapData, mapChecksum } = useGame();
   const [activeTab, setActiveTab] = useState<DevToolsTab>(savedState.activeTab);
   const [fps, setFps] = useState<number>(0);
-  const [scrollPositions, setScrollPositions] = useState<Partial<Record<DevToolsTab, number>>>(savedState.scrollPositions);
+  const [scrollPositions, setScrollPositions] = useState<Partial<Record<DevToolsTab, number>>>(
+    savedState.scrollPositions
+  );
   const tabContentRef = useRef<HTMLDivElement>(null);
   const [isRegeneratingMap, setIsRegeneratingMap] = useState(false);
   const [lastMapUpdate, setLastMapUpdate] = useState<Date>(new Date());
@@ -72,10 +74,10 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
     if (tabContentRef.current) {
       setScrollPositions(prev => ({
         ...prev,
-        [activeTab]: tabContentRef.current!.scrollTop
+        [activeTab]: tabContentRef.current!.scrollTop,
       }));
     }
-    
+
     setActiveTab(newTab);
   };
 
@@ -83,7 +85,7 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
   useEffect(() => {
     saveDevToolsState({
       activeTab,
-      scrollPositions
+      scrollPositions,
     });
   }, [activeTab, scrollPositions]);
 
@@ -112,13 +114,13 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
     const measureFps = () => {
       frameCount++;
       const currentTime = performance.now();
-      
+
       if (currentTime - lastTime >= 1000) {
         setFps(Math.round(frameCount));
         frameCount = 0;
         lastTime = currentTime;
       }
-      
+
       animationId = requestAnimationFrame(measureFps);
     };
 
@@ -140,14 +142,14 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
         terrainPercentages: {} as Record<TerrainType, number>,
         elevationCounts: {} as Record<number, number>,
         spawnCount: 0,
-        elevationRange: { min: 0, max: 0 }
+        elevationRange: { min: 0, max: 0 },
       };
     }
 
     const terrainCounts = {} as Record<TerrainType, number>;
     const elevationCounts = {} as Record<number, number>;
     let spawnCount = 0;
-    
+
     // Initialize terrain counts
     Object.values(TerrainType).forEach(terrain => {
       terrainCounts[terrain] = 0;
@@ -176,8 +178,8 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
       spawnCount,
       elevationRange: {
         min: Math.min(...Object.keys(elevationCounts).map(Number)),
-        max: Math.max(...Object.keys(elevationCounts).map(Number))
-      }
+        max: Math.max(...Object.keys(elevationCounts).map(Number)),
+      },
     };
   };
 
@@ -211,7 +213,9 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
   // Log when map data changes (for debugging regeneration)
   useEffect(() => {
     if (mapData) {
-      console.log(`[DevTools] Map data updated: ${mapData.width}x${mapData.height}, ${mapData.tiles.length} tiles`);
+      console.log(
+        `[DevTools] Map data updated: ${mapData.width}x${mapData.height}, ${mapData.tiles.length} tiles`
+      );
       setLastMapUpdate(new Date());
     }
   }, [mapChecksum]);
@@ -220,12 +224,14 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
     switch (activeTab) {
       case DevToolsTab.GAME_STATE: {
         const gameStateJson = JSON.stringify(gameState, null, 2);
-        
+
         return (
           <div className={styles.tabContent} ref={tabContentRef}>
             <div className={styles.statsGrid}>
               <div className={styles.statSection}>
-                <Heading level={4} variant="subSectionHeader">Game Overview</Heading>
+                <Heading level={4} variant='subSectionHeader'>
+                  Game Overview
+                </Heading>
                 <div className={styles.statItem}>
                   <strong>Game ID:</strong> {gameState.gameId}
                 </div>
@@ -251,19 +257,27 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
               </div>
 
               <div className={styles.statSection}>
-                <Heading level={4} variant="subSectionHeader">Players ({gameState.players.length})</Heading>
+                <Heading level={4} variant='subSectionHeader'>
+                  Players ({gameState.players.length})
+                </Heading>
                 {gameState.players.map((player, index) => (
                   <div key={player.userId} className={styles.statItem}>
-                    <strong>Player {index + 1}:</strong> {player.userName} ({player.userId.substring(0, 8)}...)
-                    {player.isPlaceholder && <span style={{ color: 'var(--color-glow-yellow)' }}> [Placeholder]</span>}
+                    <strong>Player {index + 1}:</strong> {player.userName} (
+                    {player.userId.substring(0, 8)}...)
+                    {player.isPlaceholder && (
+                      <span style={{ color: 'var(--color-glow-yellow)' }}> [Placeholder]</span>
+                    )}
                   </div>
                 ))}
               </div>
 
               <div className={styles.statSection}>
-                <Heading level={4} variant="subSectionHeader">Map Data</Heading>
+                <Heading level={4} variant='subSectionHeader'>
+                  Map Data
+                </Heading>
                 <div className={styles.statItem}>
-                  <strong>Dimensions:</strong> {mapData ? `${mapData.width} × ${mapData.height}` : 'Not loaded'}
+                  <strong>Dimensions:</strong>{' '}
+                  {mapData ? `${mapData.width} × ${mapData.height}` : 'Not loaded'}
                 </div>
                 <div className={styles.statItem}>
                   <strong>Total Tiles:</strong> {mapData ? mapData.tiles.length : 0}
@@ -282,9 +296,12 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
           <div className={styles.tabContent} ref={tabContentRef}>
             <div className={styles.statsGrid}>
               <div className={styles.statSection}>
-                <Heading level={4} variant="subSectionHeader">Map Overview</Heading>
+                <Heading level={4} variant='subSectionHeader'>
+                  Map Overview
+                </Heading>
                 <div className={styles.statItem}>
-                  <strong>Dimensions:</strong> {mapData ? `${mapData.width} × ${mapData.height}` : 'Not loaded'}
+                  <strong>Dimensions:</strong>{' '}
+                  {mapData ? `${mapData.width} × ${mapData.height}` : 'Not loaded'}
                 </div>
                 <div className={styles.statItem}>
                   <strong>Total Tiles:</strong> {mapStats.totalTiles}
@@ -296,21 +313,27 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
                   <strong>Last Updated:</strong> {lastMapUpdate.toLocaleTimeString()}
                 </div>
                 <div className={styles.statItem}>
-                  <strong>Elevation Range:</strong> {mapStats.elevationRange.min} to {mapStats.elevationRange.max}
+                  <strong>Elevation Range:</strong> {mapStats.elevationRange.min} to{' '}
+                  {mapStats.elevationRange.max}
                 </div>
               </div>
 
               <div className={styles.statSection}>
-                <Heading level={4} variant="subSectionHeader">Terrain Distribution</Heading>
+                <Heading level={4} variant='subSectionHeader'>
+                  Terrain Distribution
+                </Heading>
                 {Object.entries(mapStats.terrainCounts).map(([terrain, count]) => (
                   <div key={terrain} className={styles.statItem}>
-                    <strong>{terrain}:</strong> {count} tiles ({mapStats.terrainPercentages[terrain as TerrainType].toFixed(1)}%)
+                    <strong>{terrain}:</strong> {count} tiles (
+                    {mapStats.terrainPercentages[terrain as TerrainType].toFixed(1)}%)
                   </div>
                 ))}
               </div>
 
-                            <div className={styles.statSection}>
-                <Heading level={4} variant="subSectionHeader">Elevation Distribution</Heading>
+              <div className={styles.statSection}>
+                <Heading level={4} variant='subSectionHeader'>
+                  Elevation Distribution
+                </Heading>
                 {Object.entries(mapStats.elevationCounts).map(([elevation, count]) => (
                   <div key={elevation} className={styles.statItem}>
                     <strong>Level {elevation}:</strong> {count} tiles
@@ -319,7 +342,9 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
               </div>
 
               <div className={styles.statSection}>
-                <Heading level={4} variant="subSectionHeader">Map Tools</Heading>
+                <Heading level={4} variant='subSectionHeader'>
+                  Map Tools
+                </Heading>
                 <Button
                   onClick={handleRegenerateMap}
                   disabled={gameState.turnNumber !== 1 || isRegeneratingMap}
@@ -327,12 +352,12 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
                   {isRegeneratingMap ? 'Regenerating...' : 'Regenerate Map'}
                 </Button>
                 {isRegeneratingMap && (
-                  <Text variant="caption" color="subtle">
+                  <Text variant='caption' color='subtle'>
                     Generating new map with random seed...
                   </Text>
                 )}
                 {gameState.turnNumber !== 1 && (
-                  <Text variant="caption" color="subtle">
+                  <Text variant='caption' color='subtle'>
                     Map regeneration is only available on turn 1
                   </Text>
                 )}
@@ -349,92 +374,118 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
             </div>
           </div>
         );
-       }
-              case DevToolsTab.PERFORMANCE:
-         return (
-           <div className={styles.tabContent} ref={tabContentRef}>
-             <div className={styles.statSection}>
-               <Heading level={4} variant="subSectionHeader">Rendering Performance</Heading>
-               <div className={styles.statItem}>
-                 <strong>FPS:</strong> <span style={{ color: fps > 50 ? 'var(--color-moss-green)' : fps > 30 ? 'var(--color-glow-yellow)' : 'var(--color-clay-red)' }}>{fps || 'Calculating...'}</span>
-               </div>
-               <div className={styles.statItem}>
-                 <strong>Visible Tiles:</strong> Dynamic (based on viewport)
-               </div>
-               <div className={styles.statItem}>
-                 <strong>Total Sprites:</strong> {mapData ? mapData.tiles.length * 3 : 0} (3 copies per tile)
-               </div>
-               <div className={styles.statItem}>
-                 <strong>Browser:</strong> {navigator.userAgent.split(' ')[0]}
-               </div>
-               <Text variant="caption" color="subtle">
-                 Performance metrics are updated in real-time. FPS is color-coded: Green (&gt;50), Yellow (30-50), Red (&lt;30).
-               </Text>
-             </div>
-           </div>
-         );
-                    case DevToolsTab.NETWORK: {
-         const connectionStatus = getConnectionStatus();
-         return (
-           <div className={styles.tabContent} ref={tabContentRef}>
-             <div className={styles.statsGrid}>
-               <div className={styles.statSection}>
-                 <Heading level={4} variant="subSectionHeader">WebSocket Connection</Heading>
-                 <div className={styles.statItem}>
-                   <strong>Status:</strong> <span style={{ color: connectionStatus.color }}>{connectionStatus.text}</span>
-                 </div>
-                 <div className={styles.statItem}>
-                   <strong>Protocol:</strong> {window.location.protocol === 'https:' ? 'WSS (Secure)' : 'WS (Insecure)'}
-                 </div>
-                 <div className={styles.statItem}>
-                   <strong>Host:</strong> {window.location.host}
-                 </div>
-                 <div className={styles.statItem}>
-                   <strong>Connection Time:</strong> {new Date().toLocaleTimeString()}
-                 </div>
-               </div>
+      }
+      case DevToolsTab.PERFORMANCE:
+        return (
+          <div className={styles.tabContent} ref={tabContentRef}>
+            <div className={styles.statSection}>
+              <Heading level={4} variant='subSectionHeader'>
+                Rendering Performance
+              </Heading>
+              <div className={styles.statItem}>
+                <strong>FPS:</strong>{' '}
+                <span
+                  style={{
+                    color:
+                      fps > 50
+                        ? 'var(--color-moss-green)'
+                        : fps > 30
+                          ? 'var(--color-glow-yellow)'
+                          : 'var(--color-clay-red)',
+                  }}
+                >
+                  {fps || 'Calculating...'}
+                </span>
+              </div>
+              <div className={styles.statItem}>
+                <strong>Visible Tiles:</strong> Dynamic (based on viewport)
+              </div>
+              <div className={styles.statItem}>
+                <strong>Total Sprites:</strong> {mapData ? mapData.tiles.length * 3 : 0} (3 copies
+                per tile)
+              </div>
+              <div className={styles.statItem}>
+                <strong>Browser:</strong> {navigator.userAgent.split(' ')[0]}
+              </div>
+              <Text variant='caption' color='subtle'>
+                Performance metrics are updated in real-time. FPS is color-coded: Green (&gt;50),
+                Yellow (30-50), Red (&lt;30).
+              </Text>
+            </div>
+          </div>
+        );
+      case DevToolsTab.NETWORK: {
+        const connectionStatus = getConnectionStatus();
+        return (
+          <div className={styles.tabContent} ref={tabContentRef}>
+            <div className={styles.statsGrid}>
+              <div className={styles.statSection}>
+                <Heading level={4} variant='subSectionHeader'>
+                  WebSocket Connection
+                </Heading>
+                <div className={styles.statItem}>
+                  <strong>Status:</strong>{' '}
+                  <span style={{ color: connectionStatus.color }}>{connectionStatus.text}</span>
+                </div>
+                <div className={styles.statItem}>
+                  <strong>Protocol:</strong>{' '}
+                  {window.location.protocol === 'https:' ? 'WSS (Secure)' : 'WS (Insecure)'}
+                </div>
+                <div className={styles.statItem}>
+                  <strong>Host:</strong> {window.location.host}
+                </div>
+                <div className={styles.statItem}>
+                  <strong>Connection Time:</strong> {new Date().toLocaleTimeString()}
+                </div>
+              </div>
 
-               <div className={styles.statSection}>
-                 <Heading level={4} variant="subSectionHeader">Game Session</Heading>
-                 <div className={styles.statItem}>
-                   <strong>Game ID:</strong> {gameState.gameId}
-                 </div>
-                 <div className={styles.statItem}>
-                   <strong>Game Code:</strong> {gameState.gameCode}
-                 </div>
-                 <div className={styles.statItem}>
-                   <strong>Turn Number:</strong> {gameState.turnNumber}
-                 </div>
-                 <div className={styles.statItem}>
-                   <strong>Current Player:</strong> {gameState.currentPlayerId}
-                 </div>
-                 <div className={styles.statItem}>
-                   <strong>Total Players:</strong> {gameState.players.length}
-                 </div>
-               </div>
+              <div className={styles.statSection}>
+                <Heading level={4} variant='subSectionHeader'>
+                  Game Session
+                </Heading>
+                <div className={styles.statItem}>
+                  <strong>Game ID:</strong> {gameState.gameId}
+                </div>
+                <div className={styles.statItem}>
+                  <strong>Game Code:</strong> {gameState.gameCode}
+                </div>
+                <div className={styles.statItem}>
+                  <strong>Turn Number:</strong> {gameState.turnNumber}
+                </div>
+                <div className={styles.statItem}>
+                  <strong>Current Player:</strong> {gameState.currentPlayerId}
+                </div>
+                <div className={styles.statItem}>
+                  <strong>Total Players:</strong> {gameState.players.length}
+                </div>
+              </div>
 
-               <div className={styles.statSection}>
-                 <Heading level={4} variant="subSectionHeader">Player List</Heading>
-                 {gameState.players.map((player, index) => (
-                   <div key={player.userId} className={styles.statItem}>
-                     <strong>Player {index + 1}:</strong> {player.userName} {player.isPlaceholder ? '(Placeholder)' : ''}
-                   </div>
-                 ))}
-               </div>
-             </div>
-             <Text variant="caption" color="subtle">
-               Network debugging tools will be expanded in future updates with message logs and connection statistics.
-             </Text>
-           </div>
-         );
-       }
-       default:
-         return null;
-     }
-   };
+              <div className={styles.statSection}>
+                <Heading level={4} variant='subSectionHeader'>
+                  Player List
+                </Heading>
+                {gameState.players.map((player, index) => (
+                  <div key={player.userId} className={styles.statItem}>
+                    <strong>Player {index + 1}:</strong> {player.userName}{' '}
+                    {player.isPlaceholder ? '(Placeholder)' : ''}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <Text variant='caption' color='subtle'>
+              Network debugging tools will be expanded in future updates with message logs and
+              connection statistics.
+            </Text>
+          </div>
+        );
+      }
+      default:
+        return null;
+    }
+  };
 
   return (
-    <Dialog title="Dev Tools" onClose={onClose} size={DialogSize.FULLSCREEN}>
+    <Dialog title='Dev Tools' onClose={onClose} size={DialogSize.FULLSCREEN}>
       <div className={styles.devToolsContainer}>
         <div className={styles.tabBar}>
           <Button
@@ -466,4 +517,4 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
       </div>
     </Dialog>
   );
-} 
+}

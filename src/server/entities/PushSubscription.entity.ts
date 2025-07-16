@@ -1,4 +1,4 @@
-import { Column, Entity, Index,JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { User } from './User.entity';
 
@@ -7,7 +7,7 @@ export class PushSubscription {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @ManyToOne(() => User, (user) => user.pushSubscriptions, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, user => user.pushSubscriptions, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user!: User;
 
@@ -23,4 +23,4 @@ export class PushSubscription {
 
   @Column('varchar')
   auth!: string;
-} 
+}

@@ -1,13 +1,19 @@
-import { NextFunction,Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import redisClient from '../redisClient';
 import { AuthenticatedRequest } from '../types/middleware';
 
-export const authMiddleware = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const authMiddleware = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'Authorization header missing or improperly formatted.' });
+    return res
+      .status(401)
+      .json({ message: 'Authorization header missing or improperly formatted.' });
   }
 
   const token = authHeader.split(' ')[1];
@@ -36,4 +42,4 @@ export const authMiddleware = async (req: AuthenticatedRequest, res: Response, n
     console.error('[Auth Middleware] Error:', error);
     res.status(500).json({ message: 'Error validating session' });
   }
-}; 
+};

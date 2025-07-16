@@ -17,4 +17,4 @@ export const SOCKET_MESSAGE_TYPES = {
   // Bidirectional
   ERROR: 'error',
   GAME_CHAT: 'game:chat',
-} as const; 
+} as const;

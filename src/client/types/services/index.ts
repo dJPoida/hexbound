@@ -1,3 +1,3 @@
 // Service-related types
 
-export * from './gameState.type'; 
+export * from './gameState.type';

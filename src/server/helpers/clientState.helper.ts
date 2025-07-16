@@ -1,4 +1,4 @@
-import { ClientGameStatePayload,ServerGameState } from '../../shared/types/socket';
+import { ClientGameStatePayload, ServerGameState } from '../../shared/types/socket';
 
 /**
  * Transforms the full server game state into a lighter, client-safe payload.
@@ -9,4 +9,4 @@ import { ClientGameStatePayload,ServerGameState } from '../../shared/types/socke
 export function toClientState(serverState: ServerGameState): ClientGameStatePayload {
   const { turnActionLog, mapData, ...clientState } = serverState;
   return clientState;
-} 
+}

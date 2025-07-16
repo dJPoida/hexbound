@@ -1,12 +1,12 @@
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
-import { cleanupOutdatedCaches,precacheAndRoute } from 'workbox-precaching';
+import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
-import { NetworkFirst,StaleWhileRevalidate } from 'workbox-strategies';
+import { NetworkFirst, StaleWhileRevalidate } from 'workbox-strategies';
 
 declare let self: ServiceWorkerGlobalScope;
 
 // When the new service worker is installed, this message listener will prompt it to activate immediately.
-self.addEventListener('message', (event) => {
+self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
@@ -68,7 +68,7 @@ self.addEventListener('push', (event: PushEvent) => {
     // just because the user has the lobby open.
     if (gameCode) {
       const gameUrl = `/game/${gameCode}`;
-      const isGamePageVisible = allClients.some((client) => {
+      const isGamePageVisible = allClients.some(client => {
         const clientUrl = new URL(client.url);
         return client.visibilityState === 'visible' && clientUrl.pathname === gameUrl;
       });
@@ -80,9 +80,11 @@ self.addEventListener('push', (event: PushEvent) => {
     } else {
       // For general notifications (not game-specific), we can suppress the
       // notification if any part of the app is visible.
-      const isAppVisible = allClients.some((client) => client.visibilityState === 'visible');
+      const isAppVisible = allClients.some(client => client.visibilityState === 'visible');
       if (isAppVisible) {
-        console.log('[SW] Non-game push event received, but a client is visible. Skipping notification.');
+        console.log(
+          '[SW] Non-game push event received, but a client is visible. Skipping notification.'
+        );
         return;
       }
     }
@@ -103,13 +105,13 @@ self.addEventListener('push', (event: PushEvent) => {
 
 self.addEventListener('notificationclick', (event: NotificationEvent) => {
   console.log('[SW] Notification click received.', event.notification.data);
-  
+
   event.notification.close();
 
   const openGamePromise = async () => {
     const gameCode = event.notification.data?.gameCode;
     const gameUrl = gameCode ? `/game/${gameCode}` : '/';
-    
+
     // This looks for an existing window and focuses it.
     const allClients = await self.clients.matchAll({
       includeUncontrolled: true,

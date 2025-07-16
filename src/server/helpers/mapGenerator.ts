@@ -22,14 +22,20 @@ export class MapGenerator {
   private config: MapGenerationConfig;
   private passRegistry: PassRegistry;
 
-  constructor(width: number, height: number, presetName?: keyof typeof import('../../shared/constants/mapGeneration.const').MAP_GENERATION_PRESETS, seed?: string, playerCount?: number) {
+  constructor(
+    width: number,
+    height: number,
+    presetName?: keyof typeof import('../../shared/constants/mapGeneration.const').MAP_GENERATION_PRESETS,
+    seed?: string,
+    playerCount?: number
+  ) {
     this.config = createMapGenerationConfig(width, height, presetName, seed);
-    
+
     // If player count is specified, update the spawn allocation pass parameters
     if (playerCount !== undefined) {
       this.updateSpawnAllocationPlayerCount(playerCount);
     }
-    
+
     this.passRegistry = PassRegistry.getInstance();
   }
 
@@ -62,12 +68,12 @@ export class MapGenerator {
    */
   public generateWithDetails(): MapGenerationResult {
     const startTime = Date.now();
-    
+
     // Validate configuration
     const enabledPasses = this.config.passes.filter(p => p.enabled);
     const passNames = enabledPasses.map(p => p.name);
     const validation = this.passRegistry.validatePassConfiguration(passNames);
-    
+
     if (!validation.valid) {
       throw new Error(`Missing generation passes: ${validation.missingPasses.join(', ')}`);
     }
@@ -125,4 +131,4 @@ export class MapGenerator {
   public setConfig(config: Partial<MapGenerationConfig>): void {
     this.config = { ...this.config, ...config };
   }
-} 
+}

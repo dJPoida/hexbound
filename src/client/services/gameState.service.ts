@@ -34,4 +34,4 @@ class GameStateService {
   }
 }
 
-export const gameStateService = new GameStateService(); 
+export const gameStateService = new GameStateService();

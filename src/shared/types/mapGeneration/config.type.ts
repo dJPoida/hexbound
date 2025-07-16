@@ -14,4 +14,4 @@ export interface MapGenerationConfig {
   seed?: string;
   /** List of generation passes to execute in order */
   passes: MapGenerationPassConfig[];
-} 
+}

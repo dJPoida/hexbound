@@ -8,6 +8,8 @@
     "build": "node build.cjs",
     "preview": "cross-env NODE_ENV=production node dist/server/main.js",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "docker:up": "docker compose --env-file .env.local -f docker-compose.yml up -d",
     "docker:down": "docker compose --env-file .env.local down",
     "typeorm": "tsx --env-file=.env.local node_modules/typeorm/cli.js -d src/server/data-source.ts",
@@ -36,6 +38,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3",
     "vite-plugin-pwa": "^1.0.0"

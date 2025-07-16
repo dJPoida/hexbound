@@ -1,6 +1,12 @@
-import { MAP_GENERATION_PASSES, OCEAN_BAND_DEFAULT_PARAMS } from '../../../../shared/constants/mapGeneration.const';
+import {
+  MAP_GENERATION_PASSES,
+  OCEAN_BAND_DEFAULT_PARAMS,
+} from '../../../../shared/constants/mapGeneration.const';
 import { TerrainType } from '../../../../shared/types/map';
-import { MapGenerationPassConfig,PassExecutionResult } from '../../../../shared/types/mapGeneration';
+import {
+  MapGenerationPassConfig,
+  PassExecutionResult,
+} from '../../../../shared/types/mapGeneration';
 import { GenerationPass, MapGenerationContext } from '../GenerationPass';
 
 /**
@@ -56,7 +62,10 @@ export class OceanBandPass extends GenerationPass {
   /**
    * Parse row expressions, converting 'height-N' strings to actual row numbers
    */
-  private parseRowExpressions(rowExpressions: readonly (number | string)[], mapHeight: number): number[] {
+  private parseRowExpressions(
+    rowExpressions: readonly (number | string)[],
+    mapHeight: number
+  ): number[] {
     const oceanRows: number[] = [];
 
     for (const rowExpr of rowExpressions) {
@@ -66,7 +75,7 @@ export class OceanBandPass extends GenerationPass {
         // Parse 'height-N' expressions
         const offsetStr = rowExpr.substring('height-'.length);
         const offset = parseInt(offsetStr, 10);
-        
+
         if (!isNaN(offset)) {
           const actualRow = mapHeight - offset;
           oceanRows.push(actualRow);
@@ -77,4 +86,4 @@ export class OceanBandPass extends GenerationPass {
 
     return oceanRows;
   }
-} 
+}

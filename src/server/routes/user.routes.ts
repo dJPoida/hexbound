@@ -18,4 +18,4 @@ router.post('/subscribe-push', authMiddleware, subscribeToPushNotifications);
 // Protected route: POST /api/user/unsubscribe-push
 router.post('/unsubscribe-push', authMiddleware, unsubscribeFromPushNotifications);
 
-export default router; 
+export default router;

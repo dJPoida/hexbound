@@ -1,6 +1,6 @@
-import { Column, Entity, OneToMany,PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { Game } from "./Game.entity";
+import { Game } from './Game.entity';
 
 // These values should correspond to the 'statusName' in the 'game_statuses' table
 export const GameStatusValues = {
@@ -9,16 +9,16 @@ export const GameStatusValues = {
   FINISHED: 'finished',
 } as const;
 
-export type GameStatusName = typeof GameStatusValues[keyof typeof GameStatusValues];
+export type GameStatusName = (typeof GameStatusValues)[keyof typeof GameStatusValues];
 
-@Entity({ name: "game_statuses" })
+@Entity({ name: 'game_statuses' })
 export class GameStatus {
   @PrimaryGeneratedColumn('increment')
   statusId!: number;
 
-  @Column({ type: "varchar", unique: true })
+  @Column({ type: 'varchar', unique: true })
   statusName!: GameStatusName;
 
   @OneToMany(() => Game, game => game.status)
   games!: Game[];
-} 
+}

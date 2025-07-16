@@ -25,4 +25,4 @@
 /* UI elements that should be interactive must have pointer-events re-enabled */
 .uiContainer > * {
   pointer-events: auto;
-} 
+}

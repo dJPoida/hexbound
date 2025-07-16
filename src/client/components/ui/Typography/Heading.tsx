@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority';
-import { type ComponentChildren,createElement } from 'preact';
+import { type ComponentChildren, createElement } from 'preact';
 
 import styles from './Typography.module.css';
 
@@ -43,9 +43,5 @@ export const Heading = ({
   const component = `h${level}`;
   const finalClassName = headingStyles({ variant, color, className });
 
-  return createElement(
-    component,
-    { class: finalClassName, style, ...props },
-    children
-  );
-}; 
+  return createElement(component, { class: finalClassName, style, ...props }, children);
+};

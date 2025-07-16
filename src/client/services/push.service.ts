@@ -40,7 +40,7 @@ export const pushService = {
       });
 
       console.log('[PushService] User is subscribed:', subscription);
-      
+
       // Send subscription to the backend
       console.log('[PushService] Sending subscription to backend...');
       await authenticatedFetch(API_ROUTES.SUBSCRIBE_PUSH, {
@@ -78,7 +78,7 @@ export const pushService = {
         body: JSON.stringify({ endpoint: subscription.endpoint }),
       });
       console.log('[PushService] Unsubscription request sent to server.');
-      
+
       // Unsubscribe from the browser's push manager
       const unsubscribed = await subscription.unsubscribe();
       if (unsubscribed) {
@@ -92,5 +92,5 @@ export const pushService = {
       console.error('[PushService] Failed to unsubscribe the user: ', error);
       return false;
     }
-  }
-}; 
+  },
+};

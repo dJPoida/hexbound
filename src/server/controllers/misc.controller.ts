@@ -22,6 +22,8 @@ export const testRedis = async (_req: Request, res: Response) => {
     res.json({ message: 'Redis SET/GET successful', value });
   } catch (error) {
     console.error('[API /redis-test] Error:', error);
-    res.status(500).json({ message: 'Error interacting with Redis', error: (error as Error).message });
+    res
+      .status(500)
+      .json({ message: 'Error interacting with Redis', error: (error as Error).message });
   }
-}; 
+};

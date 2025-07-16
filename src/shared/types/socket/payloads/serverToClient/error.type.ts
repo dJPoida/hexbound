@@ -4,4 +4,4 @@
 export interface ErrorPayload {
   message: string;
   details?: unknown;
-} 
+}

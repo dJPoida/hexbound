@@ -2,6 +2,6 @@
 
 // A generic success/acknowledgement message
 export interface AckPayload {
-    status: 'ok';
-    action: string; // e.g., 'game:subscribed'
-} 
+  status: 'ok';
+  action: string; // e.g., 'game:subscribed'
+}

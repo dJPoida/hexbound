@@ -31,7 +31,9 @@ export const pushService = {
         return;
       }
 
-      console.log(`[PushService] Sending notification to ${subscriptions.length} endpoint(s) for user ${userId}.`);
+      console.log(
+        `[PushService] Sending notification to ${subscriptions.length} endpoint(s) for user ${userId}.`
+      );
 
       const notificationPromises = subscriptions.map(sub => {
         const pushSubscription = {
@@ -42,7 +44,8 @@ export const pushService = {
           },
         };
 
-        return webpush.sendNotification(pushSubscription, JSON.stringify(payload))
+        return webpush
+          .sendNotification(pushSubscription, JSON.stringify(payload))
           .catch((error: unknown) => {
             // If a subscription is no longer valid, the push service returns a 410 Gone status.
             // We should remove it from our database.
@@ -51,17 +54,22 @@ export const pushService = {
               return subscriptionRepo.delete({ id: sub.id });
             } else {
               const errorMessage = error instanceof Error ? error.message : String(error);
-              console.error(`[PushService] Failed to send notification to endpoint for user ${userId}:`, errorMessage);
+              console.error(
+                `[PushService] Failed to send notification to endpoint for user ${userId}:`,
+                errorMessage
+              );
             }
           });
       });
 
       await Promise.all(notificationPromises);
       console.log(`[PushService] Successfully processed notifications for user ${userId}.`);
-
     } catch (dbError: unknown) {
       const errorMessage = dbError instanceof Error ? dbError.message : String(dbError);
-      console.error(`[PushService] Database error while sending notifications for user ${userId}:`, errorMessage);
+      console.error(
+        `[PushService] Database error while sending notifications for user ${userId}:`,
+        errorMessage
+      );
     }
-  }
-}; 
+  },
+};

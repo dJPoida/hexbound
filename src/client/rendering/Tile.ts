@@ -1,9 +1,20 @@
 import * as PIXI from 'pixi.js';
 
-import { ELEVATION_STEP, HEX_OFFSET_X, HEX_OFFSET_Y, HEX_TEXT_OFFSET_X, HEX_TEXT_OFFSET_Y, TILE_FONT, TILE_FONT_SIZE } from '../../shared/constants/map.const';
-import { TerrainType,TileData } from '../../shared/types/map';
+import {
+  ELEVATION_STEP,
+  HEX_OFFSET_X,
+  HEX_OFFSET_Y,
+  HEX_TEXT_OFFSET_X,
+  HEX_TEXT_OFFSET_Y,
+  TILE_FONT,
+  TILE_FONT_SIZE,
+} from '../../shared/constants/map.const';
+import { TerrainType, TileData } from '../../shared/types/map';
 
-function getTextureForTerrain(terrain: TerrainType, textures: Record<string, PIXI.Texture>): PIXI.Texture {
+function getTextureForTerrain(
+  terrain: TerrainType,
+  textures: Record<string, PIXI.Texture>
+): PIXI.Texture {
   switch (terrain) {
     case TerrainType.GRASSLAND:
       return textures.tile_grassland;
@@ -41,7 +52,7 @@ export class Tile {
     this.outline.anchor.set(0);
     this.outline.x = HEX_OFFSET_X;
     this.outline.y = HEX_OFFSET_Y + elevationOffsetY;
-    
+
     const debugTextStyle: Partial<PIXI.TextStyle> = {
       fontFamily: TILE_FONT,
       fontSize: TILE_FONT_SIZE / 2,
@@ -49,9 +60,9 @@ export class Tile {
       align: 'center',
     };
 
-    this.debugText = new PIXI.Text({ 
-      text: `(${q},${r}) [${elevation}]`, 
-      style: debugTextStyle 
+    this.debugText = new PIXI.Text({
+      text: `(${q},${r}) [${elevation}]`,
+      style: debugTextStyle,
     });
     this.debugText.anchor.set(0.5);
     this.debugText.x = HEX_TEXT_OFFSET_X;
@@ -66,18 +77,18 @@ export class Tile {
         align: 'center',
       };
 
-      this.spawnText = new PIXI.Text({ 
-        text: `P${playerSpawn} Spawn`, 
-        style: spawnTextStyle 
+      this.spawnText = new PIXI.Text({
+        text: `P${playerSpawn} Spawn`,
+        style: spawnTextStyle,
       });
       this.spawnText.anchor.set(0.5);
       this.spawnText.x = HEX_TEXT_OFFSET_X;
       this.spawnText.y = HEX_TEXT_OFFSET_Y + 10 + elevationOffsetY; // Above the coordinate text
     }
-    
+
     // Add sprites to container in the correct render order
     this.container.addChild(this.body, this.outline, this.debugText);
-    
+
     // Add spawn text if it exists
     if (this.spawnText) {
       this.container.addChild(this.spawnText);
@@ -101,10 +112,10 @@ export class Tile {
     if (this.spawnText) {
       this.spawnText.destroy({ children: true });
     }
-    
+
     // Destroy the container itself
     if (this.container) {
       this.container.destroy({ children: true });
     }
   }
-} 
+}

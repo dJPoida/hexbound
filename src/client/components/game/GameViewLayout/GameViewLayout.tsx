@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import { useEffect,useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 
 import { ClientGameStatePayload } from '../../../../shared/types/socket';
 import { useDialogs } from '../../../contexts/DialogProvider';
@@ -23,17 +23,16 @@ interface GameViewLayoutProps {
   dialog: h.JSX.Element | null;
 }
 
-export function GameViewLayout({ 
-  gameState, 
-  isMapReady, 
-  onReady, 
+export function GameViewLayout({
+  gameState,
+  isMapReady,
+  onReady,
   onEndTurn,
   onPushDialog,
   isMyTurn,
   currentUserId,
-  dialog
+  dialog,
 }: GameViewLayoutProps) {
-  
   const [settings, setSettings] = useState(settingsService.getSettings());
   const dialogs = useDialogs();
 
@@ -49,49 +48,46 @@ export function GameViewLayout({
       onPushDialog('debugInfo');
     }
   };
-  
+
   // Check if any players are placeholders
   const hasPlaceholders = gameState.players.some(p => p.isPlaceholder);
   const canEndTurn = isMyTurn && !hasPlaceholders;
-  
 
-  
   // Header is now handled at the App level via AppHeader
 
   const footerContent = (
     <ActionBar>
       <div>
         {settings.showDebugInfo && (
-          <Button onClick={toggleDebugDialog} color={StyleColor.DEFAULT} icon="terminal" ariaLabel="Toggle Debug Info" />
+          <Button
+            onClick={toggleDebugDialog}
+            color={StyleColor.DEFAULT}
+            icon='terminal'
+            ariaLabel='Toggle Debug Info'
+          />
         )}
       </div>
       <div>
-        <Button 
-          onClick={onEndTurn} 
-          color={StyleColor.AMBER}
-          disabled={!canEndTurn}
-        >
+        <Button onClick={onEndTurn} color={StyleColor.AMBER} disabled={!canEndTurn}>
           {hasPlaceholders ? 'Waiting for Players' : 'End Turn'}
         </Button>
       </div>
     </ActionBar>
   );
-  
+
   return (
     <div class={styles.gameLayout}>
       <div className={`${styles.fadeOverlay} ${isMapReady ? styles.fadeOut : ''}`}></div>
       <div class={styles.viewportContainer}>
-        <Viewport 
-            pixiContainerId="pixi-container" 
-            gameState={gameState} 
-            currentPlayerId={currentUserId}
-            onReady={onReady} 
+        <Viewport
+          pixiContainerId='pixi-container'
+          gameState={gameState}
+          currentPlayerId={currentUserId}
+          onReady={onReady}
         />
       </div>
-      <main class={styles.mainContent}>
-        {dialog}
-      </main>
+      <main class={styles.mainContent}>{dialog}</main>
       <footer class={styles.footer}>{footerContent}</footer>
     </div>
   );
-} 
+}

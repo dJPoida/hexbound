@@ -69,7 +69,7 @@ export class PassRegistry {
    */
   validatePassConfiguration(passNames: string[]): { valid: boolean; missingPasses: string[] } {
     const missingPasses: string[] = [];
-    
+
     for (const passName of passNames) {
       if (!this.hasPass(passName)) {
         missingPasses.push(passName);
@@ -81,4 +81,4 @@ export class PassRegistry {
       missingPasses,
     };
   }
-} 
+}

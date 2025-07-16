@@ -17,4 +17,4 @@ export interface ServerGameState {
   gameState: {
     placeholderCounter: number;
   };
-} 
+}

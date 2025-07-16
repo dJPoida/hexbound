@@ -6,7 +6,7 @@ type DialogType = 'gameSettings' | 'incrementCounter' | 'debugInfo';
 interface DialogContextType {
   // State
   dialogStack: DialogType[];
-  
+
   // Actions
   pushDialog: (dialog: DialogType) => void;
   popDialog: () => void;
@@ -65,12 +65,8 @@ export const DialogProvider = ({ children }: DialogProviderProps) => {
     getCurrentDialog,
   };
 
-  return (
-    <DialogContext.Provider value={dialogValue}>
-      {children}
-    </DialogContext.Provider>
-  );
+  return <DialogContext.Provider value={dialogValue}>{children}</DialogContext.Provider>;
 };
 
 // Export the DialogType for use in components
-export type { DialogType }; 
+export type { DialogType };

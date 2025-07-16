@@ -6,4 +6,4 @@ export { NavigationProvider, useNavigation } from './NavigationProvider';
 export { NotificationProvider, useNotifications } from './NotificationProvider';
 
 // Export types
-export type { DialogType } from './DialogProvider'; 
+export type { DialogType } from './DialogProvider';

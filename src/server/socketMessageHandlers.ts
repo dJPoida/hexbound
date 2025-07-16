@@ -17,7 +17,13 @@ import { toClientState } from './helpers/clientState.helper';
 import { getPlayerTurnPreview } from './helpers/gameState.helper';
 import redisClient from './redisClient';
 import { pushService } from './services/push.service';
-import { broadcastToGame, isUserViewingGame, removeActiveGameView, setActiveGameView, subscribe } from './socketSubscriptionManager';
+import {
+  broadcastToGame,
+  isUserViewingGame,
+  removeActiveGameView,
+  setActiveGameView,
+  subscribe,
+} from './socketSubscriptionManager';
 
 // A simple type guard to check if a message is a valid SocketMessage
 function isValidSocketMessage(msg: unknown): msg is SocketMessage<unknown> {
@@ -46,7 +52,12 @@ function cancelTurnNotification(userId: string) {
 
 export function handleSocketMessage(ws: AuthenticatedWebSocket, message: Buffer) {
   if (!ws.userId) {
-    return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'Authentication required.' } }));
+    return ws.send(
+      JSON.stringify({
+        type: SOCKET_MESSAGE_TYPES.ERROR,
+        payload: { message: 'Authentication required.' },
+      })
+    );
   }
   cancelTurnNotification(ws.userId);
 
@@ -93,7 +104,7 @@ export function handleSocketMessage(ws: AuthenticatedWebSocket, message: Buffer)
 async function handleClientReady(ws: AuthenticatedWebSocket, payload: GameIdPayload) {
   const { userId } = ws;
   const { gameId } = payload;
-  
+
   if (!userId) return;
 
   subscribe(ws, gameId);
@@ -102,7 +113,12 @@ async function handleClientReady(ws: AuthenticatedWebSocket, payload: GameIdPayl
   const gameState = (await redisClient.json.get(gameKey)) as ServerGameState | null;
 
   if (!gameState) {
-    return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: `Game state not found for game ${gameId}.` } }));
+    return ws.send(
+      JSON.stringify({
+        type: SOCKET_MESSAGE_TYPES.ERROR,
+        payload: { message: `Game state not found for game ${gameId}.` },
+      })
+    );
   }
 
   // Send game state (without map data)
@@ -120,7 +136,9 @@ async function handleClientReady(ws: AuthenticatedWebSocket, payload: GameIdPayl
     },
   };
   ws.send(JSON.stringify(mapUpdateMessage));
-  console.log(`[ClientReady] Sent map update to client ${userId} for game ${gameId} with checksum ${checksum}`);
+  console.log(
+    `[ClientReady] Sent map update to client ${userId} for game ${gameId} with checksum ${checksum}`
+  );
 }
 
 async function handleIncrementCounter(ws: AuthenticatedWebSocket, payload: GameIdPayload) {
@@ -134,7 +152,12 @@ async function handleIncrementCounter(ws: AuthenticatedWebSocket, payload: GameI
   if (!gameState) return;
 
   if (gameState.currentPlayerId !== userId) {
-    return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'It is not your turn.' } }));
+    return ws.send(
+      JSON.stringify({
+        type: SOCKET_MESSAGE_TYPES.ERROR,
+        payload: { message: 'It is not your turn.' },
+      })
+    );
   }
 
   const action: TurnAction = { type: 'INCREMENT_COUNTER' };
@@ -159,21 +182,30 @@ async function handleEndTurn(ws: AuthenticatedWebSocket, payload: EndTurnPayload
   if (!gameState) return;
 
   if (gameState.currentPlayerId !== playerWhoSentMessage) {
-    return ws.send(JSON.stringify({ type: SOCKET_MESSAGE_TYPES.ERROR, payload: { message: 'It is not your turn to end.' } }));
+    return ws.send(
+      JSON.stringify({
+        type: SOCKET_MESSAGE_TYPES.ERROR,
+        payload: { message: 'It is not your turn to end.' },
+      })
+    );
   }
 
   // Check if any players are placeholders
   const hasPlaceholders = gameState.players.some(p => p.isPlaceholder);
   if (hasPlaceholders) {
-    return ws.send(JSON.stringify({ 
-      type: SOCKET_MESSAGE_TYPES.ERROR, 
-      payload: { message: 'Cannot end turn while waiting for all players to join.' } 
-    }));
+    return ws.send(
+      JSON.stringify({
+        type: SOCKET_MESSAGE_TYPES.ERROR,
+        payload: { message: 'Cannot end turn while waiting for all players to join.' },
+      })
+    );
   }
 
   const stateAfterActions = getPlayerTurnPreview(gameState);
 
-  const currentPlayerIndex = gameState.players.findIndex((p: Player) => p.userId === playerWhoSentMessage);
+  const currentPlayerIndex = gameState.players.findIndex(
+    (p: Player) => p.userId === playerWhoSentMessage
+  );
   const nextPlayerIndex = (currentPlayerIndex + 1) % gameState.players.length;
   const nextPlayer = gameState.players[nextPlayerIndex];
 
@@ -187,7 +219,9 @@ async function handleEndTurn(ws: AuthenticatedWebSocket, payload: EndTurnPayload
       console.log(`[EndTurn] Sending delayed push notification to: ${nextPlayer.userId}`);
       pushService.sendNotification(nextPlayer.userId, notification);
     } else {
-      console.log(`[EndTurn] Next player ${nextPlayer.userId} is actively viewing the game. Skipping delayed notification.`);
+      console.log(
+        `[EndTurn] Next player ${nextPlayer.userId} is actively viewing the game. Skipping delayed notification.`
+      );
     }
     pendingTurnNotifications.delete(nextPlayer.userId);
   }, 15000);
@@ -229,4 +263,4 @@ async function handleEndTurn(ws: AuthenticatedWebSocket, payload: EndTurnPayload
     },
   };
   broadcastToGame(gameId, JSON.stringify(turnEndedMessage));
-} 
+}

@@ -2,6 +2,6 @@
 
 // A smaller, more frequent update
 export interface CounterUpdatePayload {
-    gameId: string;
-    newCount: number;
-} 
+  gameId: string;
+  newCount: number;
+}

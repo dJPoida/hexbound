@@ -3,7 +3,11 @@ import { useContext, useEffect, useState } from 'preact/hooks';
 
 import { GameListItem } from '../../shared/types/core';
 import { MapData } from '../../shared/types/map';
-import { ClientGameStatePayload, GameTurnEndedPayload, MapUpdatePayload } from '../../shared/types/socket';
+import {
+  ClientGameStatePayload,
+  GameTurnEndedPayload,
+  MapUpdatePayload,
+} from '../../shared/types/socket';
 import { authenticatedFetch } from '../services/api.service';
 import { socketService } from '../services/socket.service';
 import { useAuth } from './AuthProvider';
@@ -100,7 +104,7 @@ export const GameProvider = ({ children }: GameProviderProps) => {
         console.error('Failed to join game:', errorData.message);
         return null;
       }
-      
+
       const joinData = await joinResponse.json();
       return { gameId: joinData.gameId, gameCode };
     } catch (error) {
@@ -156,8 +160,8 @@ export const GameProvider = ({ children }: GameProviderProps) => {
           ...prevState,
           gameState: {
             ...prevState.gameState,
-            placeholderCounter: payload.value
-          }
+            placeholderCounter: payload.value,
+          },
         };
       });
     };
@@ -226,9 +230,5 @@ export const GameProvider = ({ children }: GameProviderProps) => {
     endTurn,
   };
 
-  return (
-    <GameContext.Provider value={gameValue}>
-      {children}
-    </GameContext.Provider>
-  );
-}; 
+  return <GameContext.Provider value={gameValue}>{children}</GameContext.Provider>;
+};

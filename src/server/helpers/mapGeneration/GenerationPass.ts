@@ -1,5 +1,10 @@
-import { AxialCoordinates,TerrainType, TileData } from '../../../shared/types/map';
-import { GenerationContext, MapGenerationConfig,MapGenerationPassConfig, PassExecutionResult } from '../../../shared/types/mapGeneration';
+import { AxialCoordinates, TerrainType, TileData } from '../../../shared/types/map';
+import {
+  GenerationContext,
+  MapGenerationConfig,
+  MapGenerationPassConfig,
+  PassExecutionResult,
+} from '../../../shared/types/mapGeneration';
 
 /**
  * Enhanced generation context with helper methods for passes
@@ -15,7 +20,7 @@ export class MapGenerationContext implements GenerationContext {
     this.height = height;
     this.config = config;
     this.tiles = [];
-    
+
     // Initialize the 2D grid
     for (let r = 0; r < height; r++) {
       this.tiles[r] = Array(width).fill(null);
@@ -66,11 +71,15 @@ export class MapGenerationContext implements GenerationContext {
    */
   getNeighbors(q: number, r: number): (TileData | null)[] {
     const neighbors: (TileData | null)[] = [];
-    
+
     // Hex grid neighbor offsets (axial coordinates)
     const offsets = [
-      { q: 1, r: 0 }, { q: 1, r: -1 }, { q: 0, r: -1 },
-      { q: -1, r: 0 }, { q: -1, r: 1 }, { q: 0, r: 1 }
+      { q: 1, r: 0 },
+      { q: 1, r: -1 },
+      { q: 0, r: -1 },
+      { q: -1, r: 0 },
+      { q: -1, r: 1 },
+      { q: 0, r: 1 },
     ];
 
     for (const offset of offsets) {
@@ -122,7 +131,10 @@ export abstract class GenerationPass {
   /**
    * Execute this generation pass
    */
-  abstract execute(context: MapGenerationContext, config: MapGenerationPassConfig): PassExecutionResult;
+  abstract execute(
+    context: MapGenerationContext,
+    config: MapGenerationPassConfig
+  ): PassExecutionResult;
 
   /**
    * Check if a tile should be skipped (already set by previous pass)
@@ -134,7 +146,12 @@ export abstract class GenerationPass {
   /**
    * Calculate base elevation from adjacent tiles for smooth transitions
    */
-  protected calculateBaseElevation(context: MapGenerationContext, q: number, r: number, defaultElevation: number): number {
+  protected calculateBaseElevation(
+    context: MapGenerationContext,
+    q: number,
+    r: number,
+    defaultElevation: number
+  ): number {
     const { west, north } = context.getAdjacentElevations(q, r);
 
     if (west !== null && north !== null) {
@@ -177,4 +194,4 @@ export abstract class GenerationPass {
       message: `${this.name} pass failed: ${message}`,
     };
   }
-} 
+}

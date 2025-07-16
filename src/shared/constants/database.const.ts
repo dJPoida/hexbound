@@ -50,4 +50,4 @@ export enum SocketMessageType {
 // Node.js error codes
 export enum NodeErrorCode {
   SERVER_NOT_RUNNING = 'ERR_SERVER_NOT_RUNNING',
-} 
+}

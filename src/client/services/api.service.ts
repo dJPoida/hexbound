@@ -7,11 +7,14 @@ import { authService } from './auth.service';
  * @param options The standard fetch options object.
  * @returns A promise that resolves with the fetch Response.
  */
-export async function authenticatedFetch(url: string, options: RequestInit = {}): Promise<Response> {
+export async function authenticatedFetch(
+  url: string,
+  options: RequestInit = {}
+): Promise<Response> {
   const token = authService.getToken();
 
   const headers = new Headers(options.headers || {});
-  
+
   if (token) {
     headers.set('Authorization', `Bearer ${token}`);
   }
@@ -32,7 +35,7 @@ export async function authenticatedFetch(url: string, options: RequestInit = {})
     if (response.status === 401) {
       console.log('[API] Unauthorized request. Clearing session and redirecting to login.');
       authService.clearAuthToken();
-      window.location.href = '/'; 
+      window.location.href = '/';
     }
 
     return response;
@@ -42,4 +45,4 @@ export async function authenticatedFetch(url: string, options: RequestInit = {})
     // This prevents the app from crashing while still allowing for error handling.
     throw error;
   }
-} 
+}

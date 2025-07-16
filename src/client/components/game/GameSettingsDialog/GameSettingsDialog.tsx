@@ -1,4 +1,4 @@
-import { useEffect,useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 
 import { pushService } from '../../../services/push.service';
 import { settingsService } from '../../../services/settings.service';
@@ -38,7 +38,7 @@ export const GameSettingsDialog = ({ onClose }: GameSettingsDialogProps) => {
           return; // Bail out if permission is denied
         }
       }
-      
+
       // Now, subscribe to the push service and send to backend
       setIsSubscribing(true);
       try {
@@ -46,7 +46,7 @@ export const GameSettingsDialog = ({ onClose }: GameSettingsDialogProps) => {
         // Only update our app's setting if the subscription was successful
         settingsService.updateSettings({ notificationsEnabled: true });
       } catch (error) {
-        console.error("Failed to complete push subscription process.", error);
+        console.error('Failed to complete push subscription process.', error);
         // Optionally, show an error to the user in the dialog
       } finally {
         setIsSubscribing(false);
@@ -59,7 +59,7 @@ export const GameSettingsDialog = ({ onClose }: GameSettingsDialogProps) => {
         // This will update the UI via the subscription
         settingsService.updateSettings({ notificationsEnabled: false });
       } catch (error) {
-        console.error("Failed to complete push un-subscription process.", error);
+        console.error('Failed to complete push un-subscription process.', error);
       } finally {
         setIsSubscribing(false);
       }
@@ -73,44 +73,50 @@ export const GameSettingsDialog = ({ onClose }: GameSettingsDialogProps) => {
   const handleShowDebugInfoChange = (checked: boolean) => {
     settingsService.updateSettings({ showDebugInfo: checked });
   };
-  
+
   const isNotificationToggleDisabled = permission === 'denied' || isSubscribing;
 
   return (
-    <Dialog title="Game Settings" onClose={onClose}>
+    <Dialog title='Game Settings' onClose={onClose}>
       <div class={styles.settingsSection}>
-        <Heading level={3} variant="subSectionHeader" class={styles.sectionTitle}>Notifications</Heading>
+        <Heading level={3} variant='subSectionHeader' class={styles.sectionTitle}>
+          Notifications
+        </Heading>
         <Checkbox
-          label="Enable Turn Notifications"
+          label='Enable Turn Notifications'
           checked={settings.notificationsEnabled}
           onChange={handleNotificationsEnabledChange}
           disabled={isNotificationToggleDisabled}
         />
         {(isSubscribing || permission === 'denied') && (
-          <Text variant="caption" color="subtle" class={styles.settingDescription}>
-            {isSubscribing && "Subscribing..."}
-            {permission === 'denied' && "Notifications blocked. Enable in browser settings."}
+          <Text variant='caption' color='subtle' class={styles.settingDescription}>
+            {isSubscribing && 'Subscribing...'}
+            {permission === 'denied' && 'Notifications blocked. Enable in browser settings.'}
           </Text>
         )}
       </div>
 
       <div class={styles.settingsSection}>
-        <Heading level={3} variant="subSectionHeader" class={styles.sectionTitle}>Display</Heading>
+        <Heading level={3} variant='subSectionHeader' class={styles.sectionTitle}>
+          Display
+        </Heading>
         <Checkbox
-          label="Show Hex-Grid"
+          label='Show Hex-Grid'
           checked={settings.showHexGrid}
           onChange={handleShowHexGridChange}
         />
       </div>
 
       <div class={styles.settingsSection}>
-        <Heading level={3} variant="subSectionHeader" class={styles.sectionTitle}>Development</Heading>
+        <Heading level={3} variant='subSectionHeader' class={styles.sectionTitle}>
+          Development
+        </Heading>
         <Checkbox
-          label="Show Debug Info"
+          label='Show Debug Info'
           checked={settings.showDebugInfo}
           onChange={handleShowDebugInfoChange}
         />
       </div>
     </Dialog>
   );
-}; 
+};

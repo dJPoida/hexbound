@@ -4,4 +4,4 @@
 // It will be expanded as more actions are added.
 export type TurnAction = {
   type: 'INCREMENT_COUNTER';
-}; 
+};

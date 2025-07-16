@@ -14,16 +14,16 @@ export function calculateMapChecksum(mapData: MapData): string {
       r: tile.coordinates.r,
       elevation: tile.elevation,
       terrain: tile.terrain,
-      playerSpawn: tile.playerSpawn
-    }))
+      playerSpawn: tile.playerSpawn,
+    })),
   });
-  
+
   // Simple hash function - in production you might want a more robust hash
   let hash = 0;
   for (let i = 0; i < dataString.length; i++) {
     const char = dataString.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32-bit integer
   }
   return hash.toString(16);
-} 
+}

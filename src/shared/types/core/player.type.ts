@@ -4,4 +4,4 @@ export interface Player {
   userId: string;
   userName: string;
   isPlaceholder: boolean;
-} 
+}

@@ -48,13 +48,19 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
   const navigate = (path: string, gameData?: { gameId: string; gameCode: string }) => {
     // Run permission sync on any navigation
     const syncNotificationPermission = () => {
-      if ('Notification' in window && settingsService.getSettings().notificationsEnabled && Notification.permission === 'denied') {
-        console.log('[Permissions] Notification permission has been revoked by the user. Updating app settings.');
+      if (
+        'Notification' in window &&
+        settingsService.getSettings().notificationsEnabled &&
+        Notification.permission === 'denied'
+      ) {
+        console.log(
+          '[Permissions] Notification permission has been revoked by the user. Updating app settings.'
+        );
         settingsService.updateSettings({ notificationsEnabled: false });
       }
     };
     syncNotificationPermission();
-    
+
     clearDialogs();
 
     // Handle game navigation
@@ -81,7 +87,7 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
       }
       window.history.pushState({}, '', path);
     }
-    
+
     window.dispatchEvent(new Event('pushstate'));
   };
 
@@ -145,8 +151,6 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
   };
 
   return (
-    <NavigationContext.Provider value={navigationValue}>
-      {children}
-    </NavigationContext.Provider>
+    <NavigationContext.Provider value={navigationValue}>{children}</NavigationContext.Provider>
   );
-}; 
+};

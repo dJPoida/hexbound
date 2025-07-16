@@ -125,43 +125,62 @@
   margin-top: var(--space-sm);
 }
 
-.colorBox[data-color-name='canvas-white'] { background-color: var(--color-canvas-white); }
-.colorBox[data-color-name='charcoal'] { background-color: var(--color-charcoal); }
-.colorBox[data-color-name='stone-grey'] { background-color: var(--color-stone-grey); }
-.colorBox[data-color-name='hex-amber'] { background-color: var(--color-hex-amber); }
-.colorBox[data-color-name='glow-yellow'] { background-color: var(--color-glow-yellow); }
-.colorBox[data-color-name='pastel-sky'] { background-color: var(--color-pastel-sky); }
-.colorBox[data-color-name='moss-green'] { background-color: var(--color-moss-green); }
-.colorBox[data-color-name='clay-red'] { background-color: var(--color-clay-red); }
-.colorBox[data-color-name='deep-purple'] { background-color: var(--color-deep-purple); }
-.colorBox[data-color-name='slate-blue'] { background-color: var(--color-slate-blue); }
+.colorBox[data-color-name='canvas-white'] {
+  background-color: var(--color-canvas-white);
+}
+.colorBox[data-color-name='charcoal'] {
+  background-color: var(--color-charcoal);
+}
+.colorBox[data-color-name='stone-grey'] {
+  background-color: var(--color-stone-grey);
+}
+.colorBox[data-color-name='hex-amber'] {
+  background-color: var(--color-hex-amber);
+}
+.colorBox[data-color-name='glow-yellow'] {
+  background-color: var(--color-glow-yellow);
+}
+.colorBox[data-color-name='pastel-sky'] {
+  background-color: var(--color-pastel-sky);
+}
+.colorBox[data-color-name='moss-green'] {
+  background-color: var(--color-moss-green);
+}
+.colorBox[data-color-name='clay-red'] {
+  background-color: var(--color-clay-red);
+}
+.colorBox[data-color-name='deep-purple'] {
+  background-color: var(--color-deep-purple);
+}
+.colorBox[data-color-name='slate-blue'] {
+  background-color: var(--color-slate-blue);
+}
 
 .colorInfo strong {
-    font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-bold);
 }
 
 .colorInfo span {
-    font-size: var(--font-size-caption);
-    color: var(--color-stone-grey);
+  font-size: var(--font-size-caption);
+  color: var(--color-stone-grey);
 }
 
 .hexValue {
   font-family: monospace;
 }
 
-
 /* Typography */
 .typographySample {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
 }
 
 .caption {
-    font-size: var(--font-size-caption);
-    color: var(--color-stone-grey);
-    text-transform: uppercase;
+  font-size: var(--font-size-caption);
+  color: var(--color-stone-grey);
+  text-transform: uppercase;
 }
 
 /* Icon Grid */
@@ -239,4 +258,4 @@
   justify-content: center;
   max-width: 400px;
   margin: 0 auto;
-} 
+}

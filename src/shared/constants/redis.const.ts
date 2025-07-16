@@ -4,4 +4,4 @@ export const REDIS_KEY_PREFIXES = {
 
 export function createRedisKey(prefix: string, id: string): string {
   return `${prefix}:${id}`;
-} 
+}

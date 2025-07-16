@@ -6,4 +6,4 @@ export enum TerrainType {
   TUNDRA = 'TUNDRA',
   OCEAN = 'OCEAN',
   ICECAP = 'ICECAP',
-} 
+}

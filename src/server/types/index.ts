@@ -1,3 +1,3 @@
 // Server-specific types
 
-export * from './middleware'; 
+export * from './middleware';

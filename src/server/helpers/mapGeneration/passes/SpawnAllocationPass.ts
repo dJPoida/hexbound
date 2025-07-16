@@ -1,6 +1,12 @@
-import { MAP_GENERATION_PASSES, SPAWN_ALLOCATION_DEFAULT_PARAMS } from '../../../../shared/constants/mapGeneration.const';
+import {
+  MAP_GENERATION_PASSES,
+  SPAWN_ALLOCATION_DEFAULT_PARAMS,
+} from '../../../../shared/constants/mapGeneration.const';
 import { TerrainType, TileData } from '../../../../shared/types/map';
-import { MapGenerationPassConfig,PassExecutionResult } from '../../../../shared/types/mapGeneration';
+import {
+  MapGenerationPassConfig,
+  PassExecutionResult,
+} from '../../../../shared/types/mapGeneration';
 import { GenerationPass, MapGenerationContext } from '../GenerationPass';
 
 /**
@@ -44,7 +50,7 @@ export class SpawnAllocationPass extends GenerationPass {
     }
 
     return this.createResult(
-      tilesModified, 
+      tilesModified,
       `Allocated ${tilesModified} spawn points for ${params.playerCount} players`
     );
   }
@@ -53,7 +59,7 @@ export class SpawnAllocationPass extends GenerationPass {
    * Calculate spawn positions equally spaced across the map width
    */
   private calculateSpawnPositions(
-    context: MapGenerationContext, 
+    context: MapGenerationContext,
     params: SpawnAllocationPassParams
   ): Array<{ q: number; r: number }> {
     const positions: Array<{ q: number; r: number }> = [];
@@ -139,4 +145,4 @@ export class SpawnAllocationPass extends GenerationPass {
     // Prefer grassland and avoid ocean/ice
     return tile.terrain === TerrainType.GRASSLAND || tile.terrain === TerrainType.DESERT;
   }
-} 
+}

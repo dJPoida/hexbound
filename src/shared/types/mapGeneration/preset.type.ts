@@ -12,4 +12,4 @@ export interface MapGenerationPreset {
   description: string;
   /** Base configuration (width/height can be overridden) */
   config: Omit<MapGenerationConfig, 'width' | 'height'>;
-} 
+}

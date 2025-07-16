@@ -98,8 +98,10 @@ export const Input = ({
     hasError && styles.error,
     disabled && styles.disabled,
     readOnly && styles.readOnly,
-    className
-  ].filter(Boolean).join(' ');
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <input
@@ -126,4 +128,4 @@ export const Input = ({
       onKeyUp={onKeyUp}
     />
   );
-}; 
+};

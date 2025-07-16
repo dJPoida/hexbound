@@ -13,4 +13,4 @@ export interface ClientGameStatePayload {
   gameState: {
     placeholderCounter: number;
   };
-} 
+}

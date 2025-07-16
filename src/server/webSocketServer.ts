@@ -1,12 +1,12 @@
 import { Server } from 'http';
 import { parse } from 'url';
-import { WebSocket,WebSocketServer } from 'ws';
+import { WebSocket, WebSocketServer } from 'ws';
 
 import { AuthenticatedWebSocket } from '../shared/types/socket';
 import { User } from './entities/User.entity';
 import redisClient from './redisClient';
 import { handleSocketMessage } from './socketMessageHandlers';
-import { handleDisconnect,unsubscribeFromAll } from './socketSubscriptionManager';
+import { handleDisconnect, unsubscribeFromAll } from './socketSubscriptionManager';
 
 // Extend the AuthenticatedWebSocket to include the isAlive flag for heartbeats
 interface HeartbeatWebSocket extends AuthenticatedWebSocket {
@@ -29,14 +29,14 @@ export function initializeWebSocketServer(server: Server) {
     // Extract token from query parameter (or headers)
     const { query } = parse(request.url || '', true);
     const token = Array.isArray(query.token) ? query.token[0] : query.token;
-    
+
     if (!token) {
       console.log('[WebSocket] Upgrade failed: No token provided.');
       socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
       socket.destroy();
       return;
     }
-    
+
     try {
       const userId = await redisClient.get(`session:${token}`);
       if (!userId) {
@@ -47,20 +47,20 @@ export function initializeWebSocketServer(server: Server) {
       }
 
       // If authentication is successful, complete the WebSocket upgrade
-      wss.handleUpgrade(request, socket, head, (ws) => {
+      wss.handleUpgrade(request, socket, head, ws => {
         const authWs = ws as AuthenticatedWebSocket;
         authWs.userId = userId; // Attach userId to the WebSocket connection
         wss.emit('connection', authWs, request);
       });
     } catch (error) {
-        console.error('[WebSocket] Upgrade error:', error);
-        socket.destroy();
+      console.error('[WebSocket] Upgrade error:', error);
+      socket.destroy();
     }
   });
 
   wss.on('connection', (ws: HeartbeatWebSocket) => {
     console.log(`[WebSocket] Client connected with userId: ${ws.userId}`);
-    
+
     // Initialize heartbeat state for the new connection
     ws.isAlive = true;
     ws.on('pong', () => {
@@ -93,7 +93,7 @@ export function initializeWebSocketServer(server: Server) {
 
   // Set up the heartbeat interval
   const interval = setInterval(() => {
-    wss.clients.forEach((ws) => {
+    wss.clients.forEach(ws => {
       const hbWs = ws as HeartbeatWebSocket;
       if (!hbWs.isAlive) {
         if (hbWs.userId) {
@@ -116,4 +116,4 @@ export function initializeWebSocketServer(server: Server) {
 
   console.log('[WebSocket] Server initialized and attached to HTTP server.');
   return wss;
-} 
+}

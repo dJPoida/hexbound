@@ -6,10 +6,9 @@ export const GameStatusValues = {
   FINISHED: 'finished',
 } as const;
 
-export type GameStatusName =
-  (typeof GameStatusValues)[keyof typeof GameStatusValues];
+export type GameStatusName = (typeof GameStatusValues)[keyof typeof GameStatusValues];
 
 export interface GameStatus {
   statusId: number;
   statusName: GameStatusName;
-} 
+}

@@ -4,7 +4,7 @@ import { ViteDevServer } from 'vite';
 import { WebSocketServer } from 'ws';
 
 import config from './config.js';
-import { AppDataSource,initializeDataSource } from './data-source.js';
+import { AppDataSource, initializeDataSource } from './data-source.js';
 import { configureExpressApp } from './expressApp.js';
 import { disconnectRedis } from './redisClient.js';
 import { initializeWebSocketServer } from './webSocketServer.js';
@@ -21,9 +21,7 @@ export class Server {
   }
 
   public async start(): Promise<void> {
-    console.log(
-      `Hexbound Server starting, version: ${config.appVersion}, mode: ${config.nodeEnv}`,
-    );
+    console.log(`Hexbound Server starting, version: ${config.appVersion}, mode: ${config.nodeEnv}`);
 
     // Initialize TypeORM by calling our new function
     try {
@@ -34,7 +32,7 @@ export class Server {
       // Propagate the error to be handled by the caller in main.ts
       throw err;
     }
-    
+
     const { vite } = await configureExpressApp(this.app, this.httpServer);
     this.vite = vite;
 
@@ -51,13 +49,11 @@ export class Server {
     console.log(`[Server.ts] config.viteDevPort: ${config.viteDevPort}`);
     console.log(`[Server.ts] Final port selected: ${port}`);
 
-    await new Promise<void>((resolve) => {
+    await new Promise<void>(resolve => {
       this.httpServer.listen(port, () => {
         console.log(`Server listening at http://localhost:${port}`);
         if (config.nodeEnv !== 'production') {
-          console.log(
-            'Vite middleware enabled. Client should be served with HMR.',
-          );
+          console.log('Vite middleware enabled. Client should be served with HMR.');
         } else {
           console.log('Production server running. Serving static client build.');
         }
@@ -84,8 +80,8 @@ export class Server {
           ws.terminate();
         }
         // 3. Close the WebSocket server itself
-        await new Promise<void>((resolve) => {
-          this.wss?.close((err) => {
+        await new Promise<void>(resolve => {
+          this.wss?.close(err => {
             if (err) {
               console.error('[Server] Error closing WebSocket server:', err);
               // Don't reject, just log and continue shutdown
@@ -125,4 +121,4 @@ export class Server {
     console.log('[Server] Graceful shutdown complete.');
     return exitCode;
   }
-} 
+}

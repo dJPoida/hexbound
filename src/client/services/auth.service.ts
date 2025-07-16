@@ -19,7 +19,7 @@ export const authService = {
    * Retrieves the current session information from localStorage.
    * @returns An object with session data, or null if no session exists.
    */
-  getSession(): { token: string; userId: string; userName: string; } | null {
+  getSession(): { token: string; userId: string; userName: string } | null {
     const token = localStorage.getItem(TOKEN_KEY);
     const userId = localStorage.getItem(USER_ID_KEY);
     const userName = localStorage.getItem(USER_NAME_KEY);
@@ -71,4 +71,4 @@ export const authService = {
   getUserId(): string | null {
     return localStorage.getItem(USER_ID_KEY);
   },
-}; 
+};

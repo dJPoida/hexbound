@@ -24,4 +24,4 @@ export function getPlayerTurnPreview(gameState: ServerGameState): ServerGameStat
   }
 
   return previewState;
-} 
+}

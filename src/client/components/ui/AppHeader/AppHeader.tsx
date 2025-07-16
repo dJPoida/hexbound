@@ -19,7 +19,7 @@ export interface AppHeaderProps {
   onLogout: () => void;
   onNavigate: (path: string) => void;
   onOpenSettings: () => void;
-  
+
   // Game-specific props (optional)
   turnNumber?: number | null;
   counter?: number | null;
@@ -77,22 +77,28 @@ export function AppHeader({
     return (
       <div className={styles.resources}>
         <div className={styles.resourceItem}>
-          <Icon name="dollar-sign" />
-          <Text variant="label" font="bold" as="span">1,234</Text>
+          <Icon name='dollar-sign' />
+          <Text variant='label' font='bold' as='span'>
+            1,234
+          </Text>
         </div>
         <div className={styles.resourceItem}>
-          <Icon name="award" />
-          <Text variant="label" font="bold" as="span">567</Text>
+          <Icon name='award' />
+          <Text variant='label' font='bold' as='span'>
+            567
+          </Text>
         </div>
         <div className={styles.resourceItem}>
-          <Icon name="smile" />
-          <Text variant="label" font="bold" as="span">{counter ?? 0}</Text>
+          <Icon name='smile' />
+          <Text variant='label' font='bold' as='span'>
+            {counter ?? 0}
+          </Text>
           {onToggleCounterDialog && (
-            <Button 
-              onClick={onToggleCounterDialog} 
+            <Button
+              onClick={onToggleCounterDialog}
               color={StyleColor.WHITE}
-              icon="edit"
-              ariaLabel="Edit counter"
+              icon='edit'
+              ariaLabel='Edit counter'
             />
           )}
         </div>
@@ -101,11 +107,16 @@ export function AppHeader({
   };
 
   const renderUserInfo = () => {
-    const userText = currentView === AppHeaderView.GAME && turnNumber 
-      ? `${currentUserName} (Turn: ${turnNumber})`
-      : currentUserName;
-    
-    return <Text variant="inline" as="span" class={styles.userInfo}>{userText}</Text>;
+    const userText =
+      currentView === AppHeaderView.GAME && turnNumber
+        ? `${currentUserName} (Turn: ${turnNumber})`
+        : currentUserName;
+
+    return (
+      <Text variant='inline' as='span' class={styles.userInfo}>
+        {userText}
+      </Text>
+    );
   };
 
   const renderMenuItems = () => {
@@ -114,68 +125,140 @@ export function AppHeader({
     // Game-specific menu items
     if (currentView === AppHeaderView.GAME) {
       items.push(
-        <button key="settings" className={styles.menuItem} onClick={() => { onOpenSettings(); closeMenu(); }}>
-          <Icon name="settings" />
-          <Text variant="inline" as="span">Game Settings</Text>
+        <button
+          key='settings'
+          className={styles.menuItem}
+          onClick={() => {
+            onOpenSettings();
+            closeMenu();
+          }}
+        >
+          <Icon name='settings' />
+          <Text variant='inline' as='span'>
+            Game Settings
+          </Text>
         </button>
       );
 
       if (onCopyGameLink) {
         items.push(
-          <button key="copy-link" className={styles.menuItem} onClick={() => { onCopyGameLink(); closeMenu(); }}>
-            <Icon name="link" />
-            <Text variant="inline" as="span">{copyLinkStatus === 'copied' ? 'Link Copied!' : 'Copy Game Link'}</Text>
+          <button
+            key='copy-link'
+            className={styles.menuItem}
+            onClick={() => {
+              onCopyGameLink();
+              closeMenu();
+            }}
+          >
+            <Icon name='link' />
+            <Text variant='inline' as='span'>
+              {copyLinkStatus === 'copied' ? 'Link Copied!' : 'Copy Game Link'}
+            </Text>
           </button>
         );
       }
 
       items.push(
-        <button key="lobby" className={styles.menuItem} onClick={() => { onNavigate('/'); closeMenu(); }}>
-          <Icon name="exit" />
-          <Text variant="inline" as="span">Return to Lobby</Text>
+        <button
+          key='lobby'
+          className={styles.menuItem}
+          onClick={() => {
+            onNavigate('/');
+            closeMenu();
+          }}
+        >
+          <Icon name='exit' />
+          <Text variant='inline' as='span'>
+            Return to Lobby
+          </Text>
         </button>
       );
     } else {
       // Lobby/Utils/StyleGuide navigation
       if (currentView !== AppHeaderView.LOBBY) {
         items.push(
-          <button key="lobby" className={styles.menuItem} onClick={() => { onNavigate('/'); closeMenu(); }}>
-            <Icon name="home" />
-            <Text variant="inline" as="span">Lobby</Text>
+          <button
+            key='lobby'
+            className={styles.menuItem}
+            onClick={() => {
+              onNavigate('/');
+              closeMenu();
+            }}
+          >
+            <Icon name='home' />
+            <Text variant='inline' as='span'>
+              Lobby
+            </Text>
           </button>
         );
       }
 
       if (currentView !== AppHeaderView.STYLEGUIDE) {
         items.push(
-          <button key="styleguide" className={styles.menuItem} onClick={() => { onNavigate('/styleguide'); closeMenu(); }}>
-            <Icon name="eye" />
-            <Text variant="inline" as="span">Style Guide</Text>
+          <button
+            key='styleguide'
+            className={styles.menuItem}
+            onClick={() => {
+              onNavigate('/styleguide');
+              closeMenu();
+            }}
+          >
+            <Icon name='eye' />
+            <Text variant='inline' as='span'>
+              Style Guide
+            </Text>
           </button>
         );
       }
 
       if (currentView !== AppHeaderView.UTILS) {
         items.push(
-          <button key="utils" className={styles.menuItem} onClick={() => { onNavigate('/utils'); closeMenu(); }}>
-            <Icon name="terminal" />
-            <Text variant="inline" as="span">Utils</Text>
+          <button
+            key='utils'
+            className={styles.menuItem}
+            onClick={() => {
+              onNavigate('/utils');
+              closeMenu();
+            }}
+          >
+            <Icon name='terminal' />
+            <Text variant='inline' as='span'>
+              Utils
+            </Text>
           </button>
         );
       }
 
       items.push(
-        <button key="settings" className={styles.menuItem} onClick={() => { onOpenSettings(); closeMenu(); }}>
-          <Icon name="settings" />
-          <Text variant="inline" as="span">Game Settings</Text>
+        <button
+          key='settings'
+          className={styles.menuItem}
+          onClick={() => {
+            onOpenSettings();
+            closeMenu();
+          }}
+        >
+          <Icon name='settings' />
+          <Text variant='inline' as='span'>
+            Game Settings
+          </Text>
         </button>
       );
 
       items.push(
-              <button key="logout" className={styles.menuItem} onClick={() => { onLogout(); closeMenu(); }}>
-        <Icon name="exit" />
-        <Text variant="inline" as="span">Logout</Text>
-      </button>
+        <button
+          key='logout'
+          className={styles.menuItem}
+          onClick={() => {
+            onLogout();
+            closeMenu();
+          }}
+        >
+          <Icon name='exit' />
+          <Text variant='inline' as='span'>
+            Logout
+          </Text>
+        </button>
       );
     }
 
@@ -186,23 +269,13 @@ export function AppHeader({
     <div className={styles.header}>
       {renderGameResources()}
       {!renderGameResources() && <div />} {/* Spacer for non-game views */}
-      
       <div className={styles.headerActions}>
         {renderUserInfo()}
         <div className={styles.menuButtonContainer} ref={menuRef}>
-          <Button 
-            onClick={toggleMenu} 
-            ariaLabel="Open menu" 
-            color={StyleColor.WHITE}
-            icon="menu"
-          />
-          {isMenuOpen && (
-            <div className={styles.menuDropdown}>
-              {renderMenuItems()}
-            </div>
-          )}
+          <Button onClick={toggleMenu} ariaLabel='Open menu' color={StyleColor.WHITE} icon='menu' />
+          {isMenuOpen && <div className={styles.menuDropdown}>{renderMenuItems()}</div>}
         </div>
       </div>
     </div>
   );
-} 
+}

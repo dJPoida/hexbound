@@ -1,4 +1,4 @@
-import { ADJECTIVES, NOUNS, VERBS } from "@/shared/constants/word-lists.const";
+import { ADJECTIVES, NOUNS, VERBS } from '@/shared/constants/word-lists.const';
 
 function getRandomElement<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -10,4 +10,4 @@ export function generateGameCode(): string {
   const verb = getRandomElement(VERBS);
 
   return `${adjective}-${noun}-${verb}`;
-} 
+}

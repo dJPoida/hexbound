@@ -1,6 +1,12 @@
-import { ICE_CAP_DEFAULT_PARAMS,MAP_GENERATION_PASSES } from '../../../../shared/constants/mapGeneration.const';
+import {
+  ICE_CAP_DEFAULT_PARAMS,
+  MAP_GENERATION_PASSES,
+} from '../../../../shared/constants/mapGeneration.const';
 import { TerrainType } from '../../../../shared/types/map';
-import { MapGenerationPassConfig,PassExecutionResult } from '../../../../shared/types/mapGeneration';
+import {
+  MapGenerationPassConfig,
+  PassExecutionResult,
+} from '../../../../shared/types/mapGeneration';
 import { GenerationPass, MapGenerationContext } from '../GenerationPass';
 
 /**
@@ -34,7 +40,7 @@ export class IceCapPass extends GenerationPass {
       // Check if this row should have ice caps
       const isTopIceCap = r < params.topRows;
       const isBottomIceCap = r >= context.height - params.bottomRows;
-      
+
       if (!isTopIceCap && !isBottomIceCap) {
         continue; // Skip rows that shouldn't have ice caps
       }
@@ -47,17 +53,24 @@ export class IceCapPass extends GenerationPass {
 
         // Calculate base elevation using adjacent tiles for smooth transitions
         const baseElevation = this.calculateBaseElevation(
-          context, 
-          q, 
-          r, 
-          params.minElevation + Math.floor(Math.random() * (params.maxElevation - params.minElevation + 1))
+          context,
+          q,
+          r,
+          params.minElevation +
+            Math.floor(Math.random() * (params.maxElevation - params.minElevation + 1))
         );
 
         // Apply elevation variation
-        const finalElevation = this.applyElevationVariation(baseElevation, params.elevationVariation);
-        
+        const finalElevation = this.applyElevationVariation(
+          baseElevation,
+          params.elevationVariation
+        );
+
         // Ensure ice caps are within the specified elevation range
-        const clampedElevation = Math.max(params.minElevation, Math.min(params.maxElevation, finalElevation));
+        const clampedElevation = Math.max(
+          params.minElevation,
+          Math.min(params.maxElevation, finalElevation)
+        );
 
         // Create and set the ice cap tile
         const tile = context.createTile(q, r, clampedElevation, TerrainType.ICECAP);
@@ -66,6 +79,9 @@ export class IceCapPass extends GenerationPass {
       }
     }
 
-    return this.createResult(tilesModified, `Ice caps applied to ${params.topRows} top and ${params.bottomRows} bottom rows`);
+    return this.createResult(
+      tilesModified,
+      `Ice caps applied to ${params.topRows} top and ${params.bottomRows} bottom rows`
+    );
   }
-} 
+}

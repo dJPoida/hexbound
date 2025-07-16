@@ -4,7 +4,7 @@ import path from 'path';
 import { getModuleDir } from '../shared/helpers/getModuleDir.helper.js';
 
 const currentModuleDirname = getModuleDir(
-  typeof import.meta?.url === 'string' ? import.meta?.url : undefined,
+  typeof import.meta?.url === 'string' ? import.meta?.url : undefined
 );
 
 dotenv.config({ path: path.resolve(currentModuleDirname, '../../.env.local') });
@@ -40,7 +40,8 @@ const config = {
 
 // Validate essential configuration
 if (!config.webpush.publicKey || !config.webpush.privateKey) {
-  const message = "VAPID keys (VITE_VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY) are not defined in the environment. Push notifications will not work.";
+  const message =
+    'VAPID keys (VITE_VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY) are not defined in the environment. Push notifications will not work.';
   if (config.nodeEnv === 'production') {
     console.error(`[FATAL] ${message} Server shutting down.`);
     process.exit(1);
@@ -49,4 +50,4 @@ if (!config.webpush.publicKey || !config.webpush.privateKey) {
   }
 }
 
-export default config; 
+export default config;

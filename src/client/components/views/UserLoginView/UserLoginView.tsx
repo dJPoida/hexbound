@@ -45,11 +45,15 @@ export function UserLoginView({
     <div className={styles.loginForm}>
       <form onSubmit={handleSubmit}>
         <Logo />
-        <Text variant="body" color="subtle" class={styles.loginSubtitle}>Enter your name to begin your journey.</Text>
-        
+        <Text variant='body' color='subtle' class={styles.loginSubtitle}>
+          Enter your name to begin your journey.
+        </Text>
+
         <div className={styles.inputGroup}>
           <label htmlFor={userNameInputId} className={styles.label}>
-            <Text variant="label" as="span">Player Name</Text>
+            <Text variant='label' as='span'>
+              Player Name
+            </Text>
           </label>
           <Input
             type={InputType.TEXT}
@@ -57,7 +61,7 @@ export function UserLoginView({
             value={userNameInput}
             onInput={handleInput}
             disabled={isLoading}
-            placeholder="e.g., Aragorn"
+            placeholder='e.g., Aragorn'
             maxLength={20}
           />
         </div>
@@ -72,9 +76,17 @@ export function UserLoginView({
           {isLoading ? 'Logging in...' : 'Play'}
         </Button>
 
-        {error && <Text variant="caption" color="danger" class={styles.authError}>{error}</Text>}
-        {isLoading && <Text variant="caption" color="subtle" class={styles.loadingIndicator}>Verifying...</Text>}
+        {error && (
+          <Text variant='caption' color='danger' class={styles.authError}>
+            {error}
+          </Text>
+        )}
+        {isLoading && (
+          <Text variant='caption' color='subtle' class={styles.loadingIndicator}>
+            Verifying...
+          </Text>
+        )}
       </form>
     </div>
   );
-} 
+}

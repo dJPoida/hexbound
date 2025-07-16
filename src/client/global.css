@@ -11,8 +11,9 @@
 
 @font-face {
   font-family: 'Exo 2';
-  src: url('/fonts/Exo_2/Exo2-VariableFont_wght.woff2') format('woff2-variations'),
-       url('/fonts/Exo_2/Exo2-VariableFont_wght.woff2') format('woff2');
+  src:
+    url('/fonts/Exo_2/Exo2-VariableFont_wght.woff2') format('woff2-variations'),
+    url('/fonts/Exo_2/Exo2-VariableFont_wght.woff2') format('woff2');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -20,8 +21,9 @@
 
 @font-face {
   font-family: 'Exo 2';
-  src: url('/fonts/Exo_2/Exo2-Italic-VariableFont_wght.woff2') format('woff2-variations'),
-       url('/fonts/Exo_2/Exo2-Italic-VariableFont_wght.woff2') format('woff2');
+  src:
+    url('/fonts/Exo_2/Exo2-Italic-VariableFont_wght.woff2') format('woff2-variations'),
+    url('/fonts/Exo_2/Exo2-Italic-VariableFont_wght.woff2') format('woff2');
   font-weight: 100 900;
   font-style: italic;
   font-display: swap;
@@ -34,7 +36,9 @@
   font-style: normal;
 }
 
-html, body, #app {
+html,
+body,
+#app {
   height: 100%;
   width: 100%;
   margin: 0;
@@ -105,4 +109,4 @@ a:hover {
   color: var(--color-glow-yellow);
 }
 
-/* Removed global button styles - all buttons should use component-specific styling */ 
+/* Removed global button styles - all buttons should use component-specific styling */

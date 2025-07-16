@@ -1,7 +1,8 @@
 /* Typography.module.css */
 
 /* Base Text & Heading Styles */
-.text, .heading {
+.text,
+.heading {
   margin: 0;
   padding: 0;
 }
@@ -98,11 +99,11 @@
 /* ==========================================================================
    Font Variants (for Text component)
    ========================================================================== */
-.fontNormal { 
-  font-family: var(--font-primary); 
+.fontNormal {
+  font-family: var(--font-primary);
   font-weight: var(--font-weight-normal);
 }
-.fontBold { 
+.fontBold {
   font-family: var(--font-primary);
   font-weight: var(--font-weight-bold);
-} 
+}

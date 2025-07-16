@@ -1,3 +1,3 @@
 // UI-related types
 
-export * from './styleColor.types'; 
+export * from './styleColor.types';

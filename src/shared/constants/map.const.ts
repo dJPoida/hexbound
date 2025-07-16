@@ -41,7 +41,7 @@ export const ELEVATION_STEP = 10;
 /**
  * The font family to use for the tile's elevation text.
  */
-export const TILE_FONT="Arial";
+export const TILE_FONT = 'Arial';
 /**
  * The font size to use for the tile's elevation text.
  */

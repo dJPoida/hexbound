@@ -1,3 +1,3 @@
 // Middleware types
 
-export * from './authenticatedRequest.type'; 
+export * from './authenticatedRequest.type';

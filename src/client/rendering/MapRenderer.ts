@@ -49,7 +49,7 @@ export class MapRenderer {
   private _axialToPixel(q: number, r: number): { x: number; y: number } {
     const x = HEX_WIDTH * 0.75 * q;
     let y = HEX_HEIGHT * r;
-    
+
     // Offset for odd rows (q) to create the honeycomb pattern
     if (q % 2 !== 0) {
       y += HEX_HEIGHT / 2;
@@ -60,7 +60,7 @@ export class MapRenderer {
 
     return { x, y };
   }
-  
+
   public initializeMap(): void {
     if (!this.textures.tile_grassland) {
       console.error('[MapRenderer] Cannot initialize map, textures not loaded.');
@@ -101,7 +101,7 @@ export class MapRenderer {
       tileInstances[0].container.y = y;
       tileInstances[1].container.x = x + mapPixelWidth;
       tileInstances[1].container.y = y;
-      tileInstances[2].container.x = x + (mapPixelWidth * 2);
+      tileInstances[2].container.x = x + mapPixelWidth * 2;
       tileInstances[2].container.y = y;
 
       const rowContainer = this.rowContainers.get(r);
@@ -111,12 +111,14 @@ export class MapRenderer {
           rowContainer.addChild(instance.container);
         }
       }
-      
+
       this.tileCache.set(key, tileInstances);
       this.tileDataMap.set(key, tileData);
     }
-    
-    console.log(`[MapRenderer] Initialized and cached ${this.tileCache.size} tile sets, creating a 3-map world.`);
+
+    console.log(
+      `[MapRenderer] Initialized and cached ${this.tileCache.size} tile sets, creating a 3-map world.`
+    );
   }
 
   public updateMap(newMapData: MapData) {
@@ -128,7 +130,7 @@ export class MapRenderer {
 
       if (oldTileData && oldTileData.elevation !== newTileData.elevation) {
         updatedCount++;
-        
+
         const tileInstances = this.tileCache.get(key);
         if (tileInstances) {
           // Create new Tile objects with the updated data
@@ -136,18 +138,18 @@ export class MapRenderer {
           const newLeft = new Tile(newTileData, this.textures);
           const newCenter = new Tile(newTileData, this.textures);
           const newRight = new Tile(newTileData, this.textures);
-          
+
           const newInstances = [newLeft, newCenter, newRight];
 
           for (let i = 0; i < tileInstances.length; i++) {
             const oldContainer = tileInstances[i].container;
             const newContainer = newInstances[i].container;
-            
+
             // Position the new container at the old container's position
             newContainer.x = oldContainer.x;
             newContainer.y = oldContainer.y;
             newContainer.visible = oldContainer.visible;
-            
+
             // Replace in the row container and destroy the old one
             const rowContainer = oldContainer.parent;
             if (rowContainer) {
@@ -159,7 +161,7 @@ export class MapRenderer {
           // Update the cache with the new instances
           this.tileCache.set(key, newInstances);
         }
-        
+
         // Update the internal state
         this.tileDataMap.set(key, newTileData);
       }
@@ -180,8 +182,13 @@ export class MapRenderer {
       for (const tile of tileInstances) {
         const TILE_WIDTH = HEX_WIDTH + 10;
         const TILE_HEIGHT = HEX_HEIGHT + 10;
-        const tileRect = new PIXI.Rectangle(tile.container.x, tile.container.y, TILE_WIDTH, TILE_HEIGHT);
-        
+        const tileRect = new PIXI.Rectangle(
+          tile.container.x,
+          tile.container.y,
+          TILE_WIDTH,
+          TILE_HEIGHT
+        );
+
         if (visibleBounds.intersects(tileRect)) {
           tile.container.visible = true;
           // Set visibility of debug elements based on settings
@@ -197,4 +204,4 @@ export class MapRenderer {
       }
     }
   }
-} 
+}

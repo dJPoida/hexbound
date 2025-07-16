@@ -8,4 +8,4 @@ export interface PassExecutionResult {
   tilesModified: number;
   /** Optional message about pass execution */
   message?: string;
-} 
+}

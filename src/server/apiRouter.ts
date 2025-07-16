@@ -22,4 +22,4 @@ router.use('/debug', debugRoutes);
 // General routes that are not nested under a specific resource
 router.use('/', miscRoutes); // Handles GET /api/version, etc.
 
-export default router; 
+export default router;

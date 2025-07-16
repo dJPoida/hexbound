@@ -33,7 +33,7 @@ export function Viewport({ pixiContainerId, gameState, currentPlayerId, onReady 
           // Always destroy any existing rendering service before initializing new game
           renderingService.destroy();
           await renderingService.initialize(container, gameState, mapData, currentPlayerId);
-          
+
           // Call onReady only after rendering service has finished initializing
           if (onReady) {
             onReady();
@@ -48,7 +48,9 @@ export function Viewport({ pixiContainerId, gameState, currentPlayerId, onReady 
   useEffect(() => {
     if (!isLoggedIn) return;
     if (mapData && gameState) {
-      console.log(`[Viewport] Map data updated, calling renderingService.updateMap() for ${mapData.width}x${mapData.height} map`);
+      console.log(
+        `[Viewport] Map data updated, calling renderingService.updateMap() for ${mapData.width}x${mapData.height} map`
+      );
       renderingService.updateMap(mapData);
     }
   }, [isLoggedIn, mapChecksum, gameState?.gameId]); // Track isLoggedIn
@@ -62,4 +64,4 @@ export function Viewport({ pixiContainerId, gameState, currentPlayerId, onReady 
   }, [isLoggedIn]); // Only run cleanup if logged in
 
   return <div id={pixiContainerId} ref={pixiContainerRef} class={styles.viewport}></div>;
-} 
+}

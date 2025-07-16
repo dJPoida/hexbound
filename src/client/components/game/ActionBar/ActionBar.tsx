@@ -1,4 +1,4 @@
-import { ComponentChildren,h } from 'preact';
+import { ComponentChildren, h } from 'preact';
 
 import styles from './ActionBar.module.css';
 
@@ -9,9 +9,7 @@ interface ActionBarProps {
 export function ActionBar({ children }: ActionBarProps) {
   return (
     <div className={styles.actionBar}>
-      <div className={styles.actionBarContent}>
-        {children}
-      </div>
+      <div className={styles.actionBarContent}>{children}</div>
     </div>
   );
-} 
+}

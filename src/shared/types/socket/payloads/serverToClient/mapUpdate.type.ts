@@ -7,4 +7,4 @@ export interface MapUpdatePayload {
   gameId: string;
   mapData: MapData;
   checksum: string;
-} 
+}

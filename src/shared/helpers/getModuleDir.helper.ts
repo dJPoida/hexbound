@@ -27,7 +27,7 @@ export function getModuleDir(metaUrl?: string): string {
 
   // Fallback or error if neither is available
   console.error(
-    'CRITICAL: Could not determine module directory. __dirname is not available and import.meta.url was not provided.',
+    'CRITICAL: Could not determine module directory. __dirname is not available and import.meta.url was not provided.'
   );
   process.exit(1);
-} 
+}

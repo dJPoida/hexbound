@@ -79,8 +79,6 @@
   font-weight: 400;
 }
 
-
-
 .dialogContent {
   padding: 1.5rem;
   overflow-y: auto;
@@ -94,4 +92,4 @@
   padding: 1rem 1.5rem;
   border-top: 2px solid var(--color-stone-grey);
   background-color: rgba(0, 0, 0, 0.03);
-} 
+}

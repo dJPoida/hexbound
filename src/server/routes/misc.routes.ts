@@ -8,4 +8,4 @@ router.get('/version', getVersion);
 router.get('/ping', getPing);
 router.get('/redis-test', testRedis);
 
-export default router; 
+export default router;

@@ -11,4 +11,4 @@ const router = Router();
 // to ensure the user has an 'admin' role.
 router.post('/reset-game-data', authMiddleware, utilsController.resetGameData);
 
-export default router; 
+export default router;

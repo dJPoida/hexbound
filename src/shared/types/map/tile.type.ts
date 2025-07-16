@@ -8,4 +8,4 @@ export interface TileData {
   elevation: number;
   terrain: TerrainType;
   playerSpawn?: number; // Player number (1, 2, etc.) if this tile is a spawn point
-} 
+}

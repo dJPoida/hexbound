@@ -4,30 +4,30 @@
   width: 100%;
   padding: 0 var(--space-md);
   box-sizing: border-box;
-  
+
   /* Typography */
   font-family: var(--font-primary);
   font-size: var(--font-size-md);
   line-height: 1.2;
   color: var(--color-charcoal);
-  
+
   /* Appearance */
   background-color: var(--color-canvas-white);
   border: var(--border-width) solid var(--color-stone-grey);
   border-radius: var(--border-radius-medium);
-  
+
   /* Subtle inset shadow for parchment effect */
-  box-shadow: 
+  box-shadow:
     inset 0 1px 2px rgba(0, 0, 0, 0.1),
     0 1px 0 var(--color-canvas-white-light);
-  
+
   /* Interaction */
   outline: none;
   transition: all 0.2s ease;
-  
+
   /* Touch targets */
   min-height: var(--touch-target-min);
-  
+
   /* Remove default styling */
   appearance: none;
   -webkit-appearance: none;
@@ -56,7 +56,7 @@
 /* Focus state */
 .input:focus {
   border-color: var(--color-hex-amber);
-  box-shadow: 
+  box-shadow:
     inset 0 1px 2px rgba(0, 0, 0, 0.1),
     0 0 0 2px var(--color-hex-amber-light),
     0 1px 0 var(--color-canvas-white-light);
@@ -85,7 +85,7 @@
 
 .error:focus {
   border-color: var(--color-clay-red-dark);
-  box-shadow: 
+  box-shadow:
     inset 0 1px 2px rgba(0, 0, 0, 0.1),
     0 0 0 2px var(--color-clay-red-light),
     0 1px 0 var(--color-canvas-white-light);
@@ -118,35 +118,35 @@
 
 .readOnly:focus {
   border-color: var(--color-stone-grey-light);
-  box-shadow: 
+  box-shadow:
     inset 0 1px 2px rgba(0, 0, 0, 0.1),
     0 1px 0 var(--color-canvas-white-light);
 }
 
 /* Number input - hide spinner arrows */
-.input[type="number"] {
+.input[type='number'] {
   -moz-appearance: textfield;
 }
 
-.input[type="number"]::-webkit-outer-spin-button,
-.input[type="number"]::-webkit-inner-spin-button {
+.input[type='number']::-webkit-outer-spin-button,
+.input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
 /* Password input */
-.input[type="password"] {
+.input[type='password'] {
   font-family: monospace;
   letter-spacing: 0.1em;
 }
 
 /* Search input */
-.input[type="search"] {
+.input[type='search'] {
   -webkit-appearance: none;
   appearance: none;
 }
 
-.input[type="search"]::-webkit-search-cancel-button {
+.input[type='search']::-webkit-search-cancel-button {
   -webkit-appearance: none;
   appearance: none;
 }
@@ -167,7 +167,7 @@
   .input {
     border-width: 3px;
   }
-  
+
   .input:focus {
     outline: 3px solid var(--color-hex-amber);
     outline-offset: 2px;
@@ -179,4 +179,4 @@
   .input {
     transition: none;
   }
-} 
+}

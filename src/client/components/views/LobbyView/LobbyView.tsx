@@ -15,7 +15,12 @@ interface LobbyViewProps {
   currentUserId: string | null;
 }
 
-export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentUserId }: LobbyViewProps) {
+export function LobbyView({
+  onNavigateToGame,
+  onCreateNewGame,
+  myGames,
+  currentUserId,
+}: LobbyViewProps) {
   const [gameCode, setGameCode] = useState('');
 
   const handleJoinByCode = () => {
@@ -44,7 +49,7 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
             type={InputType.TEXT}
             value={gameCode}
             onInput={handleGameCodeChange}
-            placeholder="Paste Game Code"
+            placeholder='Paste Game Code'
           />
           <Button onClick={handleJoinByCode} color={StyleColor.DEFAULT} fullWidth={true}>
             Join
@@ -60,16 +65,19 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
               return (
                 <li key={game.gameId} className={styles.gameListItem}>
                   <div className={styles.gameInfoContainer}>
-                    <Text variant="label" font="bold" as="span" class={styles.gameCode}>
+                    <Text variant='label' font='bold' as='span' class={styles.gameCode}>
                       {game.gameCode.replace(/-/g, ' ')}
                     </Text>
-                    <Text variant="caption" color="subtle" as="span" class={styles.playerCount}>
-                      {(Array.isArray(game.players) ? game.players : Object.values(game.players) as Player[])
-                          .map((p) => p.userName)
-                          .join(', ')}
+                    <Text variant='caption' color='subtle' as='span' class={styles.playerCount}>
+                      {(Array.isArray(game.players)
+                        ? game.players
+                        : (Object.values(game.players) as Player[])
+                      )
+                        .map(p => p.userName)
+                        .join(', ')}
                     </Text>
                   </div>
-                  <Button 
+                  <Button
                     onClick={() => onNavigateToGame(game.gameId, game.gameCode)}
                     color={isMyTurn ? StyleColor.GREEN : StyleColor.DEFAULT}
                     className={styles.turnButton}
@@ -82,10 +90,10 @@ export function LobbyView({ onNavigateToGame, onCreateNewGame, myGames, currentU
           </ul>
         ) : (
           <div className={styles.noGamesMessage}>
-            <Text color="subtle">You have no active games</Text>
+            <Text color='subtle'>You have no active games</Text>
           </div>
         )}
       </div>
     </div>
   );
-} 
+}

@@ -1,5 +1,5 @@
 import { Player } from '../shared/types/core';
-import { AuthenticatedWebSocket,ServerGameState } from '../shared/types/socket';
+import { AuthenticatedWebSocket, ServerGameState } from '../shared/types/socket';
 import { AppDataSource } from './data-source';
 import { Game } from './entities/Game.entity';
 import { User } from './entities/User.entity';
@@ -94,7 +94,9 @@ export function unsubscribeFromAll(ws: AuthenticatedWebSocket): void {
   // This is a safeguard in case the 'inactive' message is not received.
   if (ws.userId) {
     activeGameViews.delete(ws.userId);
-    console.log(`[SubscriptionManager] Cleared all active game views for disconnected user ${ws.userId}`);
+    console.log(
+      `[SubscriptionManager] Cleared all active game views for disconnected user ${ws.userId}`
+    );
   }
 }
 
@@ -104,10 +106,16 @@ export function unsubscribeFromAll(ws: AuthenticatedWebSocket): void {
  * @param message The message (as a stringified JSON object) to send.
  * @param excludeWs An optional WebSocket connection to exclude from the broadcast (usually the sender).
  */
-export function broadcastToGame(gameId: string, message: string, excludeWs?: AuthenticatedWebSocket): void {
+export function broadcastToGame(
+  gameId: string,
+  message: string,
+  excludeWs?: AuthenticatedWebSocket
+): void {
   const subscribers = gameSubscriptions.get(gameId);
   if (subscribers) {
-    console.log(`[SubscriptionManager] Broadcasting to ${subscribers.size} clients in game ${gameId}`);
+    console.log(
+      `[SubscriptionManager] Broadcasting to ${subscribers.size} clients in game ${gameId}`
+    );
     subscribers.forEach(ws => {
       if (ws !== excludeWs && ws.readyState === ws.OPEN) {
         ws.send(message);
@@ -123,11 +131,13 @@ export function broadcastToGame(gameId: string, message: string, excludeWs?: Aut
  */
 export async function handleDisconnect(userId: string): Promise<void> {
   // A brief delay to allow for immediate reconnections before checking.
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  await new Promise(resolve => setTimeout(resolve, 2000));
 
   // After the delay, check if the user has truly gone offline.
   if (isUserOnline(userId)) {
-    console.log(`[SubscriptionManager] User ${userId} reconnected quickly. Aborting disconnect handler.`);
+    console.log(
+      `[SubscriptionManager] User ${userId} reconnected quickly. Aborting disconnect handler.`
+    );
     return;
   }
 
@@ -152,13 +162,17 @@ export async function handleDisconnect(userId: string): Promise<void> {
       const gameState = (await redisClient.json.get(gameKey)) as ServerGameState | null;
 
       if (!gameState) {
-        console.warn(`[SubscriptionManager] Could not find game state in Redis for gameId: ${game.gameId}`);
+        console.warn(
+          `[SubscriptionManager] Could not find game state in Redis for gameId: ${game.gameId}`
+        );
         continue;
       }
 
       // 3. If it's the user's turn, send a notification
       if (gameState.currentPlayerId === userId && gameState.status === 'IN_PROGRESS') {
-        console.log(`[SubscriptionManager] User ${userId} was disconnected on their turn for game ${game.gameCode}.`);
+        console.log(
+          `[SubscriptionManager] User ${userId} was disconnected on their turn for game ${game.gameCode}.`
+        );
         const notification = {
           title: 'Your Turn!',
           body: `It's your turn in game ${game.gameCode}.`,
@@ -204,4 +218,4 @@ export function removeActiveGameView(userId: string, gameId: string) {
  */
 export function isUserViewingGame(userId: string, gameId: string): boolean {
   return activeGameViews.has(userId) && activeGameViews.get(userId)!.has(gameId);
-} 
+}

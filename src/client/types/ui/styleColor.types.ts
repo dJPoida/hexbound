@@ -9,5 +9,5 @@ export enum StyleColor {
   PURPLE = 'purple',
   GREY = 'grey',
   WHITE = 'white',
-  YELLOW = 'yellow'
-} 
+  YELLOW = 'yellow',
+}

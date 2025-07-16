@@ -16,7 +16,11 @@ export function UtilsView() {
   const [error, setError] = useState('');
 
   const handleResetData = async () => {
-    if (!window.confirm('Are you sure you want to delete ALL game data from Postgres and Redis? This action cannot be undone.')) {
+    if (
+      !window.confirm(
+        'Are you sure you want to delete ALL game data from Postgres and Redis? This action cannot be undone.'
+      )
+    ) {
       return;
     }
 
@@ -65,4 +69,4 @@ export function UtilsView() {
       </div>
     </div>
   `;
-} 
+}

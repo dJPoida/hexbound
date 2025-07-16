@@ -9,9 +9,9 @@
   /* ==========================================================================
      Color Palette
      ========================================================================== */
-  
+
   /* General Colors */
-  --color-canvas-white: #fefaeF;
+  --color-canvas-white: #fefaef;
   --color-canvas-white-dark: #d5d1c9;
   --color-canvas-white-light: #ffffff;
   --color-canvas-white-highlight: #ffffff;
@@ -58,7 +58,7 @@
   --color-deep-purple-light: #988fa6;
   --color-deep-purple-highlight: #b3a9be;
 
-  --color-slate-blue: #5B6B7A;
+  --color-slate-blue: #5b6b7a;
   --color-slate-blue-dark: #465460;
   --color-slate-blue-light: #7a8a99;
   --color-slate-blue-highlight: #9caab8;
@@ -66,7 +66,7 @@
   /* UI & Semantic Colors */
   --color-background: var(--color-canvas-white);
   --color-parchment-light: var(--color-canvas-white-light);
-  
+
   /* StyleColor Mappings - Actual Color Names */
   --color-default: var(--color-slate-blue);
   --color-default-dark: var(--color-slate-blue-dark);
@@ -174,22 +174,22 @@
   /* ==========================================================================
      Shadows
      ========================================================================== */
-  
+
   /* Box Shadows - Warm brown theme (medieval/fantasy) */
   --shadow-warm-subtle: rgba(60, 50, 30, 0.06);
-  --shadow-warm-soft: rgba(60, 50, 30, 0.10);
+  --shadow-warm-soft: rgba(60, 50, 30, 0.1);
   --shadow-warm-medium: rgba(60, 50, 30, 0.16);
-  
+
   /* Box Shadows - Neutral black */
   --shadow-subtle: rgba(0, 0, 0, 0.05);
   --shadow-soft: rgba(0, 0, 0, 0.08);
   --shadow-medium: rgba(0, 0, 0, 0.1);
   --shadow-strong: rgba(0, 0, 0, 0.2);
-  
+
   /* Text Shadows */
   --text-shadow-dark: rgba(0, 0, 0, 0.25);
   --text-shadow-light: rgba(255, 255, 255, 0.2);
-  
+
   /* Common Shadow Combinations */
   --shadow-card-warm: 0 8px 32px 0 var(--shadow-warm-soft), 0 1.5px 4px 0 var(--shadow-warm-subtle);
   --shadow-card-neutral: 0 4px 12px var(--shadow-medium);
@@ -202,4 +202,4 @@
      ========================================================================== */
   --touch-target-min: 44px;
   --breakpoint-mobile: 768px;
-} 
+}

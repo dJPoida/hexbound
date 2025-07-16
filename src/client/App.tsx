@@ -1,6 +1,6 @@
 import './global.css'; // Import global styles
 
-import { useEffect,useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 
 import styles from './App.module.css'; // Import CSS Modules
 import { UnifiedRouter } from './components/framework/UnifiedRouter';
@@ -9,17 +9,18 @@ import { EnableNotificationsDialog } from './components/game/EnableNotifications
 import { GameSettingsDialog } from './components/game/GameSettingsDialog/GameSettingsDialog';
 import { IncrementCounterDialog } from './components/game/IncrementCounterDialog/IncrementCounterDialog';
 import { UserLoginView } from './components/views/UserLoginView/UserLoginView';
-import { 
-  AuthProvider, 
-  DialogProvider, 
-  GameProvider, 
-  NavigationProvider, 
+import {
+  AuthProvider,
+  DialogProvider,
+  GameProvider,
+  NavigationProvider,
   NotificationProvider,
   useAuth,
   useDialogs,
   useGame,
   useNavigation,
-  useNotifications} from './contexts';
+  useNotifications,
+} from './contexts';
 
 // App Content Component (wrapped by providers)
 const AppContent = () => {
@@ -69,19 +70,15 @@ const AppContent = () => {
   // Render dialog content
   const renderDialogContent = () => {
     const currentDialog = dialogs.getCurrentDialog();
-    
+
     switch (currentDialog) {
       case 'gameSettings':
-        return (
-          <GameSettingsDialog 
-            onClose={() => dialogs.popDialog()}
-          />
-        );
+        return <GameSettingsDialog onClose={() => dialogs.popDialog()} />;
       case 'incrementCounter':
         if (game.gameState) {
           const hasPlaceholders = game.gameState.players.some(p => p.isPlaceholder);
           return (
-            <IncrementCounterDialog 
+            <IncrementCounterDialog
               counter={game.gameState.gameState.placeholderCounter ?? 0}
               isMyTurn={game.gameState.currentPlayerId === auth.currentUserId}
               hasPlaceholders={hasPlaceholders}
@@ -93,12 +90,7 @@ const AppContent = () => {
         return null;
       case 'debugInfo':
         if (game.gameState) {
-          return (
-            <DevToolsDialog 
-              gameState={game.gameState}
-              onClose={() => dialogs.popDialog()}
-            />
-          );
+          return <DevToolsDialog gameState={game.gameState} onClose={() => dialogs.popDialog()} />;
         }
         return null;
       default:
@@ -112,7 +104,7 @@ const AppContent = () => {
       <div className={styles.appContainer}>
         <div className={styles.loadingContainer}>
           <p className={styles.versionDisplay}>
-            Version: <span id="appVersionDisplay">{version}</span>
+            Version: <span id='appVersionDisplay'>{version}</span>
           </p>
         </div>
       </div>
@@ -123,7 +115,7 @@ const AppContent = () => {
   const renderMainContent = () => {
     if (!auth.isLoggedIn) {
       return (
-        <UserLoginView 
+        <UserLoginView
           userNameInput={auth.userNameInput}
           onUserNameInputChange={auth.setUserNameInput}
           onLogin={handleEnhancedLogin}
@@ -132,10 +124,10 @@ const AppContent = () => {
         />
       );
     }
-    
+
     if (notifications.showNotificationsPrompt) {
       return (
-        <EnableNotificationsDialog 
+        <EnableNotificationsDialog
           permissionState={notifications.notificationPermission}
           onComplete={notifications.handleNotificationPromptComplete}
         />
@@ -167,7 +159,7 @@ const AppContent = () => {
     <div className={styles.appContainer}>
       {renderMainContent()}
       <p className={styles.versionDisplay}>
-        Version: <span id="appVersionDisplay">{version}</span>
+        Version: <span id='appVersionDisplay'>{version}</span>
       </p>
     </div>
   );

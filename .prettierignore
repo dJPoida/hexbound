@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Generated files
+*.min.js
+*.min.css
+
+# Package files
+package-lock.json
+yarn.lock
+
+# Environment files
+.env*
+
+# Docker files
+docker-compose*.yml
+
+# Documentation site
+docs-site/
+
+# Design assets
+design/assets/
+
+# Public assets
+src/client/public/
+
+# Generated icon files
+src/client/HexboundIcons.css
+
+# Cursor rules (markdown but should not be formatted)
+.cursorrules 

@@ -35,10 +35,10 @@ export interface CheckboxProps {
   size?: CheckboxSize;
 }
 
-export const Checkbox = ({ 
-  label, 
-  checked, 
-  onChange, 
+export const Checkbox = ({
+  label,
+  checked,
+  onChange,
   disabled = false,
   className = '',
   id,
@@ -47,7 +47,7 @@ export const Checkbox = ({
   required = false,
   ariaLabel,
   ariaDescribedBy,
-  size = CheckboxSize.DEFAULT
+  size = CheckboxSize.DEFAULT,
 }: CheckboxProps) => {
   const handleToggle = () => {
     if (!disabled) {
@@ -67,31 +67,33 @@ export const Checkbox = ({
     styles[size],
     disabled && styles.disabled,
     checked && styles.checked,
-    className
-  ].filter(Boolean).join(' ');
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   const iconClass = checked ? 'hbi-check-square' : 'hbi-square';
 
   return (
-    <div 
+    <div
       class={containerClasses}
       onClick={handleToggle}
       onKeyDown={handleKeyDown}
       tabIndex={disabled ? -1 : 0}
-      role="checkbox"
+      role='checkbox'
       aria-checked={checked}
       aria-label={ariaLabel || label}
       aria-describedby={ariaDescribedBy}
       aria-required={required}
       data-testid={id}
     >
-      <span class={`${iconClass} ${styles.icon}`} aria-hidden="true" />
+      <span class={`${iconClass} ${styles.icon}`} aria-hidden='true' />
       <label class={styles.label} htmlFor={id}>
         {label}
       </label>
       {/* Hidden native checkbox for form compatibility */}
       <input
-        type="checkbox"
+        type='checkbox'
         id={id}
         name={name}
         value={value}
@@ -104,4 +106,4 @@ export const Checkbox = ({
       />
     </div>
   );
-}; 
+};

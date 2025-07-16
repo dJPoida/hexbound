@@ -25,10 +25,10 @@ export const getGameByCode = async (req: Request, res: Response) => {
 
   try {
     const game = await gameRepository
-      .createQueryBuilder("game")
-      .leftJoinAndSelect("game.status", "status")
-      .leftJoinAndSelect("game.players", "player")
-      .where("game.gameCode = :gameCode", { gameCode })
+      .createQueryBuilder('game')
+      .leftJoinAndSelect('game.status', 'status')
+      .leftJoinAndSelect('game.players', 'player')
+      .where('game.gameCode = :gameCode', { gameCode })
       .getOne();
 
     if (!game) {
@@ -56,26 +56,26 @@ export const getGamesForUser = async (req: AuthenticatedRequest, res: Response) 
       .createQueryBuilder('game')
       .leftJoinAndSelect('game.status', 'status')
       .leftJoinAndSelect('game.players', 'player')
-      .where(
-        (qb) => {
-          const subQuery = qb
-            .subQuery()
-            .select('g.gameId')
-            .from(Game, 'g')
-            .innerJoin('g.players', 'p')
-            .where('p.userId = :userId')
-            .getQuery();
-          return 'game.gameId IN ' + subQuery;
-        },
-      )
+      .where(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('g.gameId')
+          .from(Game, 'g')
+          .innerJoin('g.players', 'p')
+          .where('p.userId = :userId')
+          .getQuery();
+        return 'game.gameId IN ' + subQuery;
+      })
       .setParameter('userId', userId)
       .orderBy('game.gameId', 'DESC')
       .getMany();
 
     // For each game, fetch the current player ID from Redis
     const gamesWithCurrentPlayer = await Promise.all(
-      userGames.map(async (game) => {
-        const gameState = await redisClient.json.get(`game:${game.gameId}`) as ServerGameState | null;
+      userGames.map(async game => {
+        const gameState = (await redisClient.json.get(
+          `game:${game.gameId}`
+        )) as ServerGameState | null;
         return {
           ...game,
           currentPlayerId: gameState?.currentPlayerId || null,
@@ -85,7 +85,6 @@ export const getGamesForUser = async (req: AuthenticatedRequest, res: Response) 
 
     // We may want to simplify the returned payload later
     res.status(200).json(gamesWithCurrentPlayer);
-
   } catch (error) {
     console.error('[API /games GET] Error fetching games:', error);
     res.status(500).json({ message: 'Error fetching games', error: (error as Error).message });
@@ -105,7 +104,10 @@ export const joinGame = async (req: AuthenticatedRequest, res: Response) => {
   const statusRepository = AppDataSource.getRepository(GameStatus);
 
   try {
-    const game = await gameRepository.findOne({ where: { gameCode }, relations: ['players', 'status'] });
+    const game = await gameRepository.findOne({
+      where: { gameCode },
+      relations: ['players', 'status'],
+    });
     if (!game) {
       return res.status(404).json({ message: 'Game not found.' });
     }
@@ -123,15 +125,15 @@ export const joinGame = async (req: AuthenticatedRequest, res: Response) => {
 
     // Get the current game state from Redis
     const redisKey = `game:${game.gameId}`;
-    const currentState = await redisClient.json.get(redisKey) as ServerGameState | null;
-    
+    const currentState = (await redisClient.json.get(redisKey)) as ServerGameState | null;
+
     if (!currentState) {
       return res.status(500).json({ message: 'Game state not found in Redis.' });
     }
 
     // Check if there's a placeholder player to replace
     const placeholderPlayerIndex = currentState.players.findIndex(p => p.isPlaceholder);
-    
+
     if (placeholderPlayerIndex === -1) {
       return res.status(400).json({ message: 'Game is already full.' });
     }
@@ -146,10 +148,12 @@ export const joinGame = async (req: AuthenticatedRequest, res: Response) => {
     // Check if all players are now real (no more placeholders)
     const hasPlaceholders = currentState.players.some(p => p.isPlaceholder);
     let gameStatusChanged = false;
-    
+
     if (!hasPlaceholders && game.status.statusName === GameStatusValues.WAITING) {
       // Change game status to active
-      const activeStatus = await statusRepository.findOne({ where: { statusName: GameStatusValues.ACTIVE } });
+      const activeStatus = await statusRepository.findOne({
+        where: { statusName: GameStatusValues.ACTIVE },
+      });
       if (activeStatus) {
         game.status = activeStatus;
         gameStatusChanged = true;
@@ -162,7 +166,7 @@ export const joinGame = async (req: AuthenticatedRequest, res: Response) => {
 
     // Update the game state in Redis
     await redisClient.json.set(redisKey, '$', currentState as unknown as RedisJSON);
-    
+
     // Broadcast the updated state to all clients in the game
     const broadcastMessage: SocketMessage<ServerGameState> = {
       type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE,
@@ -170,8 +174,8 @@ export const joinGame = async (req: AuthenticatedRequest, res: Response) => {
     };
     broadcastToGame(game.gameId, JSON.stringify(broadcastMessage));
 
-    const responseMessage = gameStatusChanged 
-      ? 'Successfully joined game. Game is now active!' 
+    const responseMessage = gameStatusChanged
+      ? 'Successfully joined game. Game is now active!'
       : 'Successfully joined game.';
 
     res.status(200).json({ message: responseMessage, gameId: game.gameId });
@@ -201,9 +205,13 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
     }
 
     // Get the 'waiting' status from the database
-    const waitingStatus = await statusRepository.findOne({ where: { statusName: GameStatusValues.WAITING } });
+    const waitingStatus = await statusRepository.findOne({
+      where: { statusName: GameStatusValues.WAITING },
+    });
     if (!waitingStatus) {
-        return res.status(500).json({ message: "Initial game status 'waiting' not found in database." });
+      return res
+        .status(500)
+        .json({ message: "Initial game status 'waiting' not found in database." });
     }
 
     // 2. Generate a unique game code
@@ -220,9 +228,11 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
     } while (!isCodeUnique && attempts < 10);
 
     if (!isCodeUnique) {
-      return res.status(500).json({ message: 'Failed to generate a unique game code after several attempts.' });
+      return res
+        .status(500)
+        .json({ message: 'Failed to generate a unique game code after several attempts.' });
     }
-    
+
     // 3. Create and save the new game
     const game = gameRepository.create({
       gameCode,
@@ -232,7 +242,13 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
     await gameRepository.save(game);
 
     // 4. Initialize game state in Redis
-    const mapGenerator = new MapGenerator(config.map.defaultWidth, config.map.defaultHeight, undefined, undefined, 2);
+    const mapGenerator = new MapGenerator(
+      config.map.defaultWidth,
+      config.map.defaultHeight,
+      undefined,
+      undefined,
+      2
+    );
     const mapData = mapGenerator.generate();
 
     const initialGameState: ServerGameState = {
@@ -255,12 +271,16 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
       turnActionLog: [], // To store actions taken in a turn
       mapData: mapData,
       gameState: {
-        placeholderCounter: 0
-      }
+        placeholderCounter: 0,
+      },
     };
 
     // Use JSON.SET to store the object
-    await redisClient.json.set(`game:${game.gameId}`, '$', initialGameState as unknown as RedisJSON);
+    await redisClient.json.set(
+      `game:${game.gameId}`,
+      '$',
+      initialGameState as unknown as RedisJSON
+    );
 
     // 5. Send the successful response
     res.status(201).json({
@@ -268,9 +288,8 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
       gameId: game.gameId,
       gameCode: game.gameCode,
     });
-
   } catch (error) {
     console.error('[API /games] Error creating game:', error);
     res.status(500).json({ message: 'Error creating game', error: (error as Error).message });
   }
-}; 
+};

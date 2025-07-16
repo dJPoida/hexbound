@@ -2,4 +2,4 @@
 
 export interface IncrementCounterPayload {
   gameId: string;
-} 
+}

@@ -2,4 +2,4 @@
 
 export interface GameUnsubscribePayload {
   gameId: string;
-} 
+}

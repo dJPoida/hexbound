@@ -9,4 +9,4 @@ const router = Router();
 // Debug endpoint for regenerating the map during development
 router.post('/regenerate-map', authMiddleware, regenerateMap);
 
-export default router; 
+export default router;

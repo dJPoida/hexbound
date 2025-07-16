@@ -2,5 +2,5 @@
 
 export * from './core';
 export * from './map';
-export * from './mapGeneration'; 
+export * from './mapGeneration';
 export * from './socket';

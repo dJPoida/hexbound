@@ -2,7 +2,7 @@ import { RedisJSON } from '@redis/json/dist/commands';
 import { Response } from 'express';
 
 import { SOCKET_MESSAGE_TYPES } from '../../shared/constants/socket.const';
-import { MapUpdatePayload,ServerGameState, SocketMessage } from '../../shared/types/socket';
+import { MapUpdatePayload, ServerGameState, SocketMessage } from '../../shared/types/socket';
 import config from '../config';
 import { AppDataSource } from '../data-source';
 import { Game } from '../entities/Game.entity';
@@ -24,10 +24,10 @@ export const regenerateMap = async (req: AuthenticatedRequest, res: Response) =>
     // Get the game from the database
     const gameRepository = AppDataSource.getRepository(Game);
     const game = await gameRepository
-      .createQueryBuilder("game")
-      .leftJoinAndSelect("game.status", "status")
-      .leftJoinAndSelect("game.players", "player")
-      .where("game.gameId = :gameId", { gameId })
+      .createQueryBuilder('game')
+      .leftJoinAndSelect('game.status', 'status')
+      .leftJoinAndSelect('game.players', 'player')
+      .where('game.gameId = :gameId', { gameId })
       .getOne();
 
     if (!game) {
@@ -36,7 +36,7 @@ export const regenerateMap = async (req: AuthenticatedRequest, res: Response) =>
 
     // Get the current game state from Redis
     const gameStateKey = `game:${gameId}`;
-    const gameState = await redisClient.json.get(gameStateKey) as ServerGameState;
+    const gameState = (await redisClient.json.get(gameStateKey)) as ServerGameState;
 
     if (!gameState) {
       return res.status(404).json({ message: 'Game state not found.' });
@@ -50,25 +50,36 @@ export const regenerateMap = async (req: AuthenticatedRequest, res: Response) =>
     // Generate a new map with a random seed for variation
     const randomSeed = Math.random().toString(36).substring(2, 15);
     console.log(`[DEBUG] Regenerating map for game ${gameId} with seed: ${randomSeed}`);
-    
+
     // Use OCEAN_WORLD preset for more dramatic changes
-    const mapGenerator = new MapGenerator(config.map.defaultWidth, config.map.defaultHeight, 'OCEAN_WORLD', randomSeed, game.players.length);
+    const mapGenerator = new MapGenerator(
+      config.map.defaultWidth,
+      config.map.defaultHeight,
+      'OCEAN_WORLD',
+      randomSeed,
+      game.players.length
+    );
     const newMapData = mapGenerator.generate();
-    
-    console.log(`[DEBUG] New map generated: ${newMapData.width}x${newMapData.height}, ${newMapData.tiles.length} tiles`);
-    
+
+    console.log(
+      `[DEBUG] New map generated: ${newMapData.width}x${newMapData.height}, ${newMapData.tiles.length} tiles`
+    );
+
     // Log some statistics about the new map
-    const terrainCounts = newMapData.tiles.reduce((acc, tile) => {
-      acc[tile.terrain] = (acc[tile.terrain] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    
+    const terrainCounts = newMapData.tiles.reduce(
+      (acc, tile) => {
+        acc[tile.terrain] = (acc[tile.terrain] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
     console.log(`[DEBUG] New map terrain distribution:`, terrainCounts);
 
     // Update the game state with the new map
     const updatedGameState: ServerGameState = {
       ...gameState,
-      mapData: newMapData
+      mapData: newMapData,
     };
 
     // Save the updated game state to Redis
@@ -78,7 +89,7 @@ export const regenerateMap = async (req: AuthenticatedRequest, res: Response) =>
     const clientState = toClientState(updatedGameState);
     const gameStateMessage: SocketMessage<typeof clientState> = {
       type: SOCKET_MESSAGE_TYPES.GAME_STATE_UPDATE,
-      payload: clientState
+      payload: clientState,
     };
     broadcastToGame(gameId, JSON.stringify(gameStateMessage));
 
@@ -101,4 +112,4 @@ export const regenerateMap = async (req: AuthenticatedRequest, res: Response) =>
     console.error('[DEBUG] Error regenerating map:', error);
     res.status(500).json({ message: 'Internal server error.' });
   }
-}; 
+};

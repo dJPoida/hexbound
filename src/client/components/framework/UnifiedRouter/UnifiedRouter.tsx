@@ -17,8 +17,8 @@ export interface UnifiedRouterProps {
   myGames: GameListItem[];
   gameState: ClientGameStatePayload | null;
   isGameLoaded: boolean;
-  
-  // Navigation & actions  
+
+  // Navigation & actions
   onNavigate: (path: string) => void;
   onLogout: () => void;
   onOpenSettings: () => void;
@@ -27,7 +27,7 @@ export interface UnifiedRouterProps {
   onEndTurn: () => void;
   onPushDialog: (dialog: 'gameSettings' | 'incrementCounter' | 'debugInfo') => void;
   onGameReady: () => void;
-  
+
   // Dialog & UI
   dialog: h.JSX.Element | null;
   className?: string;
@@ -60,26 +60,29 @@ export class UnifiedRouter extends Component<UnifiedRouterProps, UnifiedRouterSt
   }
 
   handleCopyGameLink = () => {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      this.setState({ copyLinkStatus: 'copied' });
-      setTimeout(() => {
-        this.setState({ copyLinkStatus: 'idle' });
-      }, 1500);
-    }).catch(err => {
-      console.error('Failed to copy text: ', err);
-    });
+    navigator.clipboard
+      .writeText(window.location.href)
+      .then(() => {
+        this.setState({ copyLinkStatus: 'copied' });
+        setTimeout(() => {
+          this.setState({ copyLinkStatus: 'idle' });
+        }, 1500);
+      })
+      .catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
   };
 
   // Determine current route type and context
   getRouteInfo() {
     const path = this.state.currentPath;
-    
+
     // Check for game route
     const gameMatch = path.match(/^\/game\/([a-zA-Z0-9-]+)/);
     if (gameMatch) {
       return { type: 'game', gameCode: gameMatch[1], headerView: AppHeaderView.GAME };
     }
-    
+
     // Check for utility routes
     if (path === '/utils') {
       return { type: 'utils', headerView: AppHeaderView.UTILS };
@@ -87,14 +90,15 @@ export class UnifiedRouter extends Component<UnifiedRouterProps, UnifiedRouterSt
     if (path === '/styleguide') {
       return { type: 'styleguide', headerView: AppHeaderView.STYLEGUIDE };
     }
-    
+
     // Default to lobby
     return { type: 'lobby', headerView: AppHeaderView.LOBBY };
   }
 
   renderHeader(routeInfo: ReturnType<typeof this.getRouteInfo>) {
-    const { currentUserName, onLogout, onOpenSettings, onNavigate, gameState, onPushDialog } = this.props;
-    
+    const { currentUserName, onLogout, onOpenSettings, onNavigate, gameState, onPushDialog } =
+      this.props;
+
     return (
       <AppHeader
         currentView={routeInfo.headerView}
@@ -103,8 +107,12 @@ export class UnifiedRouter extends Component<UnifiedRouterProps, UnifiedRouterSt
         onOpenSettings={onOpenSettings}
         onNavigate={onNavigate}
         turnNumber={routeInfo.type === 'game' ? gameState?.turnNumber : undefined}
-        counter={routeInfo.type === 'game' ? gameState?.gameState.placeholderCounter ?? 0 : undefined}
-        onToggleCounterDialog={routeInfo.type === 'game' ? () => onPushDialog('incrementCounter') : undefined}
+        counter={
+          routeInfo.type === 'game' ? (gameState?.gameState.placeholderCounter ?? 0) : undefined
+        }
+        onToggleCounterDialog={
+          routeInfo.type === 'game' ? () => onPushDialog('incrementCounter') : undefined
+        }
         onCopyGameLink={routeInfo.type === 'game' ? this.handleCopyGameLink : undefined}
         copyLinkStatus={routeInfo.type === 'game' ? this.state.copyLinkStatus : undefined}
       />
@@ -112,23 +120,23 @@ export class UnifiedRouter extends Component<UnifiedRouterProps, UnifiedRouterSt
   }
 
   renderContent(routeInfo: ReturnType<typeof this.getRouteInfo>) {
-    const { 
-      currentUserId, 
-      myGames, 
-      gameState, 
-      isGameLoaded, 
-      onJoinGame, 
-      onCreateNewGame, 
-      onEndTurn, 
-      onPushDialog, 
+    const {
+      currentUserId,
+      myGames,
+      gameState,
+      isGameLoaded,
+      onJoinGame,
+      onCreateNewGame,
+      onEndTurn,
+      onPushDialog,
       onGameReady,
-      dialog
+      dialog,
     } = this.props;
 
     switch (routeInfo.type) {
       case 'game':
         if (!gameState) return <div>Loading game...</div>;
-        
+
         return (
           <GameViewLayout
             gameState={gameState}
@@ -141,26 +149,26 @@ export class UnifiedRouter extends Component<UnifiedRouterProps, UnifiedRouterSt
             dialog={dialog}
           />
         );
-      
+
       case 'utils':
         return (
           <div className={styles.contentContainer}>
             <UtilsView />
           </div>
         );
-      
+
       case 'styleguide':
         return (
           <div className={styles.contentContainer}>
             <StyleGuideView />
           </div>
         );
-      
+
       case 'lobby':
       default:
         return (
           <div className={styles.contentContainer}>
-            <LobbyView 
+            <LobbyView
               onNavigateToGame={onJoinGame}
               onCreateNewGame={onCreateNewGame}
               myGames={myGames}
@@ -174,19 +182,15 @@ export class UnifiedRouter extends Component<UnifiedRouterProps, UnifiedRouterSt
   render() {
     const { className, dialog } = this.props;
     const routeInfo = this.getRouteInfo();
-    
+
     return (
       <div className={className}>
         {this.renderHeader(routeInfo)}
-        <div className={styles.gameViewContainer}>
-          {this.renderContent(routeInfo)}
-        </div>
+        <div className={styles.gameViewContainer}>{this.renderContent(routeInfo)}</div>
         {routeInfo.type !== 'game' && dialog && (
-          <div className={styles.dialogOverlay}>
-            {dialog}
-          </div>
+          <div className={styles.dialogOverlay}>{dialog}</div>
         )}
       </div>
     );
   }
-} 
+}

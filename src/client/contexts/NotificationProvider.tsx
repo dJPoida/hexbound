@@ -36,7 +36,8 @@ interface NotificationProviderProps {
 
 export const NotificationProvider = ({ children }: NotificationProviderProps) => {
   const [showNotificationsPrompt, setShowNotificationsPrompt] = useState(false);
-  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
+  const [notificationPermission, setNotificationPermission] =
+    useState<NotificationPermission>('default');
   const [afterPromptAction, setAfterPromptAction] = useState<() => void>(() => {});
 
   // Initialize notification state
@@ -46,23 +47,34 @@ export const NotificationProvider = ({ children }: NotificationProviderProps) =>
     if (isNotificationPending) {
       sessionStorage.removeItem(NOTIFICATION_PENDING_KEY); // Clean up immediately
       if (Notification.permission === 'granted') {
-        console.log('[NotificationProvider] Resuming notification subscription after permission change.');
-        pushService.subscribeUser().then(() => {
-          settingsService.updateSettings({ notificationsEnabled: true });
-        }).catch(err => console.error("Failed to auto-subscribe after permission change:", err));
+        console.log(
+          '[NotificationProvider] Resuming notification subscription after permission change.'
+        );
+        pushService
+          .subscribeUser()
+          .then(() => {
+            settingsService.updateSettings({ notificationsEnabled: true });
+          })
+          .catch(err => console.error('Failed to auto-subscribe after permission change:', err));
       }
     }
 
     const syncNotificationPermission = () => {
-      if ('Notification' in window && settingsService.getSettings().notificationsEnabled && Notification.permission === 'denied') {
-        console.log('[Permissions] Notification permission has been revoked by the user. Updating app settings.');
+      if (
+        'Notification' in window &&
+        settingsService.getSettings().notificationsEnabled &&
+        Notification.permission === 'denied'
+      ) {
+        console.log(
+          '[Permissions] Notification permission has been revoked by the user. Updating app settings.'
+        );
         settingsService.updateSettings({ notificationsEnabled: false });
       }
     };
 
     // Run on initial load
     syncNotificationPermission();
-    
+
     // Run whenever the tab becomes visible again
     document.addEventListener('visibilitychange', syncNotificationPermission);
 
@@ -88,10 +100,14 @@ export const NotificationProvider = ({ children }: NotificationProviderProps) =>
         await pushService.subscribeUser();
         settingsService.updateSettings({ notificationsEnabled: true });
       } catch (error) {
-        console.error("Failed to auto-subscribe user:", error);
+        console.error('Failed to auto-subscribe user:', error);
       }
       onComplete(); // Proceed regardless of subscription success
-    } else if (permission === 'prompt' || permission === 'default' || (permission === 'denied' && !settings.notificationsEnabled)) {
+    } else if (
+      permission === 'prompt' ||
+      permission === 'default' ||
+      (permission === 'denied' && !settings.notificationsEnabled)
+    ) {
       // Show the prompt dialog if it hasn't been asked, or if it was denied and our in-app setting is off.
       if (permission === 'denied') {
         // Set the flag so we know to check for changes on next load
@@ -127,4 +143,4 @@ export const NotificationProvider = ({ children }: NotificationProviderProps) =>
       {children}
     </NotificationContext.Provider>
   );
-}; 
+};

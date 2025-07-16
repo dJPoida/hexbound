@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setCurrentUserName(session.userName);
       setIsLoggedIn(true);
     }
-    
+
     // Mark initialization as complete
     setIsInitializing(false);
   }, []);
@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
     setIsLoading(true);
     setAuthError(null);
-    
+
     try {
       const response = await fetch(API_ROUTES.LOGIN, {
         method: 'POST',
@@ -79,13 +79,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         },
         body: JSON.stringify({ userName: userNameInput.trim() }),
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok) {
         // Use the auth service to save the session
         authService.saveSession(data.sessionToken, data.userId, data.userName);
-        
+
         // Update state
         setCurrentUserId(data.userId);
         setCurrentUserName(data.userName);
@@ -129,9 +129,5 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     clearAuthError,
   };
 
-  return (
-    <AuthContext.Provider value={authValue}>
-      {children}
-    </AuthContext.Provider>
-  );
-}; 
+  return <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>;
+};

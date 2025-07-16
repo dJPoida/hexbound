@@ -15,4 +15,4 @@ export interface GenerationContext {
   width: number;
   /** Map height for convenience */
   height: number;
-} 
+}

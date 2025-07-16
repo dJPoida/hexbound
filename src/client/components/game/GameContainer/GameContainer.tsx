@@ -13,17 +13,17 @@ interface GameContainerProps {
   connectionStatus: 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 }
 
-export function GameContainer({ 
-  gameId,
-  gameState,
-  connectionStatus,
-}: GameContainerProps) {
-
+export function GameContainer({ gameId, gameState, connectionStatus }: GameContainerProps) {
   useEffect(() => {
-    const activityEvents: (keyof WindowEventMap)[] = ['mousemove', 'click', 'keydown', 'touchstart'];
+    const activityEvents: (keyof WindowEventMap)[] = [
+      'mousemove',
+      'click',
+      'keydown',
+      'touchstart',
+    ];
 
     const sendAlivePingOnce = () => {
-      console.log("[Activity] User is active, sending ping.");
+      console.log('[Activity] User is active, sending ping.');
       socketService.sendMessage(SOCKET_MESSAGE_TYPES.USER_ALIVE_PING, {});
       // Remove all listeners after the first event to only send the ping once.
       activityEvents.forEach(event => {
@@ -58,7 +58,7 @@ export function GameContainer({
         socketService.sendMessage(SOCKET_MESSAGE_TYPES.CLIENT_GAME_VIEW_INACTIVE, { gameId });
       }
     };
-    
+
     // Initial active message and event listener setup
     console.log('[Visibility] GameContainer mounted. Sending active ping.');
     socketService.sendMessage(SOCKET_MESSAGE_TYPES.CLIENT_GAME_VIEW_ACTIVE, { gameId });
@@ -73,16 +73,20 @@ export function GameContainer({
   }, [gameId]);
 
   if (connectionStatus === 'connecting') {
-    return <Dialog title="Connecting...">Connecting to Game...</Dialog>;
+    return <Dialog title='Connecting...'>Connecting to Game...</Dialog>;
   }
 
   if (connectionStatus === 'reconnecting') {
-    return <Dialog title="Reconnecting...">Connection to the server has been lost. Attempting to reconnect...</Dialog>;
+    return (
+      <Dialog title='Reconnecting...'>
+        Connection to the server has been lost. Attempting to reconnect...
+      </Dialog>
+    );
   }
 
   if (connectionStatus === 'disconnected' && !gameState) {
-     return <Dialog title="Disconnected">There is no active connection to the game server.</Dialog>;
+    return <Dialog title='Disconnected'>There is no active connection to the game server.</Dialog>;
   }
 
   return null; // GameContainer no longer renders a dialog directly
-} 
+}

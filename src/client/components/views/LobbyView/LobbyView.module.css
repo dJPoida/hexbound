@@ -22,7 +22,7 @@
   .lobbyContainer {
     max-width: 100%;
   }
-  
+
   .actionsSection {
     min-width: 0; /* Allow it to shrink on very small screens */
   }
@@ -101,8 +101,6 @@
     min-height: 0; /* Allow flex item to shrink */
   }
 }
-
-
 
 .gameListItem {
   background-color: transparent;
@@ -183,4 +181,4 @@
   border-top: 1.5px solid var(--color-canvas-white-dark);
   margin-top: 1.7rem;
   padding-top: 1.3rem;
-} 
+}

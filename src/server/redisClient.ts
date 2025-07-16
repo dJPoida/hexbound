@@ -11,17 +11,24 @@ const redisOptions: RedisClientOptions = {
     reconnectStrategy: (retries: number) => {
       if (retries >= MAX_REDIS_RECONNECT_RETRIES) {
         // Stop retrying and signal an error
-        const err = new Error(`[Redis] Exhausted all ${MAX_REDIS_RECONNECT_RETRIES} reconnect retries.`);
+        const err = new Error(
+          `[Redis] Exhausted all ${MAX_REDIS_RECONNECT_RETRIES} reconnect retries.`
+        );
         console.error(err.message);
         // Returning an Error tells the client to stop retrying and emit an 'error' event with this error.
-        return err; 
+        return err;
       }
       // Calculate delay with exponential backoff, capping at MAX_RECONNECT_DELAY_MS
-      const delay = Math.min(INITIAL_RECONNECT_DELAY_MS * Math.pow(2, retries), MAX_RECONNECT_DELAY_MS);
-      console.log(`[Redis] Reconnect attempt ${retries + 1}/${MAX_REDIS_RECONNECT_RETRIES}, next attempt in ${delay}ms`);
+      const delay = Math.min(
+        INITIAL_RECONNECT_DELAY_MS * Math.pow(2, retries),
+        MAX_RECONNECT_DELAY_MS
+      );
+      console.log(
+        `[Redis] Reconnect attempt ${retries + 1}/${MAX_REDIS_RECONNECT_RETRIES}, next attempt in ${delay}ms`
+      );
       return delay;
-    }
-  }
+    },
+  },
 };
 
 if (config.redis.url) {
@@ -52,10 +59,10 @@ redisClient.on('ready', () => {
 // 'reconnecting' event might still be useful for general logging if the strategy returns a number
 redisClient.on('reconnecting', () => {
   // This log might become redundant if the reconnectStrategy logs verbosely
-  // console.log('[Redis] Client is attempting to reconnect...'); 
+  // console.log('[Redis] Client is attempting to reconnect...');
 });
 
-redisClient.on('error', (err) => {
+redisClient.on('error', err => {
   // The error from reconnectStrategy (when retries are exhausted) will also land here.
   console.error('[Redis] Client error:', err.message); // Log only message to avoid huge stack for connection errors
 });
@@ -68,7 +75,8 @@ redisClient.on('end', () => {
 (async () => {
   try {
     await redisClient.connect();
-  } catch (err: unknown) { // Changed from any to unknown
+  } catch (err: unknown) {
+    // Changed from any to unknown
     // This initial connect error won't use the reconnectStrategy, it's a one-off attempt.
     // The strategy applies to disconnections *after* an initial successful connection, or if connect() is retried externally.
     // However, if connect() fails, the client will attempt to reconnect based on the strategy if it was already "connected" (which it wouldn't be here).
@@ -92,4 +100,4 @@ export const disconnectRedis = async () => {
   }
 };
 
-export default redisClient; 
+export default redisClient;

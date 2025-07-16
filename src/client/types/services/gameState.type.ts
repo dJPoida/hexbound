@@ -3,4 +3,4 @@
 export interface GameViewportState {
   zoom: number;
   center: { x: number; y: number };
-} 
+}

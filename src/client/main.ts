@@ -2,7 +2,7 @@ import './global.css';
 import './HexboundIcons.css';
 
 import htm from 'htm';
-import { h,render } from 'preact';
+import { h, render } from 'preact';
 import { registerSW } from 'virtual:pwa-register';
 
 import { App } from './App';
@@ -27,4 +27,4 @@ if (appElement) {
   render(html`<${App} />`, appElement);
 } else {
   console.error("Could not find element with id 'app' to mount the application.");
-} 
+}

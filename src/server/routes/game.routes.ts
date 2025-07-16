@@ -22,4 +22,4 @@ router.post('/:gameCode/join', authMiddleware, joinGame);
 // Route to create a new game, protected by the auth middleware
 router.post('/', authMiddleware, createGame);
 
-export default router; 
+export default router;

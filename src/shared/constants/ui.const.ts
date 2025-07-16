@@ -1,11 +1,5 @@
 // UI-related enums and constants shared across the application
 
-
-
-
-
-
-
 // Typography variants for Text and Heading components
 export enum TypographyVariant {
   PAGE_TITLE = 'pageTitle',
@@ -36,4 +30,4 @@ export enum ComponentSize {
   DEFAULT = 'default',
   LARGE = 'large',
   SMALL = 'small',
-} 
+}

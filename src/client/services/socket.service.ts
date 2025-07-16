@@ -1,5 +1,5 @@
 import { SOCKET_MESSAGE_TYPES } from '../../shared/constants/socket.const';
-import { ErrorPayload,SocketMessage } from '../../shared/types/socket';
+import { ErrorPayload, SocketMessage } from '../../shared/types/socket';
 import { authService } from './auth.service';
 
 type MessageHandler = (payload: unknown) => void;
@@ -24,7 +24,9 @@ class SocketService {
   public connect(gameId: string) {
     // Prevent duplicate connections to the same game
     if (this.lastGameId === gameId && this.socket && this.socket.readyState === WebSocket.OPEN) {
-      console.log(`[SocketService] Already connected to game ${gameId}, skipping duplicate connection`);
+      console.log(
+        `[SocketService] Already connected to game ${gameId}, skipping duplicate connection`
+      );
       return;
     }
 
@@ -46,7 +48,7 @@ class SocketService {
 
     const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
     const socketUrl = `${protocol}://${window.location.host}/ws?token=${token}`;
-    
+
     this.socket = new WebSocket(socketUrl);
 
     this.socket.onopen = () => {
@@ -58,7 +60,7 @@ class SocketService {
       this.sendMessage(SOCKET_MESSAGE_TYPES.CLIENT_READY, { gameId: this.lastGameId });
     };
 
-    this.socket.onmessage = (event) => {
+    this.socket.onmessage = event => {
       try {
         const message: SocketMessage<unknown> = JSON.parse(event.data);
         if (message.type === 'error') {
@@ -76,8 +78,10 @@ class SocketService {
       }
     };
 
-    this.socket.onclose = (event) => {
-      console.log(`[SocketService] WebSocket connection closed. Code: ${event.code}, Reason: ${event.reason}, Clean: ${event.wasClean}`);
+    this.socket.onclose = event => {
+      console.log(
+        `[SocketService] WebSocket connection closed. Code: ${event.code}, Reason: ${event.reason}, Clean: ${event.wasClean}`
+      );
       this.socket = null;
       if (!this.isManuallyClosed) {
         this.updateStatus('reconnecting');
@@ -87,16 +91,21 @@ class SocketService {
       }
     };
 
-    this.socket.onerror = (error) => {
+    this.socket.onerror = error => {
       console.error('[SocketService] WebSocket error:', error);
       this.socket?.close();
     };
   }
 
   private scheduleReconnect() {
-    const delay = Math.min(this.RECONNECT_BASE_DELAY * Math.pow(2, this.reconnectAttempts), this.MAX_RECONNECT_DELAY);
-    console.log(`[SocketService] Attempting to reconnect in ${delay}ms... (Attempt ${this.reconnectAttempts + 1})`);
-    
+    const delay = Math.min(
+      this.RECONNECT_BASE_DELAY * Math.pow(2, this.reconnectAttempts),
+      this.MAX_RECONNECT_DELAY
+    );
+    console.log(
+      `[SocketService] Attempting to reconnect in ${delay}ms... (Attempt ${this.reconnectAttempts + 1})`
+    );
+
     setTimeout(() => {
       this.reconnectAttempts++;
       if (this.lastGameId) {
@@ -110,11 +119,14 @@ class SocketService {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(message);
     } else {
-      console.log(`[SocketService] Socket not open, readyState: ${this.socket?.readyState}. Queuing message:`, message);
+      console.log(
+        `[SocketService] Socket not open, readyState: ${this.socket?.readyState}. Queuing message:`,
+        message
+      );
       this.messageQueue.push(message);
     }
   }
-  
+
   private processMessageQueue() {
     while (this.messageQueue.length > 0) {
       const message = this.messageQueue.shift();
@@ -154,7 +166,12 @@ class SocketService {
   }
 
   public isConnectedToGame(gameId: string): boolean {
-    return this.lastGameId !== null && this.lastGameId === gameId && this.socket !== null && this.socket.readyState === WebSocket.OPEN;
+    return (
+      this.lastGameId !== null &&
+      this.lastGameId === gameId &&
+      this.socket !== null &&
+      this.socket.readyState === WebSocket.OPEN
+    );
   }
 
   public disconnect() {
@@ -166,4 +183,4 @@ class SocketService {
   }
 }
 
-export const socketService = new SocketService(); 
+export const socketService = new SocketService();

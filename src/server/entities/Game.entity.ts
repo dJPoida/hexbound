@@ -1,34 +1,42 @@
-import { Column, Entity, JoinColumn,JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-import { GameStatus } from "./GameStatus.entity";
-import { User } from "./User.entity";
+import { GameStatus } from './GameStatus.entity';
+import { User } from './User.entity';
 
-@Entity({ name: "games" })
+@Entity({ name: 'games' })
 export class Game {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   gameId!: string;
 
-  @Column({ type: "varchar", unique: true })
+  @Column({ type: 'varchar', unique: true })
   gameCode!: string;
 
   @ManyToOne(() => GameStatus, status => status.games, { eager: true })
-  @JoinColumn({ name: "statusId" })
+  @JoinColumn({ name: 'statusId' })
   status!: GameStatus;
 
-  @Column({ type: "integer", default: 1 })
+  @Column({ type: 'integer', default: 1 })
   currentTurn!: number;
 
-  @ManyToMany(() => User, (user) => user.games)
+  @ManyToMany(() => User, user => user.games)
   @JoinTable({
-    name: "game_players",
+    name: 'game_players',
     joinColumn: {
-      name: "game_id",
-      referencedColumnName: "gameId",
+      name: 'game_id',
+      referencedColumnName: 'gameId',
     },
     inverseJoinColumn: {
-      name: "user_id",
-      referencedColumnName: "userId",
+      name: 'user_id',
+      referencedColumnName: 'userId',
     },
   })
   players!: User[];
-} 
+}

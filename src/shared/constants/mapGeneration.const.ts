@@ -1,11 +1,15 @@
-import { MapGenerationConfig, MapGenerationPassConfig,MapGenerationPreset } from '../types/mapGeneration';
+import {
+  MapGenerationConfig,
+  MapGenerationPassConfig,
+  MapGenerationPreset,
+} from '../types/mapGeneration';
 
 /**
  * Map generation pass names (enum-like constants)
  */
 export const MAP_GENERATION_PASSES = {
   ICE_CAP: 'IceCap',
-  OCEAN_BAND: 'OceanBand', 
+  OCEAN_BAND: 'OceanBand',
   GRASSLAND_FILL: 'GrasslandFill',
   SPAWN_ALLOCATION: 'SpawnAllocation',
 } as const;
@@ -137,11 +141,11 @@ export const createMapGenerationConfig = (
   seed?: string
 ): MapGenerationConfig => {
   const preset = presetName ? MAP_GENERATION_PRESETS[presetName] : DEFAULT_MAP_PRESET;
-  
+
   return {
     width,
     height,
     seed,
     passes: preset.config.passes,
   };
-}; 
+};

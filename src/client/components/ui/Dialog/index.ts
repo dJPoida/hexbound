@@ -1,1 +1,1 @@
-export { Dialog, DialogSize } from './Dialog'; 
+export { Dialog, DialogSize } from './Dialog';

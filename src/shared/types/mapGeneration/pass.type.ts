@@ -8,4 +8,4 @@ export interface MapGenerationPassConfig {
   enabled: boolean;
   /** Pass-specific parameters */
   parameters: Record<string, unknown>;
-} 
+}

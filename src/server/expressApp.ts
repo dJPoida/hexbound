@@ -9,12 +9,12 @@ import apiRouter from './apiRouter.js';
 import config from './config.js';
 
 const currentModuleDirname = getModuleDir(
-  typeof import.meta?.url === 'string' ? import.meta?.url : undefined,
+  typeof import.meta?.url === 'string' ? import.meta?.url : undefined
 );
 
 export async function configureExpressApp(
   app: express.Express,
-  httpServer: http.Server,
+  httpServer: http.Server
 ): Promise<{ vite?: ViteDevServer }> {
   // API routes must be registered BEFORE the Vite middleware
   // so they are handled by the backend and not treated as a client-side route.
@@ -29,7 +29,7 @@ export async function configureExpressApp(
 
     // SPA fallback: Serve index.html for all other GET requests that don't match a file
     app.get('*', (req, res) => {
-      res.sendFile(path.resolve(clientBuildDir, 'index.html'), (err) => {
+      res.sendFile(path.resolve(clientBuildDir, 'index.html'), err => {
         if (err) {
           console.error('Error sending index.html in production:', err);
           res.status(500).end();
@@ -63,4 +63,4 @@ export async function configureExpressApp(
       throw e;
     }
   }
-} 
+}
