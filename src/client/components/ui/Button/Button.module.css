@@ -84,7 +84,8 @@
   filter: brightness(0.95);
 }
 
-.button:active:not(.disabled) .buttonText {
+.button:active:not(.disabled) .buttonText,
+.button:active:not(.disabled) .buttonIcon {
   transform: translate(1px, 1px);
 }
 
