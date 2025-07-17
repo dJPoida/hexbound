@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'hexbound-icon';
-  src:  url('fonts/hexbound-icon.eot?x6einq');
-  src:  url('fonts/hexbound-icon.eot?x6einq#iefix') format('embedded-opentype'),
-    url('fonts/hexbound-icon.ttf?x6einq') format('truetype'),
-    url('fonts/hexbound-icon.woff?x6einq') format('woff'),
-    url('fonts/hexbound-icon.svg?x6einq#hexbound-icon') format('svg');
+  src:  url('fonts/hexbound-icon.eot?fdqglt');
+  src:  url('fonts/hexbound-icon.eot?fdqglt#iefix') format('embedded-opentype'),
+    url('fonts/hexbound-icon.ttf?fdqglt') format('truetype'),
+    url('fonts/hexbound-icon.woff?fdqglt') format('woff'),
+    url('fonts/hexbound-icon.svg?fdqglt#hexbound-icon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -291,4 +291,22 @@
 }
 .hbi-sound-off:before {
   content: "\e958";
+}
+.hbi-activity:before {
+  content: "\e959";
+}
+.hbi-docs:before {
+  content: "\e95a";
+}
+.hbi-flag:before {
+  content: "\e95b";
+}
+.hbi-pen:before {
+  content: "\e95c";
+}
+.hbi-tool:before {
+  content: "\e95d";
+}
+.hbi-zap:before {
+  content: "\e95e";
 }
