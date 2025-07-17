@@ -1,5 +1,3 @@
-import { Point } from 'pixi.js';
-
 import { GameViewportState } from '../types/services';
 
 const LOCAL_STORAGE_KEY_PREFIX = 'hexbound-game-state-';

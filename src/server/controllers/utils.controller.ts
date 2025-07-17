@@ -1,7 +1,6 @@
 import { Response } from 'express';
 
 import { AppDataSource } from '../data-source';
-import { Game } from '../entities/Game.entity';
 import redisClient from '../redisClient';
 import { AuthenticatedRequest } from '../types/middleware';
 

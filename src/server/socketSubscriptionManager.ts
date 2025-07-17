@@ -1,7 +1,5 @@
-import { Player } from '../shared/types/core';
 import { AuthenticatedWebSocket, ServerGameState } from '../shared/types/socket';
 import { AppDataSource } from './data-source';
-import { Game } from './entities/Game.entity';
 import { User } from './entities/User.entity';
 import redisClient from './redisClient';
 import { pushService } from './services/push.service';
@@ -130,7 +128,7 @@ export function broadcastToGame(
  * @param userId The ID of the user who disconnected.
  */
 export async function handleDisconnect(userId: string): Promise<void> {
-  // A brief delay to allow for immediate reconnections before checking.
+  // A brief delay to allow for immediate reconnection before checking.
   await new Promise(resolve => setTimeout(resolve, 2000));
 
   // After the delay, check if the user has truly gone offline.

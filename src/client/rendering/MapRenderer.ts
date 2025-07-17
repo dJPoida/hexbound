@@ -178,6 +178,7 @@ export class MapRenderer {
     // Get current settings for visibility control
     const settings = settingsService.getSettings();
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const [key, tileInstances] of this.tileCache.entries()) {
       for (const tile of tileInstances) {
         const TILE_WIDTH = HEX_WIDTH + 10;

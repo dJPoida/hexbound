@@ -2,7 +2,6 @@ import { RedisJSON } from '@redis/json/dist/commands';
 
 import { SOCKET_MESSAGE_TYPES } from '../shared/constants/socket.const';
 import { Player } from '../shared/types/core';
-import { MapData } from '../shared/types/map';
 import {
   AuthenticatedWebSocket,
   ClientGameStatePayload,

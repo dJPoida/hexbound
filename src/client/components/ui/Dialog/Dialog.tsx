@@ -1,4 +1,4 @@
-import { ComponentChildren, h } from 'preact';
+import { ComponentChildren } from 'preact';
 
 import { StyleColor } from '../../../types/ui';
 import { Button } from '../Button';

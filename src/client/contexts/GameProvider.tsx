@@ -48,7 +48,7 @@ interface GameProviderProps {
 }
 
 export const GameProvider = ({ children }: GameProviderProps) => {
-  const { isLoggedIn, currentUserId } = useAuth();
+  const { isLoggedIn } = useAuth();
   const [myGames, setMyGames] = useState<GameListItem[]>([]);
   const [currentGameId, setCurrentGameId] = useState<string | null>(null);
   const [gameState, setGameState] = useState<ClientGameStatePayload | null>(null);

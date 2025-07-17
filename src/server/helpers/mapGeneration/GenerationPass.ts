@@ -1,4 +1,4 @@
-import { AxialCoordinates, TerrainType, TileData } from '../../../shared/types/map';
+import { TerrainType, TileData } from '../../../shared/types/map';
 import {
   GenerationContext,
   MapGenerationConfig,

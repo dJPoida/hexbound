@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 
 import redisClient from '../redisClient';
 import { AuthenticatedRequest } from '../types/middleware';

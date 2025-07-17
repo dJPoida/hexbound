@@ -7,6 +7,8 @@ import { ClientGameStatePayload, ServerGameState } from '../../shared/types/sock
  * @returns A client-safe game state payload.
  */
 export function toClientState(serverState: ServerGameState): ClientGameStatePayload {
+  // Omit turnActionLog and mapData from the server state
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { turnActionLog, mapData, ...clientState } = serverState;
   return clientState;
 }

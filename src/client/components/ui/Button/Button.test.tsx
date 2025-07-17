@@ -1,5 +1,3 @@
-import { h } from 'preact';
-
 import { StyleColor } from '../../../types/ui';
 import { Button, IconPosition } from './Button';
 
