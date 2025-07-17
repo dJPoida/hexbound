@@ -51,7 +51,7 @@ export function LobbyView({
             onInput={handleGameCodeChange}
             placeholder='Paste Game Code'
           />
-          <Button onClick={handleJoinByCode} color={StyleColor.DEFAULT} fullWidth={true}>
+          <Button onClick={handleJoinByCode} color={StyleColor.DEFAULT}>
             Join
           </Button>
         </div>

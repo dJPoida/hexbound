@@ -177,6 +177,17 @@
   box-sizing: border-box;
 }
 
+/* Ensure the input takes available space and button has proper width */
+.joinByIdContainer > *:first-child {
+  flex: 1;
+  min-width: 0; /* Allow input to shrink */
+}
+
+.joinByIdContainer > *:last-child {
+  flex-shrink: 0; /* Prevent button from shrinking */
+  min-width: 80px; /* Ensure button has minimum width */
+}
+
 .lobbySection > button + .joinByIdContainer {
   border-top: 1.5px solid var(--color-canvas-white-dark);
   margin-top: 1.7rem;
