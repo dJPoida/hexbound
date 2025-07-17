@@ -118,6 +118,10 @@
   filter: drop-shadow(0 1px 0px var(--text-shadow-light));
 }
 
+.button.disabled .disabledIcon {
+  color: var(--color-stone-grey-light) !important;
+}
+
 /* Base SVG Element Styles */
 .background,
 .leftEdge,

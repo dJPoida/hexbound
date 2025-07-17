@@ -76,7 +76,14 @@ export function GameViewLayout({
           icon='home'
           ariaLabel='Return to Lobby'
         />
-        <Button onClick={onEndTurn} color={StyleColor.AMBER} disabled={!canEndTurn}>
+        <Button
+          onClick={onEndTurn}
+          color={StyleColor.AMBER}
+          disabled={!canEndTurn}
+          icon={hasPlaceholders ? 'clock' : 'play'}
+          ariaLabel={hasPlaceholders ? 'Waiting for Players' : 'End Turn'}
+          responsive={true}
+        >
           {hasPlaceholders ? 'Waiting for Players' : 'End Turn'}
         </Button>
       </div>

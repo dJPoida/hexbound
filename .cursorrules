@@ -655,12 +655,18 @@ The Button component now uses a unified approach with optional icon integration:
   Favorite
 </Button>
 
+// Responsive button - icon-only on mobile, full text on larger screens
+<Button color={StyleColor.AMBER} icon="play" responsive={true}>
+  End Turn
+</Button>
+
 **Icon + Button Integration Rules:**
 
 - **Icon-only buttons**: Provide `ariaLabel` for accessibility
 - **Icon color**: Icons automatically match the button text color for proper contrast: white for most buttons, grey for white/yellow buttons
 - **Icon text shadow**: Icons receive the same text shadow as button text for visual consistency
 - **Icon positioning**: Use `iconPosition={IconPosition.RIGHT}` for trailing icons
+- **Responsive behavior**: Use `responsive={true}` to automatically show icon-only on mobile and full text on larger screens
 - **Backward compatibility**: All existing buttons continue to work without changes
 
 ## Form Components Architecture

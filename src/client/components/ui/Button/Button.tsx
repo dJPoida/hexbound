@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 
+import { useResponsive } from '../../../hooks';
 import { StyleColor } from '../../../types/ui';
 import { Icon, IconName } from '../Icon';
 import styles from './Button.module.css';
@@ -30,6 +31,8 @@ export interface ButtonProps {
   // Icon props
   icon?: IconName;
   iconPosition?: IconPosition;
+  // Responsive props
+  responsive?: boolean; // Enable responsive behavior (icon-only on mobile)
 }
 
 export const Button = ({
@@ -45,14 +48,16 @@ export const Button = ({
   ariaLabel,
   icon,
   iconPosition = IconPosition.LEFT,
+  responsive = false,
 }: ButtonProps) => {
   const textRef = useRef<HTMLSpanElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [svgWidth, setSvgWidth] = useState(minWidth);
   const [isReady, setIsReady] = useState(false);
+  const { isMobile } = useResponsive();
 
   // Determine if this should be an icon-only button
-  const isIconOnly = icon && !children;
+  const isIconOnly = icon && (!children || (responsive && isMobile));
 
   // Validate that we have either children or icon
   if (!children && !icon) {
@@ -70,7 +75,7 @@ export const Button = ({
       setSvgWidth(calculatedWidth);
       setIsReady(true);
     }
-  }, [children, minWidth, padding, isIconOnly]);
+  }, [children, minWidth, padding, isIconOnly, isMobile]);
 
   // For fullWidth buttons, track actual rendered size
   useEffect(() => {
@@ -108,13 +113,28 @@ export const Button = ({
   const renderIcon = () => {
     if (!icon) return null;
 
-    // Determine icon color based on button color to match text color
-    const iconColor =
-      color === StyleColor.WHITE || color === StyleColor.YELLOW
-        ? StyleColor.GREY
-        : StyleColor.WHITE;
+    // Determine icon color based on button color and disabled state
+    let iconColor: StyleColor;
 
-    return <Icon name={icon} color={iconColor} className={styles.buttonIcon} />;
+    if (disabled) {
+      // When disabled, use stone-grey-light to match disabled text color
+      // We'll pass a custom className to override the color
+      return (
+        <Icon
+          name={icon}
+          color={StyleColor.GREY}
+          className={`${styles.buttonIcon} ${styles.disabledIcon}`}
+        />
+      );
+    } else {
+      // Normal icon color logic
+      iconColor =
+        color === StyleColor.WHITE || color === StyleColor.YELLOW
+          ? StyleColor.GREY
+          : StyleColor.WHITE;
+
+      return <Icon name={icon} color={iconColor} className={styles.buttonIcon} />;
+    }
   };
 
   // Render content with icon positioning
