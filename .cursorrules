@@ -675,6 +675,68 @@ The Button component now uses a unified approach with optional icon integration:
 
 All form components follow consistent patterns for medieval/fantasy styling, accessibility, and user experience. Form components include Input, Checkbox, and future components like Select, Radio, and Textarea.
 
+## Navigation Components Architecture
+
+### Tabs Component Implementation
+
+The `Tabs` component (`src/client/components/ui/Tabs/Tabs.tsx`) provides responsive tab navigation:
+
+**Visual Design:**
+
+- **Simple styling**: Clean div-based tabs with centered icon and text
+- **Active state**: Glow yellow background with charcoal text for high visibility
+- **Hover effects**: Subtle background changes for interactive feedback
+- **Responsive design**: Desktop shows all tabs, mobile shows current tab with arrow navigation
+
+**Responsive Behavior:**
+
+- **Desktop**: Horizontal tab layout with all tabs visible
+- **Mobile**: Current tab label with left/right arrow navigation
+- **Arrow states**: Disabled arrows at start/end of tab list
+- **Touch targets**: Minimum 44px height for mobile accessibility
+
+**Component API:**
+
+```typescript
+interface TabEntry {
+  id: string;
+  label: string;
+  icon?: IconName; // Optional icon from Icon component
+}
+
+interface TabsProps {
+  tabs: TabEntry[];
+  activeTabId: string;
+  onTabChange: (tabId: string) => void;
+  className?: string;
+}
+```
+
+**Usage Examples:**
+
+```tsx
+// Basic tabs with icons
+<Tabs
+  tabs={[
+    { id: 'gameState', label: 'Game State', icon: 'terminal' },
+    { id: 'map', label: 'Map', icon: 'map' },
+    { id: 'performance', label: 'Performance', icon: 'layers' },
+  ]}
+  activeTabId={currentTab}
+  onTabChange={setCurrentTab}
+/>
+
+// Tabs without icons
+<Tabs
+  tabs={[
+    { id: 'tab1', label: 'First Tab' },
+    { id: 'tab2', label: 'Second Tab' },
+  ]}
+  activeTabId={currentTab}
+  onTabChange={setCurrentTab}
+/>
+```
+
 ### Input Component Implementation
 
 The `Input` component (`src/client/components/Input/Input.tsx`) provides a comprehensive text input solution:

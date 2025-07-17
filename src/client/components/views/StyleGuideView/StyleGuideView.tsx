@@ -6,6 +6,7 @@ import { Checkbox, CheckboxSize } from '../../ui/Checkbox';
 import { Icon, ICON_NAMES, IconName, IconSize } from '../../ui/Icon';
 import { Input, InputType, InputVariant } from '../../ui/Input';
 import { Logo } from '../../ui/Logo/Logo';
+import { TabEntry, Tabs } from '../../ui/Tabs';
 import { Heading } from '../../ui/Typography/Heading';
 import { Text } from '../../ui/Typography/Text';
 import styles from './StyleGuideView.module.css';
@@ -67,6 +68,31 @@ export const StyleGuideView = () => {
 
   const updateCheckboxState = (key: keyof typeof checkboxStates) => (checked: boolean) => {
     setCheckboxStates((prev: typeof checkboxStates) => ({ ...prev, [key]: checked }));
+  };
+
+  // State for tabs examples
+  const [activeTab, setActiveTab] = useState('gameState');
+
+  const demoTabs: TabEntry[] = [
+    { id: 'gameState', label: 'Game State', icon: 'terminal' },
+    { id: 'map', label: 'Map', icon: 'map' },
+    { id: 'performance', label: 'Performance', icon: 'layers' },
+    { id: 'network', label: 'Network', icon: 'wifi' },
+  ];
+
+  const renderTabContent = (tabId: string) => {
+    switch (tabId) {
+      case 'gameState':
+        return <Text>Game state information and debugging tools.</Text>;
+      case 'map':
+        return <Text>Map generation and terrain analysis.</Text>;
+      case 'performance':
+        return <Text>Rendering performance and optimization metrics.</Text>;
+      case 'network':
+        return <Text>Network connection and WebSocket status.</Text>;
+      default:
+        return <Text>Select a tab to view content.</Text>;
+    }
   };
 
   // Icon size constants for examples
@@ -506,6 +532,43 @@ export const StyleGuideView = () => {
                 disabled
               />
             </div>
+          </div>
+        </section>
+      </section>
+
+      <section class={styles.section}>
+        <Heading level={2} variant='sectionHeader'>
+          Tabs
+        </Heading>
+        <Text color='subtle'>
+          Tab navigation component with responsive design. On desktop, shows all tabs horizontally.
+          On mobile, shows current tab with left/right arrow navigation.
+        </Text>
+
+        <section class={styles.subSection}>
+          <Heading level={3} variant='subSectionHeader' color='subtle'>
+            Interactive Tabs Demo
+          </Heading>
+          <div class={styles.tabsDemo}>
+            <Tabs tabs={demoTabs} activeTabId={activeTab} onTabChange={setActiveTab} />
+            <div class={styles.tabContent}>{renderTabContent(activeTab)}</div>
+          </div>
+        </section>
+
+        <section class={styles.subSection}>
+          <Heading level={3} variant='subSectionHeader' color='subtle'>
+            Tabs Without Icons
+          </Heading>
+          <div class={styles.tabsDemo}>
+            <Tabs
+              tabs={[
+                { id: 'tab1', label: 'First Tab' },
+                { id: 'tab2', label: 'Second Tab' },
+                { id: 'tab3', label: 'Third Tab' },
+              ]}
+              activeTabId={activeTab}
+              onTabChange={setActiveTab}
+            />
           </div>
         </section>
       </section>
