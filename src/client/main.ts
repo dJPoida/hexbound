@@ -15,6 +15,10 @@ if (import.meta.hot) {
 // Register the service worker
 const updateSW = registerSW({
   onNeedRefresh() {
+    // Store the current URL before refreshing
+    const currentUrl = window.location.href;
+    sessionStorage.setItem('pendingUpdateUrl', currentUrl);
+
     // A new service worker is waiting to activate.
     // Send a message to it to trigger the 'skipWaiting' process.
     updateSW(true);
@@ -23,6 +27,15 @@ const updateSW = registerSW({
     console.log('App is ready to work offline.');
   },
 });
+
+// Check if we're returning from an update and redirect to the stored URL
+const pendingUpdateUrl = sessionStorage.getItem('pendingUpdateUrl');
+if (pendingUpdateUrl) {
+  sessionStorage.removeItem('pendingUpdateUrl');
+  if (window.location.href !== pendingUpdateUrl) {
+    window.location.href = pendingUpdateUrl;
+  }
+}
 
 const html = htm.bind(h);
 

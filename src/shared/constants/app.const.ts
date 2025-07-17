@@ -83,4 +83,5 @@ export enum GameActionType {
 // Service Worker message types
 export enum ServiceWorkerMessageType {
   SKIP_WAITING = 'SKIP_WAITING',
+  REFRESH_GAMES = 'REFRESH_GAMES',
 }
