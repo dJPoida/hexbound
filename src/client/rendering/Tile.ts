@@ -48,7 +48,7 @@ export class Tile {
     this.body.x = HEX_OFFSET_X;
     this.body.y = HEX_OFFSET_Y + elevationOffsetY;
 
-    this.outline = new PIXI.Sprite(textures.hex_outline);
+    this.outline = new PIXI.Sprite(textures.hex_grid);
     this.outline.anchor.set(0);
     this.outline.x = HEX_OFFSET_X;
     this.outline.y = HEX_OFFSET_Y + elevationOffsetY;

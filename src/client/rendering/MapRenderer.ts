@@ -35,7 +35,7 @@ export class MapRenderer {
       { alias: 'tile_grassland', src: '/images/tiles/tile_grassland.png' },
       { alias: 'tile_ocean', src: '/images/tiles/tile_ocean.png' },
       { alias: 'tile_icecap', src: '/images/tiles/tile_icecap.png' },
-      { alias: 'hex_outline', src: '/images/tiles/hex_outline.png' },
+      { alias: 'hex_grid', src: '/images/tiles/hex_grid.png' },
       { alias: 'hex_selected', src: '/images/tiles/hex_selected.png' },
     ];
     try {

@@ -317,7 +317,7 @@ class RenderingService {
           'tile_grassland',
           'tile_ocean',
           'tile_icecap',
-          'hex_outline',
+          'hex_grid',
           'hex_selected',
         ];
         for (const key of textureKeys) {

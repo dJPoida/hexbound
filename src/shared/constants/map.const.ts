@@ -1,11 +1,11 @@
 /**
  * The width of the hex tile's visual content, in pixels.
  */
-export const HEX_WIDTH = 120;
+export const HEX_WIDTH = 240;
 /**
  * The height of the hex tile's visual content, in pixels.
  */
-export const HEX_HEIGHT = 80;
+export const HEX_HEIGHT = 160;
 /**
  * The horizontal offset for the main hex sprite within its container, accounting for margins.
  */
@@ -17,11 +17,11 @@ export const HEX_OFFSET_Y = -5;
 /**
  * The horizontal position for the elevation text, relative to the tile container's origin.
  */
-export const HEX_TEXT_OFFSET_X = 60;
+export const HEX_TEXT_OFFSET_X = 120;
 /**
  * The vertical position for the elevation text, relative to the tile container's origin.
  */
-export const HEX_TEXT_OFFSET_Y = 30;
+export const HEX_TEXT_OFFSET_Y = 60;
 /**
  * At minimum zoom (fully zoomed out), this many tiles should be visible on screen.
  */
@@ -37,7 +37,7 @@ export const TILE_PIXEL_MARGIN = 5;
 /**
  * The vertical distance, in pixels, for each level of elevation.
  */
-export const ELEVATION_STEP = 10;
+export const ELEVATION_STEP = 20;
 /**
  * The font family to use for the tile's elevation text.
  */
