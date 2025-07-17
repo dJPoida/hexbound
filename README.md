@@ -6,7 +6,8 @@ A Polytopia / Civ / Populous crossover Asynchronous turn-based casual web game.
 
 - **TypeScript**: For robust, type-safe code across frontend and backend.
 - **Node.js & Express**: For the backend server and RESTful API.
-- **Preact & htm**: For lightweight, efficient frontend components with JSX-like syntax.
+- **Preact & htm**: For lightweight, efficient frontend components with JSX-like
+  syntax.
 - **PixiJS**: For high-performance 2D WebGL rendering of the hex grid game map.
 - **Vite**: For fast frontend development with Hot Module Reloading (HMR).
 - **TypeORM**: For database ORM and migration management with PostgreSQL.
@@ -19,11 +20,16 @@ A Polytopia / Civ / Populous crossover Asynchronous turn-based casual web game.
 The application uses a comprehensive design system built on:
 
 - **CSS Modules**: Component-scoped styling with shared design tokens
-- **Design Tokens**: Centralized color, typography, and spacing variables in `src/client/tokens.module.css`
-- **4-Tier Color System**: Base, light, dark, and highlight variants for consistent depth effects
-- **SVG Button Components**: Custom gem-style buttons with layered SVG lighting effects
-- **Responsive Layout**: Mobile-first design with breakpoints for tablet (768px) and desktop (1024px)
-- **Medieval/Fantasy Theme**: Consistent visual aesthetics throughout the application
+- **Design Tokens**: Centralized color, typography, and spacing variables in
+  `src/client/tokens.module.css`
+- **4-Tier Color System**: Base, light, dark, and highlight variants for
+  consistent depth effects
+- **SVG Button Components**: Custom gem-style buttons with layered SVG lighting
+  effects
+- **Responsive Layout**: Mobile-first design with breakpoints for tablet (768px)
+  and desktop (1024px)
+- **Medieval/Fantasy Theme**: Consistent visual aesthetics throughout the
+  application
 
 ## Architecture Overview
 
@@ -75,23 +81,27 @@ Make sure you have the following software installed:
     npm install
     ```
 
-3.  **Set up Environment Variables**
-    Create a `.env.local` file by copying the provided example:
+3.  **Set up Environment Variables** Create a `.env.local` file by copying the
+    provided example:
 
     ```sh
     cp .env.example .env.local
     ```
 
-    The default values in `.env.example` are configured to work with the Docker setup out-of-the-box.
+    The default values in `.env.example` are configured to work with the Docker
+    setup out-of-the-box.
 
-    **Note on VAPID Keys for Push Notifications:**
-    The `.env.local` file requires VAPID keys for sending web push notifications. For local development, you can use the example keys provided in `.env.example`. For production, you **must** generate your own secure keys:
+    **Note on VAPID Keys for Push Notifications:** The `.env.local` file
+    requires VAPID keys for sending web push notifications. For local
+    development, you can use the example keys provided in `.env.example`. For
+    production, you **must** generate your own secure keys:
 
     ```sh
     npx web-push generate-vapid-keys
     ```
 
-    Then update the `VITE_VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY` variables in your production environment.
+    Then update the `VITE_VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY` variables in
+    your production environment.
 
 ## Development Workflow
 
@@ -119,7 +129,8 @@ Launch the Node.js server with Vite middleware for frontend development:
 npm run dev
 ```
 
-The application will be available at **[http://localhost:3000](http://localhost:3000)**
+The application will be available at
+**[http://localhost:3000](http://localhost:3000)**
 
 This command provides:
 
@@ -150,15 +161,34 @@ npm run typeorm:generate -- src/server/migrations/MigrationName
 npm run lint
 ```
 
+### Linting for Preact/HTM
+
+- The project uses `eslint-plugin-react` for JSX/HTM linting, even though React
+  is **not** a dependency.
+- This is intentional: the React plugin provides robust JSX linting and works
+  with Preact when configured correctly.
+- The ESLint config sets:
+  - `"pragma": "h"` to use Preact's `h` function for JSX.
+  - `"version": "18.0"` to avoid warnings about missing React (do **not** use
+    `"detect"`).
+- **Do not install React** as a dependency. The plugin is only for linting
+  JSX/HTM code.
+- If you see references to React in the ESLint config, this is intentional and
+  required for proper linting with Preact.
+
+See `.eslintrc.json` for details.
+
 ## Database Tools
 
 ### Redis (via Redis Commander)
 
-Explore the Redis database at **[http://localhost:8081](http://localhost:8081)** when Docker containers are running.
+Explore the Redis database at **[http://localhost:8081](http://localhost:8081)**
+when Docker containers are running.
 
 ### PostgreSQL (via Adminer)
 
-Access the PostgreSQL database at **[http://localhost:8080](http://localhost:8080)** with these credentials:
+Access the PostgreSQL database at
+**[http://localhost:8080](http://localhost:8080)** with these credentials:
 
 - **System**: `PostgreSQL`
 - **Server**: `postgres`
@@ -198,7 +228,9 @@ hexbound/
 
 ## Contributing
 
-This project follows specific architectural patterns and design system guidelines. Please refer to the `.cursorrules` file for detailed development standards including:
+This project follows specific architectural patterns and design system
+guidelines. Please refer to the `.cursorrules` file for detailed development
+standards including:
 
 - Component organization and naming conventions
 - Design token usage and CSS architecture
@@ -208,5 +240,7 @@ This project follows specific architectural patterns and design system guideline
 ## Documentation
 
 - **Game Design**: See `/docs/` directory for gameplay mechanics and features
-- **API Documentation**: See `/design/communication-protocol.md` for API and WebSocket specifications
-- **Architecture**: Detailed technical documentation is maintained in `.cursorrules`
+- **API Documentation**: See `/design/communication-protocol.md` for API and
+  WebSocket specifications
+- **Architecture**: Detailed technical documentation is maintained in
+  `.cursorrules`

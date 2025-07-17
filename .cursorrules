@@ -1400,3 +1400,19 @@ To manage the complexity of a dynamic, 2.5D hex grid, the rendering engine uses 
 - **The Problem**: Dynamically updating a tile's elevation can break the visual layering, causing a now-taller tile to incorrectly appear behind the tiles in front of it.
 - **The Solution**: The `MapRenderer` creates a dedicated `PIXI.Container` for each **row** of the map. All `Tile` objects for a given row are added to that row's container.
 - **Benefit**: This fixes the z-indexing issue permanently. The draw order of the rows is established once at initialization (North to South). When a tile is updated, it's only modified _within_ its row container, preserving the overall draw order and ensuring correct visual layering without expensive re-sorting of all sprites.
+
+# Code Quality & Linting
+
+## ESLint Configuration for Preact
+
+- The project uses `eslint-plugin-react` for JSX/HTM linting, even though React is **not** a dependency.
+- This is a common pattern in Preact projects, as the React plugin provides robust JSX linting and works with Preact when configured correctly.
+- The ESLint config sets:
+  - `"pragma": "h"` to tell the plugin to use Preact's `h` function for JSX.
+  - `"version": "18.0"` to avoid warnings about missing React (do **not** use `"detect"`).
+- **Do not install React** as a dependency. The plugin is only for linting JSX/HTM code.
+- If you see references to React in the ESLint config, this is intentional and required for proper linting with Preact.
+
+See `.eslintrc.json` for details.
+
+---
