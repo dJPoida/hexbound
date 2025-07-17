@@ -129,19 +129,24 @@ export function HeaderMenu({
           </button>
         );
       }
+    }
 
+    // Add Documentation link for non-game views
+    if (currentView !== AppHeaderView.GAME) {
       items.push(
         <button
-          key='logout'
+          key='documentation'
           className={styles.menuItem}
           onClick={() => {
-            onLogout();
+            const currentDomain = window.location.hostname;
+            const docsUrl = `https://docs.${currentDomain}`;
+            window.open(docsUrl, '_blank');
             closeMenu();
           }}
         >
-          <Icon name='exit' />
+          <Icon name='docs' />
           <Text variant='inline' as='span'>
-            Logout
+            Documentation
           </Text>
         </button>
       );
@@ -160,6 +165,24 @@ export function HeaderMenu({
           <Icon name='home' />
           <Text variant='inline' as='span'>
             Lobby
+          </Text>
+        </button>
+      );
+    }
+
+    if (currentView != AppHeaderView.GAME) {
+      items.push(
+        <button
+          key='logout'
+          className={styles.menuItem}
+          onClick={() => {
+            onLogout();
+            closeMenu();
+          }}
+        >
+          <Icon name='exit' />
+          <Text variant='inline' as='span'>
+            Logout
           </Text>
         </button>
       );
