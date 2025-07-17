@@ -1,4 +1,3 @@
-import { h } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 
 import { API_ROUTES } from '../../../../shared/constants/api.const';
@@ -6,9 +5,9 @@ import { TerrainType } from '../../../../shared/types/map';
 import { ClientGameStatePayload } from '../../../../shared/types/socket';
 import { useGame } from '../../../contexts/GameProvider';
 import { authenticatedFetch } from '../../../services/api.service';
-import { StyleColor } from '../../../types/ui';
 import { Button } from '../../ui/Button';
 import { Dialog, DialogSize } from '../../ui/Dialog';
+import { Tabs } from '../../ui/Tabs';
 import { Heading } from '../../ui/Typography/Heading';
 import { Text } from '../../ui/Typography/Text';
 import styles from './DevToolsDialog.module.css';
@@ -69,7 +68,7 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
   const [lastMapUpdate, setLastMapUpdate] = useState<Date>(new Date());
 
   // Save state when tab changes
-  const handleTabChange = (newTab: DevToolsTab) => {
+  const handleTabChange = (newTab: string) => {
     // Save current scroll position before changing tabs
     if (tabContentRef.current) {
       setScrollPositions(prev => ({
@@ -78,7 +77,7 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
       }));
     }
 
-    setActiveTab(newTab);
+    setActiveTab(newTab as DevToolsTab);
   };
 
   // Save state to localStorage when state changes
@@ -487,32 +486,16 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
   return (
     <Dialog title='Dev Tools' onClose={onClose} size={DialogSize.FULLSCREEN}>
       <div className={styles.devToolsContainer}>
-        <div className={styles.tabBar}>
-          <Button
-            color={activeTab === DevToolsTab.GAME_STATE ? StyleColor.BLUE : StyleColor.DEFAULT}
-            onClick={() => handleTabChange(DevToolsTab.GAME_STATE)}
-          >
-            Game State
-          </Button>
-          <Button
-            color={activeTab === DevToolsTab.MAP ? StyleColor.BLUE : StyleColor.DEFAULT}
-            onClick={() => handleTabChange(DevToolsTab.MAP)}
-          >
-            Map
-          </Button>
-          <Button
-            color={activeTab === DevToolsTab.PERFORMANCE ? StyleColor.BLUE : StyleColor.DEFAULT}
-            onClick={() => handleTabChange(DevToolsTab.PERFORMANCE)}
-          >
-            Performance
-          </Button>
-          <Button
-            color={activeTab === DevToolsTab.NETWORK ? StyleColor.BLUE : StyleColor.DEFAULT}
-            onClick={() => handleTabChange(DevToolsTab.NETWORK)}
-          >
-            Network
-          </Button>
-        </div>
+        <Tabs
+          activeTabId={activeTab}
+          onTabChange={handleTabChange}
+          tabs={[
+            { id: DevToolsTab.GAME_STATE, label: 'Game State', icon: 'hexagon' },
+            { id: DevToolsTab.MAP, label: 'Map', icon: 'map' },
+            { id: DevToolsTab.PERFORMANCE, label: 'Performance', icon: 'sliders' },
+            { id: DevToolsTab.NETWORK, label: 'Network', icon: 'wifi' },
+          ]}
+        />
         {renderTabContent()}
       </div>
     </Dialog>

@@ -1,0 +1,104 @@
+.tabsContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Desktop tabs */
+.desktop {
+  flex-direction: row;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: transparent;
+  color: var(--color-stone-grey);
+  cursor: pointer;
+  border-radius: var(--border-radius-small);
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tab:hover:not(.active) {
+  background-color: var(--color-canvas-white-dark);
+  color: var(--color-charcoal);
+}
+
+.tab.active {
+  background: var(--color-glow-yellow);
+  color: var(--color-charcoal);
+  box-shadow: 0 2px 4px var(--shadow-subtle);
+}
+
+.tab:focus {
+  outline: 2px solid var(--color-hex-amber-light);
+  outline-offset: 2px;
+}
+
+/* Mobile tabs */
+.mobile {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: var(--color-canvas-white);
+  border-radius: var(--border-radius-medium);
+  border: 1px solid var(--color-canvas-white-dark);
+  box-shadow: var(--shadow-form-element);
+}
+
+.arrowButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  background: transparent;
+  border-radius: var(--border-radius-small);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.arrowButton:hover:not(.disabled) {
+  background-color: var(--color-canvas-white-dark);
+}
+
+.arrowButton.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.arrowButton:focus {
+  outline: 2px solid var(--color-hex-amber-light);
+  outline-offset: 2px;
+}
+
+.mobileTabLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-charcoal);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex: 1;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
