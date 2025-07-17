@@ -58,24 +58,6 @@ export function HeaderMenu({
   const renderMenuItems = () => {
     const items = [];
 
-    if (currentView !== AppHeaderView.LOBBY) {
-      items.push(
-        <button
-          key='lobby'
-          className={styles.menuItem}
-          onClick={() => {
-            onNavigate('/');
-            closeMenu();
-          }}
-        >
-          <Icon name='home' />
-          <Text variant='inline' as='span'>
-            Lobby
-          </Text>
-        </button>
-      );
-    }
-
     items.push(
       <button
         key='settings'
@@ -140,7 +122,7 @@ export function HeaderMenu({
               closeMenu();
             }}
           >
-            <Icon name='terminal' />
+            <Icon name='tool' />
             <Text variant='inline' as='span'>
               Utils
             </Text>
@@ -160,6 +142,24 @@ export function HeaderMenu({
           <Icon name='exit' />
           <Text variant='inline' as='span'>
             Logout
+          </Text>
+        </button>
+      );
+    }
+
+    if (currentView !== AppHeaderView.LOBBY) {
+      items.push(
+        <button
+          key='lobby'
+          className={styles.menuItem}
+          onClick={() => {
+            onNavigate('/');
+            closeMenu();
+          }}
+        >
+          <Icon name='home' />
+          <Text variant='inline' as='span'>
+            Lobby
           </Text>
         </button>
       );

@@ -490,7 +490,7 @@ export function DevToolsDialog({ gameState, onClose }: DevToolsDialogProps) {
           activeTabId={activeTab}
           onTabChange={handleTabChange}
           tabs={[
-            { id: DevToolsTab.GAME_STATE, label: 'Game State', icon: 'hexagon' },
+            { id: DevToolsTab.GAME_STATE, label: 'Game State', icon: 'terminal' },
             { id: DevToolsTab.MAP, label: 'Map', icon: 'map' },
             { id: DevToolsTab.PERFORMANCE, label: 'Performance', icon: 'sliders' },
             { id: DevToolsTab.NETWORK, label: 'Network', icon: 'wifi' },
