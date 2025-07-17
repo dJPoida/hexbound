@@ -92,6 +92,12 @@ export const ICON_NAMES = [
   'thumbs-down',
   'sound-on',
   'sound-off',
+  'activity',
+  'docs',
+  'flag',
+  'pen',
+  'tool',
+  'zap',
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];
