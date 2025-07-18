@@ -47,6 +47,7 @@ const sidebars = {
         'Technical/Map Generation',
         'Technical/AI Prompt Language',
         'Technical/Hex Grid Perspective Details',
+        'Technical/Tile Adjacency',
       ],
     },
   ],
