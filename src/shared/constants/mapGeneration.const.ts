@@ -29,7 +29,6 @@ export const ICE_CAP_DEFAULT_PARAMS = {
  * Default parameters for Ocean Band pass
  */
 export const OCEAN_BAND_DEFAULT_PARAMS = {
-  rows: [2, 'height-3'], // Can include numbers or 'height-N' expressions
   elevation: 0,
 } as const;
 
@@ -67,7 +66,7 @@ export const BASIC_WORLD_PASSES: MapGenerationPassConfig[] = [
   },
   {
     name: MAP_GENERATION_PASSES.GRASSLAND_FILL,
-    enabled: false, // Temporarily disabled to see ice formations clearly
+    enabled: false, // Disabled to focus on testing ocean generation
     parameters: GRASSLAND_FILL_DEFAULT_PARAMS,
   },
   {
@@ -90,7 +89,6 @@ export const OCEAN_WORLD_PASSES: MapGenerationPassConfig[] = [
     name: MAP_GENERATION_PASSES.OCEAN_BAND,
     enabled: true,
     parameters: {
-      rows: [2, 3, 4, 'height-5', 'height-4', 'height-3'],
       elevation: 0,
     },
   },
