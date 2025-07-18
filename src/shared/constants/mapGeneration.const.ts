@@ -12,6 +12,7 @@ export const MAP_GENERATION_PASSES = {
   OCEAN_BAND: 'OceanBand',
   GRASSLAND_FILL: 'GrasslandFill',
   SPAWN_ALLOCATION: 'SpawnAllocation',
+  ICE_CAP_WALL_BALANCING: 'IceCapWallBalancing',
 } as const;
 
 /**
@@ -49,6 +50,13 @@ export const SPAWN_ALLOCATION_DEFAULT_PARAMS = {
 } as const;
 
 /**
+ * Default parameters for Ice Cap Wall Balancing pass
+ */
+export const ICE_CAP_WALL_BALANCING_DEFAULT_PARAMS = {
+  targetElevation: 2,
+} as const;
+
+/**
  * Basic world configuration matching current implementation
  */
 export const BASIC_WORLD_PASSES: MapGenerationPassConfig[] = [
@@ -56,6 +64,11 @@ export const BASIC_WORLD_PASSES: MapGenerationPassConfig[] = [
     name: MAP_GENERATION_PASSES.ICE_CAP,
     enabled: true,
     parameters: ICE_CAP_DEFAULT_PARAMS,
+  },
+  {
+    name: MAP_GENERATION_PASSES.ICE_CAP_WALL_BALANCING,
+    enabled: true,
+    parameters: ICE_CAP_WALL_BALANCING_DEFAULT_PARAMS,
   },
   {
     name: MAP_GENERATION_PASSES.OCEAN_BAND,

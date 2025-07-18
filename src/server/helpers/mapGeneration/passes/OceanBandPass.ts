@@ -33,32 +33,17 @@ export class OceanBandPass extends GenerationPass {
     let tilesModified = 0;
     const oceanTiles = new Set<string>(); // Track ocean tiles to avoid duplicates
 
-    console.log(
-      `[OceanBandPass] Starting ocean generation for map ${context.width}x${context.height}`
-    );
-
     // Simple algorithm: iterate over the map, find ice cap tiles, check neighbors
     for (let r = 0; r < context.height; r++) {
       for (let q = 0; q < context.width; q++) {
         const tile = context.getTile(q, r);
 
         if (tile?.terrain === TerrainType.ICECAP) {
-          console.log(`[OceanBandPass] Found ice cap at (${q},${r})`);
           // Generate ocean around this ice cap tile
           const oceanCount = this.generateOceanAroundIceCap(context, q, r, params, oceanTiles);
           tilesModified += oceanCount;
         }
       }
-    }
-
-    console.log(`[OceanBandPass] Total ocean tiles placed: ${tilesModified}`);
-
-    // Debug: Show summary of ocean tiles that should be in the final map
-    console.log(`[OceanBandPass] Ocean tiles summary:`);
-    for (const oceanKey of oceanTiles) {
-      const [q, r] = oceanKey.split(',').map(Number);
-      const tile = context.getTile(q, r);
-      console.log(`[OceanBandPass] Ocean tile at (${q},${r}): ${tile ? tile.terrain : 'null'}`);
     }
 
     return this.createResult(
@@ -81,8 +66,6 @@ export class OceanBandPass extends GenerationPass {
     let oceanTilesPlaced = 0;
     const neighbors = context.getNeighbors(q, r);
 
-    console.log(`[OceanBandPass] Ice cap at (${q},${r}) - checking ${neighbors.length} neighbors`);
-
     // Check each of the 6 adjacent positions
     for (let i = 0; i < neighbors.length; i++) {
       const neighbor = neighbors[i];
@@ -90,16 +73,10 @@ export class OceanBandPass extends GenerationPass {
       // Get the neighbor coordinates using the shared helper
       const neighborCoords = getNeighborCoordinates(q, r, context.width, context.height)[i];
       if (!neighborCoords) {
-        console.log(`[OceanBandPass] Neighbor ${i} at (${q},${r}) is out of bounds`);
         continue; // Skip if out of bounds
       }
 
       const neighborKey = `${neighborCoords.q},${neighborCoords.r}`;
-      const neighborTerrain = neighbor?.terrain || 'null';
-
-      console.log(
-        `[OceanBandPass] Neighbor ${i}: (${neighborCoords.q},${neighborCoords.r}) terrain=${neighborTerrain}`
-      );
 
       // Simple rule: if neighbor is not ice cap or ocean, make it ocean
       if (
@@ -118,29 +95,7 @@ export class OceanBandPass extends GenerationPass {
           context.setTile(neighborCoords.q, neighborCoords.r, oceanTile);
           oceanTiles.add(neighborKey);
           oceanTilesPlaced++;
-          console.log(`[OceanBandPass] Placed ocean at (${neighborCoords.q},${neighborCoords.r})`);
-
-          // Verify the tile was actually set by retrieving it
-          const retrievedTile = context.getTile(neighborCoords.q, neighborCoords.r);
-          if (retrievedTile && retrievedTile.terrain === TerrainType.OCEAN) {
-            console.log(
-              `[OceanBandPass] ✓ Verified ocean tile at (${neighborCoords.q},${neighborCoords.r})`
-            );
-          } else {
-            console.log(
-              `[OceanBandPass] ✗ FAILED to verify ocean tile at (${neighborCoords.q},${neighborCoords.r}) - retrieved:`,
-              retrievedTile
-            );
-          }
-        } else {
-          console.log(
-            `[OceanBandPass] Skipped ocean at (${neighborCoords.q},${neighborCoords.r}) - already processed`
-          );
         }
-      } else {
-        console.log(
-          `[OceanBandPass] Skipped ocean at (${neighborCoords.q},${neighborCoords.r}) - is ${neighborTerrain}`
-        );
       }
     }
 

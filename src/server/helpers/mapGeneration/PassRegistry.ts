@@ -1,6 +1,7 @@
 import { GenerationPass } from './GenerationPass';
 import { GrasslandFillPass } from './passes/GrasslandFillPass';
 import { IceCapPass } from './passes/IceCapPass';
+import { IceCapWallBalancingPass } from './passes/IceCapWallBalancingPass';
 import { OceanBandPass } from './passes/OceanBandPass';
 import { SpawnAllocationPass } from './passes/SpawnAllocationPass';
 
@@ -33,6 +34,7 @@ export class PassRegistry {
     this.registerPass(new OceanBandPass());
     this.registerPass(new GrasslandFillPass());
     this.registerPass(new SpawnAllocationPass());
+    this.registerPass(new IceCapWallBalancingPass());
   }
 
   /**
