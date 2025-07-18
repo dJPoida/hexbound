@@ -13,18 +13,23 @@ import { TerrainType, TileData } from '../../shared/types/map';
 
 function getTextureForTerrain(
   terrain: TerrainType,
+  elevation: number,
   textures: Record<string, PIXI.Texture>
 ): PIXI.Texture {
   switch (terrain) {
-    case TerrainType.GRASSLAND:
-      return textures.tile_grassland;
+    case TerrainType.GRASSLAND: {
+      // Clamp elevation to valid range (0-4) and select appropriate texture
+      const clampedElevation = Math.max(0, Math.min(4, elevation));
+      const grasslandTextureKey = `tile_grassland_e${clampedElevation}`;
+      return textures[grasslandTextureKey] || textures.tile_grassland_e0; // Fallback to e0 if texture missing
+    }
     case TerrainType.OCEAN:
       return textures.tile_ocean;
     case TerrainType.ICECAP:
       return textures.tile_icecap;
     // Add other cases as new terrain types are implemented
     default:
-      return textures.tile_grassland; // Default to grassland if texture is missing
+      return textures.tile_grassland_e0; // Default to grassland e0 if texture is missing
   }
 }
 
@@ -42,7 +47,7 @@ export class Tile {
     this.container = new PIXI.Container();
     const elevationOffsetY = -(elevation * ELEVATION_STEP);
 
-    const bodyTexture = getTextureForTerrain(tileData.terrain, textures);
+    const bodyTexture = getTextureForTerrain(tileData.terrain, elevation, textures);
     this.body = new PIXI.Sprite(bodyTexture);
     this.body.anchor.set(0);
     this.body.x = HEX_OFFSET_X;

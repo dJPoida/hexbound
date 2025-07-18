@@ -314,7 +314,11 @@ class RenderingService {
       try {
         // Unload all assets first to prevent texture warnings
         const textureKeys = [
-          'tile_grassland',
+          'tile_grassland_e0',
+          'tile_grassland_e1',
+          'tile_grassland_e2',
+          'tile_grassland_e3',
+          'tile_grassland_e4',
           'tile_ocean',
           'tile_icecap',
           'hex_grid',
