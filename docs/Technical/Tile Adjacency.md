@@ -19,80 +19,95 @@ for flat-top hexagons arranged in a row-based grid with alternating row offsets.
 - **Even rows (0, 2, 4...)** and **odd rows (1, 3, 5...)** have different
   neighbor patterns
 
-## Adjacency Patterns
+## Adjacency/Neighbor Patterns
 
-### **Even Rows (r = 0, 2, 4, 6...)**
+### **Odd Columns (q = 1, 3, 5, 7...)** with **Even Rows (r = 0, 2, 4, 6...)**
 
-For a tile at position `(q, r)` in an even row, the six adjacent tiles are:
+For a tile at position `(q, r)` in an even row with an even column, the six
+adjacent tiles are:
 
 ```
-    (q-1, r-1)  (q, r-1)  (q+1, r-1)
-         (q-1, r)  (q, r)  (q+1, r)
-    (q-1, r+1)  (q, r+1)  (q+1, r+1)
+                (q, r - 1)
+(q - 1, r)                  (q + 1, r)
+                (q, r    )
+(q - 1, r + 1)              (q + 1, r + 1)
+                (q, r + 1)
+```
+
+**Adjacent coordinates:**
+
+In clockwise order:
+
+1. **Top**: `(q, r-1)` - directly above
+2. **Top-Right**: `(q+1, r)` - above and to the right
+3. **Bottom-Right**: `(q+1, r+1)` - below and to the right
+4. **Bottom**: `(q, r+1)` - directly below
+5. **Bottom-Left**: `(q-1, r+1)` - below and to the left
+6. **Top-Left**: `(q-1, r)` - above and to the left
+
+### **Even Columns (q = 0, 2, 4, 6...)** with **Even Rows (r = 0, 2, 4, 6...)**
+
+For a tile at position `(q, r)` in an even row with an even column, the six
+adjacent tiles are:
+
+```
+                (q, r - 1)
+(q - 1, r - 1)              (q + 1, r - 1)
+                (q, r    )
+(q - 1, r)                  (q + 1, r)
+                (q, r + 1)
 ```
 
 **Adjacent coordinates:**
 
 1. **Top**: `(q, r-1)` - directly above
 2. **Top-Right**: `(q+1, r-1)` - above and to the right
-3. **Right**: `(q+1, r)` - directly to the right
+3. **Bottom-Right**: `(q+1, r)` - below and to the right
 4. **Bottom**: `(q, r+1)` - directly below
-5. **Bottom-Left**: `(q-1, r+1)` - below and to the left
-6. **Left**: `(q-1, r)` - directly to the left
+5. **Bottom-Left**: `(q-1, r)` - below and to the left
+6. **Top-Left**: `(q-1, r-1)` - above and to the left
 
-### **Odd Rows (r = 1, 3, 5, 7...)**
+### **Odd Columns (q = 1, 3, 5, 7...)** with **Odd Rows (r = 1, 3, 5, 7...)**
 
 For a tile at position `(q, r)` in an odd row, the six adjacent tiles are:
 
 ```
-    (q, r-1)  (q+1, r-1)
- (q-1, r)  (q, r)  (q+1, r)
-    (q, r+1)  (q+1, r+1)
+                (q, r - 1)
+(q - 1, r)                  (q + 1, r)
+                (q, r    )
+(q - 1, r + 1)              (q + 1, r + 1)
+                (q, r + 1)
+```
+
+**Adjacent coordinates:**
+
+1. **Top**: `(q, r-1)` - directly above
+2. **Top-Right**: `(q+1, r)` - above and to the right
+3. **Bottom-Right**: `(q+1, r+1)` - below and to the right
+4. **Bottom**: `(q, r+1)` - directly below
+5. **Bottom-Left**: `(q-1, r+1)` - below and to the left
+6. **Top-Left**: `(q-1, r)` - above and to the left
+
+### **Even Columns (q = 0, 2, 4, 6...)** with **Odd Rows (r = 1, 3, 5, 7...)**
+
+For a tile at position `(q, r)` in an odd row, the six adjacent tiles are:
+
+```
+                (q, r - 1)
+(q - 1, r - 1)              (q + 1, r - 1)
+                (q, r    )
+(q - 1, r)                  (q + 1, r)
+                (q, r + 1)
 ```
 
 **Adjacent coordinates:**
 
 1. **Top**: `(q, r-1)` - directly above
 2. **Top-Right**: `(q+1, r-1)` - above and to the right
-3. **Right**: `(q+1, r)` - directly to the right
+3. **Bottom-Right**: `(q+1, r)` - below and to the right
 4. **Bottom**: `(q, r+1)` - directly below
-5. **Bottom-Right**: `(q+1, r+1)` - below and to the right
-6. **Left**: `(q-1, r)` - directly to the left
-
-## Implementation Details
-
-### **Code Implementation**
-
-```typescript
-getNeighbors(q: number, r: number): (TileData | null)[] {
-  const neighbors: (TileData | null)[] = [];
-  const isEvenRow = r % 2 === 0;
-
-  const offsets = isEvenRow
-    ? [
-        { q: 0, r: -1 },  // top
-        { q: 1, r: -1 },  // top-right
-        { q: 1, r: 0 },   // right
-        { q: 0, r: 1 },   // bottom
-        { q: -1, r: 0 },  // left
-        { q: -1, r: -1 }, // top-left
-      ]
-    : [
-        { q: 0, r: -1 },  // top
-        { q: 1, r: 0 },   // top-right
-        { q: 1, r: 1 },   // right
-        { q: 0, r: 1 },   // bottom
-        { q: -1, r: 1 },  // bottom-left
-        { q: -1, r: 0 },  // left
-      ];
-
-  for (const offset of offsets) {
-    neighbors.push(this.getTile(q + offset.q, r + offset.r));
-  }
-
-  return neighbors;
-}
-```
+5. **Bottom-Left**: `(q-1, r)` - below and to the left
+6. **Top-Left**: `(q-1, r-1)` - above and to the left
 
 ### **Key Differences from Axial Coordinates**
 
@@ -104,51 +119,51 @@ getNeighbors(q: number, r: number): (TileData | null)[] {
 
 ## Usage Examples
 
-### **Example 1: Tile (5, 2) - Even Row**
+### **Example 1: Tile (5, 2) - Odd Column, Even Row**
 
 Adjacent tiles:
 
 - `(5, 1)` - top
-- `(6, 1)` - top-right
-- `(6, 2)` - right
+- `(6, 2)` - top-right
+- `(6, 3)` - bottom-right
 - `(5, 3)` - bottom
-- `(4, 2)` - left
-- `(4, 1)` - top-left
+- `(4, 3)` - bottom-left
+- `(4, 2)` - top-left
 
-### **Example 2: Tile (5, 3) - Odd Row**
+### **Example 2: Tile (5, 3) - Odd Column, Odd Row**
 
 Adjacent tiles:
 
 - `(5, 2)` - top
-- `(6, 2)` - top-right
-- `(6, 3)` - right
-- `(5, 4)` - bottom
+- `(6, 3)` - top-right
 - `(6, 4)` - bottom-right
-- `(4, 3)` - left
+- `(5, 4)` - bottom
+- `(4, 4)` - bottom-left
+- `(4, 3)` - top-left
 
 ## Boundary Handling
 
 - **Out-of-bounds tiles** return `null` in the adjacency array
-- **Cyclic X-axis**: Tiles wrap around horizontally (west to east)
-- **Finite Y-axis**: No wrapping vertically (north to south boundaries)
+- **Cyclic X-axis**: Tiles wrap around horizontally (west to east in the q axis)
+- **Finite Y-axis**: No wrapping vertically (north to south boundaries in the r
+  axis)
 
 ## Applications
 
 This adjacency system is used for:
 
-- **Ice formation connectivity** (ice tiles must be adjacent to existing ice)
+- **Terrain generation** (influencing adjacent tile types)
 - **Elevation calculations** (smooth transitions between adjacent tiles)
 - **Pathfinding algorithms** (movement between connected tiles)
-- **Terrain generation** (influencing adjacent tile types)
 
 ## Rules and Constraints
 
 - **Six-way adjacency**: All hex tile adjacency calculations must check all six
   edges
 - **Visual orientation**: Hex tiles are oriented with flat sections on top and
-  bottom
-- **Row-based movement**: Adjacency includes tiles directly above and diagonal
-  neighbors
+  bottom **THERE IS NO LEFT AND RIGHT ADJACENCY**
+- **Row-based movement**: Adjacency includes tiles directly above, below and
+  diagonal neighbors
 - **Implementation consistency**: Always use the six neighbor offsets defined in
   `MapGenerationContext.getNeighbors()` method
 
