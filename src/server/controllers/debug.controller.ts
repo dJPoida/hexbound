@@ -51,11 +51,11 @@ export const regenerateMap = async (req: AuthenticatedRequest, res: Response) =>
     const randomSeed = Math.random().toString(36).substring(2, 15);
     console.log(`[DEBUG] Regenerating map for game ${gameId} with seed: ${randomSeed}`);
 
-    // Use OCEAN_WORLD preset for more dramatic changes
+    // Generate new map with default preset (BASIC_WORLD)
     const mapGenerator = new MapGenerator(
       config.map.defaultWidth,
       config.map.defaultHeight,
-      'OCEAN_WORLD',
+      undefined, // Use default preset (BASIC_WORLD)
       randomSeed,
       game.players.length
     );
