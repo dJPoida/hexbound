@@ -2,6 +2,7 @@ import {
   MAP_GENERATION_PASSES,
   OCEAN_BAND_DEFAULT_PARAMS,
 } from '../../../../shared/constants/mapGeneration.const';
+import { getNeighborCoordinates } from '../../../../shared/helpers/getNeighbors.helper';
 import { TerrainType } from '../../../../shared/types/map';
 import {
   MapGenerationPassConfig,
@@ -12,9 +13,7 @@ import { GenerationPass, MapGenerationContext } from '../GenerationPass';
 /**
  * Parameters for the Ocean Band generation pass
  */
-interface OceanBandPassParams {
-  elevation: number;
-}
+type OceanBandPassParams = Record<string, never>; // Ocean tiles are always at elevation 0
 
 /**
  * Generates ocean tiles dynamically based on ice cap formations
@@ -34,12 +33,17 @@ export class OceanBandPass extends GenerationPass {
     let tilesModified = 0;
     const oceanTiles = new Set<string>(); // Track ocean tiles to avoid duplicates
 
-    // Find all ice cap tiles and generate ocean around their exposed faces
+    console.log(
+      `[OceanBandPass] Starting ocean generation for map ${context.width}x${context.height}`
+    );
+
+    // Simple algorithm: iterate over the map, find ice cap tiles, check neighbors
     for (let r = 0; r < context.height; r++) {
       for (let q = 0; q < context.width; q++) {
         const tile = context.getTile(q, r);
 
         if (tile?.terrain === TerrainType.ICECAP) {
+          console.log(`[OceanBandPass] Found ice cap at (${q},${r})`);
           // Generate ocean around this ice cap tile
           const oceanCount = this.generateOceanAroundIceCap(context, q, r, params, oceanTiles);
           tilesModified += oceanCount;
@@ -47,8 +51,15 @@ export class OceanBandPass extends GenerationPass {
       }
     }
 
-    // Also fill gaps between ice cap formations with ocean
-    tilesModified += this.fillGapsWithOcean(context, params, oceanTiles);
+    console.log(`[OceanBandPass] Total ocean tiles placed: ${tilesModified}`);
+
+    // Debug: Show summary of ocean tiles that should be in the final map
+    console.log(`[OceanBandPass] Ocean tiles summary:`);
+    for (const oceanKey of oceanTiles) {
+      const [q, r] = oceanKey.split(',').map(Number);
+      const tile = context.getTile(q, r);
+      console.log(`[OceanBandPass] Ocean tile at (${q},${r}): ${tile ? tile.terrain : 'null'}`);
+    }
 
     return this.createResult(
       tilesModified,
@@ -58,7 +69,7 @@ export class OceanBandPass extends GenerationPass {
 
   /**
    * Generate ocean tiles around a specific ice cap tile
-   * Places ocean on faces that are not connected to other ice cap tiles
+   * Simple: if neighbor is not ice cap or ocean, make it ocean
    */
   private generateOceanAroundIceCap(
     context: MapGenerationContext,
@@ -70,118 +81,69 @@ export class OceanBandPass extends GenerationPass {
     let oceanTilesPlaced = 0;
     const neighbors = context.getNeighbors(q, r);
 
+    console.log(`[OceanBandPass] Ice cap at (${q},${r}) - checking ${neighbors.length} neighbors`);
+
     // Check each of the 6 adjacent positions
     for (let i = 0; i < neighbors.length; i++) {
       const neighbor = neighbors[i];
 
-      if (!neighbor) {
-        // This neighbor position is out of bounds, skip
-        continue;
+      // Get the neighbor coordinates using the shared helper
+      const neighborCoords = getNeighborCoordinates(q, r, context.width, context.height)[i];
+      if (!neighborCoords) {
+        console.log(`[OceanBandPass] Neighbor ${i} at (${q},${r}) is out of bounds`);
+        continue; // Skip if out of bounds
       }
 
-      // Place ocean if this neighbor is not an ice cap (or is null/undefined)
-      if (!neighbor || neighbor.terrain !== TerrainType.ICECAP) {
-        // Calculate the neighbor coordinates
-        const neighborCoords = this.getNeighborCoordinates(q, r, i, context);
-        if (!neighborCoords) continue; // Skip if out of bounds
+      const neighborKey = `${neighborCoords.q},${neighborCoords.r}`;
+      const neighborTerrain = neighbor?.terrain || 'null';
 
-        const neighborKey = `${neighborCoords.q},${neighborCoords.r}`;
+      console.log(
+        `[OceanBandPass] Neighbor ${i}: (${neighborCoords.q},${neighborCoords.r}) terrain=${neighborTerrain}`
+      );
 
+      // Simple rule: if neighbor is not ice cap or ocean, make it ocean
+      if (
+        !neighbor ||
+        (neighbor.terrain !== TerrainType.ICECAP && neighbor.terrain !== TerrainType.OCEAN)
+      ) {
         // Only place ocean if this tile hasn't been processed yet
         if (!oceanTiles.has(neighborKey)) {
-          // Create ocean tile
+          // Create ocean tile (always elevation 0)
           const oceanTile = context.createTile(
             neighborCoords.q,
             neighborCoords.r,
-            params.elevation,
+            0,
             TerrainType.OCEAN
           );
           context.setTile(neighborCoords.q, neighborCoords.r, oceanTile);
           oceanTiles.add(neighborKey);
           oceanTilesPlaced++;
+          console.log(`[OceanBandPass] Placed ocean at (${neighborCoords.q},${neighborCoords.r})`);
+
+          // Verify the tile was actually set by retrieving it
+          const retrievedTile = context.getTile(neighborCoords.q, neighborCoords.r);
+          if (retrievedTile && retrievedTile.terrain === TerrainType.OCEAN) {
+            console.log(
+              `[OceanBandPass] ✓ Verified ocean tile at (${neighborCoords.q},${neighborCoords.r})`
+            );
+          } else {
+            console.log(
+              `[OceanBandPass] ✗ FAILED to verify ocean tile at (${neighborCoords.q},${neighborCoords.r}) - retrieved:`,
+              retrievedTile
+            );
+          }
+        } else {
+          console.log(
+            `[OceanBandPass] Skipped ocean at (${neighborCoords.q},${neighborCoords.r}) - already processed`
+          );
         }
+      } else {
+        console.log(
+          `[OceanBandPass] Skipped ocean at (${neighborCoords.q},${neighborCoords.r}) - is ${neighborTerrain}`
+        );
       }
     }
 
     return oceanTilesPlaced;
-  }
-
-  /**
-   * Fill gaps between ice cap formations with ocean tiles
-   */
-  private fillGapsWithOcean(
-    context: MapGenerationContext,
-    params: OceanBandPassParams,
-    oceanTiles: Set<string>
-  ): number {
-    let tilesModified = 0;
-
-    // Scan each row and fill gaps between ice cap tiles with ocean
-    for (let r = 0; r < context.height; r++) {
-      let inIceCapRegion = false;
-      let lastIceCapQ = -1;
-
-      for (let q = 0; q < context.width; q++) {
-        const tile = context.getTile(q, r);
-
-        if (tile?.terrain === TerrainType.ICECAP) {
-          // We found an ice cap tile
-          if (!inIceCapRegion) {
-            inIceCapRegion = true;
-          }
-          lastIceCapQ = q;
-        } else {
-          // This is not an ice cap tile
-          if (inIceCapRegion) {
-            // We're in a gap between ice cap tiles, place ocean
-            const tileKey = `${q},${r}`;
-            if (!oceanTiles.has(tileKey)) {
-              const oceanTile = context.createTile(q, r, params.elevation, TerrainType.OCEAN);
-              context.setTile(q, r, oceanTile);
-              oceanTiles.add(tileKey);
-              tilesModified++;
-            }
-          }
-        }
-      }
-    }
-
-    return tilesModified;
-  }
-
-  /**
-   * Calculate the coordinates of a neighbor at a specific direction index
-   */
-  private getNeighborCoordinates(
-    q: number,
-    r: number,
-    directionIndex: number,
-    context: MapGenerationContext
-  ): { q: number; r: number } | null {
-    // The six neighbor offsets for flat-top hex grid
-    const offsets = [
-      [0, -1], // North
-      [1, -1], // Northeast (odd rows)
-      [1, 0], // Southeast (odd rows)
-      [0, 1], // South
-      [-1, 0], // Southwest (odd rows)
-      [-1, -1], // Northwest (odd rows)
-    ];
-
-    const [dq, dr] = offsets[directionIndex];
-    const neighborQ = q + dq;
-    const neighborR = r + dr;
-
-    // Check bounds
-    if (
-      neighborQ < 0 ||
-      neighborQ >= context.width ||
-      neighborR < 0 ||
-      neighborR >= context.height
-    ) {
-      return null;
-    }
-
-    return { q: neighborQ, r: neighborR };
   }
 }

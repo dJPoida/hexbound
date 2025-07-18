@@ -28,9 +28,7 @@ export const ICE_CAP_DEFAULT_PARAMS = {
 /**
  * Default parameters for Ocean Band pass
  */
-export const OCEAN_BAND_DEFAULT_PARAMS = {
-  elevation: 0,
-} as const;
+export const OCEAN_BAND_DEFAULT_PARAMS = {} as const;
 
 /**
  * Default parameters for Grassland Fill pass
@@ -66,7 +64,7 @@ export const BASIC_WORLD_PASSES: MapGenerationPassConfig[] = [
   },
   {
     name: MAP_GENERATION_PASSES.GRASSLAND_FILL,
-    enabled: false, // Disabled to focus on testing ocean generation
+    enabled: true, // Disabled to focus on testing ocean generation
     parameters: GRASSLAND_FILL_DEFAULT_PARAMS,
   },
   {
@@ -88,9 +86,7 @@ export const OCEAN_WORLD_PASSES: MapGenerationPassConfig[] = [
   {
     name: MAP_GENERATION_PASSES.OCEAN_BAND,
     enabled: true,
-    parameters: {
-      elevation: 0,
-    },
+    parameters: {},
   },
   {
     name: MAP_GENERATION_PASSES.GRASSLAND_FILL,

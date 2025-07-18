@@ -1,3 +1,4 @@
+import { getNeighborCoordinates } from '../../../shared/helpers/getNeighbors.helper';
 import { TerrainType, TileData } from '../../../shared/types/map';
 import {
   GenerationContext,
@@ -29,22 +30,42 @@ export class MapGenerationContext implements GenerationContext {
 
   /**
    * Get a tile at the specified coordinates
+   * Handles q-axis wrapping (horizontal wrap-around)
    */
   getTile(q: number, r: number): TileData | null {
-    if (r < 0 || r >= this.height || q < 0 || q >= this.width) {
-      return null; // Out of bounds
+    if (r < 0 || r >= this.height) {
+      return null; // Out of bounds on r-axis (no wrapping)
     }
-    return this.tiles[r]?.[q] ?? null;
+
+    // Handle q-axis wrapping (the map wraps horizontally)
+    let wrappedQ = q;
+    if (wrappedQ < 0) {
+      wrappedQ = this.width + wrappedQ; // Wrap to the right edge
+    } else if (wrappedQ >= this.width) {
+      wrappedQ = wrappedQ - this.width; // Wrap to the left edge
+    }
+
+    return this.tiles[r]?.[wrappedQ] ?? null;
   }
 
   /**
    * Set a tile at the specified coordinates
+   * Handles q-axis wrapping (horizontal wrap-around)
    */
   setTile(q: number, r: number, tile: TileData): void {
-    if (r < 0 || r >= this.height || q < 0 || q >= this.width) {
-      return; // Out of bounds
+    if (r < 0 || r >= this.height) {
+      return; // Out of bounds on r-axis (no wrapping)
     }
-    this.tiles[r][q] = tile;
+
+    // Handle q-axis wrapping (the map wraps horizontally)
+    let wrappedQ = q;
+    if (wrappedQ < 0) {
+      wrappedQ = this.width + wrappedQ; // Wrap to the right edge
+    } else if (wrappedQ >= this.width) {
+      wrappedQ = wrappedQ - this.width; // Wrap to the left edge
+    }
+
+    this.tiles[r][wrappedQ] = tile;
   }
 
   /**
@@ -68,46 +89,20 @@ export class MapGenerationContext implements GenerationContext {
 
   /**
    * Get neighboring tiles (including null for out-of-bounds or unset tiles)
-   * Uses correct hex adjacency for flat-top hex grid with alternating row offsets
+   * Uses correct hex adjacency for flat-top hex grid with alternating row/column offsets
+   * Handles q-axis wrapping (horizontal wrap-around)
    */
   getNeighbors(q: number, r: number): (TileData | null)[] {
-    const neighbors: (TileData | null)[] = [];
-
-    // Hex grid neighbor offsets for flat-top hexes with alternating rows
-    // Even rows (r=0,2,4...): offset pattern
-    // Odd rows (r=1,3,5...): different offset pattern
-    const isEvenRow = r % 2 === 0;
-
-    const offsets = isEvenRow
-      ? [
-          { q: 0, r: -1 }, // top
-          { q: 1, r: -1 }, // top-right
-          { q: 1, r: 0 }, // right
-          { q: 0, r: 1 }, // bottom
-          { q: -1, r: 0 }, // left
-          { q: -1, r: -1 }, // top-left
-        ]
-      : [
-          { q: 0, r: -1 }, // top
-          { q: 1, r: 0 }, // top-right
-          { q: 1, r: 1 }, // right
-          { q: 0, r: 1 }, // bottom
-          { q: -1, r: 1 }, // bottom-left
-          { q: -1, r: 0 }, // left
-        ];
-
-    for (const offset of offsets) {
-      neighbors.push(this.getTile(q + offset.q, r + offset.r));
-    }
-
-    return neighbors;
+    const neighborCoords = getNeighborCoordinates(q, r, this.width, this.height);
+    return neighborCoords.map(coord => (coord ? this.getTile(coord.q, coord.r) : null));
   }
 
   /**
    * Get adjacent elevations (west and north) for elevation smoothing
+   * Handles q-axis wrapping (horizontal wrap-around)
    */
   getAdjacentElevations(q: number, r: number): { west: number | null; north: number | null } {
-    const west = this.getTileElevation(q - 1, r);
+    const west = this.getTileElevation(q - 1, r); // getTileElevation uses getTile which now handles wrapping
     const north = this.getTileElevation(q, r - 1);
     return { west, north };
   }
