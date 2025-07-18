@@ -68,19 +68,33 @@ export class MapGenerationContext implements GenerationContext {
 
   /**
    * Get neighboring tiles (including null for out-of-bounds or unset tiles)
+   * Uses correct hex adjacency for flat-top hex grid with alternating row offsets
    */
   getNeighbors(q: number, r: number): (TileData | null)[] {
     const neighbors: (TileData | null)[] = [];
 
-    // Hex grid neighbor offsets (axial coordinates)
-    const offsets = [
-      { q: 1, r: 0 },
-      { q: 1, r: -1 },
-      { q: 0, r: -1 },
-      { q: -1, r: 0 },
-      { q: -1, r: 1 },
-      { q: 0, r: 1 },
-    ];
+    // Hex grid neighbor offsets for flat-top hexes with alternating rows
+    // Even rows (r=0,2,4...): offset pattern
+    // Odd rows (r=1,3,5...): different offset pattern
+    const isEvenRow = r % 2 === 0;
+
+    const offsets = isEvenRow
+      ? [
+          { q: 0, r: -1 }, // top
+          { q: 1, r: -1 }, // top-right
+          { q: 1, r: 0 }, // right
+          { q: 0, r: 1 }, // bottom
+          { q: -1, r: 0 }, // left
+          { q: -1, r: -1 }, // top-left
+        ]
+      : [
+          { q: 0, r: -1 }, // top
+          { q: 1, r: 0 }, // top-right
+          { q: 1, r: 1 }, // right
+          { q: 0, r: 1 }, // bottom
+          { q: -1, r: 1 }, // bottom-left
+          { q: -1, r: 0 }, // left
+        ];
 
     for (const offset of offsets) {
       neighbors.push(this.getTile(q + offset.q, r + offset.r));

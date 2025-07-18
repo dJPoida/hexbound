@@ -1371,6 +1371,16 @@ Environment variables are managed as follows:
   - outline (`hex_grid.png`) is used on every tile to define the grid for the user
   - selected (`hex_selected.png`) is used to indicate the tile the user has "selected" on the map
 
+## Hex Grid Adjacency Rules
+
+- **Six-Way Adjacency**: All hex tile adjacency calculations must check all six edges of the hex (top, top-right, bottom-right, bottom, bottom-left, top-left).
+- **Visual Orientation**: Hex tiles are oriented with flat sections on top and bottom, pointy sections on the sides.
+- **Row-Based Movement**: When moving from row to row (north to south), adjacency includes:
+  - The tile directly above (same q coordinate)
+  - The tile to the top-left (q-1, r-1 for odd rows; q-1, r for even rows)
+  - The tile to the top-right (q+1, r-1 for odd rows; q+1, r for even rows)
+- **Adjacency Implementation**: Always use the six neighbor offsets defined in the MapGenerationContext.getNeighbors() method for consistency.
+
 # Architectural Patterns
 
 ## Decoupling Rendering from Component Lifecycle

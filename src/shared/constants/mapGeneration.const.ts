@@ -67,7 +67,7 @@ export const BASIC_WORLD_PASSES: MapGenerationPassConfig[] = [
   },
   {
     name: MAP_GENERATION_PASSES.GRASSLAND_FILL,
-    enabled: true,
+    enabled: false, // Temporarily disabled to see ice formations clearly
     parameters: GRASSLAND_FILL_DEFAULT_PARAMS,
   },
   {
